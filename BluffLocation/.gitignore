@@ -1,0 +1,148 @@
+# ===================================
+# DEPENDENCIES
+# ===================================
+node_modules/
+.npm/
+.yarn/
+.pnp.*
+.yarn-integrity
+
+# ===================================
+# EXPO / REACT NATIVE
+# ===================================
+.expo/
+.expo-shared/
+.expo-cache/
+.expo/
+*.log
+.expo/metro-externals/
+.expo/packager-info.json
+.expo/README.md
+.expo/settings.json
+
+# ===================================
+# BUILD OUTPUTS
+# ===================================
+# Android - KEEP THIS SECTION AS IS
+android/
+*.apk
+*.aab
+*.keystore
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+android-debug.apk
+android-release.apk
+
+# iOS - MODIFIED: Keep project files, exclude builds
+# KEEP ios/ folder but exclude build products
+ios/Pods/
+ios/build/
+ios/DerivedData/
+ios/*.xcworkspace/xcuserdata/
+ios/*.xcodeproj/xcuserdata/
+ios/*.xcodeproj/project.xcworkspace/xcuserdata/
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# ===================================
+# METRO / BUNDLER
+# ===================================
+.metro/
+.metro-health-check*
+.haste_cache/
+.haste-map*
+.history/
+metro.config.js.bak
+metro-cache/
+
+# ===================================
+# DEBUG & LOGS
+# ===================================
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+*.log
+logs/
+
+# ===================================
+# ENVIRONMENT
+# ===================================
+.env
+.env.local
+.env.production
+.env.development
+.env.test
+.env*.local
+.expo-env.d.ts
+
+# ===================================
+# IDE & EDITOR
+# ===================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+*.launch
+.settings/
+
+# ===================================
+# OPERATING SYSTEM
+# ===================================
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+.Spotlight-V100
+.Trashes
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+
+# ===================================
+# TEMPORARY FILES
+# ===================================
+*.tmp
+*.temp
+*.bak
+*.backup
+*.orig
+*.save
+*.sav
+
+# ===================================
+# PACKAGE MANAGER SPECIFIC
+# ===================================
+# npm - KEEP package-lock.json for consistency
+# package-lock.json  <-- COMMENTED OUT or remove this line
+
+# Yarn
+# yarn.lock  <-- COMMENTED OUT or remove this line
+.yarn/cache/
+.yarn/unplugged/
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*
+
+# ===================================
+# TEST COVERAGE
+# ===================================
+coverage/
+.nyc_output/
+
+# ===================================
+# TYPESCRIPT
+# ===================================
+*.tsbuildinfopackage-lock.json

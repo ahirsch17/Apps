@@ -1,0 +1,33 @@
+{
+  "expo": {
+    "name": "Encrypted",
+    "slug": "Encrypted",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/MainScreensBackground.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/MainScreensBackground.png",
+      "resizeMode": "cover",
+      "backgroundColor": "#1a1a2e"
+    },
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/MainScreensBackground.png",
+        "backgroundColor": "#1a1a2e"
+      },
+      "edgeToEdgeEnabled": true,
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "favicon": "./assets/MainScreensBackground.png"
+    },
+    "plugins": [
+      "expo-router"
+    ]
+  }
+}

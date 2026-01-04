@@ -1,0 +1,29 @@
+{
+  "expo": {
+    "name": "BluffLocation",
+    "slug": "blufflocation",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/preview.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/preview.png",
+      "backgroundColor": "#ffffff",
+      "resizeMode": "contain"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.blufflocation.app"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/preview.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.blufflocation.app"
+    },
+    "web": {
+      "favicon": "./assets/preview.png"
+    }
+  }
+}
