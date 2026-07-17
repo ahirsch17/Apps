@@ -1,0 +1,5004 @@
+{
+  "generatedAt": "2026-05-02T20:59:32.474520+00:00",
+  "universities": [
+    {
+      "id": "vt",
+      "name": "Virginia Tech",
+      "emailDomain": "vt.edu",
+      "timezone": "America/New_York"
+    }
+  ],
+  "sections": [
+    {
+      "sectionId": "CSE-1001-SEC-001",
+      "canonicalCourseId": "CSE-1001",
+      "courseCode": "CS 1114",
+      "courseName": "Intro to Software Design",
+      "sectionLabel": "001",
+      "meetingDays": [
+        "Sat"
+      ],
+      "startTime": "14:30",
+      "endTime": "15:20",
+      "location": "War Memorial Gym"
+    },
+    {
+      "sectionId": "CSE-1001-SEC-002",
+      "canonicalCourseId": "CSE-1001",
+      "courseCode": "CS 1114",
+      "courseName": "Intro to Software Design",
+      "sectionLabel": "002",
+      "meetingDays": [
+        "Mon",
+        "Fri"
+      ],
+      "startTime": "17:45",
+      "endTime": "18:35",
+      "location": "Newman Library"
+    },
+    {
+      "sectionId": "CSE-1002-SEC-001",
+      "canonicalCourseId": "CSE-1002",
+      "courseCode": "CS 2114",
+      "courseName": "Software Design and Data Structures",
+      "sectionLabel": "001",
+      "meetingDays": [
+        "Sat"
+      ],
+      "startTime": "10:00",
+      "endTime": "11:30",
+      "location": "War Memorial Gym"
+    },
+    {
+      "sectionId": "CSE-1002-SEC-002",
+      "canonicalCourseId": "CSE-1002",
+      "courseCode": "CS 2114",
+      "courseName": "Software Design and Data Structures",
+      "sectionLabel": "002",
+      "meetingDays": [
+        "Tue",
+        "Wed",
+        "Thu"
+      ],
+      "startTime": "12:00",
+      "endTime": "12:50",
+      "location": "Burruss Hall"
+    },
+    {
+      "sectionId": "CSE-1003-SEC-001",
+      "canonicalCourseId": "CSE-1003",
+      "courseCode": "CS 2505",
+      "courseName": "Computer Organization I",
+      "sectionLabel": "001",
+      "meetingDays": [
+        "Sun"
+      ],
+      "startTime": "10:15",
+      "endTime": "11:30",
+      "location": "McBryde Hall"
+    },
+    {
+      "sectionId": "CSE-1003-SEC-002",
+      "canonicalCourseId": "CSE-1003",
+      "courseCode": "CS 2505",
+      "courseName": "Computer Organization I",
+      "sectionLabel": "002",
+      "meetingDays": [
+        "Mon",
+        "Thu"
+      ],
+      "startTime": "13:30",
+      "endTime": "15:00",
+      "location": "Turner Place"
+    },
+    {
+      "sectionId": "CSE-1003-SEC-003",
+      "canonicalCourseId": "CSE-1003",
+      "courseCode": "CS 2505",
+      "courseName": "Computer Organization I",
+      "sectionLabel": "003",
+      "meetingDays": [
+        "Mon",
+        "Thu"
+      ],
+      "startTime": "14:00",
+      "endTime": "15:30",
+      "location": "Turner Place"
+    },
+    {
+      "sectionId": "CSE-1004-SEC-001",
+      "canonicalCourseId": "CSE-1004",
+      "courseCode": "CS 3214",
+      "courseName": "Computer Systems",
+      "sectionLabel": "001",
+      "meetingDays": [
+        "Sat"
+      ],
+      "startTime": "14:00",
+      "endTime": "14:50",
+      "location": "War Memorial Gym"
+    },
+    {
+      "sectionId": "CSE-1004-SEC-002",
+      "canonicalCourseId": "CSE-1004",
+      "courseCode": "CS 3214",
+      "courseName": "Computer Systems",
+      "sectionLabel": "002",
+      "meetingDays": [
+        "Mon",
+        "Tue",
+        "Fri"
+      ],
+      "startTime": "14:30",
+      "endTime": "15:45",
+      "location": "The Drillfield"
+    },
+    {
+      "sectionId": "CSE-1004-SEC-003",
+      "canonicalCourseId": "CSE-1004",
+      "courseCode": "CS 3214",
+      "courseName": "Computer Systems",
+      "sectionLabel": "003",
+      "meetingDays": [
+        "Wed",
+        "Fri"
+      ],
+      "startTime": "11:30",
+      "endTime": "13:00",
+      "location": "McBryde Hall"
+    },
+    {
+      "sectionId": "CSE-1005-SEC-001",
+      "canonicalCourseId": "CSE-1005",
+      "courseCode": "MATH 1226",
+      "courseName": "Calculus of a Single Variable",
+      "sectionLabel": "001",
+      "meetingDays": [
+        "Sat"
+      ],
+      "startTime": "10:45",
+      "endTime": "12:00",
+      "location": "Turner Place"
+    },
+    {
+      "sectionId": "CSE-1005-SEC-002",
+      "canonicalCourseId": "CSE-1005",
+      "courseCode": "MATH 1226",
+      "courseName": "Calculus of a Single Variable",
+      "sectionLabel": "002",
+      "meetingDays": [
+        "Mon",
+        "Wed"
+      ],
+      "startTime": "11:00",
+      "endTime": "12:15",
+      "location": "Burruss Hall"
+    },
+    {
+      "sectionId": "CSE-1006-SEC-001",
+      "canonicalCourseId": "CSE-1006",
+      "courseCode": "MATH 2204",
+      "courseName": "Linear Algebra",
+      "sectionLabel": "001",
+      "meetingDays": [
+        "Sat"
+      ],
+      "startTime": "10:30",
+      "endTime": "11:20",
+      "location": "Goodwin Hall"
+    },
+    {
+      "sectionId": "CSE-1006-SEC-002",
+      "canonicalCourseId": "CSE-1006",
+      "courseCode": "MATH 2204",
+      "courseName": "Linear Algebra",
+      "sectionLabel": "002",
+      "meetingDays": [
+        "Tue",
+        "Thu",
+        "Fri"
+      ],
+      "startTime": "10:15",
+      "endTime": "11:45",
+      "location": "Turner Place"
+    },
+    {
+      "sectionId": "CSE-1006-SEC-003",
+      "canonicalCourseId": "CSE-1006",
+      "courseCode": "MATH 2204",
+      "courseName": "Linear Algebra",
+      "sectionLabel": "003",
+      "meetingDays": [
+        "Tue",
+        "Thu",
+        "Fri"
+      ],
+      "startTime": "11:15",
+      "endTime": "12:45",
+      "location": "Goodwin Hall"
+    },
+    {
+      "sectionId": "CSE-1007-SEC-001",
+      "canonicalCourseId": "CSE-1007",
+      "courseCode": "MATH 3134",
+      "courseName": "Applied Combinatorics",
+      "sectionLabel": "001",
+      "meetingDays": [
+        "Mon",
+        "Tue"
+      ],
+      "startTime": "10:45",
+      "endTime": "12:15",
+      "location": "McBryde Hall"
+    },
+    {
+      "sectionId": "CSE-1007-SEC-002",
+      "canonicalCourseId": "CSE-1007",
+      "courseCode": "MATH 3134",
+      "courseName": "Applied Combinatorics",
+      "sectionLabel": "002",
+      "meetingDays": [
+        "Wed",
+        "Thu",
+        "Fri"
+      ],
+      "startTime": "12:00",
+      "endTime": "13:30",
+      "location": "McBryde Hall"
+    },
+    {
+      "sectionId": "CSE-1008-SEC-001",
+      "canonicalCourseId": "CSE-1008",
+      "courseCode": "STAT 3005",
+      "courseName": "Statistics for Engineers",
+      "sectionLabel": "001",
+      "meetingDays": [
+        "Mon",
+        "Tue",
+        "Wed"
+      ],
+      "startTime": "10:45",
+      "endTime": "11:35",
+      "location": "Turner Place"
+    },
+    {
+      "sectionId": "CSE-1008-SEC-002",
+      "canonicalCourseId": "CSE-1008",
+      "courseCode": "STAT 3005",
+      "courseName": "Statistics for Engineers",
+      "sectionLabel": "002",
+      "meetingDays": [
+        "Mon",
+        "Fri"
+      ],
+      "startTime": "12:15",
+      "endTime": "13:05",
+      "location": "The Drillfield"
+    },
+    {
+      "sectionId": "CSE-1008-SEC-003",
+      "canonicalCourseId": "CSE-1008",
+      "courseCode": "STAT 3005",
+      "courseName": "Statistics for Engineers",
+      "sectionLabel": "003",
+      "meetingDays": [
+        "Mon",
+        "Fri"
+      ],
+      "startTime": "17:30",
+      "endTime": "18:45",
+      "location": "Newman Library"
+    },
+    {
+      "sectionId": "CSE-1009-SEC-001",
+      "canonicalCourseId": "CSE-1009",
+      "courseCode": "ECON 2005",
+      "courseName": "Microeconomic Principles",
+      "sectionLabel": "001",
+      "meetingDays": [
+        "Mon",
+        "Tue",
+        "Wed"
+      ],
+      "startTime": "11:00",
+      "endTime": "11:50",
+      "location": "Goodwin Hall"
+    },
+    {
+      "sectionId": "CSE-1009-SEC-002",
+      "canonicalCourseId": "CSE-1009",
+      "courseCode": "ECON 2005",
+      "courseName": "Microeconomic Principles",
+      "sectionLabel": "002",
+      "meetingDays": [
+        "Tue",
+        "Fri"
+      ],
+      "startTime": "10:45",
+      "endTime": "12:15",
+      "location": "Squires"
+    },
+    {
+      "sectionId": "CSE-1010-SEC-001",
+      "canonicalCourseId": "CSE-1010",
+      "courseCode": "ECON 2006",
+      "courseName": "Macroeconomic Principles",
+      "sectionLabel": "001",
+      "meetingDays": [
+        "Tue",
+        "Wed",
+        "Fri"
+      ],
+      "startTime": "12:45",
+      "endTime": "14:15",
+      "location": "The Drillfield"
+    },
+    {
+      "sectionId": "CSE-1010-SEC-002",
+      "canonicalCourseId": "CSE-1010",
+      "courseCode": "ECON 2006",
+      "courseName": "Macroeconomic Principles",
+      "sectionLabel": "002",
+      "meetingDays": [
+        "Mon",
+        "Thu",
+        "Fri"
+      ],
+      "startTime": "11:15",
+      "endTime": "12:05",
+      "location": "The Drillfield"
+    },
+    {
+      "sectionId": "CSE-1010-SEC-003",
+      "canonicalCourseId": "CSE-1010",
+      "courseCode": "ECON 2006",
+      "courseName": "Macroeconomic Principles",
+      "sectionLabel": "003",
+      "meetingDays": [
+        "Tue",
+        "Fri"
+      ],
+      "startTime": "17:15",
+      "endTime": "18:05",
+      "location": "McBryde Hall"
+    },
+    {
+      "sectionId": "CSE-1011-SEC-001",
+      "canonicalCourseId": "CSE-1011",
+      "courseCode": "PHYS 2305",
+      "courseName": "Foundations of Physics I",
+      "sectionLabel": "001",
+      "meetingDays": [
+        "Mon",
+        "Fri"
+      ],
+      "startTime": "13:00",
+      "endTime": "14:30",
+      "location": "War Memorial Gym"
+    },
+    {
+      "sectionId": "CSE-1011-SEC-002",
+      "canonicalCourseId": "CSE-1011",
+      "courseCode": "PHYS 2305",
+      "courseName": "Foundations of Physics I",
+      "sectionLabel": "002",
+      "meetingDays": [
+        "Tue",
+        "Wed",
+        "Thu"
+      ],
+      "startTime": "10:45",
+      "endTime": "11:35",
+      "location": "Goodwin Hall"
+    },
+    {
+      "sectionId": "CSE-1012-SEC-001",
+      "canonicalCourseId": "CSE-1012",
+      "courseCode": "PHYS 2306",
+      "courseName": "Foundations of Physics II",
+      "sectionLabel": "001",
+      "meetingDays": [
+        "Mon",
+        "Fri"
+      ],
+      "startTime": "14:30",
+      "endTime": "15:45",
+      "location": "Burruss Hall"
+    },
+    {
+      "sectionId": "CSE-1012-SEC-002",
+      "canonicalCourseId": "CSE-1012",
+      "courseCode": "PHYS 2306",
+      "courseName": "Foundations of Physics II",
+      "sectionLabel": "002",
+      "meetingDays": [
+        "Mon",
+        "Thu",
+        "Fri"
+      ],
+      "startTime": "14:30",
+      "endTime": "15:20",
+      "location": "War Memorial Gym"
+    },
+    {
+      "sectionId": "CSE-1012-SEC-003",
+      "canonicalCourseId": "CSE-1012",
+      "courseCode": "PHYS 2306",
+      "courseName": "Foundations of Physics II",
+      "sectionLabel": "003",
+      "meetingDays": [
+        "Tue",
+        "Thu"
+      ],
+      "startTime": "10:45",
+      "endTime": "11:35",
+      "location": "Turner Place"
+    },
+    {
+      "sectionId": "CSE-1013-SEC-001",
+      "canonicalCourseId": "CSE-1013",
+      "courseCode": "ENGE 1215",
+      "courseName": "Foundations of Engineering",
+      "sectionLabel": "001",
+      "meetingDays": [
+        "Mon",
+        "Thu"
+      ],
+      "startTime": "16:00",
+      "endTime": "16:50",
+      "location": "Newman Library"
+    },
+    {
+      "sectionId": "CSE-1013-SEC-002",
+      "canonicalCourseId": "CSE-1013",
+      "courseCode": "ENGE 1215",
+      "courseName": "Foundations of Engineering",
+      "sectionLabel": "002",
+      "meetingDays": [
+        "Tue",
+        "Fri"
+      ],
+      "startTime": "14:45",
+      "endTime": "16:00",
+      "location": "War Memorial Gym"
+    },
+    {
+      "sectionId": "CSE-1013-SEC-003",
+      "canonicalCourseId": "CSE-1013",
+      "courseCode": "ENGE 1215",
+      "courseName": "Foundations of Engineering",
+      "sectionLabel": "003",
+      "meetingDays": [
+        "Mon",
+        "Tue",
+        "Thu"
+      ],
+      "startTime": "08:45",
+      "endTime": "10:00",
+      "location": "Goodwin Hall"
+    },
+    {
+      "sectionId": "CSE-1014-SEC-001",
+      "canonicalCourseId": "CSE-1014",
+      "courseCode": "BIT 2405",
+      "courseName": "Intro to Business Analytics",
+      "sectionLabel": "001",
+      "meetingDays": [
+        "Mon",
+        "Thu",
+        "Fri"
+      ],
+      "startTime": "11:30",
+      "endTime": "12:20",
+      "location": "Newman Library"
+    },
+    {
+      "sectionId": "CSE-1014-SEC-002",
+      "canonicalCourseId": "CSE-1014",
+      "courseCode": "BIT 2405",
+      "courseName": "Intro to Business Analytics",
+      "sectionLabel": "002",
+      "meetingDays": [
+        "Mon",
+        "Wed"
+      ],
+      "startTime": "08:45",
+      "endTime": "10:15",
+      "location": "Squires"
+    },
+    {
+      "sectionId": "CSE-1014-SEC-003",
+      "canonicalCourseId": "CSE-1014",
+      "courseCode": "BIT 2405",
+      "courseName": "Intro to Business Analytics",
+      "sectionLabel": "003",
+      "meetingDays": [
+        "Mon",
+        "Fri"
+      ],
+      "startTime": "10:00",
+      "endTime": "11:30",
+      "location": "McBryde Hall"
+    },
+    {
+      "sectionId": "CSE-1015-SEC-001",
+      "canonicalCourseId": "CSE-1015",
+      "courseCode": "CMDA 2005",
+      "courseName": "Data and Decisions",
+      "sectionLabel": "001",
+      "meetingDays": [
+        "Mon",
+        "Tue",
+        "Wed"
+      ],
+      "startTime": "17:00",
+      "endTime": "18:30",
+      "location": "McBryde Hall"
+    },
+    {
+      "sectionId": "CSE-1015-SEC-002",
+      "canonicalCourseId": "CSE-1015",
+      "courseCode": "CMDA 2005",
+      "courseName": "Data and Decisions",
+      "sectionLabel": "002",
+      "meetingDays": [
+        "Tue",
+        "Wed",
+        "Fri"
+      ],
+      "startTime": "11:30",
+      "endTime": "12:20",
+      "location": "Turner Place"
+    },
+    {
+      "sectionId": "CSE-1016-SEC-001",
+      "canonicalCourseId": "CSE-1016",
+      "courseCode": "PSCI 1014",
+      "courseName": "US Government",
+      "sectionLabel": "001",
+      "meetingDays": [
+        "Wed",
+        "Thu"
+      ],
+      "startTime": "13:00",
+      "endTime": "13:50",
+      "location": "Goodwin Hall"
+    },
+    {
+      "sectionId": "CSE-1016-SEC-002",
+      "canonicalCourseId": "CSE-1016",
+      "courseCode": "PSCI 1014",
+      "courseName": "US Government",
+      "sectionLabel": "002",
+      "meetingDays": [
+        "Mon",
+        "Tue"
+      ],
+      "startTime": "16:30",
+      "endTime": "17:20",
+      "location": "The Drillfield"
+    },
+    {
+      "sectionId": "CSE-1016-SEC-003",
+      "canonicalCourseId": "CSE-1016",
+      "courseCode": "PSCI 1014",
+      "courseName": "US Government",
+      "sectionLabel": "003",
+      "meetingDays": [
+        "Tue",
+        "Wed"
+      ],
+      "startTime": "12:15",
+      "endTime": "13:30",
+      "location": "Turner Place"
+    },
+    {
+      "sectionId": "CSE-1017-SEC-001",
+      "canonicalCourseId": "CSE-1017",
+      "courseCode": "ENGL 1106",
+      "courseName": "Writing and Research",
+      "sectionLabel": "001",
+      "meetingDays": [
+        "Mon",
+        "Tue",
+        "Thu"
+      ],
+      "startTime": "09:00",
+      "endTime": "10:30",
+      "location": "Squires"
+    },
+    {
+      "sectionId": "CSE-1017-SEC-002",
+      "canonicalCourseId": "CSE-1017",
+      "courseCode": "ENGL 1106",
+      "courseName": "Writing and Research",
+      "sectionLabel": "002",
+      "meetingDays": [
+        "Tue",
+        "Wed",
+        "Fri"
+      ],
+      "startTime": "13:15",
+      "endTime": "14:45",
+      "location": "Turner Place"
+    },
+    {
+      "sectionId": "CSE-1018-SEC-001",
+      "canonicalCourseId": "CSE-1018",
+      "courseCode": "HIST 1214",
+      "courseName": "World History",
+      "sectionLabel": "001",
+      "meetingDays": [
+        "Mon",
+        "Wed",
+        "Fri"
+      ],
+      "startTime": "14:30",
+      "endTime": "15:20",
+      "location": "Newman Library"
+    },
+    {
+      "sectionId": "CSE-1018-SEC-002",
+      "canonicalCourseId": "CSE-1018",
+      "courseCode": "HIST 1214",
+      "courseName": "World History",
+      "sectionLabel": "002",
+      "meetingDays": [
+        "Mon",
+        "Tue",
+        "Wed"
+      ],
+      "startTime": "15:45",
+      "endTime": "17:15",
+      "location": "Newman Library"
+    },
+    {
+      "sectionId": "CSE-1018-SEC-003",
+      "canonicalCourseId": "CSE-1018",
+      "courseCode": "HIST 1214",
+      "courseName": "World History",
+      "sectionLabel": "003",
+      "meetingDays": [
+        "Mon",
+        "Tue"
+      ],
+      "startTime": "16:00",
+      "endTime": "17:15",
+      "location": "Squires"
+    },
+    {
+      "sectionId": "CSE-1019-SEC-001",
+      "canonicalCourseId": "CSE-1019",
+      "courseCode": "COMM 2004",
+      "courseName": "Public Speaking",
+      "sectionLabel": "001",
+      "meetingDays": [
+        "Mon",
+        "Wed"
+      ],
+      "startTime": "13:00",
+      "endTime": "14:15",
+      "location": "War Memorial Gym"
+    },
+    {
+      "sectionId": "CSE-1019-SEC-002",
+      "canonicalCourseId": "CSE-1019",
+      "courseCode": "COMM 2004",
+      "courseName": "Public Speaking",
+      "sectionLabel": "002",
+      "meetingDays": [
+        "Mon",
+        "Wed"
+      ],
+      "startTime": "16:45",
+      "endTime": "18:15",
+      "location": "Squires"
+    },
+    {
+      "sectionId": "CSE-1019-SEC-003",
+      "canonicalCourseId": "CSE-1019",
+      "courseCode": "COMM 2004",
+      "courseName": "Public Speaking",
+      "sectionLabel": "003",
+      "meetingDays": [
+        "Tue",
+        "Fri"
+      ],
+      "startTime": "14:00",
+      "endTime": "14:50",
+      "location": "The Drillfield"
+    },
+    {
+      "sectionId": "CSE-1020-SEC-001",
+      "canonicalCourseId": "CSE-1020",
+      "courseCode": "MUS 1104",
+      "courseName": "Music Appreciation",
+      "sectionLabel": "001",
+      "meetingDays": [
+        "Tue",
+        "Wed"
+      ],
+      "startTime": "09:45",
+      "endTime": "10:35",
+      "location": "Goodwin Hall"
+    },
+    {
+      "sectionId": "CSE-1020-SEC-002",
+      "canonicalCourseId": "CSE-1020",
+      "courseCode": "MUS 1104",
+      "courseName": "Music Appreciation",
+      "sectionLabel": "002",
+      "meetingDays": [
+        "Tue",
+        "Thu"
+      ],
+      "startTime": "13:30",
+      "endTime": "14:20",
+      "location": "War Memorial Gym"
+    },
+    {
+      "sectionId": "CSE-1020-SEC-003",
+      "canonicalCourseId": "CSE-1020",
+      "courseCode": "MUS 1104",
+      "courseName": "Music Appreciation",
+      "sectionLabel": "003",
+      "meetingDays": [
+        "Tue",
+        "Thu"
+      ],
+      "startTime": "13:30",
+      "endTime": "14:20",
+      "location": "Turner Place"
+    }
+  ],
+  "students": [
+    {
+      "id": "stu-0001",
+      "name": "Alex Hirsch",
+      "email": "alex.hirsch@vt.edu",
+      "schoolId": "vt",
+      "year": "Senior",
+      "major": "ECON",
+      "privacy": {
+        "shareSchedule": "full",
+        "shareClassDetails": true
+      }
+    },
+    {
+      "id": "stu-0002",
+      "name": "Sarah Kim",
+      "email": "sarah.kim@vt.edu",
+      "schoolId": "vt",
+      "year": "Sophomore",
+      "major": "ECON",
+      "privacy": {
+        "shareSchedule": "full",
+        "shareClassDetails": true
+      }
+    },
+    {
+      "id": "stu-0003",
+      "name": "Chris Taylor",
+      "email": "chris.taylor2@vt.edu",
+      "schoolId": "vt",
+      "year": "Senior",
+      "major": "CMDA",
+      "privacy": {
+        "shareSchedule": "full",
+        "shareClassDetails": false
+      }
+    },
+    {
+      "id": "stu-0004",
+      "name": "Emerson Moore",
+      "email": "emerson.moore3@vt.edu",
+      "schoolId": "vt",
+      "year": "Freshman",
+      "major": "MATH",
+      "privacy": {
+        "shareSchedule": "freeBusy",
+        "shareClassDetails": false
+      }
+    },
+    {
+      "id": "stu-0005",
+      "name": "Sarah Davis",
+      "email": "sarah.davis4@vt.edu",
+      "schoolId": "vt",
+      "year": "Freshman",
+      "major": "ECON",
+      "privacy": {
+        "shareSchedule": "freeBusy",
+        "shareClassDetails": false
+      }
+    },
+    {
+      "id": "stu-0006",
+      "name": "Quinn Johnson",
+      "email": "quinn.johnson5@vt.edu",
+      "schoolId": "vt",
+      "year": "Junior",
+      "major": "ECON",
+      "privacy": {
+        "shareSchedule": "full",
+        "shareClassDetails": true
+      }
+    },
+    {
+      "id": "stu-0007",
+      "name": "Parker Moore",
+      "email": "parker.moore6@vt.edu",
+      "schoolId": "vt",
+      "year": "Junior",
+      "major": "MATH",
+      "privacy": {
+        "shareSchedule": "full",
+        "shareClassDetails": false
+      }
+    },
+    {
+      "id": "stu-0008",
+      "name": "Parker Moore",
+      "email": "parker.moore7@vt.edu",
+      "schoolId": "vt",
+      "year": "Sophomore",
+      "major": "BIT",
+      "privacy": {
+        "shareSchedule": "full",
+        "shareClassDetails": false
+      }
+    },
+    {
+      "id": "stu-0009",
+      "name": "Taylor Taylor",
+      "email": "taylor.taylor8@vt.edu",
+      "schoolId": "vt",
+      "year": "Junior",
+      "major": "MATH",
+      "privacy": {
+        "shareSchedule": "freeBusy",
+        "shareClassDetails": false
+      }
+    },
+    {
+      "id": "stu-0010",
+      "name": "Parker Brown",
+      "email": "parker.brown9@vt.edu",
+      "schoolId": "vt",
+      "year": "Senior",
+      "major": "ECON",
+      "privacy": {
+        "shareSchedule": "full",
+        "shareClassDetails": false
+      }
+    },
+    {
+      "id": "stu-0011",
+      "name": "Logan Wilson",
+      "email": "logan.wilson10@vt.edu",
+      "schoolId": "vt",
+      "year": "Sophomore",
+      "major": "ECON",
+      "privacy": {
+        "shareSchedule": "full",
+        "shareClassDetails": true
+      }
+    },
+    {
+      "id": "stu-0012",
+      "name": "Mia Jones",
+      "email": "mia.jones11@vt.edu",
+      "schoolId": "vt",
+      "year": "Junior",
+      "major": "CS",
+      "privacy": {
+        "shareSchedule": "freeBusy",
+        "shareClassDetails": false
+      }
+    },
+    {
+      "id": "stu-0013",
+      "name": "Morgan Brown",
+      "email": "morgan.brown12@vt.edu",
+      "schoolId": "vt",
+      "year": "Sophomore",
+      "major": "CS",
+      "privacy": {
+        "shareSchedule": "freeBusy",
+        "shareClassDetails": true
+      }
+    },
+    {
+      "id": "stu-0014",
+      "name": "Hayden Taylor",
+      "email": "hayden.taylor13@vt.edu",
+      "schoolId": "vt",
+      "year": "Freshman",
+      "major": "MATH",
+      "privacy": {
+        "shareSchedule": "full",
+        "shareClassDetails": true
+      }
+    },
+    {
+      "id": "stu-0015",
+      "name": "Avery Wilson",
+      "email": "avery.wilson14@vt.edu",
+      "schoolId": "vt",
+      "year": "Senior",
+      "major": "BIT",
+      "privacy": {
+        "shareSchedule": "freeBusy",
+        "shareClassDetails": true
+      }
+    },
+    {
+      "id": "stu-0016",
+      "name": "Chris Davis",
+      "email": "chris.davis15@vt.edu",
+      "schoolId": "vt",
+      "year": "Sophomore",
+      "major": "BIT",
+      "privacy": {
+        "shareSchedule": "full",
+        "shareClassDetails": true
+      }
+    },
+    {
+      "id": "stu-0017",
+      "name": "Rowan Brown",
+      "email": "rowan.brown16@vt.edu",
+      "schoolId": "vt",
+      "year": "Freshman",
+      "major": "MATH",
+      "privacy": {
+        "shareSchedule": "freeBusy",
+        "shareClassDetails": false
+      }
+    },
+    {
+      "id": "stu-0018",
+      "name": "Skyler Moore",
+      "email": "skyler.moore17@vt.edu",
+      "schoolId": "vt",
+      "year": "Junior",
+      "major": "MATH",
+      "privacy": {
+        "shareSchedule": "full",
+        "shareClassDetails": false
+      }
+    },
+    {
+      "id": "stu-0019",
+      "name": "Taylor Wilson",
+      "email": "taylor.wilson18@vt.edu",
+      "schoolId": "vt",
+      "year": "Senior",
+      "major": "CMDA",
+      "privacy": {
+        "shareSchedule": "freeBusy",
+        "shareClassDetails": false
+      }
+    },
+    {
+      "id": "stu-0020",
+      "name": "Skyler Wilson",
+      "email": "skyler.wilson19@vt.edu",
+      "schoolId": "vt",
+      "year": "Sophomore",
+      "major": "CMDA",
+      "privacy": {
+        "shareSchedule": "full",
+        "shareClassDetails": true
+      }
+    },
+    {
+      "id": "stu-0021",
+      "name": "Parker Brown",
+      "email": "parker.brown20@vt.edu",
+      "schoolId": "vt",
+      "year": "Junior",
+      "major": "CMDA",
+      "privacy": {
+        "shareSchedule": "full",
+        "shareClassDetails": true
+      }
+    },
+    {
+      "id": "stu-0022",
+      "name": "Jake Williams",
+      "email": "jake.williams21@vt.edu",
+      "schoolId": "vt",
+      "year": "Sophomore",
+      "major": "MATH",
+      "privacy": {
+        "shareSchedule": "freeBusy",
+        "shareClassDetails": true
+      }
+    },
+    {
+      "id": "stu-0023",
+      "name": "Mia Davis",
+      "email": "mia.davis22@vt.edu",
+      "schoolId": "vt",
+      "year": "Senior",
+      "major": "CMDA",
+      "privacy": {
+        "shareSchedule": "full",
+        "shareClassDetails": false
+      }
+    },
+    {
+      "id": "stu-0024",
+      "name": "Sarah Brown",
+      "email": "sarah.brown23@vt.edu",
+      "schoolId": "vt",
+      "year": "Senior",
+      "major": "MATH",
+      "privacy": {
+        "shareSchedule": "freeBusy",
+        "shareClassDetails": false
+      }
+    },
+    {
+      "id": "stu-0025",
+      "name": "Hayden Smith",
+      "email": "hayden.smith24@vt.edu",
+      "schoolId": "vt",
+      "year": "Junior",
+      "major": "CMDA",
+      "privacy": {
+        "shareSchedule": "full",
+        "shareClassDetails": false
+      }
+    },
+    {
+      "id": "stu-0026",
+      "name": "Rowan Moore",
+      "email": "rowan.moore25@vt.edu",
+      "schoolId": "vt",
+      "year": "Sophomore",
+      "major": "MATH",
+      "privacy": {
+        "shareSchedule": "freeBusy",
+        "shareClassDetails": false
+      }
+    },
+    {
+      "id": "stu-0027",
+      "name": "Quinn Wilson",
+      "email": "quinn.wilson26@vt.edu",
+      "schoolId": "vt",
+      "year": "Freshman",
+      "major": "MATH",
+      "privacy": {
+        "shareSchedule": "full",
+        "shareClassDetails": false
+      }
+    },
+    {
+      "id": "stu-0028",
+      "name": "Taylor Wilson",
+      "email": "taylor.wilson27@vt.edu",
+      "schoolId": "vt",
+      "year": "Sophomore",
+      "major": "ECON",
+      "privacy": {
+        "shareSchedule": "freeBusy",
+        "shareClassDetails": false
+      }
+    },
+    {
+      "id": "stu-0029",
+      "name": "Reese Taylor",
+      "email": "reese.taylor28@vt.edu",
+      "schoolId": "vt",
+      "year": "Freshman",
+      "major": "CS",
+      "privacy": {
+        "shareSchedule": "full",
+        "shareClassDetails": true
+      }
+    },
+    {
+      "id": "stu-0030",
+      "name": "Logan Williams",
+      "email": "logan.williams29@vt.edu",
+      "schoolId": "vt",
+      "year": "Freshman",
+      "major": "CMDA",
+      "privacy": {
+        "shareSchedule": "full",
+        "shareClassDetails": false
+      }
+    },
+    {
+      "id": "stu-0031",
+      "name": "Jordan Wilson",
+      "email": "jordan.wilson30@vt.edu",
+      "schoolId": "vt",
+      "year": "Junior",
+      "major": "CMDA",
+      "privacy": {
+        "shareSchedule": "full",
+        "shareClassDetails": false
+      }
+    },
+    {
+      "id": "stu-0032",
+      "name": "Quinn Jones",
+      "email": "quinn.jones31@vt.edu",
+      "schoolId": "vt",
+      "year": "Freshman",
+      "major": "MATH",
+      "privacy": {
+        "shareSchedule": "freeBusy",
+        "shareClassDetails": true
+      }
+    },
+    {
+      "id": "stu-0033",
+      "name": "Riley Brown",
+      "email": "riley.brown32@vt.edu",
+      "schoolId": "vt",
+      "year": "Freshman",
+      "major": "CS",
+      "privacy": {
+        "shareSchedule": "freeBusy",
+        "shareClassDetails": true
+      }
+    },
+    {
+      "id": "stu-0034",
+      "name": "Jordan Smith",
+      "email": "jordan.smith33@vt.edu",
+      "schoolId": "vt",
+      "year": "Sophomore",
+      "major": "BIT",
+      "privacy": {
+        "shareSchedule": "freeBusy",
+        "shareClassDetails": false
+      }
+    },
+    {
+      "id": "stu-0035",
+      "name": "Chris Taylor",
+      "email": "chris.taylor34@vt.edu",
+      "schoolId": "vt",
+      "year": "Sophomore",
+      "major": "MATH",
+      "privacy": {
+        "shareSchedule": "full",
+        "shareClassDetails": false
+      }
+    },
+    {
+      "id": "stu-0036",
+      "name": "Taylor Taylor",
+      "email": "taylor.taylor35@vt.edu",
+      "schoolId": "vt",
+      "year": "Freshman",
+      "major": "BIT",
+      "privacy": {
+        "shareSchedule": "full",
+        "shareClassDetails": true
+      }
+    },
+    {
+      "id": "stu-0037",
+      "name": "Reese Smith",
+      "email": "reese.smith36@vt.edu",
+      "schoolId": "vt",
+      "year": "Junior",
+      "major": "ECON",
+      "privacy": {
+        "shareSchedule": "full",
+        "shareClassDetails": false
+      }
+    },
+    {
+      "id": "stu-0038",
+      "name": "Jordan Johnson",
+      "email": "jordan.johnson37@vt.edu",
+      "schoolId": "vt",
+      "year": "Sophomore",
+      "major": "CS",
+      "privacy": {
+        "shareSchedule": "full",
+        "shareClassDetails": true
+      }
+    },
+    {
+      "id": "stu-0039",
+      "name": "Reese Smith",
+      "email": "reese.smith38@vt.edu",
+      "schoolId": "vt",
+      "year": "Junior",
+      "major": "ECON",
+      "privacy": {
+        "shareSchedule": "full",
+        "shareClassDetails": false
+      }
+    },
+    {
+      "id": "stu-0040",
+      "name": "Mia Moore",
+      "email": "mia.moore39@vt.edu",
+      "schoolId": "vt",
+      "year": "Junior",
+      "major": "CS",
+      "privacy": {
+        "shareSchedule": "full",
+        "shareClassDetails": false
+      }
+    },
+    {
+      "id": "stu-0041",
+      "name": "Chris Davis",
+      "email": "chris.davis40@vt.edu",
+      "schoolId": "vt",
+      "year": "Junior",
+      "major": "MATH",
+      "privacy": {
+        "shareSchedule": "freeBusy",
+        "shareClassDetails": false
+      }
+    },
+    {
+      "id": "stu-0042",
+      "name": "Taylor Moore",
+      "email": "taylor.moore41@vt.edu",
+      "schoolId": "vt",
+      "year": "Junior",
+      "major": "ECON",
+      "privacy": {
+        "shareSchedule": "full",
+        "shareClassDetails": false
+      }
+    },
+    {
+      "id": "stu-0043",
+      "name": "Quinn Taylor",
+      "email": "quinn.taylor42@vt.edu",
+      "schoolId": "vt",
+      "year": "Junior",
+      "major": "CMDA",
+      "privacy": {
+        "shareSchedule": "freeBusy",
+        "shareClassDetails": true
+      }
+    },
+    {
+      "id": "stu-0044",
+      "name": "Drew Wilson",
+      "email": "drew.wilson43@vt.edu",
+      "schoolId": "vt",
+      "year": "Sophomore",
+      "major": "MATH",
+      "privacy": {
+        "shareSchedule": "full",
+        "shareClassDetails": false
+      }
+    },
+    {
+      "id": "stu-0045",
+      "name": "Alex Wilson",
+      "email": "alex.wilson44@vt.edu",
+      "schoolId": "vt",
+      "year": "Junior",
+      "major": "BIT",
+      "privacy": {
+        "shareSchedule": "full",
+        "shareClassDetails": true
+      }
+    },
+    {
+      "id": "stu-0046",
+      "name": "Riley Jones",
+      "email": "riley.jones45@vt.edu",
+      "schoolId": "vt",
+      "year": "Junior",
+      "major": "CMDA",
+      "privacy": {
+        "shareSchedule": "full",
+        "shareClassDetails": true
+      }
+    },
+    {
+      "id": "stu-0047",
+      "name": "Skyler Brown",
+      "email": "skyler.brown46@vt.edu",
+      "schoolId": "vt",
+      "year": "Freshman",
+      "major": "BIT",
+      "privacy": {
+        "shareSchedule": "full",
+        "shareClassDetails": false
+      }
+    },
+    {
+      "id": "stu-0048",
+      "name": "Rowan Brown",
+      "email": "rowan.brown47@vt.edu",
+      "schoolId": "vt",
+      "year": "Senior",
+      "major": "MATH",
+      "privacy": {
+        "shareSchedule": "full",
+        "shareClassDetails": true
+      }
+    },
+    {
+      "id": "stu-0049",
+      "name": "Mia Jones",
+      "email": "mia.jones48@vt.edu",
+      "schoolId": "vt",
+      "year": "Sophomore",
+      "major": "MATH",
+      "privacy": {
+        "shareSchedule": "freeBusy",
+        "shareClassDetails": false
+      }
+    },
+    {
+      "id": "stu-0050",
+      "name": "Reese Miller",
+      "email": "reese.miller49@vt.edu",
+      "schoolId": "vt",
+      "year": "Senior",
+      "major": "ECON",
+      "privacy": {
+        "shareSchedule": "full",
+        "shareClassDetails": false
+      }
+    },
+    {
+      "id": "stu-0051",
+      "name": "Rowan Miller",
+      "email": "rowan.miller50@vt.edu",
+      "schoolId": "vt",
+      "year": "Junior",
+      "major": "MATH",
+      "privacy": {
+        "shareSchedule": "full",
+        "shareClassDetails": false
+      }
+    },
+    {
+      "id": "stu-0052",
+      "name": "Drew Brown",
+      "email": "drew.brown51@vt.edu",
+      "schoolId": "vt",
+      "year": "Freshman",
+      "major": "BIT",
+      "privacy": {
+        "shareSchedule": "full",
+        "shareClassDetails": true
+      }
+    },
+    {
+      "id": "stu-0053",
+      "name": "Rowan Williams",
+      "email": "rowan.williams52@vt.edu",
+      "schoolId": "vt",
+      "year": "Sophomore",
+      "major": "BIT",
+      "privacy": {
+        "shareSchedule": "full",
+        "shareClassDetails": false
+      }
+    },
+    {
+      "id": "stu-0054",
+      "name": "Reese Moore",
+      "email": "reese.moore53@vt.edu",
+      "schoolId": "vt",
+      "year": "Junior",
+      "major": "CS",
+      "privacy": {
+        "shareSchedule": "freeBusy",
+        "shareClassDetails": false
+      }
+    },
+    {
+      "id": "stu-0055",
+      "name": "Morgan Miller",
+      "email": "morgan.miller54@vt.edu",
+      "schoolId": "vt",
+      "year": "Sophomore",
+      "major": "CMDA",
+      "privacy": {
+        "shareSchedule": "freeBusy",
+        "shareClassDetails": true
+      }
+    },
+    {
+      "id": "stu-0056",
+      "name": "Drew Smith",
+      "email": "drew.smith55@vt.edu",
+      "schoolId": "vt",
+      "year": "Freshman",
+      "major": "ECON",
+      "privacy": {
+        "shareSchedule": "full",
+        "shareClassDetails": true
+      }
+    },
+    {
+      "id": "stu-0057",
+      "name": "Hayden Johnson",
+      "email": "hayden.johnson56@vt.edu",
+      "schoolId": "vt",
+      "year": "Freshman",
+      "major": "ECON",
+      "privacy": {
+        "shareSchedule": "full",
+        "shareClassDetails": false
+      }
+    },
+    {
+      "id": "stu-0058",
+      "name": "Hayden Wilson",
+      "email": "hayden.wilson57@vt.edu",
+      "schoolId": "vt",
+      "year": "Junior",
+      "major": "BIT",
+      "privacy": {
+        "shareSchedule": "freeBusy",
+        "shareClassDetails": false
+      }
+    },
+    {
+      "id": "stu-0059",
+      "name": "Hayden Johnson",
+      "email": "hayden.johnson58@vt.edu",
+      "schoolId": "vt",
+      "year": "Freshman",
+      "major": "MATH",
+      "privacy": {
+        "shareSchedule": "full",
+        "shareClassDetails": true
+      }
+    },
+    {
+      "id": "stu-0060",
+      "name": "Reese Smith",
+      "email": "reese.smith59@vt.edu",
+      "schoolId": "vt",
+      "year": "Sophomore",
+      "major": "BIT",
+      "privacy": {
+        "shareSchedule": "full",
+        "shareClassDetails": true
+      }
+    },
+    {
+      "id": "stu-0061",
+      "name": "Morgan Johnson",
+      "email": "morgan.johnson60@vt.edu",
+      "schoolId": "vt",
+      "year": "Senior",
+      "major": "ECON",
+      "privacy": {
+        "shareSchedule": "freeBusy",
+        "shareClassDetails": false
+      }
+    },
+    {
+      "id": "stu-0062",
+      "name": "Logan Wilson",
+      "email": "logan.wilson61@vt.edu",
+      "schoolId": "vt",
+      "year": "Junior",
+      "major": "ECON",
+      "privacy": {
+        "shareSchedule": "full",
+        "shareClassDetails": false
+      }
+    },
+    {
+      "id": "stu-0063",
+      "name": "Reese Taylor",
+      "email": "reese.taylor62@vt.edu",
+      "schoolId": "vt",
+      "year": "Freshman",
+      "major": "ECON",
+      "privacy": {
+        "shareSchedule": "freeBusy",
+        "shareClassDetails": true
+      }
+    },
+    {
+      "id": "stu-0064",
+      "name": "Jordan Jones",
+      "email": "jordan.jones63@vt.edu",
+      "schoolId": "vt",
+      "year": "Freshman",
+      "major": "BIT",
+      "privacy": {
+        "shareSchedule": "freeBusy",
+        "shareClassDetails": true
+      }
+    },
+    {
+      "id": "stu-0065",
+      "name": "Rowan Johnson",
+      "email": "rowan.johnson64@vt.edu",
+      "schoolId": "vt",
+      "year": "Sophomore",
+      "major": "CS",
+      "privacy": {
+        "shareSchedule": "full",
+        "shareClassDetails": false
+      }
+    },
+    {
+      "id": "stu-0066",
+      "name": "Emerson Wilson",
+      "email": "emerson.wilson65@vt.edu",
+      "schoolId": "vt",
+      "year": "Junior",
+      "major": "CS",
+      "privacy": {
+        "shareSchedule": "freeBusy",
+        "shareClassDetails": false
+      }
+    },
+    {
+      "id": "stu-0067",
+      "name": "Parker Wilson",
+      "email": "parker.wilson66@vt.edu",
+      "schoolId": "vt",
+      "year": "Freshman",
+      "major": "BIT",
+      "privacy": {
+        "shareSchedule": "full",
+        "shareClassDetails": true
+      }
+    },
+    {
+      "id": "stu-0068",
+      "name": "Quinn Johnson",
+      "email": "quinn.johnson67@vt.edu",
+      "schoolId": "vt",
+      "year": "Sophomore",
+      "major": "BIT",
+      "privacy": {
+        "shareSchedule": "full",
+        "shareClassDetails": true
+      }
+    },
+    {
+      "id": "stu-0069",
+      "name": "Mia Smith",
+      "email": "mia.smith68@vt.edu",
+      "schoolId": "vt",
+      "year": "Sophomore",
+      "major": "CMDA",
+      "privacy": {
+        "shareSchedule": "full",
+        "shareClassDetails": false
+      }
+    },
+    {
+      "id": "stu-0070",
+      "name": "Chris Wilson",
+      "email": "chris.wilson69@vt.edu",
+      "schoolId": "vt",
+      "year": "Junior",
+      "major": "MATH",
+      "privacy": {
+        "shareSchedule": "full",
+        "shareClassDetails": false
+      }
+    }
+  ],
+  "enrollments": [
+    {
+      "studentId": "stu-0001",
+      "sectionId": "CSE-1003-SEC-002"
+    },
+    {
+      "studentId": "stu-0001",
+      "sectionId": "CSE-1016-SEC-001"
+    },
+    {
+      "studentId": "stu-0001",
+      "sectionId": "CSE-1002-SEC-001"
+    },
+    {
+      "studentId": "stu-0001",
+      "sectionId": "CSE-1012-SEC-001"
+    },
+    {
+      "studentId": "stu-0001",
+      "sectionId": "CSE-1019-SEC-002"
+    },
+    {
+      "studentId": "stu-0002",
+      "sectionId": "CSE-1016-SEC-001"
+    },
+    {
+      "studentId": "stu-0002",
+      "sectionId": "CSE-1007-SEC-002"
+    },
+    {
+      "studentId": "stu-0002",
+      "sectionId": "CSE-1001-SEC-002"
+    },
+    {
+      "studentId": "stu-0002",
+      "sectionId": "CSE-1003-SEC-002"
+    },
+    {
+      "studentId": "stu-0002",
+      "sectionId": "CSE-1006-SEC-003"
+    },
+    {
+      "studentId": "stu-0003",
+      "sectionId": "CSE-1015-SEC-001"
+    },
+    {
+      "studentId": "stu-0003",
+      "sectionId": "CSE-1015-SEC-002"
+    },
+    {
+      "studentId": "stu-0003",
+      "sectionId": "CSE-1001-SEC-002"
+    },
+    {
+      "studentId": "stu-0003",
+      "sectionId": "CSE-1019-SEC-003"
+    },
+    {
+      "studentId": "stu-0003",
+      "sectionId": "CSE-1018-SEC-001"
+    },
+    {
+      "studentId": "stu-0003",
+      "sectionId": "CSE-1008-SEC-001"
+    },
+    {
+      "studentId": "stu-0004",
+      "sectionId": "CSE-1002-SEC-001"
+    },
+    {
+      "studentId": "stu-0004",
+      "sectionId": "CSE-1019-SEC-003"
+    },
+    {
+      "studentId": "stu-0004",
+      "sectionId": "CSE-1020-SEC-002"
+    },
+    {
+      "studentId": "stu-0004",
+      "sectionId": "CSE-1005-SEC-002"
+    },
+    {
+      "studentId": "stu-0004",
+      "sectionId": "CSE-1013-SEC-001"
+    },
+    {
+      "studentId": "stu-0004",
+      "sectionId": "CSE-1014-SEC-001"
+    },
+    {
+      "studentId": "stu-0005",
+      "sectionId": "CSE-1012-SEC-002"
+    },
+    {
+      "studentId": "stu-0005",
+      "sectionId": "CSE-1008-SEC-001"
+    },
+    {
+      "studentId": "stu-0005",
+      "sectionId": "CSE-1005-SEC-002"
+    },
+    {
+      "studentId": "stu-0005",
+      "sectionId": "CSE-1015-SEC-002"
+    },
+    {
+      "studentId": "stu-0005",
+      "sectionId": "CSE-1012-SEC-001"
+    },
+    {
+      "studentId": "stu-0005",
+      "sectionId": "CSE-1016-SEC-003"
+    },
+    {
+      "studentId": "stu-0006",
+      "sectionId": "CSE-1003-SEC-002"
+    },
+    {
+      "studentId": "stu-0006",
+      "sectionId": "CSE-1013-SEC-001"
+    },
+    {
+      "studentId": "stu-0006",
+      "sectionId": "CSE-1010-SEC-001"
+    },
+    {
+      "studentId": "stu-0006",
+      "sectionId": "CSE-1011-SEC-002"
+    },
+    {
+      "studentId": "stu-0006",
+      "sectionId": "CSE-1009-SEC-002"
+    },
+    {
+      "studentId": "stu-0007",
+      "sectionId": "CSE-1017-SEC-002"
+    },
+    {
+      "studentId": "stu-0007",
+      "sectionId": "CSE-1003-SEC-003"
+    },
+    {
+      "studentId": "stu-0007",
+      "sectionId": "CSE-1005-SEC-001"
+    },
+    {
+      "studentId": "stu-0007",
+      "sectionId": "CSE-1009-SEC-002"
+    },
+    {
+      "studentId": "stu-0007",
+      "sectionId": "CSE-1011-SEC-002"
+    },
+    {
+      "studentId": "stu-0008",
+      "sectionId": "CSE-1013-SEC-002"
+    },
+    {
+      "studentId": "stu-0008",
+      "sectionId": "CSE-1008-SEC-002"
+    },
+    {
+      "studentId": "stu-0008",
+      "sectionId": "CSE-1017-SEC-002"
+    },
+    {
+      "studentId": "stu-0008",
+      "sectionId": "CSE-1011-SEC-001"
+    },
+    {
+      "studentId": "stu-0008",
+      "sectionId": "CSE-1014-SEC-003"
+    },
+    {
+      "studentId": "stu-0008",
+      "sectionId": "CSE-1002-SEC-001"
+    },
+    {
+      "studentId": "stu-0009",
+      "sectionId": "CSE-1003-SEC-002"
+    },
+    {
+      "studentId": "stu-0009",
+      "sectionId": "CSE-1009-SEC-001"
+    },
+    {
+      "studentId": "stu-0009",
+      "sectionId": "CSE-1007-SEC-002"
+    },
+    {
+      "studentId": "stu-0009",
+      "sectionId": "CSE-1004-SEC-001"
+    },
+    {
+      "studentId": "stu-0009",
+      "sectionId": "CSE-1020-SEC-001"
+    },
+    {
+      "studentId": "stu-0010",
+      "sectionId": "CSE-1013-SEC-003"
+    },
+    {
+      "studentId": "stu-0010",
+      "sectionId": "CSE-1001-SEC-001"
+    },
+    {
+      "studentId": "stu-0010",
+      "sectionId": "CSE-1017-SEC-002"
+    },
+    {
+      "studentId": "stu-0010",
+      "sectionId": "CSE-1014-SEC-002"
+    },
+    {
+      "studentId": "stu-0010",
+      "sectionId": "CSE-1012-SEC-003"
+    },
+    {
+      "studentId": "stu-0011",
+      "sectionId": "CSE-1002-SEC-002"
+    },
+    {
+      "studentId": "stu-0011",
+      "sectionId": "CSE-1006-SEC-001"
+    },
+    {
+      "studentId": "stu-0011",
+      "sectionId": "CSE-1014-SEC-001"
+    },
+    {
+      "studentId": "stu-0011",
+      "sectionId": "CSE-1010-SEC-002"
+    },
+    {
+      "studentId": "stu-0011",
+      "sectionId": "CSE-1016-SEC-002"
+    },
+    {
+      "studentId": "stu-0012",
+      "sectionId": "CSE-1016-SEC-003"
+    },
+    {
+      "studentId": "stu-0012",
+      "sectionId": "CSE-1012-SEC-002"
+    },
+    {
+      "studentId": "stu-0012",
+      "sectionId": "CSE-1019-SEC-003"
+    },
+    {
+      "studentId": "stu-0012",
+      "sectionId": "CSE-1002-SEC-002"
+    },
+    {
+      "studentId": "stu-0012",
+      "sectionId": "CSE-1006-SEC-002"
+    },
+    {
+      "studentId": "stu-0013",
+      "sectionId": "CSE-1014-SEC-003"
+    },
+    {
+      "studentId": "stu-0013",
+      "sectionId": "CSE-1004-SEC-002"
+    },
+    {
+      "studentId": "stu-0013",
+      "sectionId": "CSE-1008-SEC-002"
+    },
+    {
+      "studentId": "stu-0013",
+      "sectionId": "CSE-1012-SEC-002"
+    },
+    {
+      "studentId": "stu-0013",
+      "sectionId": "CSE-1018-SEC-002"
+    },
+    {
+      "studentId": "stu-0014",
+      "sectionId": "CSE-1004-SEC-001"
+    },
+    {
+      "studentId": "stu-0014",
+      "sectionId": "CSE-1001-SEC-002"
+    },
+    {
+      "studentId": "stu-0014",
+      "sectionId": "CSE-1016-SEC-003"
+    },
+    {
+      "studentId": "stu-0014",
+      "sectionId": "CSE-1016-SEC-001"
+    },
+    {
+      "studentId": "stu-0014",
+      "sectionId": "CSE-1020-SEC-003"
+    },
+    {
+      "studentId": "stu-0015",
+      "sectionId": "CSE-1018-SEC-003"
+    },
+    {
+      "studentId": "stu-0015",
+      "sectionId": "CSE-1005-SEC-001"
+    },
+    {
+      "studentId": "stu-0015",
+      "sectionId": "CSE-1008-SEC-003"
+    },
+    {
+      "studentId": "stu-0015",
+      "sectionId": "CSE-1014-SEC-003"
+    },
+    {
+      "studentId": "stu-0016",
+      "sectionId": "CSE-1014-SEC-003"
+    },
+    {
+      "studentId": "stu-0016",
+      "sectionId": "CSE-1011-SEC-002"
+    },
+    {
+      "studentId": "stu-0016",
+      "sectionId": "CSE-1003-SEC-002"
+    },
+    {
+      "studentId": "stu-0016",
+      "sectionId": "CSE-1006-SEC-003"
+    },
+    {
+      "studentId": "stu-0017",
+      "sectionId": "CSE-1012-SEC-003"
+    },
+    {
+      "studentId": "stu-0017",
+      "sectionId": "CSE-1004-SEC-001"
+    },
+    {
+      "studentId": "stu-0017",
+      "sectionId": "CSE-1017-SEC-001"
+    },
+    {
+      "studentId": "stu-0017",
+      "sectionId": "CSE-1004-SEC-003"
+    },
+    {
+      "studentId": "stu-0018",
+      "sectionId": "CSE-1018-SEC-003"
+    },
+    {
+      "studentId": "stu-0018",
+      "sectionId": "CSE-1008-SEC-002"
+    },
+    {
+      "studentId": "stu-0018",
+      "sectionId": "CSE-1013-SEC-003"
+    },
+    {
+      "studentId": "stu-0018",
+      "sectionId": "CSE-1008-SEC-001"
+    },
+    {
+      "studentId": "stu-0018",
+      "sectionId": "CSE-1011-SEC-002"
+    },
+    {
+      "studentId": "stu-0019",
+      "sectionId": "CSE-1013-SEC-001"
+    },
+    {
+      "studentId": "stu-0019",
+      "sectionId": "CSE-1007-SEC-001"
+    },
+    {
+      "studentId": "stu-0019",
+      "sectionId": "CSE-1012-SEC-003"
+    },
+    {
+      "studentId": "stu-0019",
+      "sectionId": "CSE-1014-SEC-003"
+    },
+    {
+      "studentId": "stu-0019",
+      "sectionId": "CSE-1004-SEC-003"
+    },
+    {
+      "studentId": "stu-0020",
+      "sectionId": "CSE-1006-SEC-001"
+    },
+    {
+      "studentId": "stu-0020",
+      "sectionId": "CSE-1016-SEC-001"
+    },
+    {
+      "studentId": "stu-0020",
+      "sectionId": "CSE-1013-SEC-003"
+    },
+    {
+      "studentId": "stu-0020",
+      "sectionId": "CSE-1019-SEC-002"
+    },
+    {
+      "studentId": "stu-0020",
+      "sectionId": "CSE-1004-SEC-002"
+    },
+    {
+      "studentId": "stu-0021",
+      "sectionId": "CSE-1008-SEC-001"
+    },
+    {
+      "studentId": "stu-0021",
+      "sectionId": "CSE-1020-SEC-001"
+    },
+    {
+      "studentId": "stu-0021",
+      "sectionId": "CSE-1020-SEC-002"
+    },
+    {
+      "studentId": "stu-0021",
+      "sectionId": "CSE-1011-SEC-002"
+    },
+    {
+      "studentId": "stu-0022",
+      "sectionId": "CSE-1020-SEC-002"
+    },
+    {
+      "studentId": "stu-0022",
+      "sectionId": "CSE-1013-SEC-003"
+    },
+    {
+      "studentId": "stu-0022",
+      "sectionId": "CSE-1008-SEC-001"
+    },
+    {
+      "studentId": "stu-0022",
+      "sectionId": "CSE-1001-SEC-001"
+    },
+    {
+      "studentId": "stu-0022",
+      "sectionId": "CSE-1008-SEC-002"
+    },
+    {
+      "studentId": "stu-0023",
+      "sectionId": "CSE-1008-SEC-003"
+    },
+    {
+      "studentId": "stu-0023",
+      "sectionId": "CSE-1015-SEC-002"
+    },
+    {
+      "studentId": "stu-0023",
+      "sectionId": "CSE-1020-SEC-002"
+    },
+    {
+      "studentId": "stu-0023",
+      "sectionId": "CSE-1017-SEC-002"
+    },
+    {
+      "studentId": "stu-0023",
+      "sectionId": "CSE-1013-SEC-002"
+    },
+    {
+      "studentId": "stu-0023",
+      "sectionId": "CSE-1004-SEC-003"
+    },
+    {
+      "studentId": "stu-0024",
+      "sectionId": "CSE-1014-SEC-002"
+    },
+    {
+      "studentId": "stu-0024",
+      "sectionId": "CSE-1013-SEC-001"
+    },
+    {
+      "studentId": "stu-0024",
+      "sectionId": "CSE-1010-SEC-001"
+    },
+    {
+      "studentId": "stu-0024",
+      "sectionId": "CSE-1009-SEC-002"
+    },
+    {
+      "studentId": "stu-0024",
+      "sectionId": "CSE-1014-SEC-003"
+    },
+    {
+      "studentId": "stu-0025",
+      "sectionId": "CSE-1010-SEC-003"
+    },
+    {
+      "studentId": "stu-0025",
+      "sectionId": "CSE-1012-SEC-003"
+    },
+    {
+      "studentId": "stu-0025",
+      "sectionId": "CSE-1009-SEC-001"
+    },
+    {
+      "studentId": "stu-0025",
+      "sectionId": "CSE-1006-SEC-001"
+    },
+    {
+      "studentId": "stu-0025",
+      "sectionId": "CSE-1018-SEC-002"
+    },
+    {
+      "studentId": "stu-0025",
+      "sectionId": "CSE-1007-SEC-001"
+    },
+    {
+      "studentId": "stu-0026",
+      "sectionId": "CSE-1010-SEC-003"
+    },
+    {
+      "studentId": "stu-0026",
+      "sectionId": "CSE-1006-SEC-003"
+    },
+    {
+      "studentId": "stu-0026",
+      "sectionId": "CSE-1020-SEC-001"
+    },
+    {
+      "studentId": "stu-0026",
+      "sectionId": "CSE-1011-SEC-002"
+    },
+    {
+      "studentId": "stu-0026",
+      "sectionId": "CSE-1002-SEC-001"
+    },
+    {
+      "studentId": "stu-0026",
+      "sectionId": "CSE-1009-SEC-001"
+    },
+    {
+      "studentId": "stu-0027",
+      "sectionId": "CSE-1013-SEC-001"
+    },
+    {
+      "studentId": "stu-0027",
+      "sectionId": "CSE-1018-SEC-003"
+    },
+    {
+      "studentId": "stu-0027",
+      "sectionId": "CSE-1010-SEC-003"
+    },
+    {
+      "studentId": "stu-0027",
+      "sectionId": "CSE-1020-SEC-001"
+    },
+    {
+      "studentId": "stu-0027",
+      "sectionId": "CSE-1017-SEC-002"
+    },
+    {
+      "studentId": "stu-0027",
+      "sectionId": "CSE-1017-SEC-001"
+    },
+    {
+      "studentId": "stu-0028",
+      "sectionId": "CSE-1013-SEC-002"
+    },
+    {
+      "studentId": "stu-0028",
+      "sectionId": "CSE-1002-SEC-001"
+    },
+    {
+      "studentId": "stu-0028",
+      "sectionId": "CSE-1004-SEC-002"
+    },
+    {
+      "studentId": "stu-0028",
+      "sectionId": "CSE-1013-SEC-003"
+    },
+    {
+      "studentId": "stu-0029",
+      "sectionId": "CSE-1009-SEC-002"
+    },
+    {
+      "studentId": "stu-0029",
+      "sectionId": "CSE-1003-SEC-003"
+    },
+    {
+      "studentId": "stu-0029",
+      "sectionId": "CSE-1012-SEC-002"
+    },
+    {
+      "studentId": "stu-0029",
+      "sectionId": "CSE-1020-SEC-002"
+    },
+    {
+      "studentId": "stu-0029",
+      "sectionId": "CSE-1014-SEC-001"
+    },
+    {
+      "studentId": "stu-0029",
+      "sectionId": "CSE-1012-SEC-003"
+    },
+    {
+      "studentId": "stu-0030",
+      "sectionId": "CSE-1019-SEC-001"
+    },
+    {
+      "studentId": "stu-0030",
+      "sectionId": "CSE-1004-SEC-003"
+    },
+    {
+      "studentId": "stu-0030",
+      "sectionId": "CSE-1011-SEC-002"
+    },
+    {
+      "studentId": "stu-0030",
+      "sectionId": "CSE-1017-SEC-001"
+    },
+    {
+      "studentId": "stu-0031",
+      "sectionId": "CSE-1003-SEC-001"
+    },
+    {
+      "studentId": "stu-0031",
+      "sectionId": "CSE-1013-SEC-001"
+    },
+    {
+      "studentId": "stu-0031",
+      "sectionId": "CSE-1020-SEC-002"
+    },
+    {
+      "studentId": "stu-0031",
+      "sectionId": "CSE-1007-SEC-002"
+    },
+    {
+      "studentId": "stu-0032",
+      "sectionId": "CSE-1016-SEC-002"
+    },
+    {
+      "studentId": "stu-0032",
+      "sectionId": "CSE-1018-SEC-002"
+    },
+    {
+      "studentId": "stu-0032",
+      "sectionId": "CSE-1011-SEC-001"
+    },
+    {
+      "studentId": "stu-0032",
+      "sectionId": "CSE-1017-SEC-001"
+    },
+    {
+      "studentId": "stu-0032",
+      "sectionId": "CSE-1003-SEC-002"
+    },
+    {
+      "studentId": "stu-0033",
+      "sectionId": "CSE-1018-SEC-001"
+    },
+    {
+      "studentId": "stu-0033",
+      "sectionId": "CSE-1014-SEC-002"
+    },
+    {
+      "studentId": "stu-0033",
+      "sectionId": "CSE-1010-SEC-003"
+    },
+    {
+      "studentId": "stu-0033",
+      "sectionId": "CSE-1009-SEC-001"
+    },
+    {
+      "studentId": "stu-0033",
+      "sectionId": "CSE-1016-SEC-003"
+    },
+    {
+      "studentId": "stu-0034",
+      "sectionId": "CSE-1019-SEC-003"
+    },
+    {
+      "studentId": "stu-0034",
+      "sectionId": "CSE-1013-SEC-002"
+    },
+    {
+      "studentId": "stu-0034",
+      "sectionId": "CSE-1014-SEC-002"
+    },
+    {
+      "studentId": "stu-0034",
+      "sectionId": "CSE-1002-SEC-001"
+    },
+    {
+      "studentId": "stu-0034",
+      "sectionId": "CSE-1016-SEC-002"
+    },
+    {
+      "studentId": "stu-0034",
+      "sectionId": "CSE-1003-SEC-001"
+    },
+    {
+      "studentId": "stu-0035",
+      "sectionId": "CSE-1016-SEC-003"
+    },
+    {
+      "studentId": "stu-0035",
+      "sectionId": "CSE-1018-SEC-001"
+    },
+    {
+      "studentId": "stu-0035",
+      "sectionId": "CSE-1008-SEC-002"
+    },
+    {
+      "studentId": "stu-0035",
+      "sectionId": "CSE-1006-SEC-003"
+    },
+    {
+      "studentId": "stu-0036",
+      "sectionId": "CSE-1003-SEC-002"
+    },
+    {
+      "studentId": "stu-0036",
+      "sectionId": "CSE-1012-SEC-001"
+    },
+    {
+      "studentId": "stu-0036",
+      "sectionId": "CSE-1003-SEC-003"
+    },
+    {
+      "studentId": "stu-0036",
+      "sectionId": "CSE-1019-SEC-003"
+    },
+    {
+      "studentId": "stu-0036",
+      "sectionId": "CSE-1016-SEC-003"
+    },
+    {
+      "studentId": "stu-0036",
+      "sectionId": "CSE-1018-SEC-003"
+    },
+    {
+      "studentId": "stu-0037",
+      "sectionId": "CSE-1012-SEC-002"
+    },
+    {
+      "studentId": "stu-0037",
+      "sectionId": "CSE-1005-SEC-001"
+    },
+    {
+      "studentId": "stu-0037",
+      "sectionId": "CSE-1018-SEC-002"
+    },
+    {
+      "studentId": "stu-0037",
+      "sectionId": "CSE-1008-SEC-003"
+    },
+    {
+      "studentId": "stu-0038",
+      "sectionId": "CSE-1002-SEC-001"
+    },
+    {
+      "studentId": "stu-0038",
+      "sectionId": "CSE-1009-SEC-001"
+    },
+    {
+      "studentId": "stu-0038",
+      "sectionId": "CSE-1020-SEC-002"
+    },
+    {
+      "studentId": "stu-0038",
+      "sectionId": "CSE-1002-SEC-002"
+    },
+    {
+      "studentId": "stu-0039",
+      "sectionId": "CSE-1010-SEC-001"
+    },
+    {
+      "studentId": "stu-0039",
+      "sectionId": "CSE-1010-SEC-002"
+    },
+    {
+      "studentId": "stu-0039",
+      "sectionId": "CSE-1012-SEC-001"
+    },
+    {
+      "studentId": "stu-0039",
+      "sectionId": "CSE-1004-SEC-003"
+    },
+    {
+      "studentId": "stu-0039",
+      "sectionId": "CSE-1007-SEC-001"
+    },
+    {
+      "studentId": "stu-0040",
+      "sectionId": "CSE-1011-SEC-002"
+    },
+    {
+      "studentId": "stu-0040",
+      "sectionId": "CSE-1015-SEC-001"
+    },
+    {
+      "studentId": "stu-0040",
+      "sectionId": "CSE-1018-SEC-001"
+    },
+    {
+      "studentId": "stu-0040",
+      "sectionId": "CSE-1005-SEC-002"
+    },
+    {
+      "studentId": "stu-0040",
+      "sectionId": "CSE-1005-SEC-001"
+    },
+    {
+      "studentId": "stu-0040",
+      "sectionId": "CSE-1019-SEC-003"
+    },
+    {
+      "studentId": "stu-0041",
+      "sectionId": "CSE-1016-SEC-002"
+    },
+    {
+      "studentId": "stu-0041",
+      "sectionId": "CSE-1010-SEC-003"
+    },
+    {
+      "studentId": "stu-0041",
+      "sectionId": "CSE-1018-SEC-001"
+    },
+    {
+      "studentId": "stu-0041",
+      "sectionId": "CSE-1007-SEC-001"
+    },
+    {
+      "studentId": "stu-0042",
+      "sectionId": "CSE-1015-SEC-002"
+    },
+    {
+      "studentId": "stu-0042",
+      "sectionId": "CSE-1004-SEC-003"
+    },
+    {
+      "studentId": "stu-0042",
+      "sectionId": "CSE-1006-SEC-003"
+    },
+    {
+      "studentId": "stu-0042",
+      "sectionId": "CSE-1012-SEC-003"
+    },
+    {
+      "studentId": "stu-0042",
+      "sectionId": "CSE-1016-SEC-003"
+    },
+    {
+      "studentId": "stu-0043",
+      "sectionId": "CSE-1012-SEC-003"
+    },
+    {
+      "studentId": "stu-0043",
+      "sectionId": "CSE-1007-SEC-002"
+    },
+    {
+      "studentId": "stu-0043",
+      "sectionId": "CSE-1017-SEC-002"
+    },
+    {
+      "studentId": "stu-0043",
+      "sectionId": "CSE-1001-SEC-001"
+    },
+    {
+      "studentId": "stu-0043",
+      "sectionId": "CSE-1020-SEC-003"
+    },
+    {
+      "studentId": "stu-0044",
+      "sectionId": "CSE-1008-SEC-002"
+    },
+    {
+      "studentId": "stu-0044",
+      "sectionId": "CSE-1018-SEC-001"
+    },
+    {
+      "studentId": "stu-0044",
+      "sectionId": "CSE-1014-SEC-002"
+    },
+    {
+      "studentId": "stu-0044",
+      "sectionId": "CSE-1005-SEC-001"
+    },
+    {
+      "studentId": "stu-0044",
+      "sectionId": "CSE-1003-SEC-001"
+    },
+    {
+      "studentId": "stu-0045",
+      "sectionId": "CSE-1010-SEC-001"
+    },
+    {
+      "studentId": "stu-0045",
+      "sectionId": "CSE-1015-SEC-002"
+    },
+    {
+      "studentId": "stu-0045",
+      "sectionId": "CSE-1008-SEC-003"
+    },
+    {
+      "studentId": "stu-0045",
+      "sectionId": "CSE-1016-SEC-003"
+    },
+    {
+      "studentId": "stu-0045",
+      "sectionId": "CSE-1012-SEC-001"
+    },
+    {
+      "studentId": "stu-0046",
+      "sectionId": "CSE-1007-SEC-002"
+    },
+    {
+      "studentId": "stu-0046",
+      "sectionId": "CSE-1012-SEC-003"
+    },
+    {
+      "studentId": "stu-0046",
+      "sectionId": "CSE-1008-SEC-003"
+    },
+    {
+      "studentId": "stu-0046",
+      "sectionId": "CSE-1006-SEC-001"
+    },
+    {
+      "studentId": "stu-0046",
+      "sectionId": "CSE-1010-SEC-003"
+    },
+    {
+      "studentId": "stu-0046",
+      "sectionId": "CSE-1013-SEC-001"
+    },
+    {
+      "studentId": "stu-0047",
+      "sectionId": "CSE-1007-SEC-001"
+    },
+    {
+      "studentId": "stu-0047",
+      "sectionId": "CSE-1010-SEC-003"
+    },
+    {
+      "studentId": "stu-0047",
+      "sectionId": "CSE-1015-SEC-001"
+    },
+    {
+      "studentId": "stu-0047",
+      "sectionId": "CSE-1010-SEC-001"
+    },
+    {
+      "studentId": "stu-0048",
+      "sectionId": "CSE-1008-SEC-002"
+    },
+    {
+      "studentId": "stu-0048",
+      "sectionId": "CSE-1018-SEC-002"
+    },
+    {
+      "studentId": "stu-0048",
+      "sectionId": "CSE-1020-SEC-003"
+    },
+    {
+      "studentId": "stu-0048",
+      "sectionId": "CSE-1001-SEC-002"
+    },
+    {
+      "studentId": "stu-0048",
+      "sectionId": "CSE-1017-SEC-002"
+    },
+    {
+      "studentId": "stu-0048",
+      "sectionId": "CSE-1011-SEC-001"
+    },
+    {
+      "studentId": "stu-0049",
+      "sectionId": "CSE-1001-SEC-001"
+    },
+    {
+      "studentId": "stu-0049",
+      "sectionId": "CSE-1015-SEC-001"
+    },
+    {
+      "studentId": "stu-0049",
+      "sectionId": "CSE-1018-SEC-001"
+    },
+    {
+      "studentId": "stu-0049",
+      "sectionId": "CSE-1020-SEC-001"
+    },
+    {
+      "studentId": "stu-0049",
+      "sectionId": "CSE-1019-SEC-002"
+    },
+    {
+      "studentId": "stu-0050",
+      "sectionId": "CSE-1016-SEC-001"
+    },
+    {
+      "studentId": "stu-0050",
+      "sectionId": "CSE-1019-SEC-002"
+    },
+    {
+      "studentId": "stu-0050",
+      "sectionId": "CSE-1013-SEC-002"
+    },
+    {
+      "studentId": "stu-0050",
+      "sectionId": "CSE-1008-SEC-002"
+    },
+    {
+      "studentId": "stu-0051",
+      "sectionId": "CSE-1016-SEC-001"
+    },
+    {
+      "studentId": "stu-0051",
+      "sectionId": "CSE-1020-SEC-003"
+    },
+    {
+      "studentId": "stu-0051",
+      "sectionId": "CSE-1010-SEC-001"
+    },
+    {
+      "studentId": "stu-0051",
+      "sectionId": "CSE-1006-SEC-003"
+    },
+    {
+      "studentId": "stu-0052",
+      "sectionId": "CSE-1006-SEC-001"
+    },
+    {
+      "studentId": "stu-0052",
+      "sectionId": "CSE-1016-SEC-002"
+    },
+    {
+      "studentId": "stu-0052",
+      "sectionId": "CSE-1007-SEC-002"
+    },
+    {
+      "studentId": "stu-0052",
+      "sectionId": "CSE-1018-SEC-001"
+    },
+    {
+      "studentId": "stu-0052",
+      "sectionId": "CSE-1019-SEC-001"
+    },
+    {
+      "studentId": "stu-0052",
+      "sectionId": "CSE-1017-SEC-002"
+    },
+    {
+      "studentId": "stu-0053",
+      "sectionId": "CSE-1004-SEC-002"
+    },
+    {
+      "studentId": "stu-0053",
+      "sectionId": "CSE-1016-SEC-003"
+    },
+    {
+      "studentId": "stu-0053",
+      "sectionId": "CSE-1003-SEC-003"
+    },
+    {
+      "studentId": "stu-0053",
+      "sectionId": "CSE-1020-SEC-002"
+    },
+    {
+      "studentId": "stu-0053",
+      "sectionId": "CSE-1017-SEC-001"
+    },
+    {
+      "studentId": "stu-0053",
+      "sectionId": "CSE-1002-SEC-001"
+    },
+    {
+      "studentId": "stu-0054",
+      "sectionId": "CSE-1020-SEC-002"
+    },
+    {
+      "studentId": "stu-0054",
+      "sectionId": "CSE-1012-SEC-002"
+    },
+    {
+      "studentId": "stu-0054",
+      "sectionId": "CSE-1002-SEC-001"
+    },
+    {
+      "studentId": "stu-0054",
+      "sectionId": "CSE-1015-SEC-002"
+    },
+    {
+      "studentId": "stu-0054",
+      "sectionId": "CSE-1010-SEC-002"
+    },
+    {
+      "studentId": "stu-0055",
+      "sectionId": "CSE-1004-SEC-002"
+    },
+    {
+      "studentId": "stu-0055",
+      "sectionId": "CSE-1003-SEC-002"
+    },
+    {
+      "studentId": "stu-0055",
+      "sectionId": "CSE-1008-SEC-002"
+    },
+    {
+      "studentId": "stu-0055",
+      "sectionId": "CSE-1009-SEC-001"
+    },
+    {
+      "studentId": "stu-0055",
+      "sectionId": "CSE-1019-SEC-002"
+    },
+    {
+      "studentId": "stu-0055",
+      "sectionId": "CSE-1011-SEC-002"
+    },
+    {
+      "studentId": "stu-0056",
+      "sectionId": "CSE-1006-SEC-001"
+    },
+    {
+      "studentId": "stu-0056",
+      "sectionId": "CSE-1004-SEC-002"
+    },
+    {
+      "studentId": "stu-0056",
+      "sectionId": "CSE-1020-SEC-002"
+    },
+    {
+      "studentId": "stu-0056",
+      "sectionId": "CSE-1014-SEC-002"
+    },
+    {
+      "studentId": "stu-0057",
+      "sectionId": "CSE-1014-SEC-001"
+    },
+    {
+      "studentId": "stu-0057",
+      "sectionId": "CSE-1013-SEC-003"
+    },
+    {
+      "studentId": "stu-0057",
+      "sectionId": "CSE-1008-SEC-001"
+    },
+    {
+      "studentId": "stu-0057",
+      "sectionId": "CSE-1005-SEC-001"
+    },
+    {
+      "studentId": "stu-0057",
+      "sectionId": "CSE-1007-SEC-002"
+    },
+    {
+      "studentId": "stu-0058",
+      "sectionId": "CSE-1020-SEC-003"
+    },
+    {
+      "studentId": "stu-0058",
+      "sectionId": "CSE-1008-SEC-002"
+    },
+    {
+      "studentId": "stu-0058",
+      "sectionId": "CSE-1019-SEC-002"
+    },
+    {
+      "studentId": "stu-0058",
+      "sectionId": "CSE-1009-SEC-002"
+    },
+    {
+      "studentId": "stu-0058",
+      "sectionId": "CSE-1004-SEC-001"
+    },
+    {
+      "studentId": "stu-0059",
+      "sectionId": "CSE-1003-SEC-001"
+    },
+    {
+      "studentId": "stu-0059",
+      "sectionId": "CSE-1004-SEC-003"
+    },
+    {
+      "studentId": "stu-0059",
+      "sectionId": "CSE-1019-SEC-003"
+    },
+    {
+      "studentId": "stu-0059",
+      "sectionId": "CSE-1006-SEC-003"
+    },
+    {
+      "studentId": "stu-0059",
+      "sectionId": "CSE-1018-SEC-001"
+    },
+    {
+      "studentId": "stu-0060",
+      "sectionId": "CSE-1018-SEC-001"
+    },
+    {
+      "studentId": "stu-0060",
+      "sectionId": "CSE-1011-SEC-001"
+    },
+    {
+      "studentId": "stu-0060",
+      "sectionId": "CSE-1014-SEC-003"
+    },
+    {
+      "studentId": "stu-0060",
+      "sectionId": "CSE-1010-SEC-002"
+    },
+    {
+      "studentId": "stu-0060",
+      "sectionId": "CSE-1003-SEC-002"
+    },
+    {
+      "studentId": "stu-0060",
+      "sectionId": "CSE-1020-SEC-002"
+    },
+    {
+      "studentId": "stu-0061",
+      "sectionId": "CSE-1007-SEC-002"
+    },
+    {
+      "studentId": "stu-0061",
+      "sectionId": "CSE-1014-SEC-002"
+    },
+    {
+      "studentId": "stu-0061",
+      "sectionId": "CSE-1004-SEC-001"
+    },
+    {
+      "studentId": "stu-0061",
+      "sectionId": "CSE-1012-SEC-003"
+    },
+    {
+      "studentId": "stu-0062",
+      "sectionId": "CSE-1018-SEC-001"
+    },
+    {
+      "studentId": "stu-0062",
+      "sectionId": "CSE-1019-SEC-002"
+    },
+    {
+      "studentId": "stu-0062",
+      "sectionId": "CSE-1007-SEC-002"
+    },
+    {
+      "studentId": "stu-0062",
+      "sectionId": "CSE-1015-SEC-002"
+    },
+    {
+      "studentId": "stu-0062",
+      "sectionId": "CSE-1010-SEC-003"
+    },
+    {
+      "studentId": "stu-0063",
+      "sectionId": "CSE-1010-SEC-002"
+    },
+    {
+      "studentId": "stu-0063",
+      "sectionId": "CSE-1003-SEC-003"
+    },
+    {
+      "studentId": "stu-0063",
+      "sectionId": "CSE-1018-SEC-001"
+    },
+    {
+      "studentId": "stu-0063",
+      "sectionId": "CSE-1006-SEC-003"
+    },
+    {
+      "studentId": "stu-0063",
+      "sectionId": "CSE-1013-SEC-001"
+    },
+    {
+      "studentId": "stu-0063",
+      "sectionId": "CSE-1001-SEC-002"
+    },
+    {
+      "studentId": "stu-0064",
+      "sectionId": "CSE-1014-SEC-003"
+    },
+    {
+      "studentId": "stu-0064",
+      "sectionId": "CSE-1009-SEC-001"
+    },
+    {
+      "studentId": "stu-0064",
+      "sectionId": "CSE-1016-SEC-002"
+    },
+    {
+      "studentId": "stu-0064",
+      "sectionId": "CSE-1006-SEC-003"
+    },
+    {
+      "studentId": "stu-0064",
+      "sectionId": "CSE-1017-SEC-001"
+    },
+    {
+      "studentId": "stu-0064",
+      "sectionId": "CSE-1003-SEC-001"
+    },
+    {
+      "studentId": "stu-0065",
+      "sectionId": "CSE-1012-SEC-003"
+    },
+    {
+      "studentId": "stu-0065",
+      "sectionId": "CSE-1018-SEC-002"
+    },
+    {
+      "studentId": "stu-0065",
+      "sectionId": "CSE-1008-SEC-003"
+    },
+    {
+      "studentId": "stu-0065",
+      "sectionId": "CSE-1017-SEC-001"
+    },
+    {
+      "studentId": "stu-0065",
+      "sectionId": "CSE-1011-SEC-002"
+    },
+    {
+      "studentId": "stu-0065",
+      "sectionId": "CSE-1004-SEC-001"
+    },
+    {
+      "studentId": "stu-0066",
+      "sectionId": "CSE-1002-SEC-001"
+    },
+    {
+      "studentId": "stu-0066",
+      "sectionId": "CSE-1008-SEC-003"
+    },
+    {
+      "studentId": "stu-0066",
+      "sectionId": "CSE-1013-SEC-002"
+    },
+    {
+      "studentId": "stu-0066",
+      "sectionId": "CSE-1004-SEC-001"
+    },
+    {
+      "studentId": "stu-0067",
+      "sectionId": "CSE-1007-SEC-001"
+    },
+    {
+      "studentId": "stu-0067",
+      "sectionId": "CSE-1014-SEC-002"
+    },
+    {
+      "studentId": "stu-0067",
+      "sectionId": "CSE-1004-SEC-002"
+    },
+    {
+      "studentId": "stu-0067",
+      "sectionId": "CSE-1010-SEC-003"
+    },
+    {
+      "studentId": "stu-0068",
+      "sectionId": "CSE-1010-SEC-002"
+    },
+    {
+      "studentId": "stu-0068",
+      "sectionId": "CSE-1017-SEC-002"
+    },
+    {
+      "studentId": "stu-0068",
+      "sectionId": "CSE-1019-SEC-002"
+    },
+    {
+      "studentId": "stu-0068",
+      "sectionId": "CSE-1018-SEC-002"
+    },
+    {
+      "studentId": "stu-0068",
+      "sectionId": "CSE-1014-SEC-002"
+    },
+    {
+      "studentId": "stu-0069",
+      "sectionId": "CSE-1015-SEC-002"
+    },
+    {
+      "studentId": "stu-0069",
+      "sectionId": "CSE-1019-SEC-002"
+    },
+    {
+      "studentId": "stu-0069",
+      "sectionId": "CSE-1019-SEC-001"
+    },
+    {
+      "studentId": "stu-0069",
+      "sectionId": "CSE-1004-SEC-003"
+    },
+    {
+      "studentId": "stu-0069",
+      "sectionId": "CSE-1011-SEC-002"
+    },
+    {
+      "studentId": "stu-0070",
+      "sectionId": "CSE-1003-SEC-003"
+    },
+    {
+      "studentId": "stu-0070",
+      "sectionId": "CSE-1013-SEC-002"
+    },
+    {
+      "studentId": "stu-0070",
+      "sectionId": "CSE-1016-SEC-002"
+    },
+    {
+      "studentId": "stu-0070",
+      "sectionId": "CSE-1011-SEC-002"
+    },
+    {
+      "studentId": "stu-0070",
+      "sectionId": "CSE-1008-SEC-001"
+    },
+    {
+      "studentId": "stu-0070",
+      "sectionId": "CSE-1002-SEC-001"
+    },
+    {
+      "studentId": "stu-0001",
+      "sectionId": "CSE-1006-SEC-001"
+    },
+    {
+      "studentId": "stu-0001",
+      "sectionId": "CSE-1003-SEC-001"
+    }
+  ],
+  "friendships": [
+    {
+      "studentA": "stu-0001",
+      "studentB": "stu-0057",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0001",
+      "studentB": "stu-0039",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0002",
+      "studentB": "stu-0058",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0002",
+      "studentB": "stu-0008",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0002",
+      "studentB": "stu-0048",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0002",
+      "studentB": "stu-0037",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0002",
+      "studentB": "stu-0010",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0003",
+      "studentB": "stu-0006",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0003",
+      "studentB": "stu-0058",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0003",
+      "studentB": "stu-0061",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0003",
+      "studentB": "stu-0065",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0003",
+      "studentB": "stu-0020",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0003",
+      "studentB": "stu-0062",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0004",
+      "studentB": "stu-0068",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0004",
+      "studentB": "stu-0047",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0004",
+      "studentB": "stu-0048",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0004",
+      "studentB": "stu-0037",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0005",
+      "studentB": "stu-0043",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0005",
+      "studentB": "stu-0019",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0006",
+      "studentB": "stu-0043",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0006",
+      "studentB": "stu-0017",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0006",
+      "studentB": "stu-0055",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0007",
+      "studentB": "stu-0013",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0007",
+      "studentB": "stu-0065",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0008",
+      "studentB": "stu-0017",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0008",
+      "studentB": "stu-0049",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0008",
+      "studentB": "stu-0021",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0008",
+      "studentB": "stu-0022",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0008",
+      "studentB": "stu-0057",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0009",
+      "studentB": "stu-0025",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0009",
+      "studentB": "stu-0048",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0009",
+      "studentB": "stu-0057",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0009",
+      "studentB": "stu-0060",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0009",
+      "studentB": "stu-0037",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0010",
+      "studentB": "stu-0062",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0010",
+      "studentB": "stu-0048",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0010",
+      "studentB": "stu-0014",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0010",
+      "studentB": "stu-0049",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0011",
+      "studentB": "stu-0048",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0011",
+      "studentB": "stu-0031",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0011",
+      "studentB": "stu-0029",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0012",
+      "studentB": "stu-0058",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0011",
+      "studentB": "stu-0012",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0003",
+      "studentB": "stu-0012",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0012",
+      "studentB": "stu-0033",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0013",
+      "studentB": "stu-0015",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0013",
+      "studentB": "stu-0064",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0013",
+      "studentB": "stu-0069",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0014",
+      "studentB": "stu-0038",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0014",
+      "studentB": "stu-0055",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0001",
+      "studentB": "stu-0014",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0014",
+      "studentB": "stu-0046",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0009",
+      "studentB": "stu-0015",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0015",
+      "studentB": "stu-0068",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0015",
+      "studentB": "stu-0070",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0016",
+      "studentB": "stu-0031",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0014",
+      "studentB": "stu-0016",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0017",
+      "studentB": "stu-0023",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0017",
+      "studentB": "stu-0062",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0017",
+      "studentB": "stu-0024",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0018",
+      "studentB": "stu-0040",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0018",
+      "studentB": "stu-0051",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0019",
+      "studentB": "stu-0048",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0019",
+      "studentB": "stu-0056",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0019",
+      "studentB": "stu-0052",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0019",
+      "studentB": "stu-0057",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0020",
+      "studentB": "stu-0035",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0011",
+      "studentB": "stu-0020",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0020",
+      "studentB": "stu-0055",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0020",
+      "studentB": "stu-0069",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0020",
+      "studentB": "stu-0056",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0020",
+      "studentB": "stu-0024",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0020",
+      "studentB": "stu-0038",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0021",
+      "studentB": "stu-0058",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0021",
+      "studentB": "stu-0046",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0021",
+      "studentB": "stu-0056",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0021",
+      "studentB": "stu-0036",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0004",
+      "studentB": "stu-0022",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0022",
+      "studentB": "stu-0057",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0005",
+      "studentB": "stu-0022",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0009",
+      "studentB": "stu-0022",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0016",
+      "studentB": "stu-0022",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0023",
+      "studentB": "stu-0068",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0023",
+      "studentB": "stu-0047",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0023",
+      "studentB": "stu-0051",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0024",
+      "studentB": "stu-0050",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0024",
+      "studentB": "stu-0034",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0024",
+      "studentB": "stu-0058",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0025",
+      "studentB": "stu-0045",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0025",
+      "studentB": "stu-0039",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0021",
+      "studentB": "stu-0025",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0023",
+      "studentB": "stu-0025",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0025",
+      "studentB": "stu-0047",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0025",
+      "studentB": "stu-0033",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0012",
+      "studentB": "stu-0026",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0009",
+      "studentB": "stu-0026",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0026",
+      "studentB": "stu-0040",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0026",
+      "studentB": "stu-0051",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0026",
+      "studentB": "stu-0062",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0026",
+      "studentB": "stu-0053",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0024",
+      "studentB": "stu-0027",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0017",
+      "studentB": "stu-0027",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0027",
+      "studentB": "stu-0065",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0020",
+      "studentB": "stu-0027",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0028",
+      "studentB": "stu-0036",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0017",
+      "studentB": "stu-0028",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0022",
+      "studentB": "stu-0028",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0029",
+      "studentB": "stu-0054",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0004",
+      "studentB": "stu-0029",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0029",
+      "studentB": "stu-0064",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0029",
+      "studentB": "stu-0038",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0029",
+      "studentB": "stu-0039",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0029",
+      "studentB": "stu-0062",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0016",
+      "studentB": "stu-0029",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0030",
+      "studentB": "stu-0041",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0030",
+      "studentB": "stu-0045",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0030",
+      "studentB": "stu-0052",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0017",
+      "studentB": "stu-0030",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0030",
+      "studentB": "stu-0048",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0007",
+      "studentB": "stu-0031",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0021",
+      "studentB": "stu-0032",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0032",
+      "studentB": "stu-0064",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0032",
+      "studentB": "stu-0066",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0031",
+      "studentB": "stu-0033",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0033",
+      "studentB": "stu-0046",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0007",
+      "studentB": "stu-0033",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0033",
+      "studentB": "stu-0067",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0033",
+      "studentB": "stu-0037",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0034",
+      "studentB": "stu-0047",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0034",
+      "studentB": "stu-0052",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0006",
+      "studentB": "stu-0034",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0007",
+      "studentB": "stu-0034",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0025",
+      "studentB": "stu-0034",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0017",
+      "studentB": "stu-0035",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0013",
+      "studentB": "stu-0035",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0035",
+      "studentB": "stu-0051",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0035",
+      "studentB": "stu-0048",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-0035",
+      "studentB": "stu-0047",
+      "status": "accepted"
+    }
+  ],
+  "friendRequests": [
+    {
+      "id": "req-0001",
+      "fromStudentId": "stu-0001",
+      "toStudentId": "stu-0061",
+      "status": "pending",
+      "createdAt": "2026-05-02T20:59:32.474520+00:00"
+    },
+    {
+      "id": "req-0002",
+      "fromStudentId": "stu-0002",
+      "toStudentId": "stu-0005",
+      "status": "pending",
+      "createdAt": "2026-05-01T20:59:32.474520+00:00"
+    },
+    {
+      "id": "req-0003",
+      "fromStudentId": "stu-0003",
+      "toStudentId": "stu-0025",
+      "status": "pending",
+      "createdAt": "2026-04-27T20:59:32.474520+00:00"
+    },
+    {
+      "id": "req-0004",
+      "fromStudentId": "stu-0003",
+      "toStudentId": "stu-0042",
+      "status": "pending",
+      "createdAt": "2026-05-01T20:59:32.474520+00:00"
+    },
+    {
+      "id": "req-0005",
+      "fromStudentId": "stu-0004",
+      "toStudentId": "stu-0067",
+      "status": "pending",
+      "createdAt": "2026-05-02T20:59:32.474520+00:00"
+    },
+    {
+      "id": "req-0006",
+      "fromStudentId": "stu-0004",
+      "toStudentId": "stu-0021",
+      "status": "pending",
+      "createdAt": "2026-04-27T20:59:32.474520+00:00"
+    },
+    {
+      "id": "req-0007",
+      "fromStudentId": "stu-0005",
+      "toStudentId": "stu-0033",
+      "status": "pending",
+      "createdAt": "2026-04-28T20:59:32.474520+00:00"
+    },
+    {
+      "id": "req-0008",
+      "fromStudentId": "stu-0005",
+      "toStudentId": "stu-0020",
+      "status": "pending",
+      "createdAt": "2026-04-26T20:59:32.474520+00:00"
+    },
+    {
+      "id": "req-0009",
+      "fromStudentId": "stu-0005",
+      "toStudentId": "stu-0011",
+      "status": "pending",
+      "createdAt": "2026-05-01T20:59:32.474520+00:00"
+    },
+    {
+      "id": "req-0010",
+      "fromStudentId": "stu-0006",
+      "toStudentId": "stu-0068",
+      "status": "pending",
+      "createdAt": "2026-04-27T20:59:32.474520+00:00"
+    },
+    {
+      "id": "req-0011",
+      "fromStudentId": "stu-0006",
+      "toStudentId": "stu-0012",
+      "status": "pending",
+      "createdAt": "2026-04-25T20:59:32.474520+00:00"
+    },
+    {
+      "id": "req-0012",
+      "fromStudentId": "stu-0006",
+      "toStudentId": "stu-0047",
+      "status": "pending",
+      "createdAt": "2026-04-30T20:59:32.474520+00:00"
+    },
+    {
+      "id": "req-0013",
+      "fromStudentId": "stu-0007",
+      "toStudentId": "stu-0038",
+      "status": "pending",
+      "createdAt": "2026-04-24T20:59:32.474520+00:00"
+    },
+    {
+      "id": "req-0014",
+      "fromStudentId": "stu-0008",
+      "toStudentId": "stu-0020",
+      "status": "pending",
+      "createdAt": "2026-04-25T20:59:32.474520+00:00"
+    },
+    {
+      "id": "req-0015",
+      "fromStudentId": "stu-0008",
+      "toStudentId": "stu-0024",
+      "status": "pending",
+      "createdAt": "2026-04-25T20:59:32.474520+00:00"
+    },
+    {
+      "id": "req-0016",
+      "fromStudentId": "stu-0009",
+      "toStudentId": "stu-0049",
+      "status": "pending",
+      "createdAt": "2026-05-02T20:59:32.474520+00:00"
+    },
+    {
+      "id": "req-0017",
+      "fromStudentId": "stu-0010",
+      "toStudentId": "stu-0067",
+      "status": "pending",
+      "createdAt": "2026-05-01T20:59:32.474520+00:00"
+    },
+    {
+      "id": "req-0018",
+      "fromStudentId": "stu-0010",
+      "toStudentId": "stu-0016",
+      "status": "pending",
+      "createdAt": "2026-04-29T20:59:32.474520+00:00"
+    },
+    {
+      "id": "req-0019",
+      "fromStudentId": "stu-0010",
+      "toStudentId": "stu-0037",
+      "status": "pending",
+      "createdAt": "2026-04-27T20:59:32.474520+00:00"
+    },
+    {
+      "id": "req-0020",
+      "fromStudentId": "stu-0010",
+      "toStudentId": "stu-0011",
+      "status": "pending",
+      "createdAt": "2026-04-26T20:59:32.474520+00:00"
+    },
+    {
+      "id": "req-0021",
+      "fromStudentId": "stu-0011",
+      "toStudentId": "stu-0050",
+      "status": "pending",
+      "createdAt": "2026-04-27T20:59:32.474520+00:00"
+    },
+    {
+      "id": "req-0022",
+      "fromStudentId": "stu-0011",
+      "toStudentId": "stu-0070",
+      "status": "pending",
+      "createdAt": "2026-04-30T20:59:32.474520+00:00"
+    },
+    {
+      "id": "req-0023",
+      "fromStudentId": "stu-0011",
+      "toStudentId": "stu-0004",
+      "status": "pending",
+      "createdAt": "2026-04-25T20:59:32.474520+00:00"
+    },
+    {
+      "id": "req-0024",
+      "fromStudentId": "stu-0012",
+      "toStudentId": "stu-0018",
+      "status": "pending",
+      "createdAt": "2026-04-24T20:59:32.474520+00:00"
+    },
+    {
+      "id": "req-0025",
+      "fromStudentId": "stu-0012",
+      "toStudentId": "stu-0061",
+      "status": "pending",
+      "createdAt": "2026-04-24T20:59:32.474520+00:00"
+    },
+    {
+      "id": "req-0026",
+      "fromStudentId": "stu-0012",
+      "toStudentId": "stu-0001",
+      "status": "pending",
+      "createdAt": "2026-04-29T20:59:32.474520+00:00"
+    },
+    {
+      "id": "req-0027",
+      "fromStudentId": "stu-0012",
+      "toStudentId": "stu-0014",
+      "status": "pending",
+      "createdAt": "2026-04-25T20:59:32.474520+00:00"
+    },
+    {
+      "id": "req-0028",
+      "fromStudentId": "stu-0015",
+      "toStudentId": "stu-0065",
+      "status": "pending",
+      "createdAt": "2026-04-28T20:59:32.474520+00:00"
+    },
+    {
+      "id": "req-0029",
+      "fromStudentId": "stu-0015",
+      "toStudentId": "stu-0003",
+      "status": "pending",
+      "createdAt": "2026-04-27T20:59:32.474520+00:00"
+    },
+    {
+      "id": "req-0030",
+      "fromStudentId": "stu-0016",
+      "toStudentId": "stu-0045",
+      "status": "pending",
+      "createdAt": "2026-04-27T20:59:32.474520+00:00"
+    },
+    {
+      "id": "req-0031",
+      "fromStudentId": "stu-0017",
+      "toStudentId": "stu-0060",
+      "status": "pending",
+      "createdAt": "2026-04-25T20:59:32.474520+00:00"
+    },
+    {
+      "id": "req-0032",
+      "fromStudentId": "stu-0017",
+      "toStudentId": "stu-0018",
+      "status": "pending",
+      "createdAt": "2026-05-02T20:59:32.474520+00:00"
+    },
+    {
+      "id": "req-0033",
+      "fromStudentId": "stu-0018",
+      "toStudentId": "stu-0066",
+      "status": "pending",
+      "createdAt": "2026-04-29T20:59:32.474520+00:00"
+    },
+    {
+      "id": "req-0034",
+      "fromStudentId": "stu-0018",
+      "toStudentId": "stu-0070",
+      "status": "pending",
+      "createdAt": "2026-05-02T20:59:32.474520+00:00"
+    },
+    {
+      "id": "req-0035",
+      "fromStudentId": "stu-0018",
+      "toStudentId": "stu-0061",
+      "status": "pending",
+      "createdAt": "2026-04-27T20:59:32.474520+00:00"
+    },
+    {
+      "id": "req-0036",
+      "fromStudentId": "stu-0019",
+      "toStudentId": "stu-0016",
+      "status": "pending",
+      "createdAt": "2026-04-26T20:59:32.474520+00:00"
+    },
+    {
+      "id": "req-0037",
+      "fromStudentId": "stu-0021",
+      "toStudentId": "stu-0006",
+      "status": "pending",
+      "createdAt": "2026-05-02T20:59:32.474520+00:00"
+    },
+    {
+      "id": "req-0038",
+      "fromStudentId": "stu-0022",
+      "toStudentId": "stu-0021",
+      "status": "pending",
+      "createdAt": "2026-04-27T20:59:32.474520+00:00"
+    },
+    {
+      "id": "req-0039",
+      "fromStudentId": "stu-0022",
+      "toStudentId": "stu-0019",
+      "status": "pending",
+      "createdAt": "2026-05-02T20:59:32.474520+00:00"
+    },
+    {
+      "id": "req-0040",
+      "fromStudentId": "stu-0022",
+      "toStudentId": "stu-0017",
+      "status": "pending",
+      "createdAt": "2026-04-27T20:59:32.474520+00:00"
+    },
+    {
+      "id": "req-0041",
+      "fromStudentId": "stu-0023",
+      "toStudentId": "stu-0041",
+      "status": "pending",
+      "createdAt": "2026-04-25T20:59:32.474520+00:00"
+    },
+    {
+      "id": "req-0042",
+      "fromStudentId": "stu-0024",
+      "toStudentId": "stu-0016",
+      "status": "pending",
+      "createdAt": "2026-04-29T20:59:32.474520+00:00"
+    },
+    {
+      "id": "req-0043",
+      "fromStudentId": "stu-0024",
+      "toStudentId": "stu-0068",
+      "status": "pending",
+      "createdAt": "2026-04-25T20:59:32.474520+00:00"
+    },
+    {
+      "id": "req-0044",
+      "fromStudentId": "stu-0024",
+      "toStudentId": "stu-0028",
+      "status": "pending",
+      "createdAt": "2026-05-01T20:59:32.474520+00:00"
+    },
+    {
+      "id": "req-0045",
+      "fromStudentId": "stu-0024",
+      "toStudentId": "stu-0037",
+      "status": "pending",
+      "createdAt": "2026-04-27T20:59:32.474520+00:00"
+    },
+    {
+      "id": "req-0046",
+      "fromStudentId": "stu-0025",
+      "toStudentId": "stu-0038",
+      "status": "pending",
+      "createdAt": "2026-04-30T20:59:32.474520+00:00"
+    },
+    {
+      "id": "req-0047",
+      "fromStudentId": "stu-0026",
+      "toStudentId": "stu-0017",
+      "status": "pending",
+      "createdAt": "2026-05-01T20:59:32.474520+00:00"
+    },
+    {
+      "id": "req-0048",
+      "fromStudentId": "stu-0027",
+      "toStudentId": "stu-0056",
+      "status": "pending",
+      "createdAt": "2026-04-29T20:59:32.474520+00:00"
+    },
+    {
+      "id": "req-0049",
+      "fromStudentId": "stu-0027",
+      "toStudentId": "stu-0008",
+      "status": "pending",
+      "createdAt": "2026-04-28T20:59:32.474520+00:00"
+    },
+    {
+      "id": "req-0050",
+      "fromStudentId": "stu-0027",
+      "toStudentId": "stu-0016",
+      "status": "pending",
+      "createdAt": "2026-04-28T20:59:32.474520+00:00"
+    },
+    {
+      "id": "req-0051",
+      "fromStudentId": "stu-0028",
+      "toStudentId": "stu-0039",
+      "status": "pending",
+      "createdAt": "2026-04-27T20:59:32.474520+00:00"
+    },
+    {
+      "id": "req-0052",
+      "fromStudentId": "stu-0028",
+      "toStudentId": "stu-0012",
+      "status": "pending",
+      "createdAt": "2026-05-02T20:59:32.474520+00:00"
+    },
+    {
+      "id": "req-0053",
+      "fromStudentId": "stu-0028",
+      "toStudentId": "stu-0065",
+      "status": "pending",
+      "createdAt": "2026-05-02T20:59:32.474520+00:00"
+    },
+    {
+      "id": "req-0054",
+      "fromStudentId": "stu-0028",
+      "toStudentId": "stu-0020",
+      "status": "pending",
+      "createdAt": "2026-04-28T20:59:32.474520+00:00"
+    },
+    {
+      "id": "req-0055",
+      "fromStudentId": "stu-0029",
+      "toStudentId": "stu-0027",
+      "status": "pending",
+      "createdAt": "2026-04-26T20:59:32.474520+00:00"
+    },
+    {
+      "id": "req-0056",
+      "fromStudentId": "stu-0031",
+      "toStudentId": "stu-0013",
+      "status": "pending",
+      "createdAt": "2026-04-26T20:59:32.474520+00:00"
+    },
+    {
+      "id": "req-0057",
+      "fromStudentId": "stu-0031",
+      "toStudentId": "stu-0038",
+      "status": "pending",
+      "createdAt": "2026-04-30T20:59:32.474520+00:00"
+    },
+    {
+      "id": "req-0058",
+      "fromStudentId": "stu-0031",
+      "toStudentId": "stu-0050",
+      "status": "pending",
+      "createdAt": "2026-04-27T20:59:32.474520+00:00"
+    },
+    {
+      "id": "req-0059",
+      "fromStudentId": "stu-0032",
+      "toStudentId": "stu-0060",
+      "status": "pending",
+      "createdAt": "2026-04-24T20:59:32.474520+00:00"
+    },
+    {
+      "id": "req-0060",
+      "fromStudentId": "stu-0033",
+      "toStudentId": "stu-0028",
+      "status": "pending",
+      "createdAt": "2026-04-25T20:59:32.474520+00:00"
+    },
+    {
+      "id": "req-0061",
+      "fromStudentId": "stu-0035",
+      "toStudentId": "stu-0016",
+      "status": "pending",
+      "createdAt": "2026-04-29T20:59:32.474520+00:00"
+    },
+    {
+      "id": "req-0062",
+      "fromStudentId": "stu-0035",
+      "toStudentId": "stu-0044",
+      "status": "pending",
+      "createdAt": "2026-04-25T20:59:32.474520+00:00"
+    }
+  ],
+  "presence": [
+    {
+      "studentId": "stu-0001",
+      "status": "onTheWay",
+      "activity": "Gym run",
+      "location": "Goodwin Hall",
+      "lastUpdated": "2026-05-02T20:52:32.474520+00:00"
+    },
+    {
+      "studentId": "stu-0002",
+      "status": "studying",
+      "activity": "Grabbing coffee",
+      "location": "The Drillfield",
+      "lastUpdated": "2026-05-02T20:42:32.474520+00:00"
+    },
+    {
+      "studentId": "stu-0003",
+      "status": "studying",
+      "activity": "Grabbing coffee",
+      "location": "Burruss Hall",
+      "lastUpdated": "2026-05-02T20:51:32.474520+00:00"
+    },
+    {
+      "studentId": "stu-0004",
+      "status": "onTheWay",
+      "activity": "Grabbing coffee",
+      "location": "Goodwin Hall",
+      "lastUpdated": "2026-05-02T20:57:32.474520+00:00"
+    },
+    {
+      "studentId": "stu-0005",
+      "status": "onTheWay",
+      "activity": "Free to hang",
+      "location": "Newman Library",
+      "lastUpdated": "2026-05-02T20:58:32.474520+00:00"
+    },
+    {
+      "studentId": "stu-0006",
+      "status": "studying",
+      "activity": "Study sprint",
+      "location": "Squires",
+      "lastUpdated": "2026-05-02T20:41:32.474520+00:00"
+    },
+    {
+      "studentId": "stu-0007",
+      "status": "onTheWay",
+      "activity": "Grabbing coffee",
+      "location": "War Memorial Gym",
+      "lastUpdated": "2026-05-02T20:41:32.474520+00:00"
+    },
+    {
+      "studentId": "stu-0008",
+      "status": "onTheWay",
+      "activity": "Study sprint",
+      "location": "The Drillfield",
+      "lastUpdated": "2026-05-02T20:55:32.474520+00:00"
+    },
+    {
+      "studentId": "stu-0009",
+      "status": "freeNow",
+      "activity": "Headed to class",
+      "location": "Squires",
+      "lastUpdated": "2026-05-02T20:55:32.474520+00:00"
+    },
+    {
+      "studentId": "stu-0010",
+      "status": "studying",
+      "activity": "Study sprint",
+      "location": "McBryde Hall",
+      "lastUpdated": "2026-05-02T20:59:32.474520+00:00"
+    },
+    {
+      "studentId": "stu-0011",
+      "status": "onTheWay",
+      "activity": "Grabbing coffee",
+      "location": "The Drillfield",
+      "lastUpdated": "2026-05-02T20:52:32.474520+00:00"
+    },
+    {
+      "studentId": "stu-0012",
+      "status": "studying",
+      "activity": "Grabbing coffee",
+      "location": "Squires",
+      "lastUpdated": "2026-05-02T20:51:32.474520+00:00"
+    },
+    {
+      "studentId": "stu-0013",
+      "status": "freeNow",
+      "activity": "Study sprint",
+      "location": "Burruss Hall",
+      "lastUpdated": "2026-05-02T20:43:32.474520+00:00"
+    },
+    {
+      "studentId": "stu-0014",
+      "status": "freeNow",
+      "activity": "Grabbing coffee",
+      "location": "Goodwin Hall",
+      "lastUpdated": "2026-05-02T20:45:32.474520+00:00"
+    },
+    {
+      "studentId": "stu-0015",
+      "status": "studying",
+      "activity": "Free to hang",
+      "location": "McBryde Hall",
+      "lastUpdated": "2026-05-02T20:45:32.474520+00:00"
+    },
+    {
+      "studentId": "stu-0016",
+      "status": "onTheWay",
+      "activity": "Free to hang",
+      "location": "Newman Library",
+      "lastUpdated": "2026-05-02T20:43:32.474520+00:00"
+    },
+    {
+      "studentId": "stu-0017",
+      "status": "studying",
+      "activity": "Gym run",
+      "location": "Newman Library",
+      "lastUpdated": "2026-05-02T20:58:32.474520+00:00"
+    },
+    {
+      "studentId": "stu-0018",
+      "status": "busy",
+      "activity": "Gym run",
+      "location": "Burruss Hall",
+      "lastUpdated": "2026-05-02T20:56:32.474520+00:00"
+    },
+    {
+      "studentId": "stu-0019",
+      "status": "busy",
+      "activity": "Gym run",
+      "location": "McBryde Hall",
+      "lastUpdated": "2026-05-02T20:57:32.474520+00:00"
+    },
+    {
+      "studentId": "stu-0020",
+      "status": "studying",
+      "activity": "Free to hang",
+      "location": "Squires",
+      "lastUpdated": "2026-05-02T20:57:32.474520+00:00"
+    },
+    {
+      "studentId": "stu-0021",
+      "status": "onTheWay",
+      "activity": "Headed to class",
+      "location": "The Drillfield",
+      "lastUpdated": "2026-05-02T20:47:32.474520+00:00"
+    },
+    {
+      "studentId": "stu-0022",
+      "status": "studying",
+      "activity": "Gym run",
+      "location": "Burruss Hall",
+      "lastUpdated": "2026-05-02T20:56:32.474520+00:00"
+    },
+    {
+      "studentId": "stu-0023",
+      "status": "freeNow",
+      "activity": "Free to hang",
+      "location": "War Memorial Gym",
+      "lastUpdated": "2026-05-02T20:46:32.474520+00:00"
+    },
+    {
+      "studentId": "stu-0024",
+      "status": "busy",
+      "activity": "Study sprint",
+      "location": "Burruss Hall",
+      "lastUpdated": "2026-05-02T20:49:32.474520+00:00"
+    },
+    {
+      "studentId": "stu-0025",
+      "status": "busy",
+      "activity": "Gym run",
+      "location": "Burruss Hall",
+      "lastUpdated": "2026-05-02T20:56:32.474520+00:00"
+    },
+    {
+      "studentId": "stu-0026",
+      "status": "studying",
+      "activity": "Gym run",
+      "location": "The Drillfield",
+      "lastUpdated": "2026-05-02T20:51:32.474520+00:00"
+    },
+    {
+      "studentId": "stu-0027",
+      "status": "studying",
+      "activity": "Study sprint",
+      "location": "Goodwin Hall",
+      "lastUpdated": "2026-05-02T20:57:32.474520+00:00"
+    },
+    {
+      "studentId": "stu-0028",
+      "status": "freeNow",
+      "activity": "Grabbing coffee",
+      "location": "McBryde Hall",
+      "lastUpdated": "2026-05-02T20:46:32.474520+00:00"
+    },
+    {
+      "studentId": "stu-0029",
+      "status": "freeNow",
+      "activity": "Headed to class",
+      "location": "Squires",
+      "lastUpdated": "2026-05-02T20:42:32.474520+00:00"
+    },
+    {
+      "studentId": "stu-0030",
+      "status": "freeNow",
+      "activity": "Free to hang",
+      "location": "The Drillfield",
+      "lastUpdated": "2026-05-02T20:56:32.474520+00:00"
+    },
+    {
+      "studentId": "stu-0031",
+      "status": "busy",
+      "activity": "Headed to class",
+      "location": "Burruss Hall",
+      "lastUpdated": "2026-05-02T20:58:32.474520+00:00"
+    },
+    {
+      "studentId": "stu-0032",
+      "status": "studying",
+      "activity": "Free to hang",
+      "location": "Turner Place",
+      "lastUpdated": "2026-05-02T20:48:32.474520+00:00"
+    },
+    {
+      "studentId": "stu-0033",
+      "status": "freeNow",
+      "activity": "Free to hang",
+      "location": "War Memorial Gym",
+      "lastUpdated": "2026-05-02T20:55:32.474520+00:00"
+    },
+    {
+      "studentId": "stu-0034",
+      "status": "busy",
+      "activity": "Study sprint",
+      "location": "McBryde Hall",
+      "lastUpdated": "2026-05-02T20:48:32.474520+00:00"
+    },
+    {
+      "studentId": "stu-0035",
+      "status": "studying",
+      "activity": "Grabbing coffee",
+      "location": "Turner Place",
+      "lastUpdated": "2026-05-02T20:41:32.474520+00:00"
+    },
+    {
+      "studentId": "stu-0036",
+      "status": "onTheWay",
+      "activity": "Gym run",
+      "location": "Newman Library",
+      "lastUpdated": "2026-05-02T20:40:32.474520+00:00"
+    },
+    {
+      "studentId": "stu-0037",
+      "status": "studying",
+      "activity": "Grabbing coffee",
+      "location": "Squires",
+      "lastUpdated": "2026-05-02T20:51:32.474520+00:00"
+    },
+    {
+      "studentId": "stu-0038",
+      "status": "studying",
+      "activity": "Headed to class",
+      "location": "The Drillfield",
+      "lastUpdated": "2026-05-02T20:59:32.474520+00:00"
+    },
+    {
+      "studentId": "stu-0039",
+      "status": "onTheWay",
+      "activity": "Study sprint",
+      "location": "Burruss Hall",
+      "lastUpdated": "2026-05-02T20:57:32.474520+00:00"
+    },
+    {
+      "studentId": "stu-0040",
+      "status": "onTheWay",
+      "activity": "Grabbing coffee",
+      "location": "McBryde Hall",
+      "lastUpdated": "2026-05-02T20:43:32.474520+00:00"
+    },
+    {
+      "studentId": "stu-0041",
+      "status": "onTheWay",
+      "activity": "Gym run",
+      "location": "Burruss Hall",
+      "lastUpdated": "2026-05-02T20:45:32.474520+00:00"
+    },
+    {
+      "studentId": "stu-0042",
+      "status": "studying",
+      "activity": "Study sprint",
+      "location": "The Drillfield",
+      "lastUpdated": "2026-05-02T20:50:32.474520+00:00"
+    },
+    {
+      "studentId": "stu-0043",
+      "status": "studying",
+      "activity": "Free to hang",
+      "location": "McBryde Hall",
+      "lastUpdated": "2026-05-02T20:58:32.474520+00:00"
+    },
+    {
+      "studentId": "stu-0044",
+      "status": "onTheWay",
+      "activity": "Study sprint",
+      "location": "Newman Library",
+      "lastUpdated": "2026-05-02T20:57:32.474520+00:00"
+    },
+    {
+      "studentId": "stu-0045",
+      "status": "studying",
+      "activity": "Gym run",
+      "location": "Burruss Hall",
+      "lastUpdated": "2026-05-02T20:44:32.474520+00:00"
+    },
+    {
+      "studentId": "stu-0046",
+      "status": "busy",
+      "activity": "Gym run",
+      "location": "Turner Place",
+      "lastUpdated": "2026-05-02T20:53:32.474520+00:00"
+    },
+    {
+      "studentId": "stu-0047",
+      "status": "freeNow",
+      "activity": "Headed to class",
+      "location": "Burruss Hall",
+      "lastUpdated": "2026-05-02T20:56:32.474520+00:00"
+    },
+    {
+      "studentId": "stu-0048",
+      "status": "studying",
+      "activity": "Free to hang",
+      "location": "Goodwin Hall",
+      "lastUpdated": "2026-05-02T20:43:32.474520+00:00"
+    },
+    {
+      "studentId": "stu-0049",
+      "status": "studying",
+      "activity": "Grabbing coffee",
+      "location": "War Memorial Gym",
+      "lastUpdated": "2026-05-02T20:47:32.474520+00:00"
+    },
+    {
+      "studentId": "stu-0050",
+      "status": "freeNow",
+      "activity": "Grabbing coffee",
+      "location": "War Memorial Gym",
+      "lastUpdated": "2026-05-02T20:50:32.474520+00:00"
+    },
+    {
+      "studentId": "stu-0051",
+      "status": "onTheWay",
+      "activity": "Study sprint",
+      "location": "Turner Place",
+      "lastUpdated": "2026-05-02T20:50:32.474520+00:00"
+    },
+    {
+      "studentId": "stu-0052",
+      "status": "studying",
+      "activity": "Grabbing coffee",
+      "location": "Newman Library",
+      "lastUpdated": "2026-05-02T20:44:32.474520+00:00"
+    },
+    {
+      "studentId": "stu-0053",
+      "status": "busy",
+      "activity": "Study sprint",
+      "location": "Squires",
+      "lastUpdated": "2026-05-02T20:47:32.474520+00:00"
+    },
+    {
+      "studentId": "stu-0054",
+      "status": "onTheWay",
+      "activity": "Free to hang",
+      "location": "The Drillfield",
+      "lastUpdated": "2026-05-02T20:57:32.474520+00:00"
+    },
+    {
+      "studentId": "stu-0055",
+      "status": "busy",
+      "activity": "Grabbing coffee",
+      "location": "Burruss Hall",
+      "lastUpdated": "2026-05-02T20:59:32.474520+00:00"
+    },
+    {
+      "studentId": "stu-0056",
+      "status": "busy",
+      "activity": "Grabbing coffee",
+      "location": "The Drillfield",
+      "lastUpdated": "2026-05-02T20:41:32.474520+00:00"
+    },
+    {
+      "studentId": "stu-0057",
+      "status": "busy",
+      "activity": "Free to hang",
+      "location": "Burruss Hall",
+      "lastUpdated": "2026-05-02T20:39:32.474520+00:00"
+    },
+    {
+      "studentId": "stu-0058",
+      "status": "busy",
+      "activity": "Headed to class",
+      "location": "McBryde Hall",
+      "lastUpdated": "2026-05-02T20:47:32.474520+00:00"
+    },
+    {
+      "studentId": "stu-0059",
+      "status": "freeNow",
+      "activity": "Headed to class",
+      "location": "Squires",
+      "lastUpdated": "2026-05-02T20:40:32.474520+00:00"
+    },
+    {
+      "studentId": "stu-0060",
+      "status": "busy",
+      "activity": "Headed to class",
+      "location": "McBryde Hall",
+      "lastUpdated": "2026-05-02T20:46:32.474520+00:00"
+    },
+    {
+      "studentId": "stu-0061",
+      "status": "freeNow",
+      "activity": "Study sprint",
+      "location": "Burruss Hall",
+      "lastUpdated": "2026-05-02T20:41:32.474520+00:00"
+    },
+    {
+      "studentId": "stu-0062",
+      "status": "busy",
+      "activity": "Free to hang",
+      "location": "McBryde Hall",
+      "lastUpdated": "2026-05-02T20:47:32.474520+00:00"
+    },
+    {
+      "studentId": "stu-0063",
+      "status": "studying",
+      "activity": "Headed to class",
+      "location": "War Memorial Gym",
+      "lastUpdated": "2026-05-02T20:49:32.474520+00:00"
+    },
+    {
+      "studentId": "stu-0064",
+      "status": "onTheWay",
+      "activity": "Grabbing coffee",
+      "location": "McBryde Hall",
+      "lastUpdated": "2026-05-02T20:43:32.474520+00:00"
+    },
+    {
+      "studentId": "stu-0065",
+      "status": "onTheWay",
+      "activity": "Headed to class",
+      "location": "The Drillfield",
+      "lastUpdated": "2026-05-02T20:39:32.474520+00:00"
+    },
+    {
+      "studentId": "stu-0066",
+      "status": "onTheWay",
+      "activity": "Study sprint",
+      "location": "McBryde Hall",
+      "lastUpdated": "2026-05-02T20:55:32.474520+00:00"
+    },
+    {
+      "studentId": "stu-0067",
+      "status": "studying",
+      "activity": "Study sprint",
+      "location": "Squires",
+      "lastUpdated": "2026-05-02T20:40:32.474520+00:00"
+    },
+    {
+      "studentId": "stu-0068",
+      "status": "onTheWay",
+      "activity": "Grabbing coffee",
+      "location": "Squires",
+      "lastUpdated": "2026-05-02T20:39:32.474520+00:00"
+    },
+    {
+      "studentId": "stu-0069",
+      "status": "busy",
+      "activity": "Gym run",
+      "location": "Goodwin Hall",
+      "lastUpdated": "2026-05-02T20:41:32.474520+00:00"
+    },
+    {
+      "studentId": "stu-0070",
+      "status": "studying",
+      "activity": "Headed to class",
+      "location": "Squires",
+      "lastUpdated": "2026-05-02T20:45:32.474520+00:00"
+    }
+  ],
+  "plans": [
+    {
+      "id": "plan-0001",
+      "creatorId": "stu-0020",
+      "type": "Gym",
+      "title": "Quick lift",
+      "location": "The Drillfield",
+      "startTime": "2026-05-03T00:09:32.474520+00:00",
+      "visibility": "friends"
+    },
+    {
+      "id": "plan-0002",
+      "creatorId": "stu-0021",
+      "type": "Study",
+      "title": "Quick lift",
+      "location": "Goodwin Hall",
+      "startTime": "2026-05-02T22:20:32.474520+00:00",
+      "visibility": "friends"
+    },
+    {
+      "id": "plan-0003",
+      "creatorId": "stu-0039",
+      "type": "Food",
+      "title": "Quick lift",
+      "location": "The Drillfield",
+      "startTime": "2026-05-02T23:02:32.474520+00:00",
+      "visibility": "friends"
+    },
+    {
+      "id": "plan-0004",
+      "creatorId": "stu-0015",
+      "type": "Study",
+      "title": "Lunch run",
+      "location": "Goodwin Hall",
+      "startTime": "2026-05-02T22:32:32.474520+00:00",
+      "visibility": "friends"
+    },
+    {
+      "id": "plan-0005",
+      "creatorId": "stu-0034",
+      "type": "Gym",
+      "title": "Lunch run",
+      "location": "Goodwin Hall",
+      "startTime": "2026-05-03T00:34:32.474520+00:00",
+      "visibility": "friends"
+    },
+    {
+      "id": "plan-0006",
+      "creatorId": "stu-0022",
+      "type": "Hangout",
+      "title": "Study before class",
+      "location": "War Memorial Gym",
+      "startTime": "2026-05-02T23:27:32.474520+00:00",
+      "visibility": "friends"
+    },
+    {
+      "id": "plan-0007",
+      "creatorId": "stu-0005",
+      "type": "Food",
+      "title": "Study before class",
+      "location": "Newman Library",
+      "startTime": "2026-05-02T23:52:32.474520+00:00",
+      "visibility": "friends"
+    },
+    {
+      "id": "plan-0008",
+      "creatorId": "stu-0057",
+      "type": "Hangout",
+      "title": "Study before class",
+      "location": "Burruss Hall",
+      "startTime": "2026-05-02T21:39:32.474520+00:00",
+      "visibility": "friends"
+    },
+    {
+      "id": "plan-0009",
+      "creatorId": "stu-0027",
+      "type": "Hangout",
+      "title": "Lunch run",
+      "location": "Squires",
+      "startTime": "2026-05-02T22:29:32.474520+00:00",
+      "visibility": "friends"
+    },
+    {
+      "id": "plan-0010",
+      "creatorId": "stu-0067",
+      "type": "Study",
+      "title": "Coffee break",
+      "location": "Burruss Hall",
+      "startTime": "2026-05-02T20:45:32.474520+00:00",
+      "visibility": "friends"
+    },
+    {
+      "id": "plan-0011",
+      "creatorId": "stu-0041",
+      "type": "Hangout",
+      "title": "Quick lift",
+      "location": "The Drillfield",
+      "startTime": "2026-05-02T20:27:32.474520+00:00",
+      "visibility": "friends"
+    },
+    {
+      "id": "plan-0012",
+      "creatorId": "stu-0034",
+      "type": "Hangout",
+      "title": "Study before class",
+      "location": "War Memorial Gym",
+      "startTime": "2026-05-03T00:11:32.474520+00:00",
+      "visibility": "friends"
+    },
+    {
+      "id": "plan-0013",
+      "creatorId": "stu-0036",
+      "type": "Study",
+      "title": "Study before class",
+      "location": "Turner Place",
+      "startTime": "2026-05-02T23:44:32.474520+00:00",
+      "visibility": "friends"
+    },
+    {
+      "id": "plan-0014",
+      "creatorId": "stu-0037",
+      "type": "Gym",
+      "title": "Coffee break",
+      "location": "The Drillfield",
+      "startTime": "2026-05-03T00:59:32.474520+00:00",
+      "visibility": "friends"
+    },
+    {
+      "id": "plan-0015",
+      "creatorId": "stu-0062",
+      "type": "Study",
+      "title": "Quick lift",
+      "location": "McBryde Hall",
+      "startTime": "2026-05-02T21:57:32.474520+00:00",
+      "visibility": "friends"
+    },
+    {
+      "id": "plan-0016",
+      "creatorId": "stu-0070",
+      "type": "Hangout",
+      "title": "Quick lift",
+      "location": "Squires",
+      "startTime": "2026-05-02T22:13:32.474520+00:00",
+      "visibility": "friends"
+    },
+    {
+      "id": "plan-0017",
+      "creatorId": "stu-0038",
+      "type": "Study",
+      "title": "Lunch run",
+      "location": "The Drillfield",
+      "startTime": "2026-05-02T19:20:32.474520+00:00",
+      "visibility": "friends"
+    },
+    {
+      "id": "plan-0018",
+      "creatorId": "stu-0057",
+      "type": "Study",
+      "title": "Coffee break",
+      "location": "War Memorial Gym",
+      "startTime": "2026-05-03T00:34:32.474520+00:00",
+      "visibility": "friends"
+    },
+    {
+      "id": "plan-0019",
+      "creatorId": "stu-0026",
+      "type": "Study",
+      "title": "Quick lift",
+      "location": "Squires",
+      "startTime": "2026-05-02T23:34:32.474520+00:00",
+      "visibility": "friends"
+    },
+    {
+      "id": "plan-0020",
+      "creatorId": "stu-0014",
+      "type": "Gym",
+      "title": "Study before class",
+      "location": "Newman Library",
+      "startTime": "2026-05-03T00:14:32.474520+00:00",
+      "visibility": "friends"
+    },
+    {
+      "id": "plan-0021",
+      "creatorId": "stu-0068",
+      "type": "Gym",
+      "title": "Lunch run",
+      "location": "McBryde Hall",
+      "startTime": "2026-05-02T20:54:32.474520+00:00",
+      "visibility": "friends"
+    },
+    {
+      "id": "plan-0022",
+      "creatorId": "stu-0053",
+      "type": "Hangout",
+      "title": "Lunch run",
+      "location": "Squires",
+      "startTime": "2026-05-02T21:48:32.474520+00:00",
+      "visibility": "friends"
+    },
+    {
+      "id": "plan-0023",
+      "creatorId": "stu-0001",
+      "type": "Gym",
+      "title": "Coffee break",
+      "location": "Goodwin Hall",
+      "startTime": "2026-05-02T23:40:32.474520+00:00",
+      "visibility": "friends"
+    },
+    {
+      "id": "plan-0024",
+      "creatorId": "stu-0062",
+      "type": "Gym",
+      "title": "Quick lift",
+      "location": "The Drillfield",
+      "startTime": "2026-05-03T00:32:32.474520+00:00",
+      "visibility": "friends"
+    },
+    {
+      "id": "plan-0025",
+      "creatorId": "stu-0037",
+      "type": "Food",
+      "title": "Lunch run",
+      "location": "War Memorial Gym",
+      "startTime": "2026-05-03T00:29:32.474520+00:00",
+      "visibility": "friends"
+    },
+    {
+      "id": "plan-0026",
+      "creatorId": "stu-0069",
+      "type": "Gym",
+      "title": "Coffee break",
+      "location": "Squires",
+      "startTime": "2026-05-02T19:18:32.474520+00:00",
+      "visibility": "friends"
+    },
+    {
+      "id": "plan-0027",
+      "creatorId": "stu-0005",
+      "type": "Hangout",
+      "title": "Study before class",
+      "location": "Turner Place",
+      "startTime": "2026-05-02T22:22:32.474520+00:00",
+      "visibility": "friends"
+    },
+    {
+      "id": "plan-0028",
+      "creatorId": "stu-0005",
+      "type": "Study",
+      "title": "Lunch run",
+      "location": "The Drillfield",
+      "startTime": "2026-05-02T19:03:32.474520+00:00",
+      "visibility": "friends"
+    },
+    {
+      "id": "plan-0029",
+      "creatorId": "stu-0037",
+      "type": "Hangout",
+      "title": "Study before class",
+      "location": "Goodwin Hall",
+      "startTime": "2026-05-02T22:51:32.474520+00:00",
+      "visibility": "friends"
+    },
+    {
+      "id": "plan-0030",
+      "creatorId": "stu-0035",
+      "type": "Food",
+      "title": "Quick lift",
+      "location": "Squires",
+      "startTime": "2026-05-02T20:37:32.474520+00:00",
+      "visibility": "friends"
+    },
+    {
+      "id": "plan-0031",
+      "creatorId": "stu-0059",
+      "type": "Study",
+      "title": "Study before class",
+      "location": "Newman Library",
+      "startTime": "2026-05-03T00:30:32.474520+00:00",
+      "visibility": "friends"
+    },
+    {
+      "id": "plan-0032",
+      "creatorId": "stu-0044",
+      "type": "Gym",
+      "title": "Study before class",
+      "location": "Burruss Hall",
+      "startTime": "2026-05-02T21:30:32.474520+00:00",
+      "visibility": "friends"
+    },
+    {
+      "id": "plan-0033",
+      "creatorId": "stu-0055",
+      "type": "Study",
+      "title": "Lunch run",
+      "location": "Burruss Hall",
+      "startTime": "2026-05-02T23:22:32.474520+00:00",
+      "visibility": "friends"
+    },
+    {
+      "id": "plan-0034",
+      "creatorId": "stu-0013",
+      "type": "Gym",
+      "title": "Coffee break",
+      "location": "The Drillfield",
+      "startTime": "2026-05-02T20:33:32.474520+00:00",
+      "visibility": "friends"
+    },
+    {
+      "id": "plan-0035",
+      "creatorId": "stu-0032",
+      "type": "Study",
+      "title": "Coffee break",
+      "location": "War Memorial Gym",
+      "startTime": "2026-05-02T19:02:32.474520+00:00",
+      "visibility": "friends"
+    },
+    {
+      "id": "plan-0036",
+      "creatorId": "stu-0058",
+      "type": "Study",
+      "title": "Quick lift",
+      "location": "Newman Library",
+      "startTime": "2026-05-02T21:15:32.474520+00:00",
+      "visibility": "friends"
+    },
+    {
+      "id": "plan-0037",
+      "creatorId": "stu-0034",
+      "type": "Study",
+      "title": "Study before class",
+      "location": "Newman Library",
+      "startTime": "2026-05-03T00:33:32.474520+00:00",
+      "visibility": "friends"
+    },
+    {
+      "id": "plan-0038",
+      "creatorId": "stu-0016",
+      "type": "Study",
+      "title": "Study before class",
+      "location": "Burruss Hall",
+      "startTime": "2026-05-02T22:57:32.474520+00:00",
+      "visibility": "friends"
+    },
+    {
+      "id": "plan-0039",
+      "creatorId": "stu-0065",
+      "type": "Study",
+      "title": "Lunch run",
+      "location": "Turner Place",
+      "startTime": "2026-05-03T00:59:32.474520+00:00",
+      "visibility": "friends"
+    },
+    {
+      "id": "plan-0040",
+      "creatorId": "stu-0048",
+      "type": "Gym",
+      "title": "Study before class",
+      "location": "Squires",
+      "startTime": "2026-05-03T00:13:32.474520+00:00",
+      "visibility": "friends"
+    }
+  ]
+}

@@ -1,0 +1,505 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		09CF4DF8301B513CF2344934 /* WeekHistoryViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 645978F9DEB4C19414C1C1A3 /* WeekHistoryViews.swift */; };
+		0E6FF2211B714268C0B4EAAD /* PickerContrast.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC8A6FDE071004C27C963053 /* PickerContrast.swift */; };
+		21328AABBAEBE4D57743FD78 /* PaceCurve.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67CBBA926A754F4B3173DBC7 /* PaceCurve.swift */; };
+		218DDA096EEDE8946C36B629 /* OnboardingFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61D2B77F8F326ACD3C8AD9EE /* OnboardingFlowView.swift */; };
+		3FD5737FD5826AD7D0AE59A2 /* HeartRateZones.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56A083BF7FBFBE2FD88AB7D5 /* HeartRateZones.swift */; };
+		42BA8F9540E13E7E02D0C075 /* HealthDataAssessment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03BB4C733E584F8DB003B5B7 /* HealthDataAssessment.swift */; };
+		45D8C7C9225DA3E015C39A48 /* ShareProgressLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BABE8CC18B09AB725A37A5A /* ShareProgressLink.swift */; };
+		501FD2DFE1600B278BBBAE64 /* OnboardingCalibrator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ED46E1E8926FA3596C70B31 /* OnboardingCalibrator.swift */; };
+		503F0D311F303FCB052B1306 /* DayTilesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 257973E887DFBB6D07ADC153 /* DayTilesView.swift */; };
+		55D81672DBF53571F934CD1B /* StokeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 075D5252C7CB9314ED71871B /* StokeApp.swift */; };
+		5F6A2BFF121B4EC1FCFB78DA /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5E0315F0E3580CFD61371F2 /* RootView.swift */; };
+		62082F026260E175F1009881 /* WeekHistoryFormatting.swift in Sources */ = {isa = PBXBuildFile; fileRef = C579196A3BA0EDDB5DECEDAC /* WeekHistoryFormatting.swift */; };
+		650C6D6CF19A6AC45CE3BBA4 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 407FC25F5E3B2AA524F2F68E /* Theme.swift */; };
+		6A27B59486C82888C876D589 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0C704E32E98553B9B4283C0 /* HomeView.swift */; };
+		7356879E028A75D691AC6BE0 /* ProgramStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFF77AD44C31C7DED9175683 /* ProgramStore.swift */; };
+		7987059526FACDF314465363 /* GamificationViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AB2E5452EE083537F14A9C5 /* GamificationViews.swift */; };
+		8DBD8FB52710EA922D5DFCEF /* HealthKitService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 815FE7A7FEF4A236D965B0ED /* HealthKitService.swift */; };
+		927044B4AFFE736AECCD34D7 /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8CC29A4F23AD9A86F49A9B0 /* ProfileView.swift */; };
+		9CA40569A3ECB3A601379572 /* PersistenceModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51FA9440359937A65776D40C /* PersistenceModels.swift */; };
+		9DB9E7008D2A842C483AB039 /* PaceNudgeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EA90787506C3887BCC622A4 /* PaceNudgeService.swift */; };
+		A9BB1211B23383EC5F32A195 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F38ADD14204A6723093CCE4C /* Assets.xcassets */; };
+		AA58F246B036EBA2A507E301 /* HealthKitSyncCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5576F2E91D2122412F9F9E6 /* HealthKitSyncCoordinator.swift */; };
+		AB47CAE77AA02DC597BE6A30 /* FamilyProgressSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0577C446DA85F358E594D64C /* FamilyProgressSheet.swift */; };
+		BE679EFB619705355208FB82 /* StokeShareCertificate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1385584DCEEC93709B90FC8A /* StokeShareCertificate.swift */; };
+		CDABF57E33EB2971B7523F73 /* StokeShareCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 735B25593FA21F12D1791C87 /* StokeShareCardView.swift */; };
+		CDDB8202EC73793C82503171 /* WeekPeriod.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F692B6FC2A9D5D286E90C9C /* WeekPeriod.swift */; };
+		D168D7776F8EE9417A7DF269 /* UserGender.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22C638E51639647EB3948475 /* UserGender.swift */; };
+		DFE59C1A2CE87B70F8035B6F /* WeekProgressRingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A53E10F88DFFF0734EC5867E /* WeekProgressRingView.swift */; };
+		E5270DD53E6DA011993FB374 /* Gamification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F087EC46DF3628A1AEADE28 /* Gamification.swift */; };
+		EBCBC7D67086FB54E387C722 /* WeekProgression.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7647D94D3C1A99D898A2B35 /* WeekProgression.swift */; };
+		F7D90462A983F0B5E2F89240 /* PaceMessaging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B9741C39ACB1288A7E650C1 /* PaceMessaging.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		03BB4C733E584F8DB003B5B7 /* HealthDataAssessment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthDataAssessment.swift; sourceTree = "<group>"; };
+		0577C446DA85F358E594D64C /* FamilyProgressSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamilyProgressSheet.swift; sourceTree = "<group>"; };
+		075D5252C7CB9314ED71871B /* StokeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StokeApp.swift; sourceTree = "<group>"; };
+		0EA90787506C3887BCC622A4 /* PaceNudgeService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaceNudgeService.swift; sourceTree = "<group>"; };
+		1385584DCEEC93709B90FC8A /* StokeShareCertificate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StokeShareCertificate.swift; sourceTree = "<group>"; };
+		22C638E51639647EB3948475 /* UserGender.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserGender.swift; sourceTree = "<group>"; };
+		257973E887DFBB6D07ADC153 /* DayTilesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayTilesView.swift; sourceTree = "<group>"; };
+		2AB2E5452EE083537F14A9C5 /* GamificationViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GamificationViews.swift; sourceTree = "<group>"; };
+		2F692B6FC2A9D5D286E90C9C /* WeekPeriod.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekPeriod.swift; sourceTree = "<group>"; };
+		407FC25F5E3B2AA524F2F68E /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		51FA9440359937A65776D40C /* PersistenceModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceModels.swift; sourceTree = "<group>"; };
+		56A083BF7FBFBE2FD88AB7D5 /* HeartRateZones.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeartRateZones.swift; sourceTree = "<group>"; };
+		5F087EC46DF3628A1AEADE28 /* Gamification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Gamification.swift; sourceTree = "<group>"; };
+		61D2B77F8F326ACD3C8AD9EE /* OnboardingFlowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingFlowView.swift; sourceTree = "<group>"; };
+		645978F9DEB4C19414C1C1A3 /* WeekHistoryViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekHistoryViews.swift; sourceTree = "<group>"; };
+		67CBBA926A754F4B3173DBC7 /* PaceCurve.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaceCurve.swift; sourceTree = "<group>"; };
+		6BABE8CC18B09AB725A37A5A /* ShareProgressLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareProgressLink.swift; sourceTree = "<group>"; };
+		735B25593FA21F12D1791C87 /* StokeShareCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StokeShareCardView.swift; sourceTree = "<group>"; };
+		815FE7A7FEF4A236D965B0ED /* HealthKitService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthKitService.swift; sourceTree = "<group>"; };
+		8ED46E1E8926FA3596C70B31 /* OnboardingCalibrator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingCalibrator.swift; sourceTree = "<group>"; };
+		9B9741C39ACB1288A7E650C1 /* PaceMessaging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaceMessaging.swift; sourceTree = "<group>"; };
+		A53E10F88DFFF0734EC5867E /* WeekProgressRingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekProgressRingView.swift; sourceTree = "<group>"; };
+		A8CC29A4F23AD9A86F49A9B0 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
+		AFF77AD44C31C7DED9175683 /* ProgramStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgramStore.swift; sourceTree = "<group>"; };
+		C0156A7D7F57EE0C88046252 /* Stoke.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Stoke.entitlements; sourceTree = "<group>"; };
+		C579196A3BA0EDDB5DECEDAC /* WeekHistoryFormatting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekHistoryFormatting.swift; sourceTree = "<group>"; };
+		C68965E480CE5DAFB28199B3 /* Stoke.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Stoke.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C7647D94D3C1A99D898A2B35 /* WeekProgression.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekProgression.swift; sourceTree = "<group>"; };
+		D5576F2E91D2122412F9F9E6 /* HealthKitSyncCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthKitSyncCoordinator.swift; sourceTree = "<group>"; };
+		D5E0315F0E3580CFD61371F2 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		DC8A6FDE071004C27C963053 /* PickerContrast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickerContrast.swift; sourceTree = "<group>"; };
+		F0C704E32E98553B9B4283C0 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		F38ADD14204A6723093CCE4C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		0C012AC94B1EB2FE7E7D8B0A /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				1B46A51F4F9FCFFE5EFDDACE /* Gamification */,
+				CD2CF629955E489B0F82F097 /* Home */,
+				CA2F4E6C5DD687E254BBBFD2 /* Onboarding */,
+				1D620C1F908D25CD1F72FB5C /* Profile */,
+				62B5DA979F1AADA99A33F9E3 /* Share */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		1846096A8AEB67626C0AA58C /* Stoke */ = {
+			isa = PBXGroup;
+			children = (
+				F38ADD14204A6723093CCE4C /* Assets.xcassets */,
+				DC8A6FDE071004C27C963053 /* PickerContrast.swift */,
+				D5E0315F0E3580CFD61371F2 /* RootView.swift */,
+				C0156A7D7F57EE0C88046252 /* Stoke.entitlements */,
+				075D5252C7CB9314ED71871B /* StokeApp.swift */,
+				407FC25F5E3B2AA524F2F68E /* Theme.swift */,
+				A4A64B840945F51F88028FCB /* Models */,
+				20AC0D415911BFA42285076B /* Services */,
+				C4F29388A32292562AF92412 /* Utilities */,
+				0C012AC94B1EB2FE7E7D8B0A /* Views */,
+			);
+			path = Stoke;
+			sourceTree = "<group>";
+		};
+		1B46A51F4F9FCFFE5EFDDACE /* Gamification */ = {
+			isa = PBXGroup;
+			children = (
+				0577C446DA85F358E594D64C /* FamilyProgressSheet.swift */,
+				2AB2E5452EE083537F14A9C5 /* GamificationViews.swift */,
+			);
+			path = Gamification;
+			sourceTree = "<group>";
+		};
+		1D620C1F908D25CD1F72FB5C /* Profile */ = {
+			isa = PBXGroup;
+			children = (
+				A8CC29A4F23AD9A86F49A9B0 /* ProfileView.swift */,
+				645978F9DEB4C19414C1C1A3 /* WeekHistoryViews.swift */,
+			);
+			path = Profile;
+			sourceTree = "<group>";
+		};
+		20AC0D415911BFA42285076B /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				03BB4C733E584F8DB003B5B7 /* HealthDataAssessment.swift */,
+				815FE7A7FEF4A236D965B0ED /* HealthKitService.swift */,
+				D5576F2E91D2122412F9F9E6 /* HealthKitSyncCoordinator.swift */,
+				8ED46E1E8926FA3596C70B31 /* OnboardingCalibrator.swift */,
+				0EA90787506C3887BCC622A4 /* PaceNudgeService.swift */,
+				AFF77AD44C31C7DED9175683 /* ProgramStore.swift */,
+				C7647D94D3C1A99D898A2B35 /* WeekProgression.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		41A5AE437C81E309B21D01DF /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				C68965E480CE5DAFB28199B3 /* Stoke.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		62B5DA979F1AADA99A33F9E3 /* Share */ = {
+			isa = PBXGroup;
+			children = (
+				6BABE8CC18B09AB725A37A5A /* ShareProgressLink.swift */,
+				735B25593FA21F12D1791C87 /* StokeShareCardView.swift */,
+			);
+			path = Share;
+			sourceTree = "<group>";
+		};
+		975800F050F89CFF7A6246E2 = {
+			isa = PBXGroup;
+			children = (
+				1846096A8AEB67626C0AA58C /* Stoke */,
+				41A5AE437C81E309B21D01DF /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		A4A64B840945F51F88028FCB /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				5F087EC46DF3628A1AEADE28 /* Gamification.swift */,
+				56A083BF7FBFBE2FD88AB7D5 /* HeartRateZones.swift */,
+				51FA9440359937A65776D40C /* PersistenceModels.swift */,
+				22C638E51639647EB3948475 /* UserGender.swift */,
+				2F692B6FC2A9D5D286E90C9C /* WeekPeriod.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		C4F29388A32292562AF92412 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				67CBBA926A754F4B3173DBC7 /* PaceCurve.swift */,
+				9B9741C39ACB1288A7E650C1 /* PaceMessaging.swift */,
+				1385584DCEEC93709B90FC8A /* StokeShareCertificate.swift */,
+				C579196A3BA0EDDB5DECEDAC /* WeekHistoryFormatting.swift */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
+		CA2F4E6C5DD687E254BBBFD2 /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				61D2B77F8F326ACD3C8AD9EE /* OnboardingFlowView.swift */,
+			);
+			path = Onboarding;
+			sourceTree = "<group>";
+		};
+		CD2CF629955E489B0F82F097 /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				257973E887DFBB6D07ADC153 /* DayTilesView.swift */,
+				F0C704E32E98553B9B4283C0 /* HomeView.swift */,
+				A53E10F88DFFF0734EC5867E /* WeekProgressRingView.swift */,
+			);
+			path = Home;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A512768A2BAE01A839D4C455 /* Stoke */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5FE839F2113DFB8AC8D2C0D9 /* Build configuration list for PBXNativeTarget "Stoke" */;
+			buildPhases = (
+				BB4CEAC9510A4E9E6274A94D /* Sources */,
+				54B0D39D626767FF1A0789D2 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Stoke;
+			packageProductDependencies = (
+			);
+			productName = Stoke;
+			productReference = C68965E480CE5DAFB28199B3 /* Stoke.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		2D31998F960C3C351293DF87 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+			};
+			buildConfigurationList = 952B71507E6AE70DEA963C7D /* Build configuration list for PBXProject "Stoke" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 975800F050F89CFF7A6246E2;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 41A5AE437C81E309B21D01DF /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A512768A2BAE01A839D4C455 /* Stoke */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		54B0D39D626767FF1A0789D2 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A9BB1211B23383EC5F32A195 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		BB4CEAC9510A4E9E6274A94D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				503F0D311F303FCB052B1306 /* DayTilesView.swift in Sources */,
+				AB47CAE77AA02DC597BE6A30 /* FamilyProgressSheet.swift in Sources */,
+				E5270DD53E6DA011993FB374 /* Gamification.swift in Sources */,
+				7987059526FACDF314465363 /* GamificationViews.swift in Sources */,
+				42BA8F9540E13E7E02D0C075 /* HealthDataAssessment.swift in Sources */,
+				8DBD8FB52710EA922D5DFCEF /* HealthKitService.swift in Sources */,
+				AA58F246B036EBA2A507E301 /* HealthKitSyncCoordinator.swift in Sources */,
+				3FD5737FD5826AD7D0AE59A2 /* HeartRateZones.swift in Sources */,
+				6A27B59486C82888C876D589 /* HomeView.swift in Sources */,
+				501FD2DFE1600B278BBBAE64 /* OnboardingCalibrator.swift in Sources */,
+				218DDA096EEDE8946C36B629 /* OnboardingFlowView.swift in Sources */,
+				21328AABBAEBE4D57743FD78 /* PaceCurve.swift in Sources */,
+				F7D90462A983F0B5E2F89240 /* PaceMessaging.swift in Sources */,
+				9DB9E7008D2A842C483AB039 /* PaceNudgeService.swift in Sources */,
+				9CA40569A3ECB3A601379572 /* PersistenceModels.swift in Sources */,
+				0E6FF2211B714268C0B4EAAD /* PickerContrast.swift in Sources */,
+				927044B4AFFE736AECCD34D7 /* ProfileView.swift in Sources */,
+				7356879E028A75D691AC6BE0 /* ProgramStore.swift in Sources */,
+				5F6A2BFF121B4EC1FCFB78DA /* RootView.swift in Sources */,
+				45D8C7C9225DA3E015C39A48 /* ShareProgressLink.swift in Sources */,
+				55D81672DBF53571F934CD1B /* StokeApp.swift in Sources */,
+				CDABF57E33EB2971B7523F73 /* StokeShareCardView.swift in Sources */,
+				BE679EFB619705355208FB82 /* StokeShareCertificate.swift in Sources */,
+				650C6D6CF19A6AC45CE3BBA4 /* Theme.swift in Sources */,
+				D168D7776F8EE9417A7DF269 /* UserGender.swift in Sources */,
+				62082F026260E175F1009881 /* WeekHistoryFormatting.swift in Sources */,
+				09CF4DF8301B513CF2344934 /* WeekHistoryViews.swift in Sources */,
+				CDDB8202EC73793C82503171 /* WeekPeriod.swift in Sources */,
+				DFE59C1A2CE87B70F8035B6F /* WeekProgressRingView.swift in Sources */,
+				EBCBC7D67086FB54E387C722 /* WeekProgression.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		587A3C676F7E1CCA5525E31D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		6F3818C3B6004F57FB3CF20B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Stoke/Stoke.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = SPDTT4AL46;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Stoke;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "Stoke reads heart rate and resting heart rate from Apple Health to estimate effort (including heart-rate reserve when available) and your weekly goal. Nothing is shared or sold.";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.hirschengineering.stoke;
+				PRODUCT_NAME = Stoke;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		AFD439632EF357E85A03A466 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		DEE66A1C1EED59F5AAF11E66 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Stoke/Stoke.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = SPDTT4AL46;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Stoke;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "Stoke reads heart rate and resting heart rate from Apple Health to estimate effort (including heart-rate reserve when available) and your weekly goal. Nothing is shared or sold.";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.hirschengineering.stoke;
+				PRODUCT_NAME = Stoke;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		5FE839F2113DFB8AC8D2C0D9 /* Build configuration list for PBXNativeTarget "Stoke" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DEE66A1C1EED59F5AAF11E66 /* Debug */,
+				6F3818C3B6004F57FB3CF20B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		952B71507E6AE70DEA963C7D /* Build configuration list for PBXProject "Stoke" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				587A3C676F7E1CCA5525E31D /* Debug */,
+				AFD439632EF357E85A03A466 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 2D31998F960C3C351293DF87 /* Project object */;
+}

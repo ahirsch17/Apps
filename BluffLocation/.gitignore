@@ -1,0 +1,125 @@
+# ===================================
+# DEPENDENCIES
+# ===================================
+node_modules/
+.npm/
+.yarn/
+.pnp.*
+.yarn-integrity
+
+# ===================================
+# REACT NATIVE
+# ===================================
+*.log
+
+# ===================================
+# BUILD OUTPUTS
+# ===================================
+# iOS - Keep project files, exclude builds
+ios/Pods/
+ios/build/
+ios/DerivedData/
+ios/*.xcworkspace/xcuserdata/
+ios/*.xcodeproj/xcuserdata/
+ios/*.xcodeproj/project.xcworkspace/xcuserdata/
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# ===================================
+# METRO / BUNDLER
+# ===================================
+.metro/
+.metro-health-check*
+.haste_cache/
+.haste-map*
+.history/
+metro.config.js.bak
+metro-cache/
+
+# ===================================
+# DEBUG & LOGS
+# ===================================
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+*.log
+logs/
+
+# ===================================
+# ENVIRONMENT
+# ===================================
+.env
+.env.local
+.env.production
+.env.development
+.env.test
+.env*.local
+
+# ===================================
+# IDE & EDITOR
+# ===================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+*.launch
+.settings/
+
+# ===================================
+# OPERATING SYSTEM
+# ===================================
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+.Spotlight-V100
+.Trashes
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+
+# ===================================
+# TEMPORARY FILES
+# ===================================
+*.tmp
+*.temp
+*.bak
+*.backup
+*.orig
+*.save
+*.sav
+
+# ===================================
+# PACKAGE MANAGER SPECIFIC
+# ===================================
+# npm - KEEP package-lock.json for consistency
+# package-lock.json  <-- COMMENTED OUT or remove this line
+
+# Yarn
+# yarn.lock  <-- COMMENTED OUT or remove this line
+.yarn/cache/
+.yarn/unplugged/
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*
+
+# ===================================
+# TEST COVERAGE
+# ===================================
+coverage/
+.nyc_output/
+
+# ===================================
+# TYPESCRIPT (if used)
+# ===================================
+*.tsbuildinfo

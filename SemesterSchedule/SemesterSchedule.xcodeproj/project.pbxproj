@@ -1,0 +1,470 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		2622CE9BFC680A601DF7A571 /* WeeklyGridPasteGoldenTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB52F6772B9E4EE950905D09 /* WeeklyGridPasteGoldenTests.swift */; };
+		296D23B46D8EF8C05D922048 /* VTTabularExport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D47A9C7736BC170C8B3E78C /* VTTabularExport.swift */; };
+		31DE6DADFD61A4E06DAF23D5 /* EditableScheduleEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEFC3F1D14A346E74DFAB7C2 /* EditableScheduleEvent.swift */; };
+		3C218F498DE2D9831A6C0768 /* CalendarImportService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 924F985238A062472745D4FF /* CalendarImportService.swift */; };
+		43A3F25A46F090CB2FBF29D8 /* SemesterScheduleApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344C2DFEBAA3ADA8E2658E39 /* SemesterScheduleApp.swift */; };
+		71E174974DCB6E0CD20F36E8 /* ScheduleTextParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CD3AD31F6C813FC3CAD585D /* ScheduleTextParser.swift */; };
+		8926AD446F30E16B36485965 /* StructuredScheduleExport.swift in Sources */ = {isa = PBXBuildFile; fileRef = C538219FD9A4AC8CFAF30EC5 /* StructuredScheduleExport.swift */; };
+		9077E596158C7960271B8B7C /* VTTabularPasteGoldenTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85AC506466142B4A31557ECC /* VTTabularPasteGoldenTests.swift */; };
+		9FE411749A8B00280CEA0C86 /* TableLikePasteGoldenTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC6A78F97616E094E0943C3B /* TableLikePasteGoldenTests.swift */; };
+		BDED8F6B666293ADA9DEBF87 /* VerticalPasteEmailWrapperGoldenTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3502B4E2C73A42B529F2A6B8 /* VerticalPasteEmailWrapperGoldenTests.swift */; };
+		C617D52501757C621D797EA1 /* BannerNursingFixtureTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 285C01B4E34B68020F124071 /* BannerNursingFixtureTests.swift */; };
+		D41BB2FEA19D462A66747216 /* VTTabularScheduleParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = E505D1ADBE9B7D6ACFA783A3 /* VTTabularScheduleParser.swift */; };
+		DCB90A4F436220A93F6EA4C7 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C43C0AF7E46D572044140B2 /* ContentView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		35B9ED66E20C26A6110A8175 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = ACD841B984C9CC677CBB2E41 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3185399F3DA02451AF446DA9;
+			remoteInfo = SemesterSchedule;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		0C43C0AF7E46D572044140B2 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		10B85DACE9E3655D9A4CACF2 /* SemesterSchedule.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = SemesterSchedule.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		285C01B4E34B68020F124071 /* BannerNursingFixtureTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerNursingFixtureTests.swift; sourceTree = "<group>"; };
+		344C2DFEBAA3ADA8E2658E39 /* SemesterScheduleApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SemesterScheduleApp.swift; sourceTree = "<group>"; };
+		3502B4E2C73A42B529F2A6B8 /* VerticalPasteEmailWrapperGoldenTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerticalPasteEmailWrapperGoldenTests.swift; sourceTree = "<group>"; };
+		3CD3AD31F6C813FC3CAD585D /* ScheduleTextParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleTextParser.swift; sourceTree = "<group>"; };
+		3D47A9C7736BC170C8B3E78C /* VTTabularExport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VTTabularExport.swift; sourceTree = "<group>"; };
+		67B7056B76FB3A4BED83DFD4 /* SemesterScheduleTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = SemesterScheduleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		85AC506466142B4A31557ECC /* VTTabularPasteGoldenTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VTTabularPasteGoldenTests.swift; sourceTree = "<group>"; };
+		924F985238A062472745D4FF /* CalendarImportService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarImportService.swift; sourceTree = "<group>"; };
+		AB52F6772B9E4EE950905D09 /* WeeklyGridPasteGoldenTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyGridPasteGoldenTests.swift; sourceTree = "<group>"; };
+		BEFC3F1D14A346E74DFAB7C2 /* EditableScheduleEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditableScheduleEvent.swift; sourceTree = "<group>"; };
+		C538219FD9A4AC8CFAF30EC5 /* StructuredScheduleExport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StructuredScheduleExport.swift; sourceTree = "<group>"; };
+		E505D1ADBE9B7D6ACFA783A3 /* VTTabularScheduleParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VTTabularScheduleParser.swift; sourceTree = "<group>"; };
+		EC6A78F97616E094E0943C3B /* TableLikePasteGoldenTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableLikePasteGoldenTests.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		374C203CCE4A865BDC0E6FEB /* SemesterSchedule */ = {
+			isa = PBXGroup;
+			children = (
+				0C43C0AF7E46D572044140B2 /* ContentView.swift */,
+				344C2DFEBAA3ADA8E2658E39 /* SemesterScheduleApp.swift */,
+				6A3228A85288EF68D7E43DB1 /* Models */,
+				E849423E4312D029D555C6E3 /* Services */,
+			);
+			path = SemesterSchedule;
+			sourceTree = "<group>";
+		};
+		6A3228A85288EF68D7E43DB1 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				BEFC3F1D14A346E74DFAB7C2 /* EditableScheduleEvent.swift */,
+				C538219FD9A4AC8CFAF30EC5 /* StructuredScheduleExport.swift */,
+				3D47A9C7736BC170C8B3E78C /* VTTabularExport.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		93FB5D3EADB21A493F0923C1 = {
+			isa = PBXGroup;
+			children = (
+				374C203CCE4A865BDC0E6FEB /* SemesterSchedule */,
+				CDDCB2CEB527870C4EFA984D /* SemesterScheduleTests */,
+				C590A22898B6AA7C3766647B /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		C590A22898B6AA7C3766647B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				10B85DACE9E3655D9A4CACF2 /* SemesterSchedule.app */,
+				67B7056B76FB3A4BED83DFD4 /* SemesterScheduleTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		CDDCB2CEB527870C4EFA984D /* SemesterScheduleTests */ = {
+			isa = PBXGroup;
+			children = (
+				285C01B4E34B68020F124071 /* BannerNursingFixtureTests.swift */,
+				EC6A78F97616E094E0943C3B /* TableLikePasteGoldenTests.swift */,
+				3502B4E2C73A42B529F2A6B8 /* VerticalPasteEmailWrapperGoldenTests.swift */,
+				85AC506466142B4A31557ECC /* VTTabularPasteGoldenTests.swift */,
+				AB52F6772B9E4EE950905D09 /* WeeklyGridPasteGoldenTests.swift */,
+			);
+			path = SemesterScheduleTests;
+			sourceTree = "<group>";
+		};
+		E849423E4312D029D555C6E3 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				924F985238A062472745D4FF /* CalendarImportService.swift */,
+				3CD3AD31F6C813FC3CAD585D /* ScheduleTextParser.swift */,
+				E505D1ADBE9B7D6ACFA783A3 /* VTTabularScheduleParser.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		25D77C4E22A701AEB3945F88 /* SemesterScheduleTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 97F2D5B7BEA8DE748B72966C /* Build configuration list for PBXNativeTarget "SemesterScheduleTests" */;
+			buildPhases = (
+				AFDEE8995E54136CCBD2D0D2 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				486DEEC433130C70826451A7 /* PBXTargetDependency */,
+			);
+			name = SemesterScheduleTests;
+			packageProductDependencies = (
+			);
+			productName = SemesterScheduleTests;
+			productReference = 67B7056B76FB3A4BED83DFD4 /* SemesterScheduleTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		3185399F3DA02451AF446DA9 /* SemesterSchedule */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D4609B3C127BAA2C281F9E01 /* Build configuration list for PBXNativeTarget "SemesterSchedule" */;
+			buildPhases = (
+				220FF0C0E027F964446E34F5 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SemesterSchedule;
+			packageProductDependencies = (
+			);
+			productName = SemesterSchedule;
+			productReference = 10B85DACE9E3655D9A4CACF2 /* SemesterSchedule.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		ACD841B984C9CC677CBB2E41 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					3185399F3DA02451AF446DA9 = {
+						DevelopmentTeam = "";
+					};
+				};
+			};
+			buildConfigurationList = 6EAB728207A7431035081832 /* Build configuration list for PBXProject "SemesterSchedule" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 93FB5D3EADB21A493F0923C1;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = C590A22898B6AA7C3766647B /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				3185399F3DA02451AF446DA9 /* SemesterSchedule */,
+				25D77C4E22A701AEB3945F88 /* SemesterScheduleTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		220FF0C0E027F964446E34F5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3C218F498DE2D9831A6C0768 /* CalendarImportService.swift in Sources */,
+				DCB90A4F436220A93F6EA4C7 /* ContentView.swift in Sources */,
+				31DE6DADFD61A4E06DAF23D5 /* EditableScheduleEvent.swift in Sources */,
+				71E174974DCB6E0CD20F36E8 /* ScheduleTextParser.swift in Sources */,
+				43A3F25A46F090CB2FBF29D8 /* SemesterScheduleApp.swift in Sources */,
+				8926AD446F30E16B36485965 /* StructuredScheduleExport.swift in Sources */,
+				296D23B46D8EF8C05D922048 /* VTTabularExport.swift in Sources */,
+				D41BB2FEA19D462A66747216 /* VTTabularScheduleParser.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AFDEE8995E54136CCBD2D0D2 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C617D52501757C621D797EA1 /* BannerNursingFixtureTests.swift in Sources */,
+				9FE411749A8B00280CEA0C86 /* TableLikePasteGoldenTests.swift in Sources */,
+				9077E596158C7960271B8B7C /* VTTabularPasteGoldenTests.swift in Sources */,
+				BDED8F6B666293ADA9DEBF87 /* VerticalPasteEmailWrapperGoldenTests.swift in Sources */,
+				2622CE9BFC680A601DF7A571 /* WeeklyGridPasteGoldenTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		486DEEC433130C70826451A7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3185399F3DA02451AF446DA9 /* SemesterSchedule */;
+			targetProxy = 35B9ED66E20C26A6110A8175 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		0D4A6BA65D27AA60822C852F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.alexhirsch.semesterschedule.tests;
+				PRODUCT_NAME = SemesterScheduleTests;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SemesterSchedule.app/SemesterSchedule";
+			};
+			name = Release;
+		};
+		3B68B3D588EF125FE0CB4BE5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		652488BE494121AFCC6CAA22 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Schedule;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
+				INFOPLIST_KEY_NSCalendarsFullAccessUsageDescription = "Schedule needs calendar access to save the meetings you review. Nothing is saved until you tap Add to Calendar.";
+				INFOPLIST_KEY_NSCalendarsUsageDescription = "Schedule adds class meetings you approve to your calendar.";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.alexhirsch.semesterschedule;
+				PRODUCT_NAME = SemesterSchedule;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		74BC12B705665A04249872F6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.alexhirsch.semesterschedule.tests;
+				PRODUCT_NAME = SemesterScheduleTests;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SemesterSchedule.app/SemesterSchedule";
+			};
+			name = Debug;
+		};
+		CD48DFAFCBEC7101DB57C4C8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Schedule;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
+				INFOPLIST_KEY_NSCalendarsFullAccessUsageDescription = "Schedule needs calendar access to save the meetings you review. Nothing is saved until you tap Add to Calendar.";
+				INFOPLIST_KEY_NSCalendarsUsageDescription = "Schedule adds class meetings you approve to your calendar.";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.alexhirsch.semesterschedule;
+				PRODUCT_NAME = SemesterSchedule;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		DC9234294B4406C336F36CAB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		6EAB728207A7431035081832 /* Build configuration list for PBXProject "SemesterSchedule" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DC9234294B4406C336F36CAB /* Debug */,
+				3B68B3D588EF125FE0CB4BE5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		97F2D5B7BEA8DE748B72966C /* Build configuration list for PBXNativeTarget "SemesterScheduleTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				74BC12B705665A04249872F6 /* Debug */,
+				0D4A6BA65D27AA60822C852F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		D4609B3C127BAA2C281F9E01 /* Build configuration list for PBXNativeTarget "SemesterSchedule" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CD48DFAFCBEC7101DB57C4C8 /* Debug */,
+				652488BE494121AFCC6CAA22 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = ACD841B984C9CC677CBB2E41 /* Project object */;
+}

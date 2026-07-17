@@ -57,7 +57,7 @@ export default function LobbyScreen() {
           </Text>
           
           <Text style={styles.subtitle}>
-            A game of words, clues, and deduction
+            Advanced mobile Codenames-style play—secret words, one-word clues, and deduction
           </Text>
 
           <View style={styles.buttonContainer}>

@@ -1,0 +1,31 @@
+name: Stoke
+options:
+  minimumXcodeGenVersion: 2.38.0
+  deploymentTarget:
+    iOS: "17.0"
+targets:
+  Stoke:
+    type: application
+    platform: iOS
+    sources:
+      - Stoke
+    resources:
+      - Stoke/Assets.xcassets
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.hirschengineering.stoke
+        PRODUCT_NAME: Stoke
+        TARGETED_DEVICE_FAMILY: 1
+        SWIFT_VERSION: 5.0
+        GENERATE_INFOPLIST_FILE: YES
+        CODE_SIGN_ENTITLEMENTS: Stoke/Stoke.entitlements
+        INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES
+        INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents: YES
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone: UIInterfaceOrientationPortrait
+        INFOPLIST_KEY_CFBundleDisplayName: Stoke
+        INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.healthcare-fitness
+        INFOPLIST_KEY_NSHealthShareUsageDescription: Stoke reads heart rate and resting heart rate from Apple Health to estimate effort (including heart-rate reserve when available) and your weekly goal. Nothing is shared or sold.
+        DEVELOPMENT_TEAM: SPDTT4AL46
+    scheme:
+      testTargets: []

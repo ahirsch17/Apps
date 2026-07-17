@@ -2,6 +2,7 @@
   "expo": {
     "name": "Encrypted",
     "slug": "Encrypted",
+    "description": "Advanced mobile word-and-clue play inspired by the party game Codenames.",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/MainScreensBackground.png",

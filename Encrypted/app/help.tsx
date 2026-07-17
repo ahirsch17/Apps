@@ -28,6 +28,16 @@ export default function HelpScreen() {
           <View style={styles.content}>
             <Text style={[styles.title, { fontFamily: 'Cinzel_700Bold' }]}>How to Play</Text>
 
+            <View style={[styles.section, styles.inspiredBox]}>
+              <Text style={styles.text}>
+                Encrypted is an advanced mobile take on the party word game{' '}
+                <Text style={styles.bold}>Codenames</Text>
+                {' '}(Vlaada Chvátil). Same core idea—two teams, secret identities on a word grid, and
+                careful clues—but tuned for phone play. Not affiliated with Czech Games Edition or the
+                Codenames trademark.
+              </Text>
+            </View>
+
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>🎯 Objective</Text>
               <Text style={styles.text}>
@@ -135,6 +145,10 @@ const styles = StyleSheet.create({
     textShadowColor: 'rgba(0, 0, 0, 0.9)',
     textShadowOffset: { width: 2, height: 2 },
     textShadowRadius: 6,
+  },
+  inspiredBox: {
+    borderColor: 'rgba(255, 215, 0, 0.35)',
+    borderWidth: 1,
   },
   section: {
     backgroundColor: 'rgba(255, 255, 255, 0.12)',

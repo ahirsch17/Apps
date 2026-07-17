@@ -1,0 +1,48 @@
+name: SemesterSchedule
+options:
+  minimumXcodeGenVersion: 2.38.0
+  deploymentTarget:
+    iOS: "17.0"
+targets:
+  SemesterSchedule:
+    type: application
+    platform: iOS
+    sources:
+      - path: SemesterSchedule
+        excludes:
+          - Assets.xcassets
+    resources:
+      - SemesterSchedule/Assets.xcassets
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.alexhirsch.semesterschedule
+        PRODUCT_NAME: SemesterSchedule
+        SWIFT_VERSION: 5.0
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES
+        INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents: YES
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone: UIInterfaceOrientationPortrait
+        INFOPLIST_KEY_CFBundleDisplayName: Schedule
+        INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.education
+        INFOPLIST_KEY_NSCalendarsUsageDescription: Schedule adds class meetings you approve to your calendar.
+        INFOPLIST_KEY_NSCalendarsFullAccessUsageDescription: Schedule needs calendar access to save the meetings you review. Nothing is saved until you tap Add to Calendar.
+        DEVELOPMENT_TEAM: ""
+    scheme:
+      testTargets:
+        - SemesterScheduleTests
+
+  SemesterScheduleTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: SemesterScheduleTests
+    dependencies:
+      - target: SemesterSchedule
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.alexhirsch.semesterschedule.tests
+        PRODUCT_NAME: SemesterScheduleTests
+        SWIFT_VERSION: 5.0
+        GENERATE_INFOPLIST_FILE: YES
+        TARGETED_DEVICE_FAMILY: "1,2"
