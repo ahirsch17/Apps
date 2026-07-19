@@ -66,34 +66,36 @@ enum VTTabularScheduleParser {
         semesterEnd: Date
     ) -> [EditableScheduleEvent] {
         rows.map { row in
-            let (sh, sm, eh, em) = placeholderTimes(for: row)
+            let tba = row.timeStart == nil || row.timeEnd == nil
+            let sh = row.timeStart?.hour ?? 0
+            let sm = row.timeStart?.minute ?? 0
+            let eh = row.timeEnd?.hour ?? 0
+            let em = row.timeEnd?.minute ?? 0
             let locDisplay: String = {
                 let t = row.locationToken.trimmingCharacters(in: .whitespaces)
                 if t.uppercased() == "ONLINE" { return "Online" }
                 return t
             }()
-            let kind: String = row.modality.lowercased().hasPrefix("face-to-face") ? "Class" : "Online"
+            let kind: String = {
+                if tba { return "TBA" }
+                return row.modality.lowercased().hasPrefix("face-to-face") ? "Class" : "Online"
+            }()
             return EditableScheduleEvent(
                 title: row.title,
                 location: locDisplay,
                 notes: "CRN \(row.crn)\n\(row.courseCode)\n\(row.modality)",
                 semesterStart: semesterStart,
                 semesterEnd: semesterEnd,
-                weekdays: row.weekdayNumbers,
+                weekdays: tba ? [] : row.weekdayNumbers,
                 startHour: sh,
                 startMinute: sm,
                 endHour: eh,
                 endMinute: em,
-                sessionKind: kind
+                sessionKind: kind,
+                isSelected: tba == false,
+                isTBA: tba
             )
         }
-    }
-
-    private static func placeholderTimes(for row: VTTabularParsedRow) -> (Int, Int, Int, Int) {
-        if let s = row.timeStart, let e = row.timeEnd {
-            return (s.hour, s.minute, e.hour, e.minute)
-        }
-        return (9, 0, 10, 0)
     }
 
     private static func flattenRecords(_ lines: [String]) -> [String] {
@@ -270,9 +272,13 @@ enum VTTabularScheduleParser {
             "WF": [4, 6],
             "MF": [2, 6],
             "TR": [3, 5],
+            "TTH": [3, 5],
+            "TUTH": [3, 5],
             "MWTH": [2, 4, 5],
             "MTWR": [2, 3, 4, 5],
             "MTWRF": [2, 3, 4, 5, 6],
+            "SU": [1],
+            "SA": [7],
         ]
         if let b = bundles[u] { return b }
 

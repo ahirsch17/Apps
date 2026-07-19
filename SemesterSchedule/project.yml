@@ -27,7 +27,9 @@ targets:
         INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.education
         INFOPLIST_KEY_NSCalendarsUsageDescription: Schedule adds class meetings you approve to your calendar.
         INFOPLIST_KEY_NSCalendarsFullAccessUsageDescription: Schedule needs calendar access to save the meetings you review. Nothing is saved until you tap Add to Calendar.
-        DEVELOPMENT_TEAM: ""
+        TARGETED_DEVICE_FAMILY: "1,2"
+        DEVELOPMENT_TEAM: SPDTT4AL46
+        CODE_SIGN_STYLE: Automatic
     scheme:
       testTargets:
         - SemesterScheduleTests

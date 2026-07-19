@@ -9,7 +9,12 @@ enum ScheduleTextParser {
         options: [.caseInsensitive]
     )
     private static let timeRangePattern = try! NSRegularExpression(
-        pattern: #"(\d{1,2}:\d{2}\s*[AP]M)\s*-\s*(\d{1,2}:\d{2}\s*[AP]M)"#,
+        pattern: #"(\d{1,2}:\d{2}\s*[AP]M)\s*(?:-|–|—|to)\s*(\d{1,2}:\d{2}\s*[AP]M)"#,
+        options: .caseInsensitive
+    )
+    /// 24-hour ranges (`14:30-15:45`, `14:30 – 15:45`).
+    private static let timeRange24Pattern = try! NSRegularExpression(
+        pattern: #"(?<!\d)([01]?\d|2[0-3]):([0-5]\d)\s*(?:-|–|—|to)\s*([01]?\d|2[0-3]):([0-5]\d)(?!\s*[AP]M)"#,
         options: .caseInsensitive
     )
     /// Inserts a space when minutes run straight into AM/PM (`10:45AM` → `10:45 AM`). Uses full `h:mm` so `10:50AM` does not become `10:5 0 AM`.
@@ -515,13 +520,25 @@ enum ScheduleTextParser {
 
     private static func matchTimeRange(in line: String) -> (startHour: Int, startMinute: Int, endHour: Int, endMinute: Int)? {
         let norm = normalizeTimeLine(line)
-        guard let m = firstMatch(timeRangePattern, norm), m.numberOfRanges >= 3,
-              let r0 = Range(m.range(at: 1), in: norm),
-              let r1 = Range(m.range(at: 2), in: norm),
-              let t0 = parseTime(String(norm[r0])),
-              let t1 = parseTime(String(norm[r1]))
-        else { return nil }
-        return (t0.hour, t0.minute, t1.hour, t1.minute)
+        if let m = firstMatch(timeRangePattern, norm), m.numberOfRanges >= 3,
+           let r0 = Range(m.range(at: 1), in: norm),
+           let r1 = Range(m.range(at: 2), in: norm),
+           let t0 = parseTime(String(norm[r0])),
+           let t1 = parseTime(String(norm[r1]))
+        {
+            return (t0.hour, t0.minute, t1.hour, t1.minute)
+        }
+        if let m = firstMatch(timeRange24Pattern, norm), m.numberOfRanges >= 5,
+           let rH0 = Range(m.range(at: 1), in: norm),
+           let rM0 = Range(m.range(at: 2), in: norm),
+           let rH1 = Range(m.range(at: 3), in: norm),
+           let rM1 = Range(m.range(at: 4), in: norm),
+           let h0 = Int(norm[rH0]), let m0 = Int(norm[rM0]),
+           let h1 = Int(norm[rH1]), let m1 = Int(norm[rM1])
+        {
+            return (h0, m0, h1, m1)
+        }
+        return nil
     }
 
     private static func normalizeTimeLine(_ line: String) -> String {
@@ -598,7 +615,12 @@ enum ScheduleTextParser {
     // MARK: - Table-like (CRN, course, days TR / MWF, time, location)
 
     private static let tableRowPattern = try! NSRegularExpression(
-        pattern: #"^(\d{4,5})\b\s+[A-Z]{2,10}\s+\d{4}\s+(.+?)\s+(\d{1,2}:\d{2}\s*[AP]M)\s*-\s*(\d{1,2}:\d{2}\s*[AP]M)\s+([A-Z]{1,8})\s+(.+)$"#,
+        pattern: #"^(\d{4,5})\b\s+[A-Z]{2,10}\s+\d{4}\s+(.+?)\s+(\d{1,2}:\d{2}\s*[AP]M)\s*(?:-|–|—|to)\s*(\d{1,2}:\d{2}\s*[AP]M)\s+([A-Za-z/,\-]{1,16})\s+(.+)$"#,
+        options: [.caseInsensitive]
+    )
+    /// Same as table rows but with 24-hour clocks.
+    private static let tableRow24Pattern = try! NSRegularExpression(
+        pattern: #"^(\d{4,5})\b\s+[A-Z]{2,10}\s+\d{4}\s+(.+?)\s+(\d{1,2}:\d{2})\s*(?:-|–|—|to)\s*(\d{1,2}:\d{2})\s+([A-Za-z/,\-]{1,16})\s+(.+)$"#,
         options: [.caseInsensitive]
     )
     private static let crnLineStartPattern = try! NSRegularExpression(pattern: #"^\d{4,5}\b"#, options: [])
@@ -662,31 +684,47 @@ enum ScheduleTextParser {
 
     private static func matchTableRow(_ record: String, semesterStart: Date, semesterEnd: Date) -> EditableScheduleEvent? {
         let record = normalizeTimeLine(record)
-        guard let m = firstMatch(tableRowPattern, record), m.numberOfRanges >= 7,
-              let rCRN = Range(m.range(at: 1), in: record),
-              let rTitle = Range(m.range(at: 2), in: record),
-              let rT0 = Range(m.range(at: 3), in: record),
-              let rT1 = Range(m.range(at: 4), in: record),
-              let rDays = Range(m.range(at: 5), in: record),
-              let rLoc = Range(m.range(at: 6), in: record)
-        else { return nil }
-
-        let crn = String(record[rCRN])
-        let title = String(record[rTitle]).trimmingCharacters(in: .whitespaces)
-        let t0 = String(record[rT0])
-        let t1 = String(record[rT1])
-        let daysToken = String(record[rDays])
-        let location = String(record[rLoc]).trimmingCharacters(in: .whitespaces)
-        return buildTableEvent(
-            crn: crn,
-            title: title,
-            t0: t0,
-            t1: t1,
-            daysToken: daysToken,
-            location: location,
-            semesterStart: semesterStart,
-            semesterEnd: semesterEnd
-        )
+        if let m = firstMatch(tableRowPattern, record), m.numberOfRanges >= 7,
+           let rCRN = Range(m.range(at: 1), in: record),
+           let rTitle = Range(m.range(at: 2), in: record),
+           let rT0 = Range(m.range(at: 3), in: record),
+           let rT1 = Range(m.range(at: 4), in: record),
+           let rDays = Range(m.range(at: 5), in: record),
+           let rLoc = Range(m.range(at: 6), in: record)
+        {
+            return buildTableEvent(
+                crn: String(record[rCRN]),
+                title: String(record[rTitle]).trimmingCharacters(in: .whitespaces),
+                t0: String(record[rT0]),
+                t1: String(record[rT1]),
+                daysToken: String(record[rDays]),
+                location: String(record[rLoc]).trimmingCharacters(in: .whitespaces),
+                semesterStart: semesterStart,
+                semesterEnd: semesterEnd,
+                use24Hour: false
+            )
+        }
+        if let m = firstMatch(tableRow24Pattern, record), m.numberOfRanges >= 7,
+           let rCRN = Range(m.range(at: 1), in: record),
+           let rTitle = Range(m.range(at: 2), in: record),
+           let rT0 = Range(m.range(at: 3), in: record),
+           let rT1 = Range(m.range(at: 4), in: record),
+           let rDays = Range(m.range(at: 5), in: record),
+           let rLoc = Range(m.range(at: 6), in: record)
+        {
+            return buildTableEvent(
+                crn: String(record[rCRN]),
+                title: String(record[rTitle]).trimmingCharacters(in: .whitespaces),
+                t0: String(record[rT0]),
+                t1: String(record[rT1]),
+                daysToken: String(record[rDays]),
+                location: String(record[rLoc]).trimmingCharacters(in: .whitespaces),
+                semesterStart: semesterStart,
+                semesterEnd: semesterEnd,
+                use24Hour: true
+            )
+        }
+        return nil
     }
 
     private static func buildTableEvent(
@@ -697,10 +735,18 @@ enum ScheduleTextParser {
         daysToken: String,
         location: String,
         semesterStart: Date,
-        semesterEnd: Date
+        semesterEnd: Date,
+        use24Hour: Bool
     ) -> EditableScheduleEvent? {
-        guard let tStart = parseTime(t0),
-              let tEnd = parseTime(t1),
+        let times: (hour: Int, minute: Int, endH: Int, endM: Int)? = {
+            if use24Hour {
+                guard let a = parse24HourClock(t0), let b = parse24HourClock(t1) else { return nil }
+                return (a.hour, a.minute, b.hour, b.minute)
+            }
+            guard let a = parseTime(t0), let b = parseTime(t1) else { return nil }
+            return (a.hour, a.minute, b.hour, b.minute)
+        }()
+        guard let t = times,
               let wds = parseAbbrevDays(daysToken),
               title.isEmpty == false
         else { return nil }
@@ -712,11 +758,19 @@ enum ScheduleTextParser {
             semesterStart: semesterStart,
             semesterEnd: semesterEnd,
             weekdays: wds,
-            startHour: tStart.hour,
-            startMinute: tStart.minute,
-            endHour: tEnd.hour,
-            endMinute: tEnd.minute
+            startHour: t.hour,
+            startMinute: t.minute,
+            endHour: t.endH,
+            endMinute: t.endM
         )
+    }
+
+    private static func parse24HourClock(_ s: String) -> (hour: Int, minute: Int)? {
+        let parts = s.trimmingCharacters(in: .whitespaces).split(separator: ":")
+        guard parts.count == 2, let h = Int(parts[0]), let m = Int(parts[1]),
+              (0 ... 23).contains(h), (0 ... 59).contains(m)
+        else { return nil }
+        return (h, m)
     }
 
     // MARK: - Weekly grid (Monday … Sunday header + CRN cards in columns)
@@ -782,7 +836,9 @@ enum ScheduleTextParser {
             }
 
             let crn = String(line[rC])
-            let indent = line.distance(from: line.startIndex, to: rFull.lowerBound)
+            // Leading spaces define the column — do not use the regex match origin (`^\s*CRN` always starts at 0).
+            _ = rFull
+            let indent = line.prefix(while: { $0 == " " }).count
             let inferred = columnWeekday(forIndent: indent, columns: columns)
 
             i += 1
@@ -794,6 +850,17 @@ enum ScheduleTextParser {
                 if let t = matchTimeRange(in: inner) {
                     times = (t.startHour, t.startMinute, t.endHour, t.endMinute)
                     i += 1
+                    // Capture room/building lines that sit after the clock row.
+                    while i < lines.count {
+                        let after = lines[i]
+                        if firstMatch(gridCrnLinePattern, after) != nil { break }
+                        if matchTimeRange(in: after) != nil { break }
+                        let trimmed = after.trimmingCharacters(in: .whitespaces)
+                        if trimmed.isEmpty == false {
+                            body.append(trimmed)
+                        }
+                        i += 1
+                    }
                     break
                 }
                 let trimmed = inner.trimmingCharacters(in: .whitespaces)
@@ -1007,9 +1074,14 @@ enum ScheduleTextParser {
             "MW": [2, 4],
             "WF": [4, 6],
             "MF": [2, 6],
+            "TR": [3, 5],
+            "TTH": [3, 5],
+            "TUTH": [3, 5],
             "MWTH": [2, 4, 5],
             "MTWR": [2, 3, 4, 5],
             "MTWRF": [2, 3, 4, 5, 6],
+            "SU": [1],
+            "SA": [7],
         ]
         if let b = bundles[u] { return b }
 

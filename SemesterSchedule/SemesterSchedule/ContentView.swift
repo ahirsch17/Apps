@@ -10,6 +10,11 @@ struct ContentView: View {
     @State private var parseOutcome: ParseOutcome = .none
     @State private var isImporting = false
     @State private var importNote: String?
+    @State private var destination: CalendarDestination = .apple
+    @State private var calendars: [EKCalendar] = []
+    @State private var selectedCalendarID: String?
+    @State private var shareURL: URL?
+    @State private var showShareSheet = false
     @Environment(\.colorScheme) private var colorScheme
 
     private let eventStore = EKEventStore()
@@ -25,6 +30,15 @@ struct ContentView: View {
         selectedEvents.filter(\.needsWeekdayPick).count
     }
 
+    private var selectedImportable: [EditableScheduleEvent] {
+        selectedEvents.filter(\.canAddToCalendar)
+    }
+
+    private var selectedCalendar: EKCalendar? {
+        guard let id = selectedCalendarID else { return CalendarImportService.defaultCalendar(eventStore: eventStore) }
+        return calendars.first { $0.calendarIdentifier == id } ?? CalendarImportService.defaultCalendar(eventStore: eventStore)
+    }
+
     var body: some View {
         NavigationStack {
             ZStack {
@@ -38,6 +52,7 @@ struct ContentView: View {
                         if events.isEmpty == false {
                             actionsRow
                             eventCards
+                            destinationBlock
                             importBlock
                         }
                     }
@@ -52,12 +67,18 @@ struct ContentView: View {
         .onAppear {
             parseFeedback.prepare()
             importFeedback.prepare()
+            refreshCalendars()
         }
         .onChange(of: pastedText) { _, new in
             if new.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                 events = []
                 parseOutcome = .none
                 importNote = nil
+            }
+        }
+        .sheet(isPresented: $showShareSheet) {
+            if let shareURL {
+                ActivityView(activityItems: [shareURL])
             }
         }
     }
@@ -97,7 +118,7 @@ struct ContentView: View {
                 )
                 .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
 
-            Text("Banner, timetable table, or Mon–Sun grid. Lab and lecture each become one row. A course line directly above Registered can override the title after CRN for that block.")
+            Text("Banner, VT table, timetable, or Mon–Sun grid. Lab and lecture each become one row. Supports TR / TuTh / M/W/F and 12h or 24h times.")
                 .font(.caption)
                 .foregroundStyle(.tertiary)
                 .fixedSize(horizontal: false, vertical: true)
@@ -139,15 +160,22 @@ struct ContentView: View {
                     RoundedRectangle(cornerRadius: 14, style: .continuous)
                         .fill(Color.orange.opacity(colorScheme == .dark ? 0.2 : 0.14))
                 )
-        case let .found(meetings, courses, needs):
-            HStack(alignment: .firstTextBaseline) {
-                Text(parseSummaryLine(meetings: meetings, courses: courses))
-                    .font(.subheadline.weight(.semibold))
-                if needs > 0 {
-                    Spacer(minLength: 8)
-                    Text("\(needs) need days")
-                        .font(.caption.weight(.semibold))
-                        .foregroundStyle(.orange)
+        case let .found(meetings, courses, needs, tba):
+            VStack(alignment: .leading, spacing: 6) {
+                HStack(alignment: .firstTextBaseline) {
+                    Text(parseSummaryLine(meetings: meetings, courses: courses))
+                        .font(.subheadline.weight(.semibold))
+                    if needs > 0 {
+                        Spacer(minLength: 8)
+                        Text("\(needs) need days")
+                            .font(.caption.weight(.semibold))
+                            .foregroundStyle(.orange)
+                    }
+                }
+                if tba > 0 {
+                    Text("\(tba) TBA / async — not added to calendar")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -183,7 +211,9 @@ struct ContentView: View {
     private var actionsRow: some View {
         HStack(spacing: 12) {
             Button("All") {
-                for i in events.indices { events[i].isSelected = true }
+                for i in events.indices where events[i].isTBA == false {
+                    events[i].isSelected = true
+                }
             }
             .buttonStyle(.bordered)
 
@@ -202,6 +232,49 @@ struct ContentView: View {
                 EventEditorRow(event: $ev, weekdaySymbols: weekdaySymbols, accent: accent, colorScheme: colorScheme)
             }
         }
+    }
+
+    private var destinationBlock: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Add to")
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(.secondary)
+
+            Picker("Destination", selection: $destination) {
+                ForEach(CalendarDestination.allCases) { dest in
+                    Text(dest.title).tag(dest)
+                }
+            }
+            .pickerStyle(.segmented)
+
+            Text(destination.detail)
+                .font(.caption)
+                .foregroundStyle(.tertiary)
+                .fixedSize(horizontal: false, vertical: true)
+
+            if destination.usesEventKit {
+                if calendars.isEmpty {
+                    Text("Grant calendar access when you tap the button below, then pick a calendar.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                } else {
+                    Picker("Calendar", selection: Binding(
+                        get: { selectedCalendarID ?? calendars.first?.calendarIdentifier ?? "" },
+                        set: { selectedCalendarID = $0 }
+                    )) {
+                        ForEach(calendars, id: \.calendarIdentifier) { cal in
+                            Text(calendarLabel(cal)).tag(cal.calendarIdentifier)
+                        }
+                    }
+                    .pickerStyle(.menu)
+                }
+            }
+        }
+        .padding(14)
+        .background(
+            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                .fill(colorScheme == .dark ? Color.white.opacity(0.05) : Color.white.opacity(0.55))
+        )
     }
 
     private var importBlock: some View {
@@ -223,7 +296,7 @@ struct ContentView: View {
             }
             .buttonStyle(.borderedProminent)
             .tint(accent)
-            .disabled(isImporting || selectedEvents.isEmpty || selectedNeedingDays > 0)
+            .disabled(isImporting || selectedImportable.isEmpty || selectedNeedingDays > 0)
 
             if let importNote {
                 Text(importNote)
@@ -238,7 +311,18 @@ struct ContentView: View {
 
     private var importTitle: String {
         if selectedNeedingDays > 0 { return "Pick days first" }
-        return "Add to Calendar"
+        if selectedImportable.isEmpty { return "Select meetings" }
+        switch destination {
+        case .apple: return "Add to Apple Calendar"
+        case .google: return "Share for Google Calendar"
+        case .both: return "Add + Share for Google"
+        }
+    }
+
+    private func calendarLabel(_ cal: EKCalendar) -> String {
+        let source = cal.source.title
+        if source.isEmpty { return cal.title }
+        return "\(cal.title) (\(source))"
     }
 
     private func parseSummaryLine(meetings: Int, courses: Int?) -> String {
@@ -268,9 +352,18 @@ struct ContentView: View {
             parseOutcome = .found(
                 meetings: parsed.count,
                 courses: ScheduleTextParser.distinctRegisteredCourseCount(in: parsed),
-                needs: parsed.filter(\.needsWeekdayPick).count
+                needs: parsed.filter(\.needsWeekdayPick).count,
+                tba: parsed.filter(\.isTBA).count
             )
             parseFeedback.impactOccurred()
+        }
+    }
+
+    private func refreshCalendars() {
+        calendars = CalendarImportService.writableCalendars(eventStore: eventStore)
+        if selectedCalendarID == nil {
+            selectedCalendarID = CalendarImportService.defaultCalendar(eventStore: eventStore)?.calendarIdentifier
+                ?? calendars.first?.calendarIdentifier
         }
     }
 
@@ -280,20 +373,52 @@ struct ContentView: View {
         isImporting = true
         defer { isImporting = false }
 
+        let plans = CalendarEventPlanner.blueprints(from: selectedImportable)
+        guard plans.isEmpty == false else {
+            importFeedback.notificationOccurred(.warning)
+            importNote = "Select rows with days and real meeting times"
+            return
+        }
+
         do {
-            let ok = try await CalendarImportService.requestAccess(eventStore: eventStore)
-            guard ok else {
-                importFeedback.notificationOccurred(.error)
-                importNote = "Calendars off — Settings → Schedule"
-                return
+            var saved = 0
+            if destination.usesEventKit {
+                let ok = try await CalendarImportService.requestAccess(eventStore: eventStore)
+                guard ok else {
+                    importFeedback.notificationOccurred(.error)
+                    importNote = "Calendars off — Settings → Schedule"
+                    return
+                }
+                refreshCalendars()
+                saved = try CalendarImportService.save(
+                    blueprints: plans,
+                    eventStore: eventStore,
+                    calendar: selectedCalendar
+                )
             }
-            let n = try CalendarImportService.save(selectedEvents, eventStore: eventStore)
-            importFeedback.notificationOccurred(n > 0 ? .success : .warning)
-            if n > 0 {
+
+            if destination.usesICSShare {
+                let url = try ICSCalendarExport.writeTemporaryFile(from: plans)
+                shareURL = url
+                showShareSheet = true
+            }
+
+            importFeedback.notificationOccurred(saved > 0 || destination.usesICSShare ? .success : .warning)
+            if destination.usesEventKit {
+                if saved > 0 {
+                    let calName = selectedCalendar?.title ?? "Calendar"
+                    importNote = destination.usesICSShare
+                        ? "Added \(saved) to \(calName). Share the .ics into Google Calendar."
+                        : "Added \(saved) to \(calName)."
+                    events = []
+                    parseOutcome = .none
+                } else if destination == .apple {
+                    importNote = "Select rows with days picked"
+                }
+            } else {
+                importNote = "Open the .ics in Google Calendar (or any calendar app)."
                 events = []
                 parseOutcome = .none
-            } else {
-                importNote = "Select rows with days picked"
             }
         } catch {
             importFeedback.notificationOccurred(.error)
@@ -305,8 +430,8 @@ struct ContentView: View {
 private enum ParseOutcome: Equatable {
     case none
     case empty
-    /// `meetings` = calendar rows. `courses` = distinct CRNs when any notes include a CRN (registrar “classes”); `nil` when no CRNs (e.g. some grids).
-    case found(meetings: Int, courses: Int?, needs: Int)
+    /// `meetings` = calendar rows. `courses` = distinct CRNs when any notes include a CRN.
+    case found(meetings: Int, courses: Int?, needs: Int, tba: Int)
 }
 
 private struct EventEditorRow: View {
@@ -329,6 +454,7 @@ private struct EventEditorRow: View {
                     .foregroundStyle(.primary)
             }
             .tint(accent)
+            .disabled(event.isTBA)
 
             VStack(alignment: .leading, spacing: 4) {
                 Text(event.displayTimeRange())
@@ -350,26 +476,32 @@ private struct EventEditorRow: View {
                     .foregroundStyle(.tertiary)
             }
 
-            HStack(spacing: 5) {
-                ForEach(weekdayOrder, id: \.self) { wd in
-                    let on = event.weekdays.contains(wd)
-                    Button {
-                        if on { event.weekdays.remove(wd) }
-                        else { event.weekdays.insert(wd) }
-                    } label: {
-                        Text(shortSymbol(for: wd))
-                            .font(.caption.weight(.bold))
-                            .frame(width: 34, height: 34)
-                            .background(
-                                Circle().fill(on ? accent : (needsDays ? Color.orange.opacity(0.18) : Color.primary.opacity(0.07)))
-                            )
-                            .foregroundStyle(on ? Color.white : .primary)
-                            .overlay(
-                                Circle()
-                                    .stroke(needsDays && !on ? Color.orange.opacity(0.55) : Color.clear, lineWidth: 2)
-                            )
+            if event.isTBA {
+                Text("No timed meetings — skipped for calendar import.")
+                    .font(.caption)
+                    .foregroundStyle(.orange)
+            } else {
+                HStack(spacing: 5) {
+                    ForEach(weekdayOrder, id: \.self) { wd in
+                        let on = event.weekdays.contains(wd)
+                        Button {
+                            if on { event.weekdays.remove(wd) }
+                            else { event.weekdays.insert(wd) }
+                        } label: {
+                            Text(shortSymbol(for: wd))
+                                .font(.caption.weight(.bold))
+                                .frame(width: 34, height: 34)
+                                .background(
+                                    Circle().fill(on ? accent : (needsDays ? Color.orange.opacity(0.18) : Color.primary.opacity(0.07)))
+                                )
+                                .foregroundStyle(on ? Color.white : .primary)
+                                .overlay(
+                                    Circle()
+                                        .stroke(needsDays && !on ? Color.orange.opacity(0.55) : Color.clear, lineWidth: 2)
+                                )
+                        }
+                        .buttonStyle(.plain)
                     }
-                    .buttonStyle(.plain)
                 }
             }
 
@@ -390,8 +522,8 @@ private struct EventEditorRow: View {
         .overlay(
             RoundedRectangle(cornerRadius: 20, style: .continuous)
                 .strokeBorder(
-                    needsDays ? Color.orange.opacity(0.45) : Color.primary.opacity(0.06),
-                    lineWidth: needsDays ? 1.5 : 1
+                    needsDays || event.isTBA ? Color.orange.opacity(0.45) : Color.primary.opacity(0.06),
+                    lineWidth: needsDays || event.isTBA ? 1.5 : 1
                 )
         )
     }
@@ -400,6 +532,16 @@ private struct EventEditorRow: View {
         guard weekday >= 1, weekday <= weekdaySymbols.count else { return "?" }
         return String(weekdaySymbols[weekday - 1].prefix(1))
     }
+}
+
+private struct ActivityView: UIViewControllerRepresentable {
+    let activityItems: [Any]
+
+    func makeUIViewController(context: Context) -> UIActivityViewController {
+        UIActivityViewController(activityItems: activityItems, applicationActivities: nil)
+    }
+
+    func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
 }
 
 #Preview {

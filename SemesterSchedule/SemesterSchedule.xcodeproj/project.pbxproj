@@ -7,12 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		04BAD75769C0845B3080B5DB /* CalendarEventPlanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63EE42578ED974E0C7EB5E1D /* CalendarEventPlanner.swift */; };
 		2622CE9BFC680A601DF7A571 /* WeeklyGridPasteGoldenTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB52F6772B9E4EE950905D09 /* WeeklyGridPasteGoldenTests.swift */; };
 		296D23B46D8EF8C05D922048 /* VTTabularExport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D47A9C7736BC170C8B3E78C /* VTTabularExport.swift */; };
 		31DE6DADFD61A4E06DAF23D5 /* EditableScheduleEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEFC3F1D14A346E74DFAB7C2 /* EditableScheduleEvent.swift */; };
 		3C218F498DE2D9831A6C0768 /* CalendarImportService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 924F985238A062472745D4FF /* CalendarImportService.swift */; };
 		43A3F25A46F090CB2FBF29D8 /* SemesterScheduleApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344C2DFEBAA3ADA8E2658E39 /* SemesterScheduleApp.swift */; };
 		71E174974DCB6E0CD20F36E8 /* ScheduleTextParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CD3AD31F6C813FC3CAD585D /* ScheduleTextParser.swift */; };
+		7E515147E0B1A82515CF4163 /* ScheduleVariationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C725F605D466F3CE6BCA3A21 /* ScheduleVariationTests.swift */; };
 		8926AD446F30E16B36485965 /* StructuredScheduleExport.swift in Sources */ = {isa = PBXBuildFile; fileRef = C538219FD9A4AC8CFAF30EC5 /* StructuredScheduleExport.swift */; };
 		9077E596158C7960271B8B7C /* VTTabularPasteGoldenTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85AC506466142B4A31557ECC /* VTTabularPasteGoldenTests.swift */; };
 		9FE411749A8B00280CEA0C86 /* TableLikePasteGoldenTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC6A78F97616E094E0943C3B /* TableLikePasteGoldenTests.swift */; };
@@ -20,6 +22,8 @@
 		C617D52501757C621D797EA1 /* BannerNursingFixtureTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 285C01B4E34B68020F124071 /* BannerNursingFixtureTests.swift */; };
 		D41BB2FEA19D462A66747216 /* VTTabularScheduleParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = E505D1ADBE9B7D6ACFA783A3 /* VTTabularScheduleParser.swift */; };
 		DCB90A4F436220A93F6EA4C7 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C43C0AF7E46D572044140B2 /* ContentView.swift */; };
+		EEA91FF796FFEBFA33EF5D82 /* CalendarEventCreationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33C01435900CAF25BBE8054A /* CalendarEventCreationTests.swift */; };
+		F16691F3891322DA94AE7D54 /* ICSCalendarExport.swift in Sources */ = {isa = PBXBuildFile; fileRef = E55A0A3F8A8DB3CF3F4297BA /* ICSCalendarExport.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -36,17 +40,21 @@
 		0C43C0AF7E46D572044140B2 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		10B85DACE9E3655D9A4CACF2 /* SemesterSchedule.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = SemesterSchedule.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		285C01B4E34B68020F124071 /* BannerNursingFixtureTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerNursingFixtureTests.swift; sourceTree = "<group>"; };
+		33C01435900CAF25BBE8054A /* CalendarEventCreationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarEventCreationTests.swift; sourceTree = "<group>"; };
 		344C2DFEBAA3ADA8E2658E39 /* SemesterScheduleApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SemesterScheduleApp.swift; sourceTree = "<group>"; };
 		3502B4E2C73A42B529F2A6B8 /* VerticalPasteEmailWrapperGoldenTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerticalPasteEmailWrapperGoldenTests.swift; sourceTree = "<group>"; };
 		3CD3AD31F6C813FC3CAD585D /* ScheduleTextParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleTextParser.swift; sourceTree = "<group>"; };
 		3D47A9C7736BC170C8B3E78C /* VTTabularExport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VTTabularExport.swift; sourceTree = "<group>"; };
+		63EE42578ED974E0C7EB5E1D /* CalendarEventPlanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarEventPlanner.swift; sourceTree = "<group>"; };
 		67B7056B76FB3A4BED83DFD4 /* SemesterScheduleTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = SemesterScheduleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		85AC506466142B4A31557ECC /* VTTabularPasteGoldenTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VTTabularPasteGoldenTests.swift; sourceTree = "<group>"; };
 		924F985238A062472745D4FF /* CalendarImportService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarImportService.swift; sourceTree = "<group>"; };
 		AB52F6772B9E4EE950905D09 /* WeeklyGridPasteGoldenTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyGridPasteGoldenTests.swift; sourceTree = "<group>"; };
 		BEFC3F1D14A346E74DFAB7C2 /* EditableScheduleEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditableScheduleEvent.swift; sourceTree = "<group>"; };
 		C538219FD9A4AC8CFAF30EC5 /* StructuredScheduleExport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StructuredScheduleExport.swift; sourceTree = "<group>"; };
+		C725F605D466F3CE6BCA3A21 /* ScheduleVariationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleVariationTests.swift; sourceTree = "<group>"; };
 		E505D1ADBE9B7D6ACFA783A3 /* VTTabularScheduleParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VTTabularScheduleParser.swift; sourceTree = "<group>"; };
+		E55A0A3F8A8DB3CF3F4297BA /* ICSCalendarExport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ICSCalendarExport.swift; sourceTree = "<group>"; };
 		EC6A78F97616E094E0943C3B /* TableLikePasteGoldenTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableLikePasteGoldenTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -94,6 +102,8 @@
 			isa = PBXGroup;
 			children = (
 				285C01B4E34B68020F124071 /* BannerNursingFixtureTests.swift */,
+				33C01435900CAF25BBE8054A /* CalendarEventCreationTests.swift */,
+				C725F605D466F3CE6BCA3A21 /* ScheduleVariationTests.swift */,
 				EC6A78F97616E094E0943C3B /* TableLikePasteGoldenTests.swift */,
 				3502B4E2C73A42B529F2A6B8 /* VerticalPasteEmailWrapperGoldenTests.swift */,
 				85AC506466142B4A31557ECC /* VTTabularPasteGoldenTests.swift */,
@@ -105,7 +115,9 @@
 		E849423E4312D029D555C6E3 /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				63EE42578ED974E0C7EB5E1D /* CalendarEventPlanner.swift */,
 				924F985238A062472745D4FF /* CalendarImportService.swift */,
+				E55A0A3F8A8DB3CF3F4297BA /* ICSCalendarExport.swift */,
 				3CD3AD31F6C813FC3CAD585D /* ScheduleTextParser.swift */,
 				E505D1ADBE9B7D6ACFA783A3 /* VTTabularScheduleParser.swift */,
 			);
@@ -160,7 +172,8 @@
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
 					3185399F3DA02451AF446DA9 = {
-						DevelopmentTeam = "";
+						DevelopmentTeam = SPDTT4AL46;
+						ProvisioningStyle = Automatic;
 					};
 				};
 			};
@@ -189,9 +202,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				04BAD75769C0845B3080B5DB /* CalendarEventPlanner.swift in Sources */,
 				3C218F498DE2D9831A6C0768 /* CalendarImportService.swift in Sources */,
 				DCB90A4F436220A93F6EA4C7 /* ContentView.swift in Sources */,
 				31DE6DADFD61A4E06DAF23D5 /* EditableScheduleEvent.swift in Sources */,
+				F16691F3891322DA94AE7D54 /* ICSCalendarExport.swift in Sources */,
 				71E174974DCB6E0CD20F36E8 /* ScheduleTextParser.swift in Sources */,
 				43A3F25A46F090CB2FBF29D8 /* SemesterScheduleApp.swift in Sources */,
 				8926AD446F30E16B36485965 /* StructuredScheduleExport.swift in Sources */,
@@ -205,6 +220,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				C617D52501757C621D797EA1 /* BannerNursingFixtureTests.swift in Sources */,
+				EEA91FF796FFEBFA33EF5D82 /* CalendarEventCreationTests.swift in Sources */,
+				7E515147E0B1A82515CF4163 /* ScheduleVariationTests.swift in Sources */,
 				9FE411749A8B00280CEA0C86 /* TableLikePasteGoldenTests.swift in Sources */,
 				9077E596158C7960271B8B7C /* VTTabularPasteGoldenTests.swift in Sources */,
 				BDED8F6B666293ADA9DEBF87 /* VerticalPasteEmailWrapperGoldenTests.swift in Sources */,
@@ -303,7 +320,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				DEVELOPMENT_TEAM = "";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = SPDTT4AL46;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = Schedule;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
@@ -349,7 +367,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				DEVELOPMENT_TEAM = "";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = SPDTT4AL46;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = Schedule;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";

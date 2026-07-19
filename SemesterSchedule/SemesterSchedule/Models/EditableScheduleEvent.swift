@@ -16,6 +16,8 @@ struct EditableScheduleEvent: Identifiable, Hashable {
     var endMinute: Int
     var sessionKind: String?
     var isSelected: Bool
+    /// True when the registrar listed TBA / no clock times (async online, etc.).
+    var isTBA: Bool
 
     init(
         id: UUID = UUID(),
@@ -30,7 +32,8 @@ struct EditableScheduleEvent: Identifiable, Hashable {
         endHour: Int,
         endMinute: Int,
         sessionKind: String? = nil,
-        isSelected: Bool = true
+        isSelected: Bool = true,
+        isTBA: Bool = false
     ) {
         self.id = id
         self.title = title
@@ -45,6 +48,7 @@ struct EditableScheduleEvent: Identifiable, Hashable {
         self.endMinute = endMinute
         self.sessionKind = sessionKind
         self.isSelected = isSelected
+        self.isTBA = isTBA
     }
 
     func firstOccurrenceStart(calendar: Calendar = .current) -> Date? {
@@ -78,13 +82,22 @@ struct EditableScheduleEvent: Identifiable, Hashable {
         e.minute = endMinute
         let base = cal.startOfDay(for: semesterStart)
         guard let start = cal.date(byAdding: s, to: base),
-              let end = cal.date(byAdding: e, to: base)
+              var end = cal.date(byAdding: e, to: base)
         else { return 3600 }
+        // Overnight labs (e.g. 10:00 PM – 1:00 AM) span past midnight.
+        if end <= start {
+            end = cal.date(byAdding: .day, value: 1, to: end) ?? end.addingTimeInterval(24 * 3600)
+        }
         return end.timeIntervalSince(start)
     }
 
     /// True when the paste did not yield any weekdays (for example a lost mini-calendar row).
-    var needsWeekdayPick: Bool { weekdays.isEmpty }
+    var needsWeekdayPick: Bool { weekdays.isEmpty && isTBA == false }
+
+    /// Rows that can become recurring calendar events.
+    var canAddToCalendar: Bool {
+        isTBA == false && weekdays.isEmpty == false
+    }
 
     func displaySemesterRange(calendar: Calendar = .current) -> String {
         let df = DateFormatter()
@@ -96,6 +109,7 @@ struct EditableScheduleEvent: Identifiable, Hashable {
     }
 
     func displayTimeRange(calendar: Calendar = .current) -> String {
+        if isTBA { return "TBA / no meeting times" }
         let cal = calendar
         let base = cal.startOfDay(for: Date())
         guard let d1 = cal.date(bySettingHour: startHour, minute: startMinute, second: 0, of: base),
@@ -105,6 +119,10 @@ struct EditableScheduleEvent: Identifiable, Hashable {
         df.locale = .current
         df.timeZone = cal.timeZone
         df.dateFormat = "h:mm a"
-        return "\(df.string(from: d1))–\(df.string(from: d2))"
+        var end = d2
+        if end <= d1 {
+            end = cal.date(byAdding: .day, value: 1, to: end) ?? end
+        }
+        return "\(df.string(from: d1))–\(df.string(from: end))"
     }
 }
