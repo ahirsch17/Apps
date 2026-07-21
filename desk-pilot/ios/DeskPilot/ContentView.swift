@@ -19,6 +19,9 @@ struct ContentView: View {
                 }
         }
         .tint(AppTheme.accent)
+        .task {
+            await connection.bootstrap(settings: settings)
+        }
     }
 }
 

@@ -31,11 +31,11 @@ final class ConnectionManager: ObservableObject {
     }
 
     func connect(host: String, port: Int, token: String?) {
-        disconnect()
+        teardownSockets()
 
         let trimmed = host.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else {
-            state = .error("Enter your PC's IP address in Settings")
+            state = .error("Missing PC IP")
             return
         }
 
@@ -61,21 +61,14 @@ final class ConnectionManager: ObservableObject {
     }
 
     func disconnect() {
-        pingTimer?.invalidate()
-        pingTimer = nil
-        reconnectWorkItem?.cancel()
-        reconnectWorkItem = nil
-        webSocket?.cancel(with: .goingAway, reason: nil)
-        webSocket = nil
-        session?.invalidateAndCancel()
-        session = nil
+        teardownSockets()
         state = .disconnected
         serverName = ""
         serverMacAddress = ""
     }
 
     func pair(host: String, port: Int, pin: String, deviceName: String) async -> String? {
-        disconnect()
+        teardownSockets()
         state = .pairing
 
         guard let url = URL(string: "ws://\(host.trimmingCharacters(in: .whitespacesAndNewlines)):\(port)") else {
@@ -119,11 +112,11 @@ final class ConnectionManager: ObservableObject {
 
             let message = json["message"] as? String ?? "Pairing failed"
             state = .error(message)
-            disconnect()
+            teardownSockets()
             return nil
         } catch {
-            state = .error("Could not reach PC — check Wi‑Fi and server")
-            disconnect()
+            state = .error("Can't reach PC — run allow-firewall.bat on PC, same Wi‑Fi, Local Network ON")
+            teardownSockets()
             return nil
         }
     }
@@ -136,14 +129,6 @@ final class ConnectionManager: ObservableObject {
         Task {
             try? await send(text: text)
         }
-    }
-
-    func testConnection(host: String, port: Int, token: String?) async -> Bool {
-        connect(host: host, port: port, token: token)
-        try? await Task.sleep(nanoseconds: 500_000_000)
-        send(command: RemoteCommand.ping())
-        try? await Task.sleep(nanoseconds: 1_500_000_000)
-        return isConnected
     }
 
     /// Connect using saved token, or auto-pair with preset PC credentials.
@@ -167,7 +152,11 @@ final class ConnectionManager: ObservableObject {
             if !serverMacAddress.isEmpty {
                 settings.macAddress = serverMacAddress
             }
+            return
         }
+
+        if case .error = state { return }
+        state = .error("Tap banner to retry")
     }
 
     private func connectWithAuth(host: String, port: Int, token: String) async -> Bool {
@@ -178,12 +167,23 @@ final class ConnectionManager: ObservableObject {
 
     private func sendAuthIfNeeded() {
         guard let token = authToken, !token.isEmpty else {
-            state = .error("Could not pair — check Wi‑Fi and server")
+            state = .error("Not paired — tap banner to retry")
             return
         }
 
         let auth: [String: Any] = ["type": "auth", "token": token]
         send(command: auth)
+    }
+
+    private func teardownSockets() {
+        pingTimer?.invalidate()
+        pingTimer = nil
+        reconnectWorkItem?.cancel()
+        reconnectWorkItem = nil
+        webSocket?.cancel(with: .goingAway, reason: nil)
+        webSocket = nil
+        session?.invalidateAndCancel()
+        session = nil
     }
 
     private func send(text: String) async throws {
@@ -236,8 +236,8 @@ final class ConnectionManager: ObservableObject {
 
                 case .failure:
                     if self.state != .disconnected && self.state != .pairing {
-                        self.state = .error("Connection lost")
-                        self.scheduleReconnect()
+                        self.state = .error("Connection lost — tap banner to retry")
+                        self.teardownSockets()
                     }
                 }
             }
@@ -257,8 +257,8 @@ final class ConnectionManager: ObservableObject {
             }
             state = .connected
         case "auth_fail":
-            state = .error("Session expired — pair again")
-            disconnect()
+            state = .error("Session expired — tap banner to retry")
+            teardownSockets()
         case "pong":
             if case .connecting = state {
                 state = .connected
@@ -278,19 +278,6 @@ final class ConnectionManager: ObservableObject {
                 self?.send(command: RemoteCommand.ping())
             }
         }
-    }
-
-    private func scheduleReconnect() {
-        reconnectWorkItem?.cancel()
-        guard let token = authToken, !token.isEmpty else { return }
-
-        let work = DispatchWorkItem { [weak self] in
-            Task { @MainActor in
-                self?.connect(host: self?.currentHost ?? "", port: self?.currentPort ?? 8765, token: token)
-            }
-        }
-        reconnectWorkItem = work
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3, execute: work)
     }
 }
 

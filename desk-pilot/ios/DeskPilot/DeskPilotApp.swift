@@ -12,9 +12,6 @@ struct DeskPilotApp: App {
                 .environmentObject(connection)
                 .environmentObject(settings)
                 .preferredColorScheme(.dark)
-                .task {
-                    await connection.bootstrap(settings: settings)
-                }
         }
     }
 }
