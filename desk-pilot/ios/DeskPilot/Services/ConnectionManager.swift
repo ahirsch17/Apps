@@ -156,37 +156,20 @@ final class ConnectionManager: ObservableObject {
     }
 
     private func send(text: String) async throws {
-        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
-            webSocket?.send(.string(text)) { error in
-                if let error {
-                    continuation.resume(throwing: error)
-                } else {
-                    continuation.resume()
-                }
-            }
+        guard let socket = webSocket else {
+            throw URLError(.notConnectedToInternet)
         }
+        try await WebSocketIO.send(text, on: socket)
     }
 
     private func receiveOnce(timeout: TimeInterval) async throws -> String {
+        guard let socket = webSocket else {
+            throw URLError(.notConnectedToInternet)
+        }
+
         try await withThrowingTaskGroup(of: String.self) { group in
             group.addTask {
-                try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<String, Error>) in
-                    self.webSocket?.receive { result in
-                        switch result {
-                        case .success(let message):
-                            switch message {
-                            case .string(let text):
-                                continuation.resume(returning: text)
-                            case .data(let data):
-                                continuation.resume(returning: String(data: data, encoding: .utf8) ?? "")
-                            @unknown default:
-                                continuation.resume(returning: "")
-                            }
-                        case .failure(let error):
-                            continuation.resume(throwing: error)
-                        }
-                    }
-                }
+                try await WebSocketIO.receive(from: socket)
             }
 
             group.addTask {
@@ -201,7 +184,9 @@ final class ConnectionManager: ObservableObject {
     }
 
     private func listen() {
-        webSocket?.receive { [weak self] result in
+        guard let socket = webSocket else { return }
+
+        WebSocketIO.receive(from: socket) { [weak self] result in
             Task { @MainActor in
                 guard let self else { return }
                 switch result {
@@ -273,5 +258,49 @@ final class ConnectionManager: ObservableObject {
         }
         reconnectWorkItem = work
         DispatchQueue.main.asyncAfter(deadline: .now() + 3, execute: work)
+    }
+}
+
+/// WebSocket I/O isolated from `@MainActor` so URLSession callbacks compile under strict concurrency.
+private enum WebSocketIO {
+    static func send(_ text: String, on socket: URLSessionWebSocketTask) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            socket.send(.string(text)) { error in
+                if let error {
+                    continuation.resume(throwing: error)
+                } else {
+                    continuation.resume()
+                }
+            }
+        }
+    }
+
+    static func receive(from socket: URLSessionWebSocketTask) async throws -> String {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<String, Error>) in
+            socket.receive { result in
+                switch result {
+                case .success(let message):
+                    switch message {
+                    case .string(let text):
+                        continuation.resume(returning: text)
+                    case .data(let data):
+                        continuation.resume(returning: String(data: data, encoding: .utf8) ?? "")
+                    @unknown default:
+                        continuation.resume(returning: "")
+                    }
+                case .failure(let error):
+                    continuation.resume(throwing: error)
+                }
+            }
+        }
+    }
+
+    static func receive(
+        from socket: URLSessionWebSocketTask,
+        completion: @escaping (Result<URLSessionWebSocketTask.Message, Error>) -> Void
+    ) {
+        socket.receive { result in
+            completion(result)
+        }
     }
 }
