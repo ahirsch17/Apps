@@ -9,6 +9,7 @@ struct ControlView: View {
     @State private var scrollMode = false
     @State private var typedBuffer = ""
     @State private var suppressTypingSync = false
+    @State private var showTypingBar = false
     @State private var showOptions = false
 
     var body: some View {
@@ -18,10 +19,12 @@ struct ControlView: View {
 
                 TrackpadSurface(scrollMode: $scrollMode)
                     .frame(maxWidth: .infinity)
-                    .frame(maxHeight: typeFieldFocused ? 140 : .infinity)
-                    .animation(.easeInOut(duration: 0.2), value: typeFieldFocused)
+                    .frame(maxHeight: showTypingBar ? 120 : .infinity)
+                    .animation(.easeInOut(duration: 0.2), value: showTypingBar)
 
-                typeBar
+                if showTypingBar {
+                    typingBar
+                }
 
                 HStack(spacing: 8) {
                     clickButton("Left", button: "left")
@@ -48,40 +51,48 @@ struct ControlView: View {
             .sheet(isPresented: $showOptions) {
                 optionsSheet
             }
+            .onChange(of: connection.keyboardFocusRequestID) { _, _ in
+                openPhoneKeyboard()
+            }
         }
     }
 
-    private var typeBar: some View {
+    private var typingBar: some View {
         VStack(alignment: .leading, spacing: 6) {
-            if typeFieldFocused {
-                Text("Typing on your PC — Return to submit")
-                    .font(.caption2)
+            HStack {
+                Text("Typing on your PC")
+                    .font(.caption.weight(.medium))
                     .foregroundStyle(AppTheme.accent)
+                Spacer()
+                Button("Done") {
+                    showTypingBar = false
+                    typeFieldFocused = false
+                    clearLocalBuffer()
+                }
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(AppTheme.textSecondary)
             }
 
-            TextField(
-                typeFieldFocused ? "" : "Tap here to type (click the PC field first)",
-                text: $typedBuffer,
-                axis: .vertical
-            )
-            .lineLimit(1...5)
-            .textFieldStyle(.plain)
-            .focused($typeFieldFocused)
-            .submitLabel(.return)
-            .autocorrectionDisabled()
-            .textInputAutocapitalization(.never)
-            .padding(12)
-            .background(AppTheme.background)
-            .clipShape(RoundedRectangle(cornerRadius: 12))
-            .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(typeFieldFocused ? AppTheme.accent.opacity(0.5) : AppTheme.cardBorder, lineWidth: 1)
-            )
-            .onSubmit { submitTyping() }
-            .onChange(of: typedBuffer) { oldValue, newValue in
-                syncLiveTyping(from: oldValue, to: newValue)
-            }
+            TextField("Start typing…", text: $typedBuffer, axis: .vertical)
+                .lineLimit(1...4)
+                .textFieldStyle(.plain)
+                .focused($typeFieldFocused)
+                .submitLabel(.return)
+                .autocorrectionDisabled()
+                .textInputAutocapitalization(.never)
+                .padding(12)
+                .background(AppTheme.background)
+                .clipShape(RoundedRectangle(cornerRadius: 12))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .stroke(AppTheme.accent.opacity(0.5), lineWidth: 1)
+                )
+                .onSubmit { submitTyping() }
+                .onChange(of: typedBuffer) { oldValue, newValue in
+                    syncLiveTyping(from: oldValue, to: newValue)
+                }
         }
+        .padding(12)
         .cardStyle()
     }
 
@@ -118,6 +129,14 @@ struct ControlView: View {
         .presentationDetents([.medium])
     }
 
+    private func openPhoneKeyboard() {
+        clearLocalBuffer()
+        showTypingBar = true
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            typeFieldFocused = true
+        }
+    }
+
     private func clickButton(_ title: String, button: String) -> some View {
         Button(title) {
             connection.send(command: RemoteCommand.mouseClick(button: button))
@@ -152,6 +171,8 @@ struct ControlView: View {
     private func submitTyping() {
         connection.send(command: RemoteCommand.key("enter"))
         clearLocalBuffer()
+        showTypingBar = false
+        typeFieldFocused = false
         if settings.hapticsEnabled {
             UIImpactFeedbackGenerator(style: .light).impactOccurred()
         }

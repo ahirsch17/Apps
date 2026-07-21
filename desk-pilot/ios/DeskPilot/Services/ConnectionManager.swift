@@ -15,6 +15,7 @@ final class ConnectionManager: ObservableObject {
     @Published private(set) var state: ConnectionState = .disconnected
     @Published private(set) var serverName: String = ""
     @Published private(set) var serverMacAddress: String = ""
+    @Published private(set) var keyboardFocusRequestID = 0
 
     private var webSocket: URLSessionWebSocketTask?
     private var session: URLSession?
@@ -275,6 +276,8 @@ final class ConnectionManager: ObservableObject {
             if case .connecting = state {
                 state = .connected
             }
+        case "focus_text":
+            keyboardFocusRequestID += 1
         case "error":
             let message = json["message"] as? String ?? "Server error"
             state = .error(message)
