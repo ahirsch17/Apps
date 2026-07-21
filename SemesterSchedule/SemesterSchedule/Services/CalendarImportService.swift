@@ -1,14 +1,63 @@
 import EventKit
 import Foundation
 
+enum CalendarDestination: String, CaseIterable, Identifiable {
+    case apple
+    case google
+    case both
+
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .apple: return "Apple"
+        case .google: return "Google"
+        case .both: return "Both"
+        }
+    }
+
+    var detail: String {
+        switch self {
+        case .apple: return "Saves into a calendar on this iPhone (Apple or a Google account already added in Settings → Calendar)."
+        case .google: return "Shares a .ics file you can open in Google Calendar (or any calendar app)."
+        case .both: return "Saves on this iPhone and shares a .ics for Google Calendar."
+        }
+    }
+
+    var usesEventKit: Bool {
+        switch self {
+        case .apple, .both: return true
+        case .google: return false
+        }
+    }
+
+    var usesICSShare: Bool {
+        switch self {
+        case .google, .both: return true
+        case .apple: return false
+        }
+    }
+}
+
 enum CalendarImportService {
     static func requestAccess(eventStore: EKEventStore = EKEventStore()) async throws -> Bool {
         try await eventStore.requestFullAccessToEvents()
     }
 
-    /// Saves recurring weekly events until `semesterEnd` (end of day). Returns count saved.
+    /// Writable event calendars (Apple iCloud, Google, Exchange, local, etc.).
+    static func writableCalendars(eventStore: EKEventStore) -> [EKCalendar] {
+        eventStore.calendars(for: .event)
+            .filter(\.allowsContentModifications)
+            .sorted { $0.title.localizedCaseInsensitiveCompare($1.title) == .orderedAscending }
+    }
+
+    static func defaultCalendar(eventStore: EKEventStore) -> EKCalendar? {
+        eventStore.defaultCalendarForNewEvents
+    }
+
+    /// Saves recurring weekly events from blueprints. Returns count saved.
     static func save(
-        _ events: [EditableScheduleEvent],
+        blueprints: [CalendarEventBlueprint],
         eventStore: EKEventStore = EKEventStore(),
         calendar: EKCalendar? = nil
     ) throws -> Int {
@@ -21,31 +70,23 @@ enum CalendarImportService {
             )
         }
 
-        var gregorian = Calendar(identifier: .gregorian)
-        gregorian.timeZone = TimeZone.current
         var saved = 0
-
-        for ev in events where ev.isSelected {
-            guard let firstStart = ev.firstOccurrenceStart(calendar: gregorian) else { continue }
-            let duration = ev.durationSeconds(calendar: gregorian)
-            let firstEnd = firstStart.addingTimeInterval(duration)
-
+        for bp in blueprints {
             let ek = EKEvent(eventStore: eventStore)
             ek.calendar = targetCal
-            ek.title = ev.title
-            ek.location = ev.location
-            ek.notes = ev.notes
-            ek.startDate = firstStart
-            ek.endDate = firstEnd
+            ek.title = bp.title
+            ek.location = bp.location.isEmpty ? nil : bp.location
+            ek.notes = bp.notes.isEmpty ? nil : bp.notes
+            ek.startDate = bp.firstStart
+            ek.endDate = bp.firstEnd
 
-            let days: [EKRecurrenceDayOfWeek] = ev.weekdays.compactMap { wd in
+            let days: [EKRecurrenceDayOfWeek] = bp.weekdays.compactMap { wd in
                 guard let w = EKWeekday(rawValue: wd) else { return nil }
                 return EKRecurrenceDayOfWeek(w)
             }
             guard days.isEmpty == false else { continue }
 
-            let endDay = gregorian.startOfDay(for: ev.semesterEnd).addingTimeInterval(24 * 3600 - 1)
-            let endRule = EKRecurrenceEnd(end: endDay)
+            let endRule = EKRecurrenceEnd(end: bp.recurrenceEnd)
             let rule = EKRecurrenceRule(
                 recurrenceWith: .weekly,
                 interval: 1,
@@ -58,11 +99,25 @@ enum CalendarImportService {
                 end: endRule
             )
             ek.recurrenceRules = [rule]
+            if bp.alarmMinutesBefore > 0 {
+                ek.addAlarm(EKAlarm(relativeOffset: TimeInterval(-bp.alarmMinutesBefore * 60)))
+            }
 
             try eventStore.save(ek, span: .futureEvents)
             saved += 1
         }
 
         return saved
+    }
+
+    /// Convenience: plan + save selected editable events.
+    static func save(
+        _ events: [EditableScheduleEvent],
+        eventStore: EKEventStore = EKEventStore(),
+        calendar: EKCalendar? = nil,
+        timeZone: TimeZone = .current
+    ) throws -> Int {
+        let plans = CalendarEventPlanner.blueprints(from: events, timeZone: timeZone)
+        return try save(blueprints: plans, eventStore: eventStore, calendar: calendar)
     }
 }

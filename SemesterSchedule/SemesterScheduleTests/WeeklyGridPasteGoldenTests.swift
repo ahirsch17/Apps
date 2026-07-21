@@ -12,7 +12,7 @@ final class WeeklyGridPasteGoldenTests: XCTestCase {
         return cal.date(from: c)!
     }()
 
-    /// Two CRN blocks under a short weekday header row.
+    /// Two CRN blocks under a short weekday header row (indented Tuesday + Monday).
     private static let gridFixture = """
 Mon       Tue       Wed       Thu       Fri       Sat       Sun
                CRN: 22774
@@ -27,17 +27,6 @@ Seminar
 MCB 100
 """
 
-    private static let trickyCases: [StructuredParsingNote] = [
-        .init(
-            field: "column indent",
-            note: "Leading whitespace before CRN is part of the grid regex match, so indent is always 0 today — every block maps to the first weekday column (Monday) until the matcher is fixed."
-        ),
-        .init(
-            field: "location after time",
-            note: "Grid blocks only scan body lines before the time row for location; room/building lines after the clock range are not captured today."
-        ),
-    ]
-
     func testGrid_parseProducesTwoRows() {
         let events = ScheduleTextParser.parse(Self.gridFixture, defaultSemesterEnd: Self.semesterEnd)
         XCTAssertEqual(events.count, 2)
@@ -49,8 +38,7 @@ MCB 100
         let export = StructuredScheduleExportBuilder.build(
             events: events,
             student: nil,
-            inputFormat: "weekly_grid",
-            trickyCases: Self.trickyCases
+            inputFormat: "weekly_grid"
         )
 
         let expected = StructuredScheduleExport(
@@ -67,11 +55,11 @@ MCB 100
                     instructors: [],
                     meetingPatterns: [
                         StructuredMeetingPattern(
-                            days: ["Monday"],
+                            days: ["Tuesday"],
                             startTime: "12:30 PM",
                             endTime: "01:45 PM",
                             type: nil,
-                            location: nil,
+                            location: "ONLINE",
                             building: nil,
                             room: nil
                         ),
@@ -91,7 +79,7 @@ MCB 100
                             startTime: "02:30 PM",
                             endTime: "03:20 PM",
                             type: nil,
-                            location: nil,
+                            location: "MCB 100",
                             building: nil,
                             room: nil
                         ),
@@ -101,7 +89,7 @@ MCB 100
             parsingNotes: StructuredExportParsingNotes(
                 enrollmentCount: 2,
                 meetingPatternCount: 2,
-                trickyCases: Self.trickyCases
+                trickyCases: nil
             )
         )
 
@@ -112,9 +100,14 @@ MCB 100
         XCTAssertEqual(roundTrip, expected)
     }
 
-    func testGrid_bothBlocksMapToMondayColumnToday() {
+    func testGrid_columnIndentMapsWeekdaysAndLocations() {
         let events = ScheduleTextParser.parse(Self.gridFixture, defaultSemesterEnd: Self.semesterEnd)
-        XCTAssertEqual(events.map(\.weekdays), [Set([2]), Set([2])])
+        let capstone = events.first { $0.notes.contains("22774") }
+        let seminar = events.first { $0.notes.contains("21937") }
+        XCTAssertEqual(capstone?.weekdays, Set([3]), "Indented CRN under Tue column")
+        XCTAssertEqual(seminar?.weekdays, Set([2]), "Left-aligned CRN under Mon column")
+        XCTAssertEqual(capstone?.location, "ONLINE")
+        XCTAssertEqual(seminar?.location, "MCB 100")
     }
 
     func testGrid_titlesIncludeCourseCodes() {
