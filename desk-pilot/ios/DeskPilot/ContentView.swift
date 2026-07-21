@@ -4,26 +4,38 @@ struct ContentView: View {
     @EnvironmentObject private var connection: ConnectionManager
     @EnvironmentObject private var settings: SettingsStore
 
+    @State private var selectedTab = 0
+
     var body: some View {
-        TabView {
-            ControlView()
-                .tabItem {
-                    Label("Control", systemImage: "cursorarrow")
-                }
+        ZStack(alignment: .bottom) {
+            TabView(selection: $selectedTab) {
+                ControlView()
+                    .tag(0)
+                    .tabItem {
+                        Label("Control", systemImage: "cursorarrow")
+                    }
 
-            MediaView()
-                .tabItem {
-                    Label("Media", systemImage: "speaker.wave.2.fill")
-                }
+                MediaView()
+                    .tag(1)
+                    .tabItem {
+                        Label("Media", systemImage: "speaker.wave.2.fill")
+                    }
 
-            PowerView()
-                .tabItem {
-                    Label("Power", systemImage: "power")
-                }
+                PowerView()
+                    .tag(2)
+                    .tabItem {
+                        Label("Power", systemImage: "power")
+                    }
+            }
+            .tint(AppTheme.accent)
+
+            TypingOverlay()
         }
-        .tint(AppTheme.accent)
         .task {
             await connection.bootstrap(settings: settings)
+        }
+        .onChange(of: connection.keyboardFocusRequestID) { _, _ in
+            selectedTab = 0
         }
     }
 }

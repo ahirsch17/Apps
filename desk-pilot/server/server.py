@@ -15,7 +15,7 @@ import websockets
 from config_store import CONFIG_DIR, load_config, save_config
 from pynput.keyboard import Controller as KeyboardController, Key
 from pynput.mouse import Button, Controller as MouseController
-from text_focus import pc_text_field_is_focused
+from text_focus import describe_focus_target, pc_text_field_is_focused
 
 HOST = "0.0.0.0"
 PORT = 8765
@@ -213,9 +213,13 @@ async def send_json(websocket: websockets.WebSocketServerProtocol, payload: dict
 
 
 async def maybe_notify_text_focus(websocket: websockets.WebSocketServerProtocol) -> None:
-    await asyncio.sleep(0.25)
-    if pc_text_field_is_focused():
-        await send_json(websocket, {"type": "focus_text"})
+    for delay in (0.12, 0.28, 0.45, 0.7):
+        await asyncio.sleep(delay)
+        if pc_text_field_is_focused():
+            log_line(f"Text focus detected ({describe_focus_target()})")
+            await send_json(websocket, {"type": "focus_text"})
+            return
+    log_line(f"No text focus after click ({describe_focus_target()})")
 
 
 async def handle_message(websocket: websockets.WebSocketServerProtocol, data: dict) -> None:
