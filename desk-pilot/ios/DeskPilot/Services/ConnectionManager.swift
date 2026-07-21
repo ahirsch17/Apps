@@ -26,8 +26,12 @@ final class ConnectionManager: ObservableObject {
     private var authToken: String?
 
     var isConnected: Bool {
-        if case .connected = state { return true }
-        return false
+        switch state {
+        case .connected, .pairing:
+            return true
+        default:
+            return false
+        }
     }
 
     func connect(host: String, port: Int, token: String?) {
@@ -83,7 +87,6 @@ final class ConnectionManager: ObservableObject {
         session = URLSession(configuration: config)
         webSocket = session?.webSocketTask(with: url)
         webSocket?.resume()
-        listen()
 
         let message = RemoteCommand.pair(pin: pin, deviceName: deviceName)
         guard let data = try? JSONSerialization.data(withJSONObject: message),
@@ -106,6 +109,7 @@ final class ConnectionManager: ObservableObject {
                 serverName = json["hostname"] as? String ?? host
                 serverMacAddress = json["mac_address"] as? String ?? ""
                 state = .connected
+                listen()
                 startPingLoop()
                 return token
             }
@@ -250,6 +254,14 @@ final class ConnectionManager: ObservableObject {
               let type = json["type"] as? String else { return }
 
         switch type {
+        case "pair_ok":
+            if case .pairing = state, let token = json["token"] as? String {
+                authToken = token
+                serverName = json["hostname"] as? String ?? currentHost
+                serverMacAddress = json["mac_address"] as? String ?? ""
+                state = .connected
+                startPingLoop()
+            }
         case "auth_ok":
             serverName = json["hostname"] as? String ?? currentHost
             if let mac = json["mac_address"] as? String, !mac.isEmpty {

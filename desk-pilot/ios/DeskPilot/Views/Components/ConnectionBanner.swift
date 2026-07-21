@@ -57,9 +57,8 @@ struct ConnectionBanner: View {
 
     private var statusText: String {
         switch connection.state {
-        case .connected: return "Connected"
+        case .connected, .pairing: return "Connected"
         case .connecting: return "Connecting…"
-        case .pairing: return "Pairing…"
         case .disconnected: return "Not connected"
         case .error(let message): return message
         }
