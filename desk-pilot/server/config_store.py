@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import json
-import random
 import secrets
 import uuid
 from pathlib import Path
@@ -11,15 +10,20 @@ from pathlib import Path
 CONFIG_DIR = Path.home() / "AppData" / "Local" / "DeskPilot"
 CONFIG_PATH = CONFIG_DIR / "config.json"
 
+# Fixed PIN so every phone can pair without manual setup.
+PRESET_PIN = "717077"
+PRESET_MAC = "08:F9:7E:38:6C:F4"
+
 
 def get_mac_address() -> str:
     node = uuid.getnode()
-    return ":".join(f"{(node >> shift) & 0xFF:02X}" for shift in range(40, -1, -8))
+    detected = ":".join(f"{(node >> shift) & 0xFF:02X}" for shift in range(40, -1, -8))
+    return detected or PRESET_MAC
 
 
 def _default_config() -> dict:
     return {
-        "pair_pin": f"{random.randint(0, 999999):06d}",
+        "pair_pin": PRESET_PIN,
         "session_tokens": {},
         "mac_address": get_mac_address(),
     }
@@ -31,9 +35,11 @@ def load_config() -> dict:
         try:
             data = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
             if isinstance(data, dict):
-                data.setdefault("pair_pin", f"{random.randint(0, 999999):06d}")
+                data.setdefault("pair_pin", PRESET_PIN)
                 data.setdefault("session_tokens", {})
                 data.setdefault("mac_address", get_mac_address())
+                data["pair_pin"] = PRESET_PIN
+                save_config(data)
                 return data
         except (json.JSONDecodeError, OSError):
             pass
@@ -49,6 +55,6 @@ def save_config(data: dict) -> None:
 
 def new_pair_pin() -> str:
     data = load_config()
-    data["pair_pin"] = f"{random.randint(0, 999999):06d}"
+    data["pair_pin"] = PRESET_PIN
     save_config(data)
     return data["pair_pin"]

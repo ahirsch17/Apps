@@ -1,5 +1,6 @@
 import Foundation
 import Combine
+import UIKit
 
 enum ConnectionState: Equatable {
     case disconnected
@@ -143,6 +144,26 @@ final class ConnectionManager: ObservableObject {
         send(command: RemoteCommand.ping())
         try? await Task.sleep(nanoseconds: 1_500_000_000)
         return isConnected
+    }
+
+    /// Connect using saved token, or auto-pair with preset PC credentials.
+    func bootstrap(settings: SettingsStore) async {
+        if settings.isPaired {
+            connect(host: settings.host, port: settings.port, token: settings.authToken)
+            return
+        }
+
+        if let token = await pair(
+            host: settings.host,
+            port: settings.port,
+            pin: PCDefaults.pairPIN,
+            deviceName: UIDevice.current.name
+        ) {
+            settings.authToken = token
+            if !serverMacAddress.isEmpty {
+                settings.macAddress = serverMacAddress
+            }
+        }
     }
 
     private func sendAuthIfNeeded() {

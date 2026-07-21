@@ -61,19 +61,15 @@ final class SettingsStore: ObservableObject {
 
     init() {
         let defaults = UserDefaults.standard
-        host = defaults.string(forKey: Keys.host) ?? ""
-        port = defaults.object(forKey: Keys.port) as? Int ?? 8765
+        host = defaults.string(forKey: Keys.host) ?? PCDefaults.host
+        port = defaults.object(forKey: Keys.port) as? Int ?? PCDefaults.port
         authToken = defaults.string(forKey: Keys.token)
         trackpadSensitivity = defaults.object(forKey: Keys.trackpadSensitivity) as? Double ?? 1.0
         scrollSensitivity = defaults.object(forKey: Keys.scrollSensitivity) as? Double ?? 1.0
         tapToClick = defaults.object(forKey: Keys.tapToClick) as? Bool ?? true
         invertScroll = defaults.object(forKey: Keys.invertScroll) as? Bool ?? false
         hapticsEnabled = defaults.object(forKey: Keys.haptics) as? Bool ?? true
-        macAddress = defaults.string(forKey: Keys.macAddress) ?? ""
+        macAddress = defaults.string(forKey: Keys.macAddress) ?? PCDefaults.macAddress
         wolBroadcast = defaults.string(forKey: Keys.wolBroadcast) ?? "255.255.255.255"
-    }
-
-    func forgetDevice() {
-        authToken = nil
     }
 }

@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 @main
 struct DeskPilotApp: App {
@@ -11,6 +12,9 @@ struct DeskPilotApp: App {
                 .environmentObject(connection)
                 .environmentObject(settings)
                 .preferredColorScheme(.dark)
+                .task {
+                    await connection.bootstrap(settings: settings)
+                }
         }
     }
 }
