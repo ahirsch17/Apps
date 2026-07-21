@@ -1,6 +1,9 @@
 import SwiftUI
 
 struct ContentView: View {
+    @EnvironmentObject private var connection: ConnectionManager
+    @EnvironmentObject private var settings: SettingsStore
+
     var body: some View {
         TabView {
             ControlView()
