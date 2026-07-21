@@ -16,6 +16,7 @@ from config_store import CONFIG_DIR, load_config, save_config
 from pynput.keyboard import Controller as KeyboardController, Key
 from pynput.mouse import Button, Controller as MouseController
 from text_focus import describe_focus_target, pc_text_field_is_focused
+from wake_routine import run_login_watch, run_wake_routine
 
 HOST = "0.0.0.0"
 PORT = 8765
@@ -212,9 +213,53 @@ async def send_json(websocket: websockets.WebSocketServerProtocol, payload: dict
     await websocket.send(json.dumps(payload))
 
 
-async def notify_phone_keyboard(websocket: websockets.WebSocketServerProtocol) -> None:
-    await asyncio.sleep(0.05)
-    await send_json(websocket, {"type": "focus_text"})
+async def maybe_notify_text_focus(websocket: websockets.WebSocketServerProtocol) -> None:
+    for delay in (0.15, 0.35, 0.6):
+        await asyncio.sleep(delay)
+        if pc_text_field_is_focused():
+            log_line(f"Text focus detected ({describe_focus_target()})")
+            await send_json(websocket, {"type": "focus_text"})
+            return
+
+
+def wake_settings() -> tuple[str, str, list[str]]:
+    user = str(CONFIG.get("windows_user", "")).strip()
+    pin = str(CONFIG.get("windows_pin", "")).strip()
+    apps = CONFIG.get("launch_apps") or []
+    if not isinstance(apps, list):
+        apps = []
+    cleaned_apps = [str(name).strip() for name in apps if str(name).strip()]
+    return user, pin, cleaned_apps
+
+
+async def handle_wake_routine(websocket: websockets.WebSocketServerProtocol) -> None:
+    user, pin, apps = wake_settings()
+    if not pin:
+        await send_json(
+            websocket,
+            {"type": "wake_routine_status", "status": "error", "message": "No Windows PIN configured"},
+        )
+        return
+
+    await send_json(websocket, {"type": "wake_routine_status", "status": "started"})
+
+    def log(message: str) -> None:
+        log_line(message)
+
+    try:
+        await asyncio.to_thread(
+            run_wake_routine,
+            windows_user=user,
+            windows_pin=pin,
+            launch_apps=apps,
+            log=log,
+        )
+        await send_json(websocket, {"type": "wake_routine_status", "status": "done"})
+    except Exception as exc:
+        await send_json(
+            websocket,
+            {"type": "wake_routine_status", "status": "error", "message": str(exc)},
+        )
 
 
 async def handle_message(websocket: websockets.WebSocketServerProtocol, data: dict) -> None:
@@ -271,7 +316,7 @@ async def handle_message(websocket: websockets.WebSocketServerProtocol, data: di
         action = str(data.get("action", "click"))
         handle_mouse_click(button, action)
         if button == "left" and action in {"click", "down"}:
-            asyncio.create_task(notify_phone_keyboard(websocket))
+            asyncio.create_task(maybe_notify_text_focus(websocket))
         return
 
     if msg_type == "scroll":
@@ -302,6 +347,10 @@ async def handle_message(websocket: websockets.WebSocketServerProtocol, data: di
 
     if msg_type == "power":
         power_action(str(data.get("action", "")))
+        return
+
+    if msg_type == "wake_routine":
+        asyncio.create_task(handle_wake_routine(websocket))
         return
 
     await send_json(websocket, {"type": "error", "message": f"Unknown command: {msg_type}"})

@@ -24,6 +24,17 @@ struct ControlView: View {
                     }
                     .buttonStyle(PrimaryButtonStyle(isActive: scrollMode))
                 }
+
+                Button {
+                    connection.requestKeyboard()
+                    if settings.hapticsEnabled {
+                        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                    }
+                } label: {
+                    Label("Keyboard", systemImage: "keyboard")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(PrimaryButtonStyle(isActive: connection.keyboardIsOpen))
             }
             .padding(16)
             .background(AppTheme.background.ignoresSafeArea())
@@ -80,9 +91,6 @@ struct ControlView: View {
     private func clickButton(_ title: String, button: String) -> some View {
         Button(title) {
             connection.send(command: RemoteCommand.mouseClick(button: button))
-            if button == "left" {
-                connection.requestKeyboard()
-            }
             if settings.hapticsEnabled {
                 UIImpactFeedbackGenerator(style: .light).impactOccurred()
             }

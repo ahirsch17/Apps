@@ -4,6 +4,7 @@ struct ContentView: View {
     @EnvironmentObject private var connection: ConnectionManager
     @EnvironmentObject private var settings: SettingsStore
 
+    @Environment(\.scenePhase) private var scenePhase
     @State private var selectedTab = 0
 
     var body: some View {
@@ -36,6 +37,11 @@ struct ContentView: View {
         }
         .onChange(of: connection.keyboardFocusRequestID) { _, _ in
             selectedTab = 0
+        }
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .active, !connection.isConnected {
+                Task { await connection.bootstrap(settings: settings) }
+            }
         }
     }
 }

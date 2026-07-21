@@ -7,6 +7,7 @@ struct PowerView: View {
 
     @State private var confirmAction: PowerAction?
     @State private var wakeMessage = ""
+    @State private var isWaking = false
 
     enum PowerAction: String, Identifiable {
         case sleep, lock, shutdown
@@ -30,23 +31,28 @@ struct PowerView: View {
                 Spacer()
 
                 Button {
-                    wakePC()
+                    Task { await wakePC() }
                 } label: {
                     VStack(spacing: 12) {
                         Image(systemName: "power.circle.fill")
                             .font(.system(size: 56))
                         Text("Wake PC")
                             .font(.title3.weight(.semibold))
+                        Text("Sign in + open Netflix & Prime")
+                            .font(.caption)
+                            .foregroundStyle(AppTheme.textSecondary)
                     }
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 28)
                 }
                 .buttonStyle(TileButtonStyle())
+                .disabled(isWaking)
 
                 if !wakeMessage.isEmpty {
                     Text(wakeMessage)
                         .font(.caption)
                         .foregroundStyle(AppTheme.textSecondary)
+                        .multilineTextAlignment(.center)
                 }
 
                 HStack(spacing: 12) {
@@ -64,6 +70,11 @@ struct PowerView: View {
             .background(AppTheme.background.ignoresSafeArea())
             .navigationTitle("Power")
             .navigationBarTitleDisplayMode(.inline)
+            .onChange(of: connection.wakeRoutineMessage) { _, message in
+                if !message.isEmpty {
+                    wakeMessage = message
+                }
+            }
             .alert(item: $confirmAction) { action in
                 Alert(
                     title: Text(action.title),
@@ -104,14 +115,26 @@ struct PowerView: View {
             .frame(minHeight: 88)
         }
         .buttonStyle(TileButtonStyle())
-        .disabled(title != "Wake" && !connection.isConnected)
+        .disabled(!connection.isConnected)
     }
 
-    private func wakePC() {
+    private func wakePC() async {
+        isWaking = true
+        defer { isWaking = false }
+
         do {
             try WakeOnLAN.wake(macAddress: settings.macAddress, broadcastHost: settings.wolBroadcast)
-            wakeMessage = "Wake signal sent"
+            wakeMessage = "Wake signal sent — waiting for PC…"
             haptic()
+
+            let connected = await connection.waitForConnection(timeout: 90, settings: settings)
+            guard connected else {
+                wakeMessage = "Wake sent. PC still starting — tap banner to retry."
+                return
+            }
+
+            wakeMessage = "Signing in and opening apps…"
+            connection.send(command: RemoteCommand.wakeRoutine())
         } catch {
             wakeMessage = error.localizedDescription
         }

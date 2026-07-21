@@ -44,4 +44,8 @@ enum RemoteCommand {
     static func power(action: String) -> [String: Any] {
         ["type": "power", "action": action]
     }
+
+    static func wakeRoutine() -> [String: Any] {
+        ["type": "wake_routine"]
+    }
 }

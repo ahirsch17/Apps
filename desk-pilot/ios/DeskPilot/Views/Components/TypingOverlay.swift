@@ -56,8 +56,10 @@ struct TypingOverlay: View {
     }
 
     private func presentKeyboard() {
+        guard !isVisible else { return }
         clearLocalBuffer()
         isVisible = true
+        connection.setKeyboardOpen(true)
         Task { @MainActor in
             try? await Task.sleep(nanoseconds: 50_000_000)
             fieldFocused = true
@@ -71,6 +73,7 @@ struct TypingOverlay: View {
     private func dismissKeyboard() {
         fieldFocused = false
         isVisible = false
+        connection.setKeyboardOpen(false)
         clearLocalBuffer()
     }
 

@@ -16,11 +16,14 @@ final class ConnectionManager: ObservableObject {
     @Published private(set) var serverName: String = ""
     @Published private(set) var serverMacAddress: String = ""
     @Published private(set) var keyboardFocusRequestID = 0
+    @Published private(set) var keyboardIsOpen = false
+    @Published private(set) var wakeRoutineMessage = ""
 
     private var webSocket: URLSessionWebSocketTask?
     private var session: URLSession?
     private var pingTimer: Timer?
     private var reconnectWorkItem: DispatchWorkItem?
+    private var reconnectAttempt = 0
 
     private var currentHost: String = ""
     private var currentPort: Int = 8765
@@ -37,6 +40,23 @@ final class ConnectionManager: ObservableObject {
 
     func requestKeyboard() {
         keyboardFocusRequestID += 1
+    }
+
+    func setKeyboardOpen(_ isOpen: Bool) {
+        keyboardIsOpen = isOpen
+    }
+
+    /// Wait for the PC server after Wake-on-LAN, retrying pairing in the background.
+    func waitForConnection(timeout: TimeInterval, settings: SettingsStore) async -> Bool {
+        if isConnected { return true }
+
+        let deadline = Date().addingTimeInterval(timeout)
+        while Date() < deadline {
+            if isConnected { return true }
+            await bootstrap(settings: settings)
+            try? await Task.sleep(nanoseconds: 3_000_000_000)
+        }
+        return isConnected
     }
 
     func connect(host: String, port: Int, token: String?) {
@@ -184,11 +204,12 @@ final class ConnectionManager: ObservableObject {
         send(command: auth)
     }
 
-    private func teardownSockets() {
+    private func teardownSockets(keepReconnectPlan: Bool = false) {
         pingTimer?.invalidate()
         pingTimer = nil
-        reconnectWorkItem?.cancel()
-        reconnectWorkItem = nil
+        if !keepReconnectPlan {
+            cancelReconnect()
+        }
         webSocket?.cancel(with: .goingAway, reason: nil)
         webSocket = nil
         session?.invalidateAndCancel()
@@ -245,8 +266,9 @@ final class ConnectionManager: ObservableObject {
 
                 case .failure:
                     if self.state != .disconnected && self.state != .pairing {
-                        self.state = .error("Connection lost — tap banner to retry")
-                        self.teardownSockets()
+                        self.state = .error("Connection lost — reconnecting…")
+                        self.teardownSockets(keepReconnectPlan: true)
+                        self.scheduleReconnect()
                     }
                 }
             }
@@ -265,6 +287,8 @@ final class ConnectionManager: ObservableObject {
                 serverName = json["hostname"] as? String ?? currentHost
                 serverMacAddress = json["mac_address"] as? String ?? ""
                 state = .connected
+                reconnectAttempt = 0
+                cancelReconnect()
                 startPingLoop()
             }
         case "auth_ok":
@@ -273,21 +297,66 @@ final class ConnectionManager: ObservableObject {
                 serverMacAddress = mac
             }
             state = .connected
+            reconnectAttempt = 0
+            cancelReconnect()
         case "auth_fail":
             state = .error("Session expired — tap banner to retry")
             teardownSockets()
         case "pong":
             if case .connecting = state {
                 state = .connected
+                reconnectAttempt = 0
+                cancelReconnect()
             }
         case "focus_text":
-            keyboardFocusRequestID += 1
+            if !keyboardIsOpen {
+                keyboardFocusRequestID += 1
+            }
+        case "wake_routine_status":
+            let status = json["status"] as? String ?? ""
+            switch status {
+            case "started":
+                wakeRoutineMessage = "Signing in and opening apps…"
+            case "done":
+                wakeRoutineMessage = "Signed in — Netflix and Prime Video opening"
+            case "error":
+                wakeRoutineMessage = json["message"] as? String ?? "Wake routine failed"
+            default:
+                break
+            }
         case "error":
             let message = json["message"] as? String ?? "Server error"
             state = .error(message)
         default:
             break
         }
+    }
+
+    private func cancelReconnect() {
+        reconnectWorkItem?.cancel()
+        reconnectWorkItem = nil
+    }
+
+    private func scheduleReconnect() {
+        cancelReconnect()
+        guard !currentHost.isEmpty, let token = authToken, !token.isEmpty else { return }
+
+        let delays: [TimeInterval] = [3, 5, 10, 15, 30]
+        let delay = delays[min(reconnectAttempt, delays.count - 1)]
+        reconnectAttempt += 1
+
+        let work = DispatchWorkItem { [weak self] in
+            Task { @MainActor in
+                guard let self, !self.isConnected else { return }
+                self.connect(host: self.currentHost, port: self.currentPort, token: token)
+                try? await Task.sleep(nanoseconds: 4_000_000_000)
+                if !self.isConnected {
+                    self.scheduleReconnect()
+                }
+            }
+        }
+        reconnectWorkItem = work
+        DispatchQueue.main.asyncAfter(deadline: .now() + delay, execute: work)
     }
 
     private func startPingLoop() {
