@@ -167,7 +167,7 @@ final class ConnectionManager: ObservableObject {
             throw URLError(.notConnectedToInternet)
         }
 
-        try await withThrowingTaskGroup(of: String.self) { group in
+        return try await withThrowingTaskGroup(of: String.self) { group in
             group.addTask {
                 try await WebSocketIO.receive(from: socket)
             }
@@ -177,7 +177,9 @@ final class ConnectionManager: ObservableObject {
                 throw URLError(.timedOut)
             }
 
-            let result = try await group.next()!
+            guard let result = try await group.next() else {
+                throw URLError(.timedOut)
+            }
             group.cancelAll()
             return result
         }
