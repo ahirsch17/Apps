@@ -27,7 +27,10 @@ if errorlevel 1 (
 
 echo.
 echo Done. DeskPilot server will start automatically when you log in.
-echo Starting it now...
+echo.
+echo IMPORTANT: Right-click allow-firewall.bat ^> Run as administrator
+echo so your phone can reach this PC over Wi-Fi.
+echo.
 start "" "%PYTHONW%" "%SERVER_DIR%server.py"
 echo.
 echo Check pairing info in: %%LOCALAPPDATA%%\DeskPilot\server.log

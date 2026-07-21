@@ -148,9 +148,13 @@ final class ConnectionManager: ObservableObject {
 
     /// Connect using saved token, or auto-pair with preset PC credentials.
     func bootstrap(settings: SettingsStore) async {
-        if settings.isPaired {
-            connect(host: settings.host, port: settings.port, token: settings.authToken)
-            return
+        state = .connecting
+
+        if settings.isPaired, let token = settings.authToken {
+            if await connectWithAuth(host: settings.host, port: settings.port, token: token) {
+                return
+            }
+            settings.authToken = nil
         }
 
         if let token = await pair(
@@ -166,9 +170,15 @@ final class ConnectionManager: ObservableObject {
         }
     }
 
+    private func connectWithAuth(host: String, port: Int, token: String) async -> Bool {
+        connect(host: host, port: port, token: token)
+        try? await Task.sleep(nanoseconds: 2_500_000_000)
+        return isConnected
+    }
+
     private func sendAuthIfNeeded() {
         guard let token = authToken, !token.isEmpty else {
-            state = .error("Pair with your PC in Settings first")
+            state = .error("Could not pair — check Wi‑Fi and server")
             return
         }
 
