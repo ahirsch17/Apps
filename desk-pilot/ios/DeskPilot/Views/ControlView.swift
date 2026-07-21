@@ -5,9 +5,10 @@ struct ControlView: View {
     @EnvironmentObject private var connection: ConnectionManager
     @EnvironmentObject private var settings: SettingsStore
 
+    @FocusState private var typeFieldFocused: Bool
     @State private var scrollMode = false
-    @State private var showTyping = false
-    @State private var textToSend = ""
+    @State private var typedBuffer = ""
+    @State private var suppressTypingSync = false
     @State private var showOptions = false
 
     var body: some View {
@@ -16,24 +17,11 @@ struct ControlView: View {
                 ConnectionBanner()
 
                 TrackpadSurface(scrollMode: $scrollMode)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .frame(maxWidth: .infinity)
+                    .frame(maxHeight: typeFieldFocused ? 140 : .infinity)
+                    .animation(.easeInOut(duration: 0.2), value: typeFieldFocused)
 
-                if showTyping {
-                    HStack(spacing: 8) {
-                        TextField("Type on your PC…", text: $textToSend)
-                            .textFieldStyle(.plain)
-                            .padding(12)
-                            .background(AppTheme.background)
-                            .clipShape(RoundedRectangle(cornerRadius: 12))
-                            .overlay(RoundedRectangle(cornerRadius: 12).stroke(AppTheme.cardBorder))
-                            .submitLabel(.send)
-                            .onSubmit { sendText() }
-
-                        Button("Send") { sendText() }
-                            .buttonStyle(PrimaryButtonStyle(isActive: true))
-                            .disabled(textToSend.isEmpty || !connection.isConnected)
-                    }
-                }
+                typeBar
 
                 HStack(spacing: 8) {
                     clickButton("Left", button: "left")
@@ -42,16 +30,6 @@ struct ControlView: View {
                         scrollMode.toggle()
                     }
                     .buttonStyle(PrimaryButtonStyle(isActive: scrollMode))
-
-                    Button {
-                        showTyping.toggle()
-                        if !showTyping { textToSend = "" }
-                    } label: {
-                        Image(systemName: showTyping ? "keyboard.chevron.compact.down" : "keyboard")
-                            .frame(maxWidth: .infinity)
-                            .frame(minHeight: AppTheme.minTapTarget)
-                    }
-                    .buttonStyle(PrimaryButtonStyle(isActive: showTyping))
                 }
             }
             .padding(16)
@@ -71,6 +49,40 @@ struct ControlView: View {
                 optionsSheet
             }
         }
+    }
+
+    private var typeBar: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            if typeFieldFocused {
+                Text("Typing on your PC — Return to submit")
+                    .font(.caption2)
+                    .foregroundStyle(AppTheme.accent)
+            }
+
+            TextField(
+                typeFieldFocused ? "" : "Tap here to type (click the PC field first)",
+                text: $typedBuffer,
+                axis: .vertical
+            )
+            .lineLimit(1...5)
+            .textFieldStyle(.plain)
+            .focused($typeFieldFocused)
+            .submitLabel(.return)
+            .autocorrectionDisabled()
+            .textInputAutocapitalization(.never)
+            .padding(12)
+            .background(AppTheme.background)
+            .clipShape(RoundedRectangle(cornerRadius: 12))
+            .overlay(
+                RoundedRectangle(cornerRadius: 12)
+                    .stroke(typeFieldFocused ? AppTheme.accent.opacity(0.5) : AppTheme.cardBorder, lineWidth: 1)
+            )
+            .onSubmit { submitTyping() }
+            .onChange(of: typedBuffer) { oldValue, newValue in
+                syncLiveTyping(from: oldValue, to: newValue)
+            }
+        }
+        .cardStyle()
     }
 
     private var optionsSheet: some View {
@@ -116,13 +128,39 @@ struct ControlView: View {
         .buttonStyle(PrimaryButtonStyle())
     }
 
-    private func sendText() {
-        guard !textToSend.isEmpty else { return }
-        connection.send(command: RemoteCommand.text(textToSend))
-        textToSend = ""
+    private func syncLiveTyping(from oldValue: String, to newValue: String) {
+        guard !suppressTypingSync, connection.isConnected else { return }
+
+        if newValue.count > oldValue.count {
+            let added = String(newValue.dropFirst(oldValue.count))
+            if added.count == 1, let char = added.first {
+                connection.send(command: RemoteCommand.key(String(char)))
+            } else {
+                connection.send(command: RemoteCommand.text(added))
+            }
+            return
+        }
+
+        if newValue.count < oldValue.count {
+            let deletes = oldValue.count - newValue.count
+            for _ in 0..<deletes {
+                connection.send(command: RemoteCommand.key("backspace"))
+            }
+        }
+    }
+
+    private func submitTyping() {
+        connection.send(command: RemoteCommand.key("enter"))
+        clearLocalBuffer()
         if settings.hapticsEnabled {
             UIImpactFeedbackGenerator(style: .light).impactOccurred()
         }
+    }
+
+    private func clearLocalBuffer() {
+        suppressTypingSync = true
+        typedBuffer = ""
+        suppressTypingSync = false
     }
 }
 
