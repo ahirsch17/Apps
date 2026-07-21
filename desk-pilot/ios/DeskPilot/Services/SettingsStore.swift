@@ -70,6 +70,7 @@ final class SettingsStore: ObservableObject {
         invertScroll = defaults.object(forKey: Keys.invertScroll) as? Bool ?? false
         hapticsEnabled = defaults.object(forKey: Keys.haptics) as? Bool ?? true
         macAddress = defaults.string(forKey: Keys.macAddress) ?? PCDefaults.macAddress
-        wolBroadcast = defaults.string(forKey: Keys.wolBroadcast) ?? "255.255.255.255"
+        let savedHost = defaults.string(forKey: Keys.host) ?? PCDefaults.host
+        wolBroadcast = defaults.string(forKey: Keys.wolBroadcast) ?? WakeOnLAN.subnetBroadcast(for: savedHost)
     }
 }

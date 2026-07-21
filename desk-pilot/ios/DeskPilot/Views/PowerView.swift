@@ -123,7 +123,11 @@ struct PowerView: View {
         defer { isWaking = false }
 
         do {
-            try WakeOnLAN.wake(macAddress: settings.macAddress, broadcastHost: settings.wolBroadcast)
+            try WakeOnLAN.wake(
+                macAddress: settings.macAddress,
+                pcHost: settings.host,
+                broadcastHost: settings.wolBroadcast
+            )
             wakeMessage = "Wake signal sent — waiting for PC…"
             haptic()
 
