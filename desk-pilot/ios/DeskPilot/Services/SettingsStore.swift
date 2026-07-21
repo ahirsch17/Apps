@@ -64,7 +64,7 @@ final class SettingsStore: ObservableObject {
         host = defaults.string(forKey: Keys.host) ?? PCDefaults.host
         port = defaults.object(forKey: Keys.port) as? Int ?? PCDefaults.port
         authToken = defaults.string(forKey: Keys.token)
-        trackpadSensitivity = defaults.object(forKey: Keys.trackpadSensitivity) as? Double ?? 1.0
+        trackpadSensitivity = defaults.object(forKey: Keys.trackpadSensitivity) as? Double ?? 1.6
         scrollSensitivity = defaults.object(forKey: Keys.scrollSensitivity) as? Double ?? 1.0
         tapToClick = defaults.object(forKey: Keys.tapToClick) as? Bool ?? true
         invertScroll = defaults.object(forKey: Keys.invertScroll) as? Bool ?? false

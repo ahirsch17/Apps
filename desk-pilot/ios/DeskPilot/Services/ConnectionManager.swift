@@ -35,6 +35,10 @@ final class ConnectionManager: ObservableObject {
         }
     }
 
+    func requestKeyboard() {
+        keyboardFocusRequestID += 1
+    }
+
     func connect(host: String, port: Int, token: String?) {
         teardownSockets()
 

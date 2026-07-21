@@ -80,6 +80,9 @@ struct ControlView: View {
     private func clickButton(_ title: String, button: String) -> some View {
         Button(title) {
             connection.send(command: RemoteCommand.mouseClick(button: button))
+            if button == "left" {
+                connection.requestKeyboard()
+            }
             if settings.hapticsEnabled {
                 UIImpactFeedbackGenerator(style: .light).impactOccurred()
             }

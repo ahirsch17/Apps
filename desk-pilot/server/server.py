@@ -212,14 +212,9 @@ async def send_json(websocket: websockets.WebSocketServerProtocol, payload: dict
     await websocket.send(json.dumps(payload))
 
 
-async def maybe_notify_text_focus(websocket: websockets.WebSocketServerProtocol) -> None:
-    for delay in (0.12, 0.28, 0.45, 0.7):
-        await asyncio.sleep(delay)
-        if pc_text_field_is_focused():
-            log_line(f"Text focus detected ({describe_focus_target()})")
-            await send_json(websocket, {"type": "focus_text"})
-            return
-    log_line(f"No text focus after click ({describe_focus_target()})")
+async def notify_phone_keyboard(websocket: websockets.WebSocketServerProtocol) -> None:
+    await asyncio.sleep(0.05)
+    await send_json(websocket, {"type": "focus_text"})
 
 
 async def handle_message(websocket: websockets.WebSocketServerProtocol, data: dict) -> None:
@@ -276,7 +271,7 @@ async def handle_message(websocket: websockets.WebSocketServerProtocol, data: di
         action = str(data.get("action", "click"))
         handle_mouse_click(button, action)
         if button == "left" and action in {"click", "down"}:
-            asyncio.create_task(maybe_notify_text_focus(websocket))
+            asyncio.create_task(notify_phone_keyboard(websocket))
         return
 
     if msg_type == "scroll":

@@ -92,6 +92,9 @@ struct TrackpadSurface: View {
 
     private func click(button: String) {
         connection.send(command: RemoteCommand.mouseClick(button: button))
+        if button == "left" {
+            connection.requestKeyboard()
+        }
         if settings.hapticsEnabled {
             UIImpactFeedbackGenerator(style: .light).impactOccurred()
         }
