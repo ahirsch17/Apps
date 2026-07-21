@@ -27,3 +27,6 @@ yarn-error.*
 # macOS / editor
 .DS_Store
 *.pem
+
+# Separate GitHub repos kept in this folder for local organization
+SamePath/

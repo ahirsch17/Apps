@@ -6,7 +6,7 @@ import SocketIO
 
 /// Socket.IO client for BluffLocation.
 ///
-/// Mirrors the contract in `Apps/client.js` (events + emits).
+/// Mirrors the contract in `mobile apps/client.js` (events + emits).
 final class BluffLocationSocket {
   // MARK: - Callbacks (app-level events)
   var onConnected: (() -> Void)?

@@ -1,0 +1,136 @@
+import SwiftUI
+import UIKit
+
+struct MediaView: View {
+    @EnvironmentObject private var connection: ConnectionManager
+    @EnvironmentObject private var settings: SettingsStore
+
+    @State private var volumeLevel: Double = 50
+    @State private var volumeBaseline: Double = 50
+
+    var body: some View {
+        NavigationStack {
+            VStack(spacing: 20) {
+                ConnectionBanner()
+
+                volumeCard
+                transportCard
+
+                Spacer()
+            }
+            .padding(16)
+            .background(AppTheme.background.ignoresSafeArea())
+            .navigationTitle("Media")
+            .navigationBarTitleDisplayMode(.inline)
+        }
+    }
+
+    private var volumeCard: some View {
+        VStack(spacing: 20) {
+            Image(systemName: "speaker.wave.3.fill")
+                .font(.system(size: 44))
+                .foregroundStyle(AppTheme.accent)
+                .padding(.top, 8)
+
+            Text("Volume")
+                .font(.title3.weight(.semibold))
+                .foregroundStyle(AppTheme.textPrimary)
+
+            HStack(spacing: 16) {
+                Button {
+                    connection.send(command: RemoteCommand.volume(action: "down", steps: 2))
+                    volumeLevel = max(0, volumeLevel - 5)
+                    haptic()
+                } label: {
+                    Image(systemName: "minus")
+                        .font(.title2.weight(.semibold))
+                        .frame(width: 56, height: 56)
+                }
+                .buttonStyle(PrimaryButtonStyle())
+
+                Slider(value: $volumeLevel, in: 0...100, step: 5) { editing in
+                    if !editing {
+                        sendVolumeDelta()
+                    }
+                }
+                .tint(AppTheme.accent)
+
+                Button {
+                    connection.send(command: RemoteCommand.volume(action: "up", steps: 2))
+                    volumeLevel = min(100, volumeLevel + 5)
+                    haptic()
+                } label: {
+                    Image(systemName: "plus")
+                        .font(.title2.weight(.semibold))
+                        .frame(width: 56, height: 56)
+                }
+                .buttonStyle(PrimaryButtonStyle())
+            }
+
+            Button("Mute") {
+                connection.send(command: RemoteCommand.volume(action: "mute"))
+                haptic()
+            }
+            .buttonStyle(PrimaryButtonStyle(isActive: true))
+            .disabled(!connection.isConnected)
+        }
+        .padding(20)
+        .cardStyle()
+    }
+
+    private var transportCard: some View {
+        HStack(spacing: 16) {
+            mediaButton(icon: "backward.fill", label: "Prev") {
+                connection.send(command: RemoteCommand.media(action: "prev"))
+            }
+
+            mediaButton(icon: "playpause.fill", label: "Play") {
+                connection.send(command: RemoteCommand.media(action: "play_pause"))
+            }
+
+            mediaButton(icon: "forward.fill", label: "Next") {
+                connection.send(command: RemoteCommand.media(action: "next"))
+            }
+        }
+        .padding(16)
+        .cardStyle()
+    }
+
+    private func mediaButton(icon: String, label: String, action: @escaping () -> Void) -> some View {
+        Button {
+            action()
+            haptic()
+        } label: {
+            VStack(spacing: 8) {
+                Image(systemName: icon)
+                    .font(.title2)
+                Text(label)
+                    .font(.caption)
+            }
+            .frame(maxWidth: .infinity)
+            .frame(minHeight: 80)
+        }
+        .buttonStyle(TileButtonStyle())
+        .disabled(!connection.isConnected)
+    }
+
+    private func sendVolumeDelta() {
+        let delta = Int((volumeLevel - volumeBaseline) / 5)
+        guard delta != 0 else { return }
+        let action = delta > 0 ? "up" : "down"
+        connection.send(command: RemoteCommand.volume(action: action, steps: abs(delta)))
+        volumeBaseline = volumeLevel
+    }
+
+    private func haptic() {
+        if settings.hapticsEnabled {
+            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+        }
+    }
+}
+
+#Preview {
+    MediaView()
+        .environmentObject(ConnectionManager())
+        .environmentObject(SettingsStore())
+}

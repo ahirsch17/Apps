@@ -6,7 +6,7 @@ const appsRoot = path.resolve(projectRoot, "..");
 
 const config = getDefaultConfig(projectRoot);
 
-// Allow importing shared modules from `Apps/` (e.g. `Apps/client.js`)
+// Allow importing shared modules from `mobile apps/` (e.g. `mobile apps/client.js`)
 config.watchFolders = [appsRoot];
 config.resolver.nodeModulesPaths = [
   path.resolve(projectRoot, "node_modules"),
