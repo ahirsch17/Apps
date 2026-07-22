@@ -31,7 +31,7 @@ struct ControlView: View {
                 }
                 .buttonStyle(PrimaryButtonStyle(isActive: connection.keyboardIsOpen))
 
-                Text("Tap a search field on your PC, then tap Keyboard.")
+                Text("Tap a search field on your PC — keyboard opens automatically.")
                     .font(.caption2)
                     .foregroundStyle(AppTheme.textSecondary)
                     .multilineTextAlignment(.center)

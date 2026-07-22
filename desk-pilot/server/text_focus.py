@@ -1,4 +1,4 @@
-"""Detect when the user clicked into something typable on Windows."""
+"""Detect when the user clicked into a search bar or text field on Windows."""
 
 from __future__ import annotations
 
@@ -20,28 +20,40 @@ NON_TEXT_TYPES = {
     "RadioButtonControl",
     "ToolBarControl",
     "ThumbControl",
+    "PaneControl",
+    "GroupControl",
+    "WindowControl",
 }
 
-CLASS_HINTS = (
-    "edit",
-    "input",
+SEARCH_HINTS = (
     "search",
     "omnibox",
-    "monaco",
-    "textarea",
-    "textbox",
     "address",
-    "combo",
     "find",
     "query",
     "url",
-    "candidat",
+    "monaco",
+    "input",
+    "edit",
+    "textbox",
+    "textarea",
+    "combo",
     "prompt",
     "chat",
 )
 
 
-def _accepts_text_input(control) -> bool:
+def _has_search_hint(control) -> bool:
+    class_name = (control.ClassName or "").lower()
+    control_name = (control.Name or "").lower()
+    automation_id = (control.AutomationId or "").lower()
+    return any(
+        hint in class_name or hint in automation_id or hint in control_name
+        for hint in SEARCH_HINTS
+    )
+
+
+def _accepts_text_input(control, *, focused_control) -> bool:
     if control is None:
         return False
 
@@ -54,82 +66,43 @@ def _accepts_text_input(control) -> bool:
     if control.ControlTypeName in NON_TEXT_TYPES:
         return False
 
-    if control.ControlTypeName in TEXT_FIELD_TYPES:
+    is_focused = control == focused_control
+    has_hint = _has_search_hint(control)
+
+    if control.ControlTypeName == "EditControl" and (is_focused or has_hint):
         return True
 
-    class_name = (control.ClassName or "").lower()
-    control_name = (control.Name or "").lower()
-    automation_id = (control.AutomationId or "").lower()
-
-    if any(hint in class_name for hint in CLASS_HINTS):
-        return True
-    if any(hint in automation_id for hint in CLASS_HINTS):
-        return True
-    if any(word in control_name for word in ("search", "address", "find", "type")):
+    if control.ControlTypeName == "ComboBoxControl" and (is_focused or has_hint):
         return True
 
-    try:
-        value_pattern = control.GetValuePattern()
-        if value_pattern is not None and not value_pattern.IsReadOnly:
-            return True
-    except Exception:
-        pass
+    if control.ControlTypeName == "DocumentControl" and has_hint and is_focused:
+        return True
 
-    try:
-        if control.GetTextPattern() is not None:
-            return True
-    except Exception:
-        pass
-
-    return False
-
-
-def _candidate_controls():
-    import uiautomation as auto
-    from pynput.mouse import Controller as MouseController
-
-    seen = set()
-    candidates = []
-
-    def add(control) -> None:
-        if control is None:
-            return
-        try:
-            key = control.NativeWindowHandle, control.ControlTypeName, control.ClassName
-        except Exception:
-            key = id(control)
-        if key in seen:
-            return
-        seen.add(key)
-        candidates.append(control)
-
-    add(auto.GetFocusedControl())
-
-    x, y = MouseController().position
-    under_cursor = auto.ControlFromPoint(int(x), int(y))
-    add(under_cursor)
-
-    parent = under_cursor
-    for _ in range(8):
-        if parent is None:
-            break
-        add(parent)
-        parent = parent.GetParentControl()
-
-    return candidates
+    return has_hint and control.ControlTypeName in TEXT_FIELD_TYPES
 
 
 def pc_text_field_is_focused() -> bool:
     try:
-        for control in _candidate_controls():
-            if _accepts_text_input(control):
-                return True
+        import uiautomation as auto
+        from pynput.mouse import Controller as MouseController
+
+        focused = auto.GetFocusedControl()
+        if _accepts_text_input(focused, focused_control=focused):
+            return True
+
+        x, y = MouseController().position
+        under_cursor = auto.ControlFromPoint(int(x), int(y))
+        if _accepts_text_input(under_cursor, focused_control=focused):
+            return True
+
+        if under_cursor is not None:
             try:
-                for child, _ in control.Walk(includeTop=False, maxDepth=2):
-                    if _accepts_text_input(child):
+                for child, _ in under_cursor.Walk(includeTop=False, maxDepth=2):
+                    if _accepts_text_input(child, focused_control=focused):
                         return True
             except Exception:
-                continue
+                pass
+
         return False
     except Exception:
         return False
@@ -150,6 +123,7 @@ def describe_focus_target() -> str:
             return (
                 f"{control.ControlTypeName}"
                 f" class={control.ClassName!r}"
+                f" name={control.Name!r}"
                 f" focusable={control.IsKeyboardFocusable}"
             )
 

@@ -37,7 +37,7 @@ struct TrackpadSurface: View {
                 }
                 .allowsHitTesting(false)
 
-                TrackpadGestureRepresentable(
+                TrackpadTouchRepresentable(
                     onMove: { dx, dy in
                         guard connection.isConnected else { return }
                         connection.send(command: RemoteCommand.mouseMove(dx: dx, dy: dy))
@@ -63,7 +63,7 @@ struct TrackpadSurface: View {
     }
 }
 
-private struct TrackpadGestureRepresentable: UIViewRepresentable {
+private struct TrackpadTouchRepresentable: UIViewRepresentable {
     let onMove: (Double, Double) -> Void
     let onScroll: (Double, Double) -> Void
     let onTap: () -> Void
@@ -84,43 +84,23 @@ private struct TrackpadGestureRepresentable: UIViewRepresentable {
         )
     }
 
-    func makeUIView(context: Context) -> UIView {
-        let view = UIView()
-        view.backgroundColor = .clear
+    func makeUIView(context: Context) -> TrackpadTouchView {
+        let view = TrackpadTouchView()
+        view.coordinator = context.coordinator
         view.isMultipleTouchEnabled = true
-
-        let movePan = UIPanGestureRecognizer(
-            target: context.coordinator,
-            action: #selector(Coordinator.handleMovePan(_:))
-        )
-        movePan.minimumNumberOfTouches = 1
-        movePan.maximumNumberOfTouches = 1
-        movePan.delegate = context.coordinator
-
-        let scrollPan = UIPanGestureRecognizer(
-            target: context.coordinator,
-            action: #selector(Coordinator.handleScrollPan(_:))
-        )
-        scrollPan.minimumNumberOfTouches = 2
-        scrollPan.maximumNumberOfTouches = 2
-        scrollPan.delegate = context.coordinator
-
-        view.addGestureRecognizer(movePan)
-        view.addGestureRecognizer(scrollPan)
-
-        context.coordinator.movePan = movePan
-        context.coordinator.scrollPan = scrollPan
+        view.backgroundColor = .clear
         return view
     }
 
-    func updateUIView(_ uiView: UIView, context: Context) {
+    func updateUIView(_ uiView: TrackpadTouchView, context: Context) {
+        uiView.coordinator = context.coordinator
         context.coordinator.tapToClick = tapToClick
         context.coordinator.moveSensitivity = moveSensitivity
         context.coordinator.scrollSensitivity = scrollSensitivity
         context.coordinator.invertScroll = invertScroll
     }
 
-    final class Coordinator: NSObject, UIGestureRecognizerDelegate {
+    final class Coordinator {
         let onMove: (Double, Double) -> Void
         let onScroll: (Double, Double) -> Void
         let onTap: () -> Void
@@ -129,11 +109,8 @@ private struct TrackpadGestureRepresentable: UIViewRepresentable {
         var scrollSensitivity: Double
         var invertScroll: Bool
 
-        weak var movePan: UIPanGestureRecognizer?
-        weak var scrollPan: UIPanGestureRecognizer?
-
-        private var accumulatedMove = CGPoint.zero
-        private var lastScrollTranslation = CGPoint.zero
+        private var pendingMove = CGPoint.zero
+        private var lastScrollCenter: CGPoint?
 
         init(
             onMove: @escaping (Double, Double) -> Void,
@@ -153,60 +130,143 @@ private struct TrackpadGestureRepresentable: UIViewRepresentable {
             self.invertScroll = invertScroll
         }
 
-        func gestureRecognizer(
-            _ gestureRecognizer: UIGestureRecognizer,
-            shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer
-        ) -> Bool {
-            false
-        }
+        func sendMove(dx: CGFloat, dy: CGFloat) {
+            pendingMove.x += dx * moveSensitivity
+            pendingMove.y += dy * moveSensitivity
 
-        @objc func handleMovePan(_ gesture: UIPanGestureRecognizer) {
-            switch gesture.state {
-            case .began:
-                accumulatedMove = .zero
-            case .changed:
-                let translation = gesture.translation(in: gesture.view)
-                let dx = (translation.x - accumulatedMove.x) * moveSensitivity
-                let dy = (translation.y - accumulatedMove.y) * moveSensitivity
-                accumulatedMove = translation
-
-                let stepX = Int(dx)
-                let stepY = Int(dy)
-                if stepX != 0 || stepY != 0 {
-                    onMove(Double(stepX), Double(stepY))
-                }
-            case .ended, .cancelled:
-                if tapToClick {
-                    let translation = gesture.translation(in: gesture.view)
-                    if hypot(translation.x, translation.y) < 8 {
-                        onTap()
-                    }
-                }
-                accumulatedMove = .zero
-            default:
-                break
+            let stepX = Int(pendingMove.x)
+            let stepY = Int(pendingMove.y)
+            if stepX != 0 || stepY != 0 {
+                onMove(Double(stepX), Double(stepY))
+                pendingMove.x -= Double(stepX)
+                pendingMove.y -= Double(stepY)
             }
         }
 
-        @objc func handleScrollPan(_ gesture: UIPanGestureRecognizer) {
-            switch gesture.state {
-            case .began:
-                lastScrollTranslation = .zero
-            case .changed:
-                let translation = gesture.translation(in: gesture.view)
-                let deltaX = (translation.x - lastScrollTranslation.x) * scrollSensitivity * 0.08
-                let deltaY = (translation.y - lastScrollTranslation.y) * scrollSensitivity * 0.08
-                lastScrollTranslation = translation
+        func sendScroll(at center: CGPoint) {
+            guard let previous = lastScrollCenter else {
+                lastScrollCenter = center
+                return
+            }
 
-                let invert = invertScroll ? -1.0 : 1.0
-                if deltaX != 0 || deltaY != 0 {
-                    onScroll(deltaX, -deltaY * invert)
-                }
-            case .ended, .cancelled:
-                lastScrollTranslation = .zero
-            default:
-                break
+            let deltaX = (center.x - previous.x) * scrollSensitivity * 0.08
+            let deltaY = (center.y - previous.y) * scrollSensitivity * 0.08
+            lastScrollCenter = center
+
+            let invert = invertScroll ? -1.0 : 1.0
+            if deltaX != 0 || deltaY != 0 {
+                onScroll(deltaX, -deltaY * invert)
             }
         }
+
+        func resetScroll() {
+            lastScrollCenter = nil
+        }
+
+        func resetMove() {
+            pendingMove = .zero
+        }
+    }
+}
+
+private final class TrackpadTouchView: UIView {
+    weak var coordinator: TrackpadTouchRepresentable.Coordinator?
+
+    private var activeMoveTouch: UITouch?
+    private var moveStartPoint: CGPoint = .zero
+    private var lastMovePoint: CGPoint = .zero
+    private var didMove = false
+
+    private var scrollTouches: [UITouch] = []
+
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        guard let event else { return }
+        let allTouches = event.allTouches?.filter { $0.view == self } ?? Array(touches)
+
+        if allTouches.count >= 2 {
+            beginScroll(with: allTouches)
+            return
+        }
+
+        guard activeMoveTouch == nil, let touch = touches.first else { return }
+        activeMoveTouch = touch
+        moveStartPoint = touch.location(in: self)
+        lastMovePoint = moveStartPoint
+        didMove = false
+    }
+
+    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        guard let event, let coordinator else { return }
+        let allTouches = event.allTouches?.filter { $0.view == self } ?? Array(touches)
+
+        if scrollTouches.count >= 2 || allTouches.count >= 2 {
+            updateScroll(with: allTouches)
+            return
+        }
+
+        guard let touch = activeMoveTouch, touches.contains(touch) else { return }
+        let point = touch.location(in: self)
+        let dx = point.x - lastMovePoint.x
+        let dy = point.y - lastMovePoint.y
+
+        if hypot(point.x - moveStartPoint.x, point.y - moveStartPoint.y) > 6 {
+            didMove = true
+        }
+
+        coordinator.sendMove(dx: dx, dy: dy)
+        lastMovePoint = point
+    }
+
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        guard let coordinator else { return }
+
+        if scrollTouches.contains(where: { touches.contains($0) }) {
+            scrollTouches.removeAll { touches.contains($0) }
+            if scrollTouches.count < 2 {
+                scrollTouches.removeAll()
+                coordinator.resetScroll()
+            }
+            return
+        }
+
+        guard let touch = activeMoveTouch, touches.contains(touch) else { return }
+        if coordinator.tapToClick && !didMove {
+            coordinator.onTap()
+        }
+
+        activeMoveTouch = nil
+        didMove = false
+        coordinator.resetMove()
+    }
+
+    override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
+        touchesEnded(touches, with: event)
+    }
+
+    private func beginScroll(with touches: [UITouch]) {
+        activeMoveTouch = nil
+        didMove = true
+        scrollTouches = Array(touches.prefix(2))
+        coordinator?.resetScroll()
+        coordinator?.resetMove()
+    }
+
+    private func updateScroll(with touches: [UITouch]) {
+        guard let coordinator, touches.count >= 2 else { return }
+
+        if scrollTouches.count < 2 {
+            beginScroll(with: touches)
+            return
+        }
+
+        let center = averagePoint(for: Array(touches.prefix(2)))
+        coordinator.sendScroll(at: center)
+    }
+
+    private func averagePoint(for touches: [UITouch]) -> CGPoint {
+        guard !touches.isEmpty else { return .zero }
+        let points = touches.map { $0.location(in: self) }
+        let sum = points.reduce(CGPoint.zero) { CGPoint(x: $0.x + $1.x, y: $0.y + $1.y) }
+        return CGPoint(x: sum.x / CGFloat(points.count), y: sum.y / CGFloat(points.count))
     }
 }

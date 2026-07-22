@@ -15,6 +15,7 @@ import websockets
 from config_store import CONFIG_DIR, load_config, save_config
 from pynput.keyboard import Controller as KeyboardController, Key
 from pynput.mouse import Button, Controller as MouseController
+from text_focus import describe_focus_target, pc_text_field_is_focused
 from wake_routine import run_login_watch, run_wake_routine
 
 HOST = "0.0.0.0"
@@ -212,6 +213,15 @@ async def send_json(websocket: websockets.WebSocketServerProtocol, payload: dict
     await websocket.send(json.dumps(payload))
 
 
+async def maybe_notify_text_focus(websocket: websockets.WebSocketServerProtocol) -> None:
+    for delay in (0.2, 0.45, 0.75):
+        await asyncio.sleep(delay)
+        if pc_text_field_is_focused():
+            log_line(f"Text focus detected ({describe_focus_target()})")
+            await send_json(websocket, {"type": "focus_text"})
+            return
+
+
 def wake_settings() -> tuple[str, str, list[str]]:
     user = str(CONFIG.get("windows_user", "")).strip()
     pin = str(CONFIG.get("windows_pin", "")).strip()
@@ -305,6 +315,8 @@ async def handle_message(websocket: websockets.WebSocketServerProtocol, data: di
         button = str(data.get("button", "left"))
         action = str(data.get("action", "click"))
         handle_mouse_click(button, action)
+        if button == "left" and action in {"click", "down"}:
+            asyncio.create_task(maybe_notify_text_focus(websocket))
         return
 
     if msg_type == "scroll":

@@ -36,17 +36,11 @@ struct MediaView: View {
                 .font(.title3.weight(.semibold))
                 .foregroundStyle(AppTheme.textPrimary)
 
-            HStack(spacing: 16) {
-                Button {
+            HStack(spacing: 10) {
+                volumeStepButton(systemName: "minus") {
                     connection.send(command: RemoteCommand.volume(action: "down", steps: 2))
                     volumeLevel = max(0, volumeLevel - 5)
-                    haptic()
-                } label: {
-                    Image(systemName: "minus")
-                        .font(.title2.weight(.semibold))
-                        .frame(width: 56, height: 56)
                 }
-                .buttonStyle(PrimaryButtonStyle())
 
                 Slider(value: $volumeLevel, in: 0...100, step: 5) { editing in
                     if !editing {
@@ -54,17 +48,12 @@ struct MediaView: View {
                     }
                 }
                 .tint(AppTheme.accent)
+                .layoutPriority(1)
 
-                Button {
+                volumeStepButton(systemName: "plus") {
                     connection.send(command: RemoteCommand.volume(action: "up", steps: 2))
                     volumeLevel = min(100, volumeLevel + 5)
-                    haptic()
-                } label: {
-                    Image(systemName: "plus")
-                        .font(.title2.weight(.semibold))
-                        .frame(width: 56, height: 56)
                 }
-                .buttonStyle(PrimaryButtonStyle())
             }
 
             Button("Mute") {
@@ -76,6 +65,19 @@ struct MediaView: View {
         }
         .padding(20)
         .cardStyle()
+    }
+
+    private func volumeStepButton(systemName: String, action: @escaping () -> Void) -> some View {
+        Button {
+            action()
+            haptic()
+        } label: {
+            Image(systemName: systemName)
+                .font(.body.weight(.semibold))
+                .frame(width: 32, height: 44)
+        }
+        .buttonStyle(PrimaryButtonStyle())
+        .disabled(!connection.isConnected)
     }
 
     private var transportCard: some View {

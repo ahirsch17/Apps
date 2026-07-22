@@ -327,6 +327,10 @@ final class ConnectionManager: ObservableObject {
             default:
                 break
             }
+        case "focus_text":
+            if !keyboardIsOpen {
+                keyboardFocusRequestID += 1
+            }
         case "error":
             let message = json["message"] as? String ?? "Server error"
             state = .error(message)
