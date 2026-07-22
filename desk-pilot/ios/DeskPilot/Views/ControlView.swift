@@ -5,7 +5,6 @@ struct ControlView: View {
     @EnvironmentObject private var connection: ConnectionManager
     @EnvironmentObject private var settings: SettingsStore
 
-    @State private var scrollMode = false
     @State private var showOptions = false
 
     var body: some View {
@@ -13,16 +12,12 @@ struct ControlView: View {
             VStack(spacing: 12) {
                 ConnectionBanner()
 
-                TrackpadSurface(scrollMode: $scrollMode)
+                TrackpadSurface()
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
 
                 HStack(spacing: 8) {
                     clickButton("Left", button: "left")
                     clickButton("Right", button: "right")
-                    Button(scrollMode ? "Track" : "Scroll") {
-                        scrollMode.toggle()
-                    }
-                    .buttonStyle(PrimaryButtonStyle(isActive: scrollMode))
                 }
 
                 Button {
@@ -35,6 +30,11 @@ struct ControlView: View {
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(PrimaryButtonStyle(isActive: connection.keyboardIsOpen))
+
+                Text("Tap a search field on your PC, then tap Keyboard.")
+                    .font(.caption2)
+                    .foregroundStyle(AppTheme.textSecondary)
+                    .multilineTextAlignment(.center)
             }
             .padding(16)
             .background(AppTheme.background.ignoresSafeArea())
@@ -61,14 +61,24 @@ struct ControlView: View {
                 Section("Trackpad") {
                     VStack(alignment: .leading, spacing: 8) {
                         HStack {
-                            Text("Sensitivity")
+                            Text("Move sensitivity")
                             Spacer()
                             Text(String(format: "%.1fx", settings.trackpadSensitivity))
                                 .foregroundStyle(AppTheme.accent)
                         }
                         Slider(value: $settings.trackpadSensitivity, in: 0.25...3.0, step: 0.05)
                     }
+                    VStack(alignment: .leading, spacing: 8) {
+                        HStack {
+                            Text("Scroll sensitivity")
+                            Spacer()
+                            Text(String(format: "%.1fx", settings.scrollSensitivity))
+                                .foregroundStyle(AppTheme.accent)
+                        }
+                        Slider(value: $settings.scrollSensitivity, in: 0.25...3.0, step: 0.05)
+                    }
                     Toggle("Tap to click", isOn: $settings.tapToClick)
+                    Toggle("Invert scroll", isOn: $settings.invertScroll)
                     Toggle("Haptics", isOn: $settings.hapticsEnabled)
                 }
 
@@ -85,7 +95,7 @@ struct ControlView: View {
                 }
             }
         }
-        .presentationDetents([.medium])
+        .presentationDetents([.medium, .large])
     }
 
     private func clickButton(_ title: String, button: String) -> some View {

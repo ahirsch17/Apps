@@ -48,8 +48,6 @@ final class ConnectionManager: ObservableObject {
 
     /// Wait for the PC server after Wake-on-LAN, retrying pairing in the background.
     func waitForConnection(timeout: TimeInterval, settings: SettingsStore) async -> Bool {
-        if isConnected { return true }
-
         let deadline = Date().addingTimeInterval(timeout)
         while Date() < deadline {
             if isConnected { return true }
@@ -57,6 +55,15 @@ final class ConnectionManager: ObservableObject {
             try? await Task.sleep(nanoseconds: 3_000_000_000)
         }
         return isConnected
+    }
+
+    /// Clears a stale socket so wake flow waits for the PC to actually come back.
+    func prepareForWakeReconnect() {
+        cancelReconnect()
+        reconnectAttempt = 0
+        teardownSockets()
+        state = .disconnected
+        wakeRoutineMessage = ""
     }
 
     func connect(host: String, port: Int, token: String?) {
@@ -307,10 +314,6 @@ final class ConnectionManager: ObservableObject {
                 state = .connected
                 reconnectAttempt = 0
                 cancelReconnect()
-            }
-        case "focus_text":
-            if !keyboardIsOpen {
-                keyboardFocusRequestID += 1
             }
         case "wake_routine_status":
             let status = json["status"] as? String ?? ""

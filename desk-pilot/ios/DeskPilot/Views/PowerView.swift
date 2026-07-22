@@ -120,7 +120,10 @@ struct PowerView: View {
 
     private func wakePC() async {
         isWaking = true
+        wakeMessage = ""
         defer { isWaking = false }
+
+        connection.prepareForWakeReconnect()
 
         do {
             try WakeOnLAN.wake(
@@ -128,20 +131,24 @@ struct PowerView: View {
                 pcHost: settings.host,
                 broadcastHost: settings.wolBroadcast
             )
-            wakeMessage = "Wake signal sent — waiting for PC…"
+            wakeMessage = "Wake signal sent — waiting for PC to respond…"
             haptic()
-
-            let connected = await connection.waitForConnection(timeout: 90, settings: settings)
-            guard connected else {
-                wakeMessage = "Wake sent. PC still starting — tap banner to retry."
-                return
-            }
-
-            wakeMessage = "Signing in and opening apps…"
-            connection.send(command: RemoteCommand.wakeRoutine())
         } catch {
             wakeMessage = error.localizedDescription
+            return
         }
+
+        let connected = await connection.waitForConnection(timeout: 120, settings: settings)
+        guard connected else {
+            wakeMessage = """
+            PC did not respond. Sleep the PC instead of shutting down, run enable-wol.bat on the PC, \
+            and stay on the same Wi‑Fi.
+            """
+            return
+        }
+
+        wakeMessage = "PC online — signing in and opening apps…"
+        connection.send(command: RemoteCommand.wakeRoutine())
     }
 
     private func haptic() {
