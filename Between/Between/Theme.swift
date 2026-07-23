@@ -48,4 +48,29 @@ extension ClassConnection.Kind {
         case .differentSection: return BetweenTheme.neonViolet
         }
     }
+
+    var shortLabel: String {
+        switch self {
+        case .sameSection: return "Same sec."
+        case .differentSection: return "Other sec."
+        }
+    }
+}
+
+enum FriendColorPalette {
+    private static let palette: [Color] = [
+        Color(red: 0.65, green: 0.41, blue: 0.98), // purple — Rachel
+        Color(red: 0.30, green: 0.85, blue: 0.55), // green — John
+        Color(red: 1.00, green: 0.55, blue: 0.35), // orange
+        Color(red: 0.98, green: 0.45, blue: 0.65), // pink
+        Color(red: 0.30, green: 0.75, blue: 0.95), // cyan
+        Color(red: 1.00, green: 0.72, blue: 0.28), // amber
+        Color(red: 0.45, green: 0.99, blue: 0.54), // lime
+        Color(red: 0.22, green: 0.53, blue: 1.00)  // blue
+    ]
+
+    static func color(for friendId: String) -> Color {
+        let index = abs(friendId.hashValue) % palette.count
+        return palette[index]
+    }
 }

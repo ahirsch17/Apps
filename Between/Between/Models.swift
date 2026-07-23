@@ -46,6 +46,37 @@ struct Student: Codable, Identifiable, Hashable {
     let year: String
     let major: String
     let privacy: Privacy
+    let phoneNumber: String?
+    let suggestedVia: String?
+
+    init(
+        id: String,
+        name: String,
+        email: String,
+        schoolId: String,
+        year: String,
+        major: String,
+        privacy: Privacy,
+        phoneNumber: String? = nil,
+        suggestedVia: String? = nil
+    ) {
+        self.id = id
+        self.name = name
+        self.email = email
+        self.schoolId = schoolId
+        self.year = year
+        self.major = major
+        self.privacy = privacy
+        self.phoneNumber = phoneNumber
+        self.suggestedVia = suggestedVia
+    }
+}
+
+struct IncomingFriendRequest: Identifiable, Hashable {
+    let requestId: String
+    let from: Student
+
+    var id: String { requestId }
 }
 
 struct Enrollment: Codable, Hashable {
@@ -136,14 +167,92 @@ struct ClassConnection: Identifiable, Hashable {
     let meetingDays: [String]
 }
 
+struct FriendOverlap: Identifiable {
+    let id: String
+    let friendId: String
+    let friendName: String
+    let intervals: [(start: Int, end: Int)]
+    let totalMinutes: Int
+
+    var longestIntervalMinutes: Int {
+        intervals.map { $0.end - $0.start }.max() ?? 0
+    }
+
+    var overlapRangeLabel: String {
+        guard let best = intervals.max(by: { ($0.end - $0.start) < ($1.end - $1.start) }) else { return "" }
+        return ScheduleEngine.formatRange(start: best.start, end: best.end)
+    }
+
+    func firstName() -> String {
+        friendName.components(separatedBy: " ").first ?? friendName
+    }
+}
+
+struct FriendTimelineSegment: Identifiable {
+    let id: String
+    let friendId: String
+    let friendName: String
+    let startMinutes: Int
+    let endMinutes: Int
+
+    var durationMinutes: Int { endMinutes - startMinutes }
+}
+
+struct TodayPlanItem: Identifiable {
+    enum Kind: String {
+        case classBlock
+        case freeBlock
+    }
+
+    let id: String
+    let kind: Kind
+    let startMinutes: Int
+    let endMinutes: Int
+    let section: Section?
+    let friendOverlaps: [FriendOverlap]
+
+    var durationMinutes: Int { endMinutes - startMinutes }
+
+    var timeRangeLabel: String {
+        ScheduleEngine.formatRange(start: startMinutes, end: endMinutes)
+    }
+
+    var isHighlightableFreeBlock: Bool {
+        kind == .freeBlock && durationMinutes >= ScheduleEngine.minFreeBlockMinutes
+    }
+
+    func starredOverlaps(starredIds: Set<String>, minMinutes: Int = ScheduleEngine.minOverlapMinutes) -> [FriendOverlap] {
+        friendOverlaps.filter { overlap in
+            starredIds.contains(overlap.friendId) && overlap.longestIntervalMinutes >= minMinutes
+        }
+    }
+
+    func segments(for starredIds: Set<String>) -> [FriendTimelineSegment] {
+        starredOverlaps(starredIds: starredIds).flatMap { overlap in
+            overlap.intervals
+                .filter { $0.end - $0.start >= ScheduleEngine.minOverlapMinutes }
+                .map { interval in
+                    FriendTimelineSegment(
+                        id: "\(overlap.friendId)-\(interval.start)",
+                        friendId: overlap.friendId,
+                        friendName: overlap.friendName,
+                        startMinutes: interval.start,
+                        endMinutes: interval.end
+                    )
+                }
+        }
+    }
+}
+
 struct DashboardData {
     let me: Student
     let nearbyFriends: [FriendCard]
     let classConnections: [ClassConnection]
     let mySections: [Section]
-    let pendingIncomingRequests: [Student]
-    let pendingOutgoingRequests: [Student]
+    let pendingIncoming: [IncomingFriendRequest]
+    let pendingOutgoing: [Student]
     let suggestedStudents: [Student]
     let plans: [Plan]
+    let todayPlan: [TodayPlanItem]
     let syncTimestamp: Date
 }

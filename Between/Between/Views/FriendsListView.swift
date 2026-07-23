@@ -2,100 +2,160 @@ import SwiftUI
 
 struct FriendsListView: View {
     @EnvironmentObject private var viewModel: AppViewModel
+    @State private var settingsFriend: FriendCard?
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 14) {
-                Text("Friends First")
-                    .font(.largeTitle.weight(.bold))
-                    .padding(.top, 84)
-
-                Text("This view only surfaces friends and trusted connections, never the full campus feed.")
-                    .foregroundStyle(.secondary)
-
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("Friends in your classes")
-                        .font(.headline)
-                    ForEach(viewModel.classConnections.prefix(8)) { connection in
-                        HStack {
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text("\(connection.courseCode) · \(connection.friendName)")
-                                    .font(.subheadline.weight(.semibold))
-                                Text("\(connection.kind.label) · \(connection.sectionLabel)")
-                                    .font(.caption)
-                                    .foregroundStyle(connection.kind.color)
-                            }
-                            Spacer()
-                            Button("Nudge") { }
-                                .buttonStyle(.bordered)
-                        }
-                    }
+                HStack {
+                    Text("Friends")
+                        .font(.largeTitle.weight(.bold))
+                        .accessibilityAddTraits(.isHeader)
+                    Spacer()
+                    InfoTipButton(
+                        title: "Friends",
+                        message: "Star your close friends to highlight them on Today. Friend suggestions from contacts and social apps will match by phone or username within your school — coming soon."
+                    )
                 }
-                .glassCard()
+                .padding(.top, 84)
 
                 if !viewModel.pendingIncoming.isEmpty {
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("Incoming friend requests")
-                            .font(.headline)
-                        ForEach(viewModel.pendingIncoming, id: \.id) { student in
-                            HStack {
-                                Text(student.name)
-                                Spacer()
-                                Button("Accept") {
-                                    Task { await viewModel.acceptRequest(from: student) }
-                                }
-                                .buttonStyle(.borderedProminent)
-                            }
-                        }
-                    }
-                    .glassCard()
+                    requestsSection
                 }
 
-                ForEach(viewModel.nearbyFriends) { friend in
-                    HStack(spacing: 12) {
-                        Circle()
-                            .fill(Color.primary.opacity(0.12))
-                            .frame(width: 44, height: 44)
-                            .overlay(Text(friend.avatarEmoji).font(.title3))
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(friend.name).font(.headline)
-                            Text(friend.activity).foregroundStyle(.secondary)
-                            Text("\(friend.location) · \(friend.distanceLabel)")
-                                .font(.caption)
-                                .foregroundStyle(friend.status.color)
-                        }
-                        Spacer()
-                        Button("Plan") { }
-                            .buttonStyle(.bordered)
-                            .tint(friend.status.color)
-                    }
-                    .glassCard()
+                if !viewModel.classConnections.isEmpty {
+                    classSection
                 }
 
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("People to add")
-                        .font(.headline)
-                    ForEach(viewModel.suggested.prefix(12), id: \.id) { student in
-                        HStack {
-                            VStack(alignment: .leading) {
-                                Text(student.name)
-                                Text(student.email)
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                            }
-                            Spacer()
-                            Button("Add") {
-                                Task { await viewModel.sendFriendRequest(to: student) }
-                            }
-                            .buttonStyle(.bordered)
-                        }
-                    }
-                }
-                .glassCard()
+                friendsSection
+                suggestionsSection
             }
             .padding(.horizontal, 16)
             .padding(.bottom, 24)
         }
+        .refreshable {
+            await viewModel.refresh()
+        }
+        .sheet(item: $settingsFriend) { friend in
+            FriendSettingsSheet(friend: friend, preferences: viewModel.preferences)
+        }
+    }
+
+    private var requestsSection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Requests")
+                .font(.headline)
+            ForEach(viewModel.pendingIncoming) { request in
+                HStack {
+                    Text(request.from.name)
+                        .font(.subheadline.weight(.semibold))
+                    Spacer()
+                    Button("Accept") {
+                        Task { await viewModel.acceptRequest(request) }
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .frame(minHeight: 44)
+                }
+            }
+        }
+        .glassCard()
+    }
+
+    private var classSection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("In your classes")
+                .font(.headline)
+            ForEach(viewModel.classConnections.prefix(6)) { connection in
+                HStack {
+                    Circle()
+                        .fill(connection.kind.color)
+                        .frame(width: 8, height: 8)
+                    Text("\(connection.friendName.components(separatedBy: " ").first ?? connection.friendName) · \(connection.courseCode)")
+                        .font(.subheadline)
+                    Spacer()
+                    Text(connection.kind.shortLabel)
+                        .font(.caption)
+                        .foregroundStyle(connection.kind.color)
+                }
+            }
+        }
+        .glassCard()
+    }
+
+    private var friendsSection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Your friends")
+                .font(.headline)
+            ForEach(viewModel.nearbyFriends) { friend in
+                HStack(spacing: 10) {
+                    Circle()
+                        .fill(FriendColorPalette.color(for: friend.id).opacity(0.2))
+                        .frame(width: 40, height: 40)
+                        .overlay(Text(friend.avatarEmoji))
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(friend.name)
+                            .font(.subheadline.weight(.semibold))
+                        Text(friend.status.label)
+                            .font(.caption)
+                            .foregroundStyle(friend.status.color)
+                    }
+                    Spacer()
+                    Button {
+                        viewModel.toggleStar(friend)
+                    } label: {
+                        Image(systemName: viewModel.preferences.isStarred(friend.id) ? "star.fill" : "star")
+                            .foregroundStyle(viewModel.preferences.isStarred(friend.id) ? BetweenTheme.neonAmber : .secondary)
+                    }
+                    .frame(width: 44, height: 44)
+                    .accessibilityLabel(viewModel.preferences.isStarred(friend.id) ? "Unstar \(friend.name)" : "Star \(friend.name)")
+
+                    Button {
+                        settingsFriend = friend
+                    } label: {
+                        Image(systemName: "slider.horizontal.3")
+                            .foregroundStyle(.secondary)
+                    }
+                    .frame(width: 44, height: 44)
+                    .accessibilityLabel("Settings for \(friend.name)")
+                }
+            }
+        }
+        .glassCard()
+    }
+
+    private var suggestionsSection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack {
+                Text("Suggested")
+                    .font(.headline)
+                Spacer()
+                if !viewModel.contactSuggestions.isEmpty {
+                    Text("From contacts")
+                        .font(.caption2)
+                        .foregroundStyle(BetweenTheme.neonMint)
+                }
+            }
+            ForEach(viewModel.suggested.prefix(8), id: \.id) { student in
+                HStack {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(student.name)
+                            .font(.subheadline)
+                        if student.suggestedVia == "contacts" {
+                            Text("In your contacts")
+                                .font(.caption2)
+                                .foregroundStyle(BetweenTheme.neonMint)
+                        }
+                    }
+                    Spacer()
+                    Button("Add") {
+                        Task { await viewModel.sendFriendRequest(to: student) }
+                    }
+                    .buttonStyle(.bordered)
+                    .frame(minHeight: 44)
+                }
+            }
+        }
+        .glassCard()
     }
 }
 

@@ -1,46 +1,79 @@
-# Between iOS Prototype
+# Between
 
-SwiftUI iOS prototype for the `Between` PRD.
+Between helps college students find shared free time and class overlap with people they already know — privacy-first, no campus-wide feed.
+
+**Stack:** SwiftUI · pluggable backend (local seed demo → deployed API)
 
 ## Run in Xcode
 
-1. Open `Between.xcodeproj`.
-2. Select the `Between` scheme.
-3. Choose an iOS Simulator device.
-4. Press Run.
+1. Open `Between.xcodeproj` on your Mac.
+2. Select the **Between** scheme → Run on Simulator or iPhone.
+3. Sign in as **Alex Hirsch (`alex.hirsch@vt.edu`)**.
 
-## Regenerate project
+Works offline in demo mode (bundled seed data).
 
-This project is generated with XcodeGen from `project.yml`.
+## Architecture (swap backend in one place)
 
-```bash
-xcodegen generate
+```
+Views  →  AppViewModel  →  BetweenBackendServicing (protocol)
+                                    ↑
+                    ┌───────────────┴───────────────┐
+            LocalBackendService          RemoteBackendService
+            (seed_data.json)             (HTTPS /v1/…)
+                    ↑                           ↑
+            BackendServiceFactory ← BackendConfiguration.mode
 ```
 
-## Local pipeline architecture
+| File | Role |
+|------|------|
+| `BetweenBackendServicing.swift` | API contract — UI never imports local vs remote |
+| `BackendConfiguration.swift` | **Change `mode` here to go production** |
+| `BackendServiceFactory.swift` | Wires the active backend |
+| `LocalBackendService.swift` | Demo: in-process store + `seed_data.json` |
+| `RemoteBackendService.swift` | Production: `BetweenAPIClient` + REST routes |
+| `DashboardBuilder.swift` | Domain logic (mirrors what the server should return) |
+| `ScheduleEngine.swift` | Overlap / timeline math (client-side for demo) |
 
-- `LocalBackendService` simulates API endpoints for login, dashboard fetch, refresh, friend requests, and request acceptance.
-- `connectPresenceStream()` simulates websocket-style real-time updates.
-- `seed_data.json` is bundled app data generated from script output.
-- `AppViewModel` is the app-side orchestrator and can be swapped to a network backend later.
+### Going live
 
-## Seed data generation
+1. Deploy an API implementing routes in `BetweenAPIClient.swift` (`/v1/auth/login`, `/v1/me/dashboard`, etc.).
+2. In `BackendConfiguration.swift`:
 
-Generate fake university data:
-
-```bash
-python3 Scripts/generate_seed_data.py
+```swift
+static var mode: BackendMode = .remote(baseURL: URL(string: "https://your-api.com")!)
 ```
 
-The script generates:
+3. Release build already defaults to remote — point the URL at your deployment.
 
-- 1 university (`vt`) with `@vt.edu` users.
-- 20 canonical classes with multiple sections (including weekend sections for testability).
-- 70 students, enrollments, friendships, pending friend requests, presence updates, and plans.
+No ViewModel or View changes required.
 
-## Current app testing flow
+## Demo data
 
-- Login as any seeded account from the picker (for example `alex.hirsch@vt.edu`).
-- Review nearby friends and class connections (same section vs different section).
-- Accept incoming friend requests and send new requests from suggested users.
-- Pull refresh from class panel to simulate app-start/manual sync behavior.
+Regenerate curated seed data (25 students, John + Rachel with designed overlaps):
+
+```bash
+python Scripts/generate_seed_data.py
+```
+
+**Demo cast**
+
+| Person | Role |
+|--------|------|
+| Alex Hirsch | You — login account |
+| John Martinez | Close friend, same section CS 2114, Wed lunch overlap |
+| Rachel Chen | Close friend, different section CS 3214, partial overlap |
+| Others | Suggestions, classmates, pending requests |
+
+Contact-style suggestions show **“In your contacts”** (simulated via `suggestedVia: "contacts"` until Contacts API is wired).
+
+## Demo flow (Sunday)
+
+1. Sign in as Alex.
+2. **Now** — colored timeline, John/Rachel overlap bars, class chips.
+3. **Friends** — star/unstar, per-friend privacy toggles, accept requests.
+4. **Plans** — one-tap plans.
+
+## Related
+
+- Product requirements: [`BetweenPRD`](https://github.com/ahirsch17/BetweenPRD) (private)
+- Repo: [`Apps`](https://github.com/ahirsch17/Apps) → `Between/`

@@ -1,14 +1,8 @@
 import SwiftUI
 
 struct ContentView: View {
-    @StateObject private var viewModel = AppViewModel(service: {
-        do {
-            return try LocalBackendService.live()
-        } catch {
-            fatalError("Failed to bootstrap local backend: \(error)")
-        }
-    }())
-    @State private var page = 0
+    @EnvironmentObject private var viewModel: AppViewModel
+    @AppStorage("between.hasSeenWelcome") private var hasSeenWelcome = false
     @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
@@ -22,10 +16,10 @@ struct ContentView: View {
             )
             .ignoresSafeArea()
 
-            TabView(selection: $page) {
-                HomeMapView()
-                    .tag(0)
+            TabView(selection: $viewModel.selectedTab) {
                 FriendsListView()
+                    .tag(0)
+                HomeMapView()
                     .tag(1)
                 PlansView()
                     .tag(2)
@@ -33,7 +27,7 @@ struct ContentView: View {
             .environmentObject(viewModel)
             .tabViewStyle(.page(indexDisplayMode: .never))
             .overlay(alignment: .top) {
-                PagerHeader(page: $page)
+                PagerHeader(selectedTab: $viewModel.selectedTab)
                     .padding(.horizontal, 16)
                     .padding(.top, 8)
             }
@@ -42,8 +36,32 @@ struct ContentView: View {
                 LoginOverlayView()
                     .environmentObject(viewModel)
             }
+
+            if !hasSeenWelcome && viewModel.me != nil {
+                WelcomeOverlayView {
+                    hasSeenWelcome = true
+                }
+            }
+
+            if let toast = viewModel.toastMessage {
+                VStack {
+                    Spacer()
+                    Text(toast)
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 12)
+                        .background(Color.black.opacity(0.82))
+                        .clipShape(Capsule())
+                        .padding(.bottom, 28)
+                        .accessibilityAddTraits(.isStaticText)
+                }
+                .transition(.move(edge: .bottom).combined(with: .opacity))
+                .animation(.spring(response: 0.35), value: viewModel.toastMessage)
+            }
         }
         .fontDesign(.rounded)
+        .dynamicTypeSize(...DynamicTypeSize.accessibility2)
         .task {
             await viewModel.bootstrap()
         }
@@ -51,7 +69,7 @@ struct ContentView: View {
 }
 
 private struct PagerHeader: View {
-    @Binding var page: Int
+    @Binding var selectedTab: Int
     private let tabs = ["Friends", "Now", "Plans"]
 
     var body: some View {
@@ -59,27 +77,61 @@ private struct PagerHeader: View {
             ForEach(tabs.indices, id: \.self) { index in
                 Button {
                     withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
-                        page = index
+                        selectedTab = index
                     }
                 } label: {
                     Text(tabs[index])
                         .font(.subheadline.weight(.semibold))
-                        .foregroundStyle(index == page ? .black : .white)
+                        .foregroundStyle(index == selectedTab ? .black : .white)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 10)
-                        .background(index == page ? Color.white : Color.white.opacity(0.08))
+                        .background(index == selectedTab ? Color.white : Color.white.opacity(0.08))
                         .clipShape(Capsule())
                 }
+                .frame(minHeight: 44)
+                .accessibilityLabel("\(tabs[index]) tab")
+                .accessibilityAddTraits(index == selectedTab ? [.isSelected] : [])
             }
         }
         .padding(6)
         .background(Color.primary.opacity(0.12))
         .clipShape(Capsule())
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel("Main navigation")
+    }
+}
+
+private struct WelcomeOverlayView: View {
+    let onContinue: () -> Void
+
+    var body: some View {
+        ZStack {
+            Color.black.opacity(0.45).ignoresSafeArea()
+            VStack(spacing: 20) {
+                Text("Between")
+                    .font(.largeTitle.weight(.bold))
+                Text("Find time between classes with people you know.")
+                    .font(.body)
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+                Button("Get started") {
+                    onContinue()
+                }
+                .buttonStyle(.borderedProminent)
+                .tint(BetweenTheme.neonViolet)
+                .frame(maxWidth: .infinity, minHeight: 44)
+            }
+            .frame(maxWidth: 400)
+            .padding(24)
+            .glassCard()
+            .padding(.horizontal, 24)
+        }
     }
 }
 
 #Preview {
     ContentView()
+        .environmentObject(AppViewModel.make())
 }
 
 private struct LoginOverlayView: View {
@@ -89,10 +141,11 @@ private struct LoginOverlayView: View {
         ZStack {
             Color.black.opacity(0.25).ignoresSafeArea()
             VStack(alignment: .leading, spacing: 14) {
-                Text("Local Pipeline Login")
+                Text("Sign in")
                     .font(.title2.weight(.bold))
-                Text("Select a seeded @vt.edu user to test login, friend requests, and class matching.")
-                    .font(.subheadline)
+                    .accessibilityAddTraits(.isHeader)
+                Text("Demo account — uses local campus data.")
+                    .font(.caption)
                     .foregroundStyle(.secondary)
 
                 Picker("Account", selection: $viewModel.selectedEmail) {
@@ -101,18 +154,20 @@ private struct LoginOverlayView: View {
                     }
                 }
                 .pickerStyle(.menu)
+                .accessibilityLabel("Choose demo account")
 
                 Button {
                     Task { await viewModel.login() }
                 } label: {
                     HStack {
                         if viewModel.isLoading { ProgressView().tint(.white) }
-                        Text(viewModel.isLoading ? "Logging in..." : "Login")
+                        Text(viewModel.isLoading ? "Signing in..." : "Sign in")
                     }
-                    .frame(maxWidth: .infinity)
+                    .frame(maxWidth: .infinity, minHeight: 44)
                 }
                 .buttonStyle(.borderedProminent)
                 .disabled(viewModel.selectedEmail.isEmpty || viewModel.isLoading)
+                .accessibilityLabel("Sign in to Between")
 
                 if let message = viewModel.errorMessage {
                     Text(message).font(.caption).foregroundStyle(.red)

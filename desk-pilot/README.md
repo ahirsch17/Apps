@@ -76,7 +76,7 @@ mobile apps/
 │   ├── README.md         This file
 │   ├── ios/              SwiftUI iPhone app (open in Xcode)
 │   └── server/           Python WebSocket server for Windows
-├── SamePath/             Separate repo (Expo app)
+├── Between/              Campus connection app (SwiftUI)
 ├── Stoke/
 ├── Encrypted/
 └── ...

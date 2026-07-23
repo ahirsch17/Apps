@@ -28,5 +28,5 @@ yarn-error.*
 .DS_Store
 *.pem
 
-# Separate GitHub repos kept in this folder for local organization
-SamePath/
+# Separate GitHub repos kept in this folder for local organization (if any)
+# SamePath was renamed to Between and archived on GitHub — see Between/
