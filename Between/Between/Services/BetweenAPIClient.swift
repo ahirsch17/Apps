@@ -127,8 +127,8 @@ struct LoginResponseBody: Decodable {
 
 struct DashboardDTO: Decodable {
     let me: Student
-    let nearbyFriends: [FriendCard]
-    let classConnections: [ClassConnection]
+    let nearbyFriends: [FriendCardDTO]
+    let classConnections: [ClassConnectionDTO]
     let mySections: [Section]
     let pendingIncoming: [IncomingFriendRequestDTO]
     let pendingOutgoing: [Student]
@@ -136,6 +136,52 @@ struct DashboardDTO: Decodable {
     let plans: [Plan]
     let todayPlan: [TodayPlanItemDTO]
     let syncTimestamp: Date
+}
+
+struct FriendCardDTO: Decodable {
+    let id: String
+    let name: String
+    let email: String
+    let avatarEmoji: String
+    let status: String
+    let activity: String
+    let location: String
+    let distanceLabel: String
+
+    func asModel() -> FriendCard {
+        FriendCard(
+            id: id,
+            name: name,
+            email: email,
+            avatarEmoji: avatarEmoji,
+            status: PresenceStatus(rawValue: status) ?? .busy,
+            activity: activity,
+            location: location,
+            distanceLabel: distanceLabel
+        )
+    }
+}
+
+struct ClassConnectionDTO: Decodable {
+    let id: String
+    let courseCode: String
+    let courseName: String
+    let friendName: String
+    let kind: String
+    let sectionLabel: String
+    let meetingDays: [String]
+
+    func asModel() -> ClassConnection {
+        ClassConnection(
+            id: id,
+            courseCode: courseCode,
+            courseName: courseName,
+            friendName: friendName,
+            kind: ClassConnection.Kind(rawValue: kind) ?? .differentSection,
+            sectionLabel: sectionLabel,
+            meetingDays: meetingDays
+        )
+    }
 }
 
 struct IncomingFriendRequestDTO: Decodable {
@@ -164,8 +210,8 @@ extension DashboardDTO {
     func asDashboardData() -> DashboardData {
         DashboardData(
             me: me,
-            nearbyFriends: nearbyFriends,
-            classConnections: classConnections,
+            nearbyFriends: nearbyFriends.map { $0.asModel() },
+            classConnections: classConnections.map { $0.asModel() },
             mySections: mySections,
             pendingIncoming: pendingIncoming.map {
                 IncomingFriendRequest(requestId: $0.requestId, from: $0.from)
