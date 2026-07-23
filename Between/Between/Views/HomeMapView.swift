@@ -107,4 +107,5 @@ struct HomeMapView: View {
 
 #Preview {
     HomeMapView()
+        .environmentObject(AppViewModel.make())
 }

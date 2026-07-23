@@ -93,4 +93,5 @@ struct PlansView: View {
 
 #Preview {
     PlansView()
+        .environmentObject(AppViewModel.make())
 }

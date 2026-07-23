@@ -161,4 +161,5 @@ struct FriendsListView: View {
 
 #Preview {
     FriendsListView()
+        .environmentObject(AppViewModel.make())
 }

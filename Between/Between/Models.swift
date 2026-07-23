@@ -98,7 +98,7 @@ struct FriendRequest: Codable, Identifiable, Hashable {
     let createdAt: Date
 }
 
-enum PresenceStatus: String, Codable, CaseIterable {
+enum PresenceStatus: String, Codable, CaseIterable, Hashable {
     case freeNow
     case onTheWay
     case studying
