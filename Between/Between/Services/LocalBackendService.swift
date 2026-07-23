@@ -25,11 +25,35 @@ actor LocalBackendService: BetweenBackendServicing {
     }
 
     func login(email: String, password: String?) async throws -> AuthSession {
-        _ = password
+        guard let me = database.students.first(where: { $0.email.lowercased() == email.lowercased() }) else {
+            throw BackendError.userNotFound
+        }
+        if let password, !password.isEmpty, password != "demo123" {
+            throw BackendError.server(message: "Incorrect password. Demo password is demo123.")
+        }
+        return AuthSession(userId: me.id, email: me.email, token: "local-\(me.id)")
+    }
+
+    func activateNewUser(email: String, code: String) async throws -> AuthSession {
+        guard code == "482910" else {
+            throw BackendError.server(message: "Invalid activation code. Demo code is 482910.")
+        }
         guard let me = database.students.first(where: { $0.email.lowercased() == email.lowercased() }) else {
             throw BackendError.userNotFound
         }
         return AuthSession(userId: me.id, email: me.email, token: "local-\(me.id)")
+    }
+
+    func searchSections(query: String) async -> [CourseSection] {
+        let trimmed = query.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        guard !trimmed.isEmpty else { return [] }
+        return database.sections.filter { section in
+            section.courseCode.lowercased().contains(trimmed)
+                || section.courseName.lowercased().contains(trimmed)
+                || section.sectionId.lowercased().contains(trimmed)
+                || section.sectionLabel.lowercased().contains(trimmed)
+        }
+        .sorted { $0.courseCode < $1.courseCode }
     }
 
     func refreshDashboard(session: AuthSession) async throws -> DashboardData {

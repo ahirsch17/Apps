@@ -5,6 +5,8 @@ import Foundation
 protocol BetweenBackendServicing: Sendable {
     func fetchLoginCandidates() async -> [Student]
     func login(email: String, password: String?) async throws -> AuthSession
+    func activateNewUser(email: String, code: String) async throws -> AuthSession
+    func searchSections(query: String) async -> [CourseSection]
     func refreshDashboard(session: AuthSession) async throws -> DashboardData
     func sendFriendRequest(session: AuthSession, to studentId: String) async throws
     func acceptFriendRequest(session: AuthSession, requestId: String) async throws

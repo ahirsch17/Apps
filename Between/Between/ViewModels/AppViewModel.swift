@@ -2,17 +2,27 @@ import Foundation
 import SwiftUI
 import Combine
 
+enum AuthStep {
+    case welcome
+    case returning
+    case newUser
+}
+
 @MainActor
 final class AppViewModel: ObservableObject {
+    @Published var authStep: AuthStep = .welcome
+    @Published var loginEmail: String = ""
+    @Published var loginPassword: String = ""
+    @Published var activationCode: String = ""
     @Published var candidates: [Student] = []
     @Published var dashboard: DashboardData?
-    @Published var selectedEmail: String = ""
     @Published var errorMessage: String?
     @Published var toastMessage: String?
     @Published var isLoading = false
     @Published var isRefreshing = false
     @Published var lastSyncText = "Not synced"
-    @Published var selectedTab = 1
+    @Published var courseSearchQuery: String = ""
+    @Published var courseSearchResults: [CourseSection] = []
 
     let preferences = FriendPreferencesStore()
 
@@ -20,6 +30,7 @@ final class AppViewModel: ObservableObject {
     private var session: AuthSession?
     private var streamTask: Task<Void, Never>?
     private var preferenceCancellable: AnyCancellable?
+    private var searchTask: Task<Void, Never>?
 
     init(service: any BetweenBackendServicing) {
         self.service = service
@@ -43,15 +54,14 @@ final class AppViewModel: ObservableObject {
     var pendingIncoming: [IncomingFriendRequest] { dashboard?.pendingIncoming ?? [] }
     var pendingOutgoing: [Student] { dashboard?.pendingOutgoing ?? [] }
     var suggested: [Student] { dashboard?.suggestedStudents ?? [] }
-    var plans: [Plan] { dashboard?.plans ?? [] }
     var todayPlan: [TodayPlanItem] { dashboard?.todayPlan ?? [] }
+
+    var notificationCount: Int {
+        pendingIncoming.count
+    }
 
     var starredFriends: [FriendCard] {
         nearbyFriends.filter { preferences.isStarred($0.id) }
-    }
-
-    var freeNowCount: Int {
-        nearbyFriends.filter { $0.status == .freeNow }.count
     }
 
     var contactSuggestions: [Student] {
@@ -60,25 +70,34 @@ final class AppViewModel: ObservableObject {
 
     func bootstrap() async {
         candidates = await service.fetchLoginCandidates()
-        if selectedEmail.isEmpty {
-            selectedEmail = candidates.first(where: { $0.email == "alex.hirsch@vt.edu" })?.email
+        if loginEmail.isEmpty {
+            loginEmail = candidates.first(where: { $0.email == "alex.hirsch@vt.edu" })?.email
                 ?? candidates.first?.email
                 ?? ""
         }
     }
 
-    func login() async {
-        guard !selectedEmail.isEmpty else { return }
+    func loginReturning() async {
+        guard !loginEmail.isEmpty else { return }
         isLoading = true
+        errorMessage = nil
         defer { isLoading = false }
         do {
-            let auth = try await service.login(email: selectedEmail, password: nil)
-            session = auth
-            let data = try await service.refreshDashboard(session: auth)
-            applyDashboard(data)
-            preferences.bind(userId: data.me.id, friendIds: data.nearbyFriends.map(\.id))
-            autoSuggestStars(from: data)
-            listenForPresence()
+            let auth = try await service.login(email: loginEmail, password: loginPassword)
+            try await completeSignIn(auth)
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
+
+    func activateNewUser() async {
+        guard !loginEmail.isEmpty, activationCode.count >= 6 else { return }
+        isLoading = true
+        errorMessage = nil
+        defer { isLoading = false }
+        do {
+            let auth = try await service.activateNewUser(email: loginEmail, code: activationCode)
+            try await completeSignIn(auth)
         } catch {
             errorMessage = error.localizedDescription
         }
@@ -95,6 +114,20 @@ final class AppViewModel: ObservableObject {
         } catch {
             errorMessage = error.localizedDescription
         }
+    }
+
+    func searchCourses() {
+        searchTask?.cancel()
+        let query = courseSearchQuery
+        searchTask = Task {
+            try? await Task.sleep(for: .milliseconds(250))
+            guard !Task.isCancelled else { return }
+            courseSearchResults = await service.searchSections(query: query)
+        }
+    }
+
+    func connections(for section: CourseSection) -> [ClassConnection] {
+        classConnections.filter { $0.courseCode == section.courseCode }
     }
 
     func toggleStar(_ friend: FriendCard) {
@@ -136,63 +169,33 @@ final class AppViewModel: ObservableObject {
         }
     }
 
-    func joinFriend(_ friend: FriendCard) async {
-        selectedTab = 2
-        showToast("Plan with \(friend.name.components(separatedBy: " ").first ?? friend.name)")
+    func signOut() {
+        session = nil
+        dashboard = nil
+        streamTask?.cancel()
+        authStep = .welcome
+        loginPassword = ""
+        activationCode = ""
+        errorMessage = nil
     }
 
-    func nudge(friend: FriendCard) async {
-        guard let session else { return }
-        do {
-            try await service.sendNudge(session: session, to: friend.id, message: "Hey")
-            showToast("Nudged \(friend.name.components(separatedBy: " ").first ?? friend.name)")
-        } catch {
-            errorMessage = error.localizedDescription
-        }
-    }
-
-    func nudge(connection: ClassConnection) async {
-        if let friend = nearbyFriends.first(where: { $0.name == connection.friendName }) {
-            await nudge(friend: friend)
-        }
-    }
-
-    func planWith(friend: FriendCard) async {
-        guard let session else { return }
-        do {
-            _ = try await service.createPlan(
-                session: session,
-                type: "hangout",
-                title: "Meet \(friend.name.components(separatedBy: " ").first ?? friend.name)",
-                location: friend.location
-            )
-            selectedTab = 2
-            await refresh()
-        } catch {
-            errorMessage = error.localizedDescription
-        }
-    }
-
-    func createQuickPlan(type: String, title: String, location: String) async {
-        guard let session else { return }
-        do {
-            _ = try await service.createPlan(session: session, type: type, title: title, location: location)
-            showToast("\(title) created")
-            await refresh()
-        } catch {
-            errorMessage = error.localizedDescription
-        }
+    private func completeSignIn(_ auth: AuthSession) async throws {
+        session = auth
+        let data = try await service.refreshDashboard(session: auth)
+        applyDashboard(data)
+        preferences.bind(userId: data.me.id, friendIds: data.nearbyFriends.map(\.id))
+        autoSuggestStars(from: data)
+        listenForPresence()
+        authStep = .welcome
     }
 
     private func autoSuggestStars(from data: DashboardData) {
         let allOverlaps = data.todayPlan.flatMap(\.friendOverlaps)
         preferences.suggestStars(from: allOverlaps, limit: 5)
-        // Ensure demo anchors John + Rachel stay starred when present.
         for friendId in ["stu-john", "stu-rachel"] {
-            if data.nearbyFriends.contains(where: { $0.id == friendId }) {
-                if !preferences.isStarred(friendId) {
-                    preferences.toggleStar(friendId)
-                }
+            if data.nearbyFriends.contains(where: { $0.id == friendId }),
+               !preferences.isStarred(friendId) {
+                preferences.toggleStar(friendId)
             }
         }
     }
@@ -201,7 +204,7 @@ final class AppViewModel: ObservableObject {
         dashboard = data
         let formatter = RelativeDateTimeFormatter()
         formatter.unitsStyle = .short
-        lastSyncText = "Synced \(formatter.localizedString(for: data.syncTimestamp, relativeTo: Date()))"
+        lastSyncText = "Updated \(formatter.localizedString(for: data.syncTimestamp, relativeTo: Date()))"
     }
 
     private func showToast(_ message: String) {

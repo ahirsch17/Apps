@@ -13,14 +13,18 @@
 		20210B7736BF59A2B80BC25B /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFE6A3F160FDFB0A4D9A1C9C /* Theme.swift */; };
 		36213467843795F1B9D3C50E /* LocalBackendService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC147388B2C51BF6FE2BC85A /* LocalBackendService.swift */; };
 		47708D5EAB07F9FD8EF53BCF /* AppViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7EEC126A5992F85498AC572 /* AppViewModel.swift */; };
-		9D069E20D9DF3BE6D5BC69FE /* PlansView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BBE7BC14274599D9C63D829 /* PlansView.swift */; };
-		A1B2C3D4E5F60718293A4B5C /* ScheduleEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C3D4E5F60718293A4B5C6D /* ScheduleEngine.swift */; };
-		B9127AFB0729CFFBFADF82E2 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCCE475D181E553671608741 /* Models.swift */; };
-		C9E64452F593A5E65C0038BE /* FriendsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48660899B49583F7CBCA5515 /* FriendsListView.swift */; };
+		C9E64452F593A5E65C0038BE /* AuthFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48660899B49583F7CBCA5515 /* AuthFlowView.swift */; };
+		F5504C2BA4EAFD4F22DA571E /* TodayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30A315A13B219DC4DC53B71E /* TodayView.swift */; };
+		N3TWORK5HEET000000000001 /* NetworkSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = N3TWORK5HEET000000000002 /* NetworkSheet.swift */; };
+		N0TIF1CAT10N000000000001 /* NotificationsSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = N0TIF1CAT10N000000000002 /* NotificationsSheet.swift */; };
+		C0URSEL00KUP000000000001 /* CourseLookupSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0URSEL00KUP000000000002 /* CourseLookupSheet.swift */; };
+		CLASFR1END5HEET000000001 /* ClassFriendsSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = CLASFR1END5HEET000000002 /* ClassFriendsSheet.swift */; };
+		2B3C4D5E6F708192A3B4C5D /* FriendSettingsSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C4D5E6F708192A3B4C5D6E /* FriendSettingsSheet.swift */; };
 		D5E6F708192A3B4C5D6E7F80 /* DayTimelineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6F708192A3B4C5D6E7F8091 /* DayTimelineView.swift */; };
 		E7F8091A2B3C4D5E6F70819 /* InfoTipButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8091A2B3C4D5E6F708192A /* InfoTipButton.swift */; };
 		F91A2B3C4D5E6F708192A3B /* ClassConnectionsStrip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A2B3C4D5E6F708192A3B4C /* ClassConnectionsStrip.swift */; };
-		2B3C4D5E6F708192A3B4C5D /* FriendSettingsSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C4D5E6F708192A3B4C5D6E /* FriendSettingsSheet.swift */; };
+		A1B2C3D4E5F60718293A4B5C /* ScheduleEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C3D4E5F60718293A4B5C6D /* ScheduleEngine.swift */; };
+		B9127AFB0729CFFBFADF82E2 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCCE475D181E553671608741 /* Models.swift */; };
 		4D5E6F708192A3B4C5D6E7F /* FriendPreferencesStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E6F708192A3B4C5D6E7F80 /* FriendPreferencesStore.swift */; };
 		6F708192A3B4C5D6E7F8091 /* BetweenBackendServicing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 708192A3B4C5D6E7F8091A2 /* BetweenBackendServicing.swift */; };
 		8192A3B4C5D6E7F8091A2B3 /* BackendConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92A3B4C5D6E7F8091A2B3C4 /* BackendConfiguration.swift */; };
@@ -30,12 +34,15 @@
 		091A2B3C4D5E6F708192A3B /* SeedDataLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A2B3C4D5E6F708192A3B4D /* SeedDataLoader.swift */; };
 		2A3B4C5D6E7F8091A2B3C4E /* RemoteBackendService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B4C5D6E7F8091A2B3C4D5F /* RemoteBackendService.swift */; };
 		CE64052987978BED734ADDDC /* BetweenApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A2D1926CA26D82F91AE16B6 /* BetweenApp.swift */; };
-		F5504C2BA4EAFD4F22DA571E /* HomeMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30A315A13B219DC4DC53B71E /* HomeMapView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		30A315A13B219DC4DC53B71E /* HomeMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeMapView.swift; sourceTree = "<group>"; };
-		48660899B49583F7CBCA5515 /* FriendsListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendsListView.swift; sourceTree = "<group>"; };
+		30A315A13B219DC4DC53B71E /* TodayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayView.swift; sourceTree = "<group>"; };
+		48660899B49583F7CBCA5515 /* AuthFlowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthFlowView.swift; sourceTree = "<group>"; };
+		N3TWORK5HEET000000000002 /* NetworkSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkSheet.swift; sourceTree = "<group>"; };
+		N0TIF1CAT10N000000000002 /* NotificationsSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsSheet.swift; sourceTree = "<group>"; };
+		C0URSEL00KUP000000000002 /* CourseLookupSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CourseLookupSheet.swift; sourceTree = "<group>"; };
+		CLASFR1END5HEET000000002 /* ClassFriendsSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClassFriendsSheet.swift; sourceTree = "<group>"; };
 		5A2D1926CA26D82F91AE16B6 /* BetweenApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BetweenApp.swift; sourceTree = "<group>"; };
 		5D949A1803F9BC9CC8CD7859 /* Between.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Between.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8BBE7BC14274599D9C63D829 /* PlansView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlansView.swift; sourceTree = "<group>"; };
@@ -82,12 +89,14 @@
 		1609F75150C20B7B2F9A1103 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				48660899B49583F7CBCA5515 /* FriendsListView.swift */,
-				30A315A13B219DC4DC53B71E /* HomeMapView.swift */,
-				8BBE7BC14274599D9C63D829 /* PlansView.swift */,
+				48660899B49583F7CBCA5515 /* AuthFlowView.swift */,
+				30A315A13B219DC4DC53B71E /* TodayView.swift */,
 				E6F708192A3B4C5D6E7F8091 /* DayTimelineView.swift */,
+				N3TWORK5HEET000000000002 /* NetworkSheet.swift */,
+				N0TIF1CAT10N000000000002 /* NotificationsSheet.swift */,
+				C0URSEL00KUP000000000002 /* CourseLookupSheet.swift */,
+				CLASFR1END5HEET000000002 /* ClassFriendsSheet.swift */,
 				F8091A2B3C4D5E6F708192A /* InfoTipButton.swift */,
-				1A2B3C4D5E6F708192A3B4C /* ClassConnectionsStrip.swift */,
 				3C4D5E6F708192A3B4C5D6E /* FriendSettingsSheet.swift */,
 			);
 			path = Views;
@@ -215,16 +224,18 @@
 				47708D5EAB07F9FD8EF53BCF /* AppViewModel.swift in Sources */,
 				CE64052987978BED734ADDDC /* BetweenApp.swift in Sources */,
 				1B900367E8F16631978B210B /* ContentView.swift in Sources */,
-				C9E64452F593A5E65C0038BE /* FriendsListView.swift in Sources */,
-				F5504C2BA4EAFD4F22DA571E /* HomeMapView.swift in Sources */,
+				C9E64452F593A5E65C0038BE /* AuthFlowView.swift in Sources */,
+				F5504C2BA4EAFD4F22DA571E /* TodayView.swift in Sources */,
+				N3TWORK5HEET000000000001 /* NetworkSheet.swift in Sources */,
+				N0TIF1CAT10N000000000001 /* NotificationsSheet.swift in Sources */,
+				C0URSEL00KUP000000000001 /* CourseLookupSheet.swift in Sources */,
+				CLASFR1END5HEET000000001 /* ClassFriendsSheet.swift in Sources */,
 				36213467843795F1B9D3C50E /* LocalBackendService.swift in Sources */,
 				B9127AFB0729CFFBFADF82E2 /* Models.swift in Sources */,
-				9D069E20D9DF3BE6D5BC69FE /* PlansView.swift in Sources */,
 				A1B2C3D4E5F60718293A4B5C /* ScheduleEngine.swift in Sources */,
 				20210B7736BF59A2B80BC25B /* Theme.swift in Sources */,
 				D5E6F708192A3B4C5D6E7F80 /* DayTimelineView.swift in Sources */,
 				E7F8091A2B3C4D5E6F70819 /* InfoTipButton.swift in Sources */,
-				F91A2B3C4D5E6F708192A3B /* ClassConnectionsStrip.swift in Sources */,
 				2B3C4D5E6F708192A3B4C5D /* FriendSettingsSheet.swift in Sources */,
 				4D5E6F708192A3B4C5D6E7F /* FriendPreferencesStore.swift in Sources */,
 				6F708192A3B4C5D6E7F8091 /* BetweenBackendServicing.swift in Sources */,

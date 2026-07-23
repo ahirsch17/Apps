@@ -68,10 +68,12 @@ Contact-style suggestions show **“In your contacts”** (simulated via `sugges
 
 ## Demo flow (Sunday)
 
-1. Sign in as Alex.
-2. **Now** — colored timeline, John/Rachel overlap bars, class chips.
-3. **Friends** — star/unstar, per-friend privacy toggles, accept requests.
-4. **Plans** — one-tap plans.
+1. **I'm returning** → `alex.hirsch@vt.edu` / `demo123`
+2. **Today** — main screen: schedule, free-time overlap bars, shared-free-time hero
+3. **Bell** — friend requests · **People icon** — network, star friends, add suggestions
+4. **Search** — course/CRN lookup · **People on class row** — friends in that section
+
+New users: **I'm new** → any seed email + code `482910`.
 
 ## Repo layout
 

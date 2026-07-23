@@ -24,6 +24,17 @@ actor RemoteBackendService: BetweenBackendServicing {
         return response.session
     }
 
+    func activateNewUser(email: String, code: String) async throws -> AuthSession {
+        _ = email
+        _ = code
+        throw BackendError.notImplemented
+    }
+
+    func searchSections(query: String) async -> [CourseSection] {
+        _ = query
+        return []
+    }
+
     func refreshDashboard(session: AuthSession) async throws -> DashboardData {
         let dto: DashboardDTO = try await client.get(.dashboard, token: session.token)
         let dashboard = dto.asDashboardData()
