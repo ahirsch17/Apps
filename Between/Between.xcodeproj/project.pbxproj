@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		0B58D26883F30B10D4352217 /* seed_data.json in Resources */ = {isa = PBXBuildFile; fileRef = A286433737770F501590882F /* seed_data.json */; };
+		A1C2D3E4F5061728394A5B6C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B2D3E4F5061728394A5B6C7D /* Assets.xcassets */; };
 		1B900367E8F16631978B210B /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDF199F746A50225E095F90A /* ContentView.swift */; };
 		20210B7736BF59A2B80BC25B /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFE6A3F160FDFB0A4D9A1C9C /* Theme.swift */; };
 		36213467843795F1B9D3C50E /* LocalBackendService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC147388B2C51BF6FE2BC85A /* LocalBackendService.swift */; };
@@ -39,6 +40,7 @@
 		5D949A1803F9BC9CC8CD7859 /* Between.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Between.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8BBE7BC14274599D9C63D829 /* PlansView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlansView.swift; sourceTree = "<group>"; };
 		A286433737770F501590882F /* seed_data.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = seed_data.json; sourceTree = "<group>"; };
+		B2D3E4F5061728394A5B6C7D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A7EEC126A5992F85498AC572 /* AppViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppViewModel.swift; sourceTree = "<group>"; };
 		BFE6A3F160FDFB0A4D9A1C9C /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		CCCE475D181E553671608741 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
@@ -106,6 +108,7 @@
 				FDF199F746A50225E095F90A /* ContentView.swift */,
 				CCCE475D181E553671608741 /* Models.swift */,
 				BFE6A3F160FDFB0A4D9A1C9C /* Theme.swift */,
+				B2D3E4F5061728394A5B6C7D /* Assets.xcassets */,
 				D373AE391246A04481EC2279 /* Resources */,
 				0B4CC01BE6CFE3E556049F74 /* Services */,
 				BF3CE3D6EAB8868B3D55C517 /* ViewModels */,
@@ -198,6 +201,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0B58D26883F30B10D4352217 /* seed_data.json in Resources */,
+				A1C2D3E4F5061728394A5B6C /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

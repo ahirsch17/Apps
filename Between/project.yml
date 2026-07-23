@@ -11,6 +11,7 @@ targets:
       - Between
     resources:
       - Between/Resources
+      - Between/Assets.xcassets
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.alexhirsch.between

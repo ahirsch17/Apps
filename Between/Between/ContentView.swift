@@ -108,6 +108,11 @@ private struct WelcomeOverlayView: View {
         ZStack {
             Color.black.opacity(0.45).ignoresSafeArea()
             VStack(spacing: 20) {
+                Image("BrandLogo")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(maxWidth: 220, maxHeight: 72)
+                    .accessibilityLabel("Between logo")
                 Text("Between")
                     .font(.largeTitle.weight(.bold))
                 Text("Find time between classes with people you know.")
@@ -141,6 +146,12 @@ private struct LoginOverlayView: View {
         ZStack {
             Color.black.opacity(0.25).ignoresSafeArea()
             VStack(alignment: .leading, spacing: 14) {
+                Image("BrandLogo")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(maxWidth: 180, maxHeight: 56)
+                    .frame(maxWidth: .infinity)
+                    .accessibilityLabel("Between logo")
                 Text("Sign in")
                     .font(.title2.weight(.bold))
                     .accessibilityAddTraits(.isHeader)

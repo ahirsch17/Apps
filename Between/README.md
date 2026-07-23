@@ -73,6 +73,17 @@ Contact-style suggestions show **“In your contacts”** (simulated via `sugges
 3. **Friends** — star/unstar, per-friend privacy toggles, accept requests.
 4. **Plans** — one-tap plans.
 
+## Repo layout
+
+| Path | Purpose |
+|------|---------|
+| `Between/` | SwiftUI iOS app |
+| `api/` | Postgres + VT import server (from earlier prototype) |
+| `docs/VT_INTEGRATION_GUIDE.md` | VT onboarding flow for production |
+| `Scripts/` | Seed data generator |
+
+**Note:** SamePath was the earlier React Native prototype for the same product. It is consolidated here — Between is the only app.
+
 ## Related
 
 - Product requirements: [`BetweenPRD`](https://github.com/ahirsch17/BetweenPRD) (private)
