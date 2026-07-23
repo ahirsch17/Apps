@@ -38,14 +38,14 @@ enum ScheduleEngine {
         return "\(formatTime12Hour(start)) – \(formatTime12Hour(end))"
     }
 
-    static func sections(on dayIdx: Int, from sections: [Section]) -> [Section] {
-        sections.filter { section in
+    static func sectionsForDay(_ dayIdx: Int, in allSections: [CourseSection]) -> [CourseSection] {
+        allSections.filter { section in
             section.meetingDays.contains { dayMap[$0] == dayIdx }
         }
     }
 
-    static func busyIntervals(on dayIdx: Int, sections: [Section]) -> [(start: Int, end: Int, section: Section)] {
-        sections(on: dayIdx, from: sections).compactMap { section in
+    static func busyIntervals(on dayIdx: Int, sections: [CourseSection]) -> [(start: Int, end: Int, section: CourseSection)] {
+        sectionsForDay(dayIdx, in: sections).compactMap { section in
             guard let start = minutes(from: section.startTime),
                   let end = minutes(from: section.endTime) else { return nil }
             let clampedStart = max(start, startMinutes)
@@ -56,8 +56,8 @@ enum ScheduleEngine {
         .sorted { $0.start < $1.start }
     }
 
-    static func freeIntervals(on dayIdx: Int, sections: [Section]) -> [(start: Int, end: Int)] {
-        let busy = busyIntervals(on: dayIdx, from: sections).map { ($0.start, $0.end) }
+    static func freeIntervals(on dayIdx: Int, sections: [CourseSection]) -> [(start: Int, end: Int)] {
+        let busy = busyIntervals(on: dayIdx, sections: sections).map { ($0.start, $0.end) }
         var free: [(start: Int, end: Int)] = []
         var previousEnd = startMinutes
         for (start, end) in busy {
@@ -99,8 +99,8 @@ enum ScheduleEngine {
     }
 
     static func buildTodayPlan(
-        mySections: [Section],
-        friendSectionsById: [String: [Section]],
+        mySections: [CourseSection],
+        friendSectionsById: [String: [CourseSection]],
         friendNamesById: [String: String],
         now: Date = Date()
     ) -> [TodayPlanItem] {
@@ -108,8 +108,8 @@ enum ScheduleEngine {
         let nowMinutes = Calendar.current.component(.hour, from: now) * 60
             + Calendar.current.component(.minute, from: now)
 
-        let busy = busyIntervals(on: dayIdx, from: mySections)
-        let free = freeIntervals(on: dayIdx, from: mySections)
+        let busy = busyIntervals(on: dayIdx, sections: mySections)
+        let free = freeIntervals(on: dayIdx, sections: mySections)
 
         var timeline: [TodayPlanItem] = []
         var freeIndex = 0
@@ -174,14 +174,14 @@ enum ScheduleEngine {
     private static func friendOverlaps(
         for freeBlock: (start: Int, end: Int),
         dayIdx: Int,
-        friendSectionsById: [String: [Section]],
+        friendSectionsById: [String: [CourseSection]],
         friendNamesById: [String: String]
     ) -> [FriendOverlap] {
         let userFree = [(freeBlock.start, freeBlock.end)]
         var overlaps: [FriendOverlap] = []
 
         for (friendId, sections) in friendSectionsById {
-            let friendFree = freeIntervals(on: dayIdx, from: sections)
+            let friendFree = freeIntervals(on: dayIdx, sections: sections)
             let intervals = intersectIntervals(
                 userFree.map { (start: $0.0, end: $0.1) },
                 friendFree

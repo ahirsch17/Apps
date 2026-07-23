@@ -39,7 +39,7 @@ final class AppViewModel: ObservableObject {
     var me: Student? { dashboard?.me }
     var nearbyFriends: [FriendCard] { dashboard?.nearbyFriends ?? [] }
     var classConnections: [ClassConnection] { dashboard?.classConnections ?? [] }
-    var mySections: [Section] { dashboard?.mySections ?? [] }
+    var mySections: [CourseSection] { dashboard?.mySections ?? [] }
     var pendingIncoming: [IncomingFriendRequest] { dashboard?.pendingIncoming ?? [] }
     var pendingOutgoing: [Student] { dashboard?.pendingOutgoing ?? [] }
     var suggested: [Student] { dashboard?.suggestedStudents ?? [] }

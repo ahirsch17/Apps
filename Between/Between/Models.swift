@@ -3,7 +3,7 @@ import Foundation
 struct SeedDatabase: Codable {
     let generatedAt: Date
     let universities: [University]
-    let sections: [Section]
+    let sections: [CourseSection]
     let students: [Student]
     let enrollments: [Enrollment]
     let friendships: [Friendship]
@@ -19,7 +19,7 @@ struct University: Codable, Identifiable {
     let timezone: String
 }
 
-struct Section: Codable, Identifiable {
+struct CourseSection: Codable, Identifiable {
     let sectionId: String
     let canonicalCourseId: String
     let courseCode: String
@@ -208,7 +208,7 @@ struct TodayPlanItem: Identifiable {
     let kind: Kind
     let startMinutes: Int
     let endMinutes: Int
-    let section: Section?
+    let section: CourseSection?
     let friendOverlaps: [FriendOverlap]
 
     var durationMinutes: Int { endMinutes - startMinutes }
@@ -248,7 +248,7 @@ struct DashboardData {
     let me: Student
     let nearbyFriends: [FriendCard]
     let classConnections: [ClassConnection]
-    let mySections: [Section]
+    let mySections: [CourseSection]
     let pendingIncoming: [IncomingFriendRequest]
     let pendingOutgoing: [Student]
     let suggestedStudents: [Student]

@@ -129,7 +129,7 @@ struct DashboardDTO: Decodable {
     let me: Student
     let nearbyFriends: [FriendCardDTO]
     let classConnections: [ClassConnectionDTO]
-    let mySections: [Section]
+    let mySections: [CourseSection]
     let pendingIncoming: [IncomingFriendRequestDTO]
     let pendingOutgoing: [Student]
     let suggestedStudents: [Student]
@@ -194,7 +194,7 @@ struct TodayPlanItemDTO: Decodable {
     let kind: String
     let startMinutes: Int
     let endMinutes: Int
-    let section: Section?
+    let section: CourseSection?
     let friendOverlaps: [FriendOverlapDTO]
 }
 

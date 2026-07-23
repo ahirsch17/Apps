@@ -8,7 +8,7 @@ enum DashboardBuilder {
     struct Input {
         let me: Student
         let students: [Student]
-        let sections: [Section]
+        let sections: [CourseSection]
         let enrollments: [Enrollment]
         let friendships: [Friendship]
         let friendRequests: [FriendRequest]
@@ -83,7 +83,7 @@ enum DashboardBuilder {
                 return lhs.name < rhs.name
             }
 
-        let friendSectionsById = Dictionary(uniqueKeysWithValues: friendIds.compactMap { friendId -> (String, [Section])? in
+        let friendSectionsById = Dictionary(uniqueKeysWithValues: friendIds.compactMap { friendId -> (String, [CourseSection])? in
             let ids = Set(input.enrollments.filter { $0.studentId == friendId }.map(\.sectionId))
             let sections = ids.compactMap { sectionById[$0] }
             return sections.isEmpty ? nil : (friendId, sections)
