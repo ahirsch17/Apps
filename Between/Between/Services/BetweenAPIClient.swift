@@ -240,7 +240,7 @@ extension TodayPlanItemDTO {
                     friendName: dto.friendName,
                     intervals: dto.intervals.compactMap { pair in
                         guard pair.count == 2 else { return nil }
-                        return (pair[0], pair[1])
+                        return (start: pair[0], end: pair[1])
                     },
                     totalMinutes: dto.totalMinutes
                 )

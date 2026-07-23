@@ -6,6 +6,14 @@ enum ScheduleEngine {
     static let minFreeBlockMinutes = 30
     static let minOverlapMinutes = 25
 
+    private typealias TimeRange = (start: Int, end: Int)
+    private typealias ClassBlock = (start: Int, end: Int, section: CourseSection)
+
+    private enum TimelineBlock {
+        case free(TimeRange)
+        case busy(ClassBlock)
+    }
+
     private static let dayMap: [String: Int] = [
         "Sun": 0, "Mon": 1, "Tue": 2, "Wed": 3, "Thu": 4, "Fri": 5, "Sat": 6
     ]
@@ -44,39 +52,36 @@ enum ScheduleEngine {
         }
     }
 
-    static func busyIntervals(on dayIdx: Int, sections: [CourseSection]) -> [(start: Int, end: Int, section: CourseSection)] {
+    static func busyIntervals(on dayIdx: Int, sections: [CourseSection]) -> [ClassBlock] {
         sectionsForDay(dayIdx, in: sections).compactMap { section in
             guard let start = minutes(from: section.startTime),
                   let end = minutes(from: section.endTime) else { return nil }
             let clampedStart = max(start, startMinutes)
             let clampedEnd = min(end, endMinutes)
             guard clampedEnd > clampedStart else { return nil }
-            return (clampedStart, clampedEnd, section)
+            return (start: clampedStart, end: clampedEnd, section: section)
         }
         .sorted { $0.start < $1.start }
     }
 
-    static func freeIntervals(on dayIdx: Int, sections: [CourseSection]) -> [(start: Int, end: Int)] {
-        let busy = busyIntervals(on: dayIdx, sections: sections).map { ($0.start, $0.end) }
-        var free: [(start: Int, end: Int)] = []
+    static func freeIntervals(on dayIdx: Int, sections: [CourseSection]) -> [TimeRange] {
+        let busy = busyIntervals(on: dayIdx, sections: sections).map { (start: $0.start, end: $0.end) }
+        var free: [TimeRange] = []
         var previousEnd = startMinutes
         for (start, end) in busy {
             if start > previousEnd {
-                free.append((previousEnd, start))
+                free.append((start: previousEnd, end: start))
             }
             previousEnd = max(previousEnd, end)
         }
         if previousEnd < endMinutes {
-            free.append((previousEnd, endMinutes))
+            free.append((start: previousEnd, end: endMinutes))
         }
         return free
     }
 
-    static func intersectIntervals(
-        _ a: [(start: Int, end: Int)],
-        _ b: [(start: Int, end: Int)]
-    ) -> [(start: Int, end: Int)] {
-        var result: [(start: Int, end: Int)] = []
+    static func intersectIntervals(_ a: [TimeRange], _ b: [TimeRange]) -> [TimeRange] {
+        var result: [TimeRange] = []
         let sortedA = a.sorted { $0.start < $1.start }
         let sortedB = b.sorted { $0.start < $1.start }
         var i = 0
@@ -87,7 +92,7 @@ enum ScheduleEngine {
             let start = max(left.start, right.start)
             let end = min(left.end, right.end)
             if end > start {
-                result.append((start, end))
+                result.append((start: start, end: end))
             }
             if left.end < right.end {
                 i += 1
@@ -132,10 +137,13 @@ enum ScheduleEngine {
         }
 
         while freeIndex < free.count || busyIndex < busy.count {
-            let freeBlock = freeIndex < free.count ? free[freeIndex] : nil
-            let classBlock = busyIndex < busy.count ? busy[busyIndex] : nil
+            let nextFree = freeIndex < free.count ? free[freeIndex] : nil
+            let nextBusy = busyIndex < busy.count ? busy[busyIndex] : nil
 
-            if let freeBlock, classBlock == nil || freeBlock.start <= classBlock.start {
+            guard let block = nextTimelineBlock(free: nextFree, busy: nextBusy) else { break }
+
+            switch block {
+            case let .free(freeBlock):
                 let overlaps = friendOverlaps(
                     for: freeBlock,
                     dayIdx: dayIdx,
@@ -153,7 +161,8 @@ enum ScheduleEngine {
                     )
                 )
                 freeIndex += 1
-            } else if let classBlock {
+
+            case let .busy(classBlock):
                 appendIfFuture(
                     TodayPlanItem(
                         id: "class-\(classBlock.section.sectionId)",
@@ -171,21 +180,31 @@ enum ScheduleEngine {
         return timeline
     }
 
+    private static func nextTimelineBlock(free: TimeRange?, busy: ClassBlock?) -> TimelineBlock? {
+        switch (free, busy) {
+        case let (freeBlock?, nil):
+            return .free(freeBlock)
+        case let (nil, classBlock?):
+            return .busy(classBlock)
+        case let (freeBlock?, classBlock?):
+            return freeBlock.start <= classBlock.start ? .free(freeBlock) : .busy(classBlock)
+        case (nil, nil):
+            return nil
+        }
+    }
+
     private static func friendOverlaps(
-        for freeBlock: (start: Int, end: Int),
+        for freeBlock: TimeRange,
         dayIdx: Int,
         friendSectionsById: [String: [CourseSection]],
         friendNamesById: [String: String]
     ) -> [FriendOverlap] {
-        let userFree = [(freeBlock.start, freeBlock.end)]
+        let userFree: [TimeRange] = [freeBlock]
         var overlaps: [FriendOverlap] = []
 
         for (friendId, sections) in friendSectionsById {
             let friendFree = freeIntervals(on: dayIdx, sections: sections)
-            let intervals = intersectIntervals(
-                userFree.map { (start: $0.0, end: $0.1) },
-                friendFree
-            )
+            let intervals = intersectIntervals(userFree, friendFree)
             guard !intervals.isEmpty else { continue }
             let qualifying = intervals.filter { $0.end - $0.start >= minOverlapMinutes }
             guard !qualifying.isEmpty else { continue }
