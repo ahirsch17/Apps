@@ -15,7 +15,6 @@ PRESET_PIN = "717077"
 PRESET_MAC = "08:F9:7E:38:6C:F4"
 PRESET_WINDOWS_USER = "Alexis Hirsch"
 PRESET_WINDOWS_PIN = "1702019"
-PRESET_LAUNCH_APPS = ["Netflix", "Prime Video"]
 
 
 def get_mac_address() -> str:
@@ -31,7 +30,6 @@ def _default_config() -> dict:
         "mac_address": get_mac_address(),
         "windows_user": PRESET_WINDOWS_USER,
         "windows_pin": PRESET_WINDOWS_PIN,
-        "launch_apps": list(PRESET_LAUNCH_APPS),
     }
 
 
@@ -46,7 +44,6 @@ def load_config() -> dict:
                 data.setdefault("mac_address", get_mac_address())
                 data.setdefault("windows_user", PRESET_WINDOWS_USER)
                 data.setdefault("windows_pin", PRESET_WINDOWS_PIN)
-                data.setdefault("launch_apps", list(PRESET_LAUNCH_APPS))
                 data["pair_pin"] = PRESET_PIN
                 save_config(data)
                 return data

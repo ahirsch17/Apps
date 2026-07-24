@@ -319,9 +319,9 @@ final class ConnectionManager: ObservableObject {
             let status = json["status"] as? String ?? ""
             switch status {
             case "started":
-                wakeRoutineMessage = "Signing in and opening apps…"
+                wakeRoutineMessage = "Signing in…"
             case "done":
-                wakeRoutineMessage = "Signed in — Netflix and Prime Video opening"
+                wakeRoutineMessage = "Signed in"
             case "error":
                 wakeRoutineMessage = json["message"] as? String ?? "Wake routine failed"
             default:

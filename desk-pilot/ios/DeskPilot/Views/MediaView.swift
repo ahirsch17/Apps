@@ -7,14 +7,23 @@ struct MediaView: View {
 
     @State private var volumeLevel: Double = 50
     @State private var volumeBaseline: Double = 50
+    @State private var appLaunchMessage = ""
 
     var body: some View {
         NavigationStack {
             VStack(spacing: 20) {
                 ConnectionBanner()
 
+                appsCard
                 volumeCard
                 transportCard
+
+                if !appLaunchMessage.isEmpty {
+                    Text(appLaunchMessage)
+                        .font(.caption)
+                        .foregroundStyle(AppTheme.textSecondary)
+                        .multilineTextAlignment(.center)
+                }
 
                 Spacer()
             }
@@ -23,6 +32,41 @@ struct MediaView: View {
             .navigationTitle("Media")
             .navigationBarTitleDisplayMode(.inline)
         }
+    }
+
+    private var appsCard: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Apps")
+                .font(.title3.weight(.semibold))
+                .foregroundStyle(AppTheme.textPrimary)
+
+            HStack(spacing: 12) {
+                appButton(title: "Netflix", icon: "play.tv.fill", appName: PCDefaults.netflixApp)
+                appButton(title: "Prime Video", icon: "film.fill", appName: PCDefaults.primeVideoApp)
+            }
+        }
+        .padding(16)
+        .cardStyle()
+    }
+
+    private func appButton(title: String, icon: String, appName: String) -> some View {
+        Button {
+            connection.send(command: RemoteCommand.launchApp(appName))
+            appLaunchMessage = "Opening \(title)…"
+            haptic()
+        } label: {
+            VStack(spacing: 10) {
+                Image(systemName: icon)
+                    .font(.title)
+                Text(title)
+                    .font(.subheadline.weight(.semibold))
+                    .multilineTextAlignment(.center)
+            }
+            .frame(maxWidth: .infinity)
+            .frame(minHeight: 96)
+        }
+        .buttonStyle(TileButtonStyle())
+        .disabled(!connection.isConnected)
     }
 
     private var volumeCard: some View {

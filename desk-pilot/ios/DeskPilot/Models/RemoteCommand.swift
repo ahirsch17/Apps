@@ -48,4 +48,8 @@ enum RemoteCommand {
     static func wakeRoutine() -> [String: Any] {
         ["type": "wake_routine"]
     }
+
+    static func launchApp(_ name: String) -> [String: Any] {
+        ["type": "launch_app", "name": name]
+    }
 }

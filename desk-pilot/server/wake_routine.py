@@ -1,8 +1,7 @@
-"""Unlock Windows after wake and launch configured streaming apps."""
+"""Unlock Windows after wake."""
 
 from __future__ import annotations
 
-import subprocess
 import time
 from typing import Callable
 
@@ -86,40 +85,7 @@ def type_pin(pin: str, log: LogFn = print) -> None:
     keyboard.release(Key.enter)
 
 
-def launch_app(app_name: str, log: LogFn = print) -> bool:
-    safe_name = app_name.replace('"', "")
-    ps = (
-        "$app = Get-StartApps | Where-Object { $_.Name -like '*"
-        + safe_name
-        + "*' } | Select-Object -First 1; "
-        "if ($app) { Start-Process ('shell:AppsFolder\\' + $app.AppID) } "
-        "else { exit 1 }"
-    )
-    try:
-        result = subprocess.run(
-            ["powershell", "-NoProfile", "-Command", ps],
-            capture_output=True,
-            text=True,
-            timeout=20,
-            creationflags=subprocess.CREATE_NO_WINDOW,
-        )
-        if result.returncode == 0:
-            _log(f"Launched {app_name}", log)
-            return True
-        _log(f"Could not find app: {app_name}", log)
-        return False
-    except Exception as exc:
-        _log(f"Launch failed for {app_name}: {exc}", log)
-        return False
-
-
-def run_wake_routine(
-    *,
-    windows_user: str,
-    windows_pin: str,
-    launch_apps: list[str],
-    log: LogFn = print,
-) -> None:
+def run_wake_routine(*, windows_user: str, windows_pin: str, log: LogFn = print) -> None:
     _log("Wake routine started", log)
     time.sleep(4)
 
@@ -130,11 +96,6 @@ def run_wake_routine(
         time.sleep(10)
     else:
         _log("Already signed in — skipping PIN entry", log)
-        time.sleep(2)
-
-    for app_name in launch_apps:
-        launch_app(app_name, log=log)
-        time.sleep(2)
 
     _log("Wake routine finished", log)
 
@@ -143,7 +104,6 @@ def run_login_watch(
     *,
     windows_user: str,
     windows_pin: str,
-    launch_apps: list[str],
     log: LogFn = print,
     timeout_seconds: int = 180,
 ) -> None:
@@ -152,12 +112,7 @@ def run_login_watch(
     deadline = time.time() + timeout_seconds
     while time.time() < deadline:
         if is_sign_in_screen():
-            run_wake_routine(
-                windows_user=windows_user,
-                windows_pin=windows_pin,
-                launch_apps=launch_apps,
-                log=log,
-            )
+            run_wake_routine(windows_user=windows_user, windows_pin=windows_pin, log=log)
             return
         time.sleep(3)
     _log("Login watch timed out", log)
@@ -165,22 +120,15 @@ def run_login_watch(
 
 if __name__ == "__main__":
     import sys
-    from config_store import load_config
+    from config_store import CONFIG_DIR, load_config
 
     config = load_config()
-    user, pin, apps = (
-        str(config.get("windows_user", "")),
-        str(config.get("windows_pin", "")),
-        config.get("launch_apps") or [],
-    )
-    if not isinstance(apps, list):
-        apps = []
+    user = str(config.get("windows_user", ""))
+    pin = str(config.get("windows_pin", ""))
 
     def log(message: str) -> None:
         print(message)
         try:
-            from config_store import CONFIG_DIR
-
             CONFIG_DIR.mkdir(parents=True, exist_ok=True)
             with (CONFIG_DIR / "server.log").open("a", encoding="utf-8") as handle:
                 handle.write(message + "\n")
@@ -188,16 +136,6 @@ if __name__ == "__main__":
             pass
 
     if "--login-watch" in sys.argv:
-        run_login_watch(
-            windows_user=user,
-            windows_pin=pin,
-            launch_apps=[str(name) for name in apps],
-            log=log,
-        )
+        run_login_watch(windows_user=user, windows_pin=pin, log=log)
     else:
-        run_wake_routine(
-            windows_user=user,
-            windows_pin=pin,
-            launch_apps=[str(name) for name in apps],
-            log=log,
-        )
+        run_wake_routine(windows_user=user, windows_pin=pin, log=log)

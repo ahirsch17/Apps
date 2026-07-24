@@ -4,7 +4,7 @@ cd /d "%~dp0"
 
 echo DeskPilot — install wake / sign-in helper
 echo.
-echo This helps sign into Windows and open Netflix + Prime Video after wake.
+echo This helps sign into Windows after wake.
 echo Works best when the PC sleeps instead of fully shutting down.
 echo.
 

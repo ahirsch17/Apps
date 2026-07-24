@@ -6,4 +6,7 @@ enum PCDefaults {
     static let port = 8765
     static let macAddress = "08:F9:7E:38:6C:F4"
     static let pairPIN = "717077"
+
+    static let netflixApp = "Netflix"
+    static let primeVideoApp = "Prime Video"
 }

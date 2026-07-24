@@ -16,7 +16,8 @@ from config_store import CONFIG_DIR, load_config, save_config
 from pynput.keyboard import Controller as KeyboardController, Key
 from pynput.mouse import Button, Controller as MouseController
 from text_focus import describe_focus_target, pc_text_field_is_focused
-from wake_routine import run_login_watch, run_wake_routine
+from app_launcher import launch_app
+from wake_routine import run_wake_routine
 
 HOST = "0.0.0.0"
 PORT = 8765
@@ -222,18 +223,14 @@ async def maybe_notify_text_focus(websocket: websockets.WebSocketServerProtocol)
             return
 
 
-def wake_settings() -> tuple[str, str, list[str]]:
+def wake_settings() -> tuple[str, str]:
     user = str(CONFIG.get("windows_user", "")).strip()
     pin = str(CONFIG.get("windows_pin", "")).strip()
-    apps = CONFIG.get("launch_apps") or []
-    if not isinstance(apps, list):
-        apps = []
-    cleaned_apps = [str(name).strip() for name in apps if str(name).strip()]
-    return user, pin, cleaned_apps
+    return user, pin
 
 
 async def handle_wake_routine(websocket: websockets.WebSocketServerProtocol) -> None:
-    user, pin, apps = wake_settings()
+    user, pin = wake_settings()
     if not pin:
         await send_json(
             websocket,
@@ -251,7 +248,6 @@ async def handle_wake_routine(websocket: websockets.WebSocketServerProtocol) -> 
             run_wake_routine,
             windows_user=user,
             windows_pin=pin,
-            launch_apps=apps,
             log=log,
         )
         await send_json(websocket, {"type": "wake_routine_status", "status": "done"})
@@ -259,6 +255,25 @@ async def handle_wake_routine(websocket: websockets.WebSocketServerProtocol) -> 
         await send_json(
             websocket,
             {"type": "wake_routine_status", "status": "error", "message": str(exc)},
+        )
+
+
+async def handle_launch_app(websocket: websockets.WebSocketServerProtocol, app_name: str) -> None:
+    cleaned = app_name.strip()
+    if not cleaned:
+        await send_json(websocket, {"type": "launch_app_status", "status": "error", "message": "Missing app name"})
+        return
+
+    def log(message: str) -> None:
+        log_line(message)
+
+    ok = await asyncio.to_thread(launch_app, cleaned, log)
+    if ok:
+        await send_json(websocket, {"type": "launch_app_status", "status": "done", "app": cleaned})
+    else:
+        await send_json(
+            websocket,
+            {"type": "launch_app_status", "status": "error", "message": f"Could not open {cleaned}"},
         )
 
 
@@ -351,6 +366,10 @@ async def handle_message(websocket: websockets.WebSocketServerProtocol, data: di
 
     if msg_type == "wake_routine":
         asyncio.create_task(handle_wake_routine(websocket))
+        return
+
+    if msg_type == "launch_app":
+        asyncio.create_task(handle_launch_app(websocket, str(data.get("name", ""))))
         return
 
     await send_json(websocket, {"type": "error", "message": f"Unknown command: {msg_type}"})

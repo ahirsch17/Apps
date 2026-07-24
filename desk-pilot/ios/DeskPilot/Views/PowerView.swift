@@ -38,7 +38,7 @@ struct PowerView: View {
                             .font(.system(size: 56))
                         Text("Wake PC")
                             .font(.title3.weight(.semibold))
-                        Text("Sign in + open Netflix & Prime")
+                        Text("Wake & sign in")
                             .font(.caption)
                             .foregroundStyle(AppTheme.textSecondary)
                     }
@@ -147,7 +147,7 @@ struct PowerView: View {
             return
         }
 
-        wakeMessage = "PC online — signing in and opening apps…"
+        wakeMessage = "PC online — signing in…"
         connection.send(command: RemoteCommand.wakeRoutine())
     }
 
