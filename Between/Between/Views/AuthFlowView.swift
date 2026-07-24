@@ -20,70 +20,93 @@ struct AuthFlowView: View {
     }
 
     private var welcomeScreen: some View {
-        VStack(spacing: 28) {
+        VStack(spacing: 0) {
             Spacer()
 
             Image("BrandLogo")
                 .resizable()
                 .scaledToFit()
-                .frame(maxWidth: 240, maxHeight: 80)
+                .frame(maxWidth: 200, maxHeight: 64)
                 .accessibilityLabel("Between logo")
 
-            VStack(spacing: 8) {
+            VStack(spacing: 10) {
                 Text("Between")
-                    .font(.largeTitle.weight(.bold))
-                Text("See when you and friends are free between classes.")
-                    .font(.body)
+                    .font(BetweenFont.greeting())
+                Text("Know when you and your friends\nare free between classes.")
+                    .font(BetweenFont.secondary())
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
-                    .padding(.horizontal, 24)
             }
+            .padding(.top, 20)
+            .padding(.horizontal, 32)
+
+            VStack(alignment: .leading, spacing: 14) {
+                featureRow(icon: "person.2.fill", text: "See who's free right now")
+                featureRow(icon: "fork.knife", text: "Find lunch windows together")
+                featureRow(icon: "books.vertical.fill", text: "Spot friends in your classes")
+            }
+            .padding(.horizontal, 36)
+            .padding(.top, 32)
+
+            Spacer()
 
             VStack(spacing: 12) {
                 Button {
                     viewModel.authStep = .returning
                     viewModel.errorMessage = nil
                 } label: {
-                    Text("I'm returning")
-                        .frame(maxWidth: .infinity, minHeight: 48)
+                    Text("Sign in")
                 }
-                .buttonStyle(.borderedProminent)
-                .tint(BetweenTheme.neonViolet)
+                .buttonStyle(BetweenPrimaryButtonStyle())
 
                 Button {
                     viewModel.authStep = .newUser
                     viewModel.errorMessage = nil
                 } label: {
-                    Text("I'm new")
-                        .frame(maxWidth: .infinity, minHeight: 48)
+                    Text("New to Between? Activate account")
                 }
-                .buttonStyle(.bordered)
+                .buttonStyle(BetweenSecondaryButtonStyle())
             }
             .padding(.horizontal, 28)
-
-            Spacer()
+            .padding(.bottom, 40)
         }
-        .padding(.vertical, 32)
+    }
+
+    private func featureRow(icon: String, text: String) -> some View {
+        HStack(spacing: 14) {
+            Image(systemName: icon)
+                .font(.body)
+                .foregroundStyle(BetweenTheme.accent)
+                .frame(width: 32)
+            Text(text)
+                .font(BetweenFont.secondary())
+        }
     }
 
     private var returningScreen: some View {
         authForm(
             title: "Welcome back",
-            subtitle: "Sign in with your VT email and password."
+            subtitle: "Use your VT email to sign in."
         ) {
-            TextField("Email", text: $viewModel.loginEmail)
+            TextField("you@vt.edu", text: $viewModel.loginEmail)
                 .textContentType(.emailAddress)
                 .keyboardType(.emailAddress)
                 .autocapitalization(.none)
-                .textFieldStyle(.roundedBorder)
+                .padding(12)
+                .background(BetweenTheme.surfaceMuted(colorScheme))
+                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
 
             SecureField("Password", text: $viewModel.loginPassword)
                 .textContentType(.password)
-                .textFieldStyle(.roundedBorder)
+                .padding(12)
+                .background(BetweenTheme.surfaceMuted(colorScheme))
+                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
 
-            Text("Demo: alex.hirsch@vt.edu · password demo123")
-                .font(.caption)
-                .foregroundStyle(.secondary)
+            #if DEBUG
+            Text("Demo: alex.hirsch@vt.edu · demo123")
+                .font(BetweenFont.caption())
+                .foregroundStyle(.tertiary)
+            #endif
 
             Button {
                 Task { await viewModel.loginReturning() }
@@ -92,32 +115,36 @@ struct AuthFlowView: View {
                     if viewModel.isLoading { ProgressView().tint(.white) }
                     Text(viewModel.isLoading ? "Signing in…" : "Sign in")
                 }
-                .frame(maxWidth: .infinity, minHeight: 48)
             }
-            .buttonStyle(.borderedProminent)
-            .tint(BetweenTheme.neonViolet)
+            .buttonStyle(BetweenPrimaryButtonStyle())
             .disabled(viewModel.loginEmail.isEmpty || viewModel.isLoading)
         }
     }
 
     private var newUserScreen: some View {
         authForm(
-            title: "Activate account",
-            subtitle: "Enter the code from your VT welcome email."
+            title: "Activate your account",
+            subtitle: "Enter the code from your welcome email."
         ) {
-            TextField("VT email", text: $viewModel.loginEmail)
+            TextField("you@vt.edu", text: $viewModel.loginEmail)
                 .textContentType(.emailAddress)
                 .keyboardType(.emailAddress)
                 .autocapitalization(.none)
-                .textFieldStyle(.roundedBorder)
+                .padding(12)
+                .background(BetweenTheme.surfaceMuted(colorScheme))
+                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
 
             TextField("6-digit code", text: $viewModel.activationCode)
                 .keyboardType(.numberPad)
-                .textFieldStyle(.roundedBorder)
+                .padding(12)
+                .background(BetweenTheme.surfaceMuted(colorScheme))
+                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
 
-            Text("Demo code: 482910 (works with any seed account email)")
-                .font(.caption)
-                .foregroundStyle(.secondary)
+            #if DEBUG
+            Text("Demo code: 482910")
+                .font(BetweenFont.caption())
+                .foregroundStyle(.tertiary)
+            #endif
 
             Button {
                 Task { await viewModel.activateNewUser() }
@@ -126,10 +153,8 @@ struct AuthFlowView: View {
                     if viewModel.isLoading { ProgressView().tint(.white) }
                     Text(viewModel.isLoading ? "Activating…" : "Continue")
                 }
-                .frame(maxWidth: .infinity, minHeight: 48)
             }
-            .buttonStyle(.borderedProminent)
-            .tint(BetweenTheme.neonViolet)
+            .buttonStyle(BetweenPrimaryButtonStyle())
             .disabled(viewModel.loginEmail.isEmpty || viewModel.activationCode.count < 6 || viewModel.isLoading)
         }
     }
@@ -141,9 +166,15 @@ struct AuthFlowView: View {
     ) -> some View {
         VStack(spacing: 0) {
             HStack {
-                Button("Back") {
+                Button {
                     viewModel.authStep = .welcome
                     viewModel.errorMessage = nil
+                } label: {
+                    HStack(spacing: 4) {
+                        Image(systemName: "chevron.left")
+                        Text("Back")
+                    }
+                    .font(BetweenFont.secondary())
                 }
                 Spacer()
             }
@@ -151,23 +182,22 @@ struct AuthFlowView: View {
             .padding(.top, 12)
 
             ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
+                VStack(alignment: .leading, spacing: 24) {
                     VStack(alignment: .leading, spacing: 6) {
                         Text(title)
-                            .font(.title2.weight(.bold))
+                            .font(BetweenFont.screenTitle())
                         Text(subtitle)
-                            .font(.subheadline)
+                            .font(BetweenFont.secondary())
                             .foregroundStyle(.secondary)
                     }
 
-                    VStack(spacing: 12) {
+                    VStack(spacing: 14) {
                         fields()
                     }
-                    .surfaceCard()
 
                     if let message = viewModel.errorMessage {
                         Text(message)
-                            .font(.caption)
+                            .font(BetweenFont.caption())
                             .foregroundStyle(.red)
                     }
                 }

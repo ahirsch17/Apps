@@ -10,17 +10,17 @@ struct FriendSettingsSheet: View {
             List {
                 Section {
                     Toggle(isOn: starBinding) {
-                        Label("Starred friend", systemImage: "star.fill")
+                        Label("Close friend", systemImage: "star.fill")
                     }
                     Toggle(isOn: shareBinding) {
-                        Label("Can see when I'm free", systemImage: "eye")
+                        Label("Share my free time", systemImage: "eye")
                     }
                 } footer: {
-                    Text("Starred friends appear on your Today timeline. Turn off visibility for anyone you don't want seeing your free blocks.")
-                        .font(.caption)
+                    Text("Close friends show up first on your home screen.")
+                        .font(BetweenFont.caption())
                 }
             }
-            .navigationTitle(friend.name.components(separatedBy: " ").first ?? friend.name)
+            .navigationTitle(FriendColorPalette.firstName(friend.name))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {

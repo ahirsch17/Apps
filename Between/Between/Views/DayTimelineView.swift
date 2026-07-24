@@ -1,56 +1,23 @@
 import SwiftUI
 
 struct DayTimelineView: View {
-    let items: [TodayPlanItem]
-    let starredFriendIds: Set<String>
-    let friends: [FriendCard]
+    let entries: [TodayPresenter.TimelineEntry]
     var onClassFriendsTap: ((CourseSection) -> Void)?
 
-    private var starredFriends: [FriendCard] {
-        friends.filter { starredFriendIds.contains($0.id) }
-    }
-
     var body: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            HStack {
-                Text("Your schedule")
-                    .font(.headline)
-                Spacer()
-                InfoTipButton(
-                    title: "Free time overlap",
-                    message: "Green and colored segments show 25+ minutes when you and a starred friend are both free. Tap the people icon on a class to see friends in that course."
-                )
-            }
+        VStack(alignment: .leading, spacing: 12) {
+            SectionHeader(title: "Your classes", subtitle: "Tap classmates to see who's in your section")
 
-            if starredFriends.isEmpty {
-                Text("Star close friends in your network (top right) to highlight overlap here.")
-                    .font(.caption)
+            if entries.isEmpty {
+                Text("No more classes today — you're done!")
+                    .font(BetweenFont.secondary())
                     .foregroundStyle(.secondary)
-            } else {
-                HStack(spacing: 12) {
-                    ForEach(starredFriends) { friend in
-                        HStack(spacing: 5) {
-                            RoundedRectangle(cornerRadius: 2)
-                                .fill(FriendColorPalette.color(for: friend.id))
-                                .frame(width: 12, height: 12)
-                            Text(friend.name.components(separatedBy: " ").first ?? friend.name)
-                                .font(.caption.weight(.medium))
-                        }
-                    }
-                }
-            }
-
-            if items.isEmpty {
-                Text("Nothing left on today's schedule.")
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
+                    .padding(.vertical, 8)
             } else {
                 VStack(spacing: 0) {
-                    ForEach(Array(items.enumerated()), id: \.element.id) { index, item in
-                        if index > 0 {
-                            Divider().padding(.leading, 52)
-                        }
-                        timelineRow(item)
+                    ForEach(Array(entries.enumerated()), id: \.element.id) { index, entry in
+                        if index > 0 { Divider().padding(.leading, 52) }
+                        timelineRow(entry)
                     }
                 }
             }
@@ -59,116 +26,91 @@ struct DayTimelineView: View {
     }
 
     @ViewBuilder
-    private func timelineRow(_ item: TodayPlanItem) -> some View {
-        HStack(alignment: .top, spacing: 10) {
-            Text(compactTime(item.startMinutes))
-                .font(.caption.monospacedDigit())
-                .foregroundStyle(.secondary)
-                .frame(width: 52, alignment: .leading)
-                .padding(.top, 4)
-
-            VStack(alignment: .leading, spacing: 6) {
-                bar(for: item)
-                HStack {
-                    Text(rowLabel(item))
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                        .lineLimit(2)
-                    Spacer()
-                    if item.kind == .classBlock, let section = item.section {
-                        Button {
-                            onClassFriendsTap?(section)
-                        } label: {
-                            Image(systemName: "person.2")
-                                .font(.caption.weight(.semibold))
-                                .foregroundStyle(BetweenTheme.neonBlue)
-                                .frame(width: 32, height: 32)
-                        }
-                        .accessibilityLabel("Friends in \(section.courseCode)")
-                    }
-                }
-            }
+    private func timelineRow(_ entry: TodayPresenter.TimelineEntry) -> some View {
+        HStack(alignment: .top, spacing: 12) {
+            timeColumn(for: entry)
+            contentColumn(for: entry)
         }
-        .padding(.vertical, 8)
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel(accessibilityLabel(for: item))
+        .padding(.vertical, 12)
+    }
+
+    private func timeColumn(for entry: TodayPresenter.TimelineEntry) -> some View {
+        let (start, end) = timeRange(for: entry)
+        return VStack(alignment: .trailing, spacing: 2) {
+            Text(compactTime(start))
+                .font(BetweenFont.captionMedium().monospacedDigit())
+            Text(compactTime(end))
+                .font(.caption2.monospacedDigit())
+                .foregroundStyle(.secondary)
+        }
+        .frame(width: 48, alignment: .trailing)
     }
 
     @ViewBuilder
-    private func bar(for item: TodayPlanItem) -> some View {
-        let height: CGFloat = item.kind == .classBlock ? 12 : 28
+    private func contentColumn(for entry: TodayPresenter.TimelineEntry) -> some View {
+        switch entry {
+        case .classBlock(let item):
+            classRow(item)
+        case .freeWithFriends:
+            EmptyView()
+        case .soloBreak:
+            HStack(spacing: 8) {
+                Image(systemName: "cup.and.saucer")
+                    .foregroundStyle(.secondary)
+                Text("Open block — no class")
+                    .font(BetweenFont.secondary())
+                    .foregroundStyle(.secondary)
+            }
+        }
+    }
 
-        GeometryReader { geo in
-            ZStack(alignment: .leading) {
-                RoundedRectangle(cornerRadius: 4, style: .continuous)
-                    .fill(baseFill(for: item))
-                    .frame(height: height)
-
-                if item.isHighlightableFreeBlock {
-                    ForEach(item.segments(for: starredFriendIds)) { segment in
-                        segmentBar(segment, in: item, totalWidth: geo.size.width, height: height)
-                    }
+    @ViewBuilder
+    private func classRow(_ item: TodayPlanItem) -> some View {
+        HStack(alignment: .top) {
+            VStack(alignment: .leading, spacing: 4) {
+                if let section = item.section {
+                    Text(section.courseCode)
+                        .font(BetweenFont.cardTitle())
+                    Text(section.courseName)
+                        .font(BetweenFont.caption())
+                        .foregroundStyle(.secondary)
+                        .lineLimit(2)
+                    Text("Sec \(section.sectionLabel) · \(section.location)")
+                        .font(BetweenFont.caption())
+                        .foregroundStyle(.secondary)
                 }
             }
-        }
-        .frame(height: height)
-    }
-
-    private func segmentBar(_ segment: FriendTimelineSegment, in item: TodayPlanItem, totalWidth: CGFloat, height: CGFloat) -> some View {
-        let blockDuration = max(CGFloat(item.durationMinutes), 1)
-        let offsetRatio = CGFloat(segment.startMinutes - item.startMinutes) / blockDuration
-        let widthRatio = CGFloat(segment.durationMinutes) / blockDuration
-        return RoundedRectangle(cornerRadius: 3, style: .continuous)
-            .fill(FriendColorPalette.color(for: segment.friendId))
-            .frame(width: max(totalWidth * widthRatio, 10), height: height - 2)
-            .offset(x: totalWidth * offsetRatio)
-    }
-
-    private func baseFill(for item: TodayPlanItem) -> Color {
-        switch item.kind {
-        case .classBlock:
-            return BetweenTheme.neonBlue.opacity(0.35)
-        case .freeBlock:
-            return item.isHighlightableFreeBlock
-                ? BetweenTheme.neonMint.opacity(0.18)
-                : Color.primary.opacity(0.06)
-        }
-    }
-
-    private func rowLabel(_ item: TodayPlanItem) -> String {
-        switch item.kind {
-        case .classBlock:
+            Spacer()
             if let section = item.section {
-                return "\(section.courseCode) · Sec \(section.sectionLabel) · \(section.location)"
+                Button { onClassFriendsTap?(section) } label: {
+                    Image(systemName: "person.2.fill")
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(BetweenTheme.accent)
+                        .frame(width: 40, height: 40)
+                        .background(BetweenTheme.accentSoft)
+                        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                }
+                .accessibilityLabel("See classmates")
             }
-            return "Class"
-        case .freeBlock:
-            let segments = item.segments(for: starredFriendIds)
-            if segments.isEmpty {
-                return item.durationMinutes >= ScheduleEngine.minFreeBlockMinutes
-                    ? "Free · \(item.durationMinutes) min"
-                    : "Short break"
-            }
-            return "Free with " + segments.map {
-                "\($0.friendName.components(separatedBy: " ").first ?? $0.friendName) (\($0.durationMinutes)m)"
-            }.joined(separator: ", ")
+        }
+    }
+
+    private func timeRange(for entry: TodayPresenter.TimelineEntry) -> (Int, Int) {
+        switch entry {
+        case .classBlock(let item): return (item.startMinutes, item.endMinutes)
+        case .freeWithFriends(let start, let end, _): return (start, end)
+        case .soloBreak(let start, let end): return (start, end)
         }
     }
 
     private func compactTime(_ minutes: Int) -> String {
-        let h = minutes / 60
-        let m = minutes % 60
-        let h12 = h == 0 ? 12 : (h > 12 ? h - 12 : h)
-        let ampm = h < 12 ? "a" : "p"
-        return m == 0 ? "\(h12)\(ampm)" : "\(h12):\(String(format: "%02d", m))\(ampm)"
-    }
-
-    private func accessibilityLabel(for item: TodayPlanItem) -> String {
-        "\(rowLabel(item)), \(item.timeRangeLabel)"
+        ScheduleEngine.formatTime12Hour(minutes)
+            .replacingOccurrences(of: " AM", with: "a")
+            .replacingOccurrences(of: " PM", with: "p")
     }
 }
 
 #Preview {
-    DayTimelineView(items: [], starredFriendIds: [], friends: [])
+    DayTimelineView(entries: [])
         .padding()
 }

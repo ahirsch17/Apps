@@ -24,6 +24,7 @@
 		E7F8091A2B3C4D5E6F70819 /* InfoTipButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8091A2B3C4D5E6F708192A /* InfoTipButton.swift */; };
 		F91A2B3C4D5E6F708192A3B /* ClassConnectionsStrip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A2B3C4D5E6F708192A3B4C /* ClassConnectionsStrip.swift */; };
 		A1B2C3D4E5F60718293A4B5C /* ScheduleEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C3D4E5F60718293A4B5C6D /* ScheduleEngine.swift */; };
+		T0DAYPR3S3NT3R0000000001 /* TodayPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = T0DAYPR3S3NT3R0000000002 /* TodayPresenter.swift */; };
 		B9127AFB0729CFFBFADF82E2 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCCE475D181E553671608741 /* Models.swift */; };
 		4D5E6F708192A3B4C5D6E7F /* FriendPreferencesStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E6F708192A3B4C5D6E7F80 /* FriendPreferencesStore.swift */; };
 		6F708192A3B4C5D6E7F8091 /* BetweenBackendServicing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 708192A3B4C5D6E7F8091A2 /* BetweenBackendServicing.swift */; };
@@ -53,6 +54,7 @@
 		CCCE475D181E553671608741 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 		FC147388B2C51BF6FE2BC85A /* LocalBackendService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalBackendService.swift; sourceTree = "<group>"; };
 		B2C3D4E5F60718293A4B5C6D /* ScheduleEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleEngine.swift; sourceTree = "<group>"; };
+		T0DAYPR3S3NT3R0000000002 /* TodayPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayPresenter.swift; sourceTree = "<group>"; };
 		E6F708192A3B4C5D6E7F8091 /* DayTimelineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayTimelineView.swift; sourceTree = "<group>"; };
 		F8091A2B3C4D5E6F708192A /* InfoTipButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfoTipButton.swift; sourceTree = "<group>"; };
 		1A2B3C4D5E6F708192A3B4C /* ClassConnectionsStrip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClassConnectionsStrip.swift; sourceTree = "<group>"; };
@@ -81,6 +83,7 @@
 				FC147388B2C51BF6FE2BC85A /* LocalBackendService.swift */,
 				3B4C5D6E7F8091A2B3C4D5F /* RemoteBackendService.swift */,
 				B2C3D4E5F60718293A4B5C6D /* ScheduleEngine.swift */,
+				T0DAYPR3S3NT3R0000000002 /* TodayPresenter.swift */,
 				5E6F708192A3B4C5D6E7F80 /* FriendPreferencesStore.swift */,
 			);
 			path = Services;
@@ -233,6 +236,7 @@
 				36213467843795F1B9D3C50E /* LocalBackendService.swift in Sources */,
 				B9127AFB0729CFFBFADF82E2 /* Models.swift in Sources */,
 				A1B2C3D4E5F60718293A4B5C /* ScheduleEngine.swift in Sources */,
+				T0DAYPR3S3NT3R0000000001 /* TodayPresenter.swift in Sources */,
 				20210B7736BF59A2B80BC25B /* Theme.swift in Sources */,
 				D5E6F708192A3B4C5D6E7F80 /* DayTimelineView.swift in Sources */,
 				E7F8091A2B3C4D5E6F70819 /* InfoTipButton.swift in Sources */,

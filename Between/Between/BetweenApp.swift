@@ -8,6 +8,7 @@ struct BetweenApp: App {
         WindowGroup {
             ContentView()
                 .environmentObject(viewModel)
+                .tint(BetweenTheme.accent)
         }
     }
 }

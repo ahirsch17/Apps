@@ -1,73 +1,39 @@
 #!/usr/bin/env python3
-"""Generate demo seed data for Between (25 students, ~50 sections, curated overlaps)."""
+"""Generate demo seed data — Wednesday-focused schedules, 12+ friends, realistic overlaps."""
 
 import json
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
-# --- Curated cast (demo story) ---
+# Core cast + extended friend group (all connected to Alex)
 CAST = [
-    {
-        "id": "stu-alex",
-        "name": "Alex Hirsch",
-        "email": "alex.hirsch@vt.edu",
-        "year": "Senior",
-        "major": "CS",
-        "phone": "+15405551234",
-        "suggestedVia": None,
-    },
-    {
-        "id": "stu-john",
-        "name": "John Martinez",
-        "email": "john.martinez@vt.edu",
-        "year": "Senior",
-        "major": "CS",
-        "phone": "+15405559876",
-        "suggestedVia": "contacts",
-    },
-    {
-        "id": "stu-rachel",
-        "name": "Rachel Chen",
-        "email": "rachel.chen@vt.edu",
-        "year": "Junior",
-        "major": "CS",
-        "phone": "+15405552468",
-        "suggestedVia": "contacts",
-    },
-    {
-        "id": "stu-sarah",
-        "name": "Sarah Kim",
-        "email": "sarah.kim@vt.edu",
-        "year": "Sophomore",
-        "major": "BIT",
-        "phone": None,
-        "suggestedVia": None,
-    },
-    {
-        "id": "stu-mia",
-        "name": "Mia Johnson",
-        "email": "mia.johnson@vt.edu",
-        "year": "Junior",
-        "major": "CMDA",
-        "phone": "+15405553001",
-        "suggestedVia": "contacts",
-    },
+    {"id": "stu-alex", "name": "Alex Hirsch", "email": "alex.hirsch@vt.edu", "year": "Senior", "major": "CS",
+     "phone": "+15405551234", "suggestedVia": None},
+    {"id": "stu-john", "name": "John Martinez", "email": "john.martinez@vt.edu", "year": "Senior", "major": "CS",
+     "phone": "+15405559876", "suggestedVia": "contacts"},
+    {"id": "stu-rachel", "name": "Rachel Chen", "email": "rachel.chen@vt.edu", "year": "Junior", "major": "CS",
+     "phone": "+15405552468", "suggestedVia": "contacts"},
+    {"id": "stu-sarah", "name": "Sarah Kim", "email": "sarah.kim@vt.edu", "year": "Sophomore", "major": "BIT",
+     "phone": None, "suggestedVia": None},
+    {"id": "stu-mia", "name": "Mia Johnson", "email": "mia.johnson@vt.edu", "year": "Junior", "major": "CMDA",
+     "phone": "+15405553001", "suggestedVia": "contacts"},
+    {"id": "stu-chris", "name": "Chris Brown", "email": "chris.brown@vt.edu", "year": "Senior", "major": "CS",
+     "phone": None, "suggestedVia": None},
+    {"id": "stu-taylor", "name": "Taylor Davis", "email": "taylor.davis@vt.edu", "year": "Junior", "major": "CS",
+     "phone": None, "suggestedVia": "contacts"},
+    {"id": "stu-jordan", "name": "Jordan Wilson", "email": "jordan.wilson@vt.edu", "year": "Sophomore", "major": "CS",
+     "phone": None, "suggestedVia": None},
+    {"id": "stu-casey", "name": "Casey Taylor", "email": "casey.taylor@vt.edu", "year": "Junior", "major": "BIT",
+     "phone": None, "suggestedVia": None},
+    {"id": "stu-avery", "name": "Avery Thomas", "email": "avery.thomas@vt.edu", "year": "Senior", "major": "CS",
+     "phone": None, "suggestedVia": None},
+    {"id": "stu-riley", "name": "Riley Anderson", "email": "riley.anderson@vt.edu", "year": "Sophomore", "major": "CMDA",
+     "phone": None, "suggestedVia": None},
+    {"id": "stu-quinn", "name": "Quinn Jackson", "email": "quinn.jackson@vt.edu", "year": "Junior", "major": "MATH",
+     "phone": None, "suggestedVia": None},
 ]
 
-EXTRA_NAMES = [
-    ("Chris", "Brown", "CS"),
-    ("Taylor", "Davis", "BIT"),
-    ("Jordan", "Wilson", "MATH"),
-    ("Morgan", "Moore", "ECON"),
-    ("Casey", "Taylor", "CS"),
-    ("Riley", "Anderson", "CMDA"),
-    ("Avery", "Thomas", "CS"),
-    ("Quinn", "Jackson", "BIT"),
-    ("Logan", "White", "MATH"),
-    ("Hayden", "Harris", "CS"),
-    ("Skyler", "Martin", "ECON"),
-    ("Rowan", "Thompson", "CS"),
-    ("Reese", "Garcia", "BIT"),
+SUGGESTIONS = [
     ("Emerson", "Clark", "CMDA"),
     ("Parker", "Lewis", "CS"),
     ("Drew", "Walker", "MATH"),
@@ -75,289 +41,219 @@ EXTRA_NAMES = [
     ("Blake", "Allen", "BIT"),
     ("Sydney", "Young", "ECON"),
     ("Cameron", "King", "CS"),
+    ("Morgan", "Moore", "ECON"),
 ]
 
 LOCATIONS = [
-    "Newman Library",
-    "McBryde Hall",
-    "Squires",
-    "War Memorial Gym",
-    "Turner Place",
-    "Drillfield",
-    "Burruss Hall",
-    "Goodwin Hall",
+    "McBryde Hall", "Newman Library", "Torgersen Hall", "Goodwin Hall",
+    "Burruss Hall", "Derring Hall", "Pamplin Hall", "Turner Place",
 ]
 
 
-def section(section_id, canonical, code, name, label, days, start, end, location):
+def section(sid, canonical, code, name, label, days, start, end, loc):
     return {
-        "sectionId": section_id,
-        "canonicalCourseId": canonical,
-        "courseCode": code,
-        "courseName": name,
-        "sectionLabel": label,
-        "meetingDays": days,
-        "startTime": start,
-        "endTime": end,
-        "location": location,
+        "sectionId": sid, "canonicalCourseId": canonical, "courseCode": code,
+        "courseName": name, "sectionLabel": label, "meetingDays": days,
+        "startTime": start, "endTime": end, "location": loc,
     }
 
 
 def build_sections():
-    """~50 sections across 20 courses (2-3 sections each)."""
-    courses = [
-        ("CSE-1001", "CS 1114", "Intro to Software Design"),
-        ("CSE-1002", "CS 2114", "Software Design & Data Structures"),
-        ("CSE-1003", "CS 2505", "Computer Organization I"),
-        ("CSE-1004", "CS 3214", "Computer Systems"),
-        ("CSE-1005", "MATH 1226", "Calculus of a Single Variable"),
-        ("CSE-1006", "MATH 2204", "Linear Algebra"),
-        ("CSE-1007", "MATH 3134", "Applied Combinatorics"),
-        ("CSE-1008", "STAT 3005", "Statistics for Engineers"),
-        ("CSE-1009", "ECON 2005", "Microeconomic Principles"),
-        ("CSE-1010", "ECON 2006", "Macroeconomic Principles"),
-        ("CSE-1011", "PHYS 2305", "Foundations of Physics I"),
-        ("CSE-1012", "PHYS 2306", "Foundations of Physics II"),
-        ("CSE-1013", "ENGE 1215", "Foundations of Engineering"),
-        ("CSE-1014", "BIT 2405", "Intro to Business Analytics"),
-        ("CSE-1015", "CMDA 2005", "Data and Decisions"),
-        ("CSE-1016", "PSCI 1014", "US Government"),
-        ("CSE-1017", "ENGL 1106", "Writing and Research"),
-        ("CSE-1018", "HIST 1214", "World History"),
-        ("CSE-1019", "COMM 2004", "Public Speaking"),
-        ("CSE-1020", "MUS 1104", "Music Appreciation"),
-    ]
-
-    sections = []
-
-    # Curated anchors — same/different section + Wed overlap for Alex/John/Rachel
-    sections.extend([
-        # Same section: Alex + John, Wed 9:00
+    """Sections tuned for a realistic Wednesday on campus."""
+    return [
+        # Shared CS block — Alex, John, Sarah, Chris, Taylor (same section)
         section("CS2114-001", "CSE-1002", "CS 2114", "Software Design & Data Structures", "001",
                 ["Mon", "Wed", "Fri"], "09:00", "09:50", "McBryde Hall"),
         section("CS2114-002", "CSE-1002", "CS 2114", "Software Design & Data Structures", "002",
-                ["Tue", "Thu"], "11:00", "11:50", "Goodwin Hall"),
-        # Different section same course: Alex 001 vs John 002 on CS 3214
+                ["Mon", "Wed", "Fri"], "10:00", "10:50", "McBryde Hall"),
+        # Systems — Alex 001, Rachel/Avery 002 (different section, same course)
         section("CS3214-001", "CSE-1004", "CS 3214", "Computer Systems", "001",
-                ["Mon", "Wed"], "14:00", "15:15", "Burruss Hall"),
+                ["Mon", "Wed"], "14:00", "15:15", "Torgersen Hall"),
         section("CS3214-002", "CSE-1004", "CS 3214", "Computer Systems", "002",
-                ["Mon", "Wed"], "14:00", "15:15", "Burruss Hall"),
-        # Alex Wed: MATH block before lunch free window
+                ["Mon", "Wed"], "15:30", "16:45", "Torgersen Hall"),
+        # Mid-morning
         section("MATH2204-001", "CSE-1006", "MATH 2204", "Linear Algebra", "001",
                 ["Mon", "Wed", "Fri"], "11:00", "11:50", "Derring Hall"),
-        # John Wed: ECON during Alex math, then long free block
+        section("MATH2204-002", "CSE-1006", "MATH 2204", "Linear Algebra", "002",
+                ["Tue", "Thu"], "11:00", "11:50", "Derring Hall"),
+        # Wed-only blocks that create a lunch window
         section("ECON2005-001", "CSE-1009", "ECON 2005", "Microeconomic Principles", "001",
                 ["Wed", "Fri"], "11:00", "11:50", "Pamplin Hall"),
-        # Rachel: partial overlap with Alex lunch free (12:30-14:00)
-        section("STAT3005-001", "CSE-1008", "STAT 3005", "Statistics for Engineers", "001",
-                ["Tue", "Thu"], "09:30", "10:45", "Hutcheson Hall"),
         section("CMDA2005-001", "CSE-1015", "CMDA 2005", "Data and Decisions", "001",
                 ["Wed"], "10:00", "10:50", "Newman Library"),
-    ])
-
-    templates = [
-        (["Mon", "Wed"], "10:00", "10:50"),
-        (["Tue", "Thu"], "13:00", "13:50"),
-        (["Mon", "Wed", "Fri"], "15:30", "16:20"),
-        (["Tue"], "14:00", "15:15"),
-        (["Thu"], "09:00", "09:50"),
+        section("STAT3005-001", "CSE-1008", "STAT 3005", "Statistics for Engineers", "001",
+                ["Tue", "Thu"], "09:30", "10:45", "Hutcheson Hall"),
+        section("STAT3005-002", "CSE-1008", "STAT 3005", "Statistics for Engineers", "002",
+                ["Mon", "Wed"], "13:00", "13:50", "Hutcheson Hall"),
+        # Afternoon fillers
+        section("BIT2405-001", "CSE-1014", "BIT 2405", "Intro to Business Analytics", "001",
+                ["Mon", "Wed"], "15:30", "16:20", "Pamplin Hall"),
+        section("PHYS2305-001", "CSE-1011", "PHYS 2305", "Foundations of Physics I", "001",
+                ["Mon", "Wed", "Fri"], "08:00", "08:50", "Goodwin Hall"),
+        section("ENGL1106-001", "CSE-1017", "ENGL 1106", "Writing and Research", "001",
+                ["Tue", "Thu"], "14:00", "15:15", "Shanks Hall"),
+        section("COMM2004-001", "CSE-1019", "COMM 2004", "Public Speaking", "001",
+                ["Wed"], "16:00", "16:50", "Newman Library"),
+        # Extra catalog for course lookup
+        section("CS1114-001", "CSE-1001", "CS 1114", "Intro to Software Design", "001",
+                ["Mon", "Wed", "Fri"], "13:00", "13:50", "McBryde Hall"),
+        section("CS2505-001", "CSE-1003", "CS 2505", "Computer Organization I", "001",
+                ["Tue", "Thu"], "11:00", "12:15", "McBryde Hall"),
     ]
-
-    for idx, (canonical, code, name) in enumerate(courses):
-        if canonical in {"CSE-1002", "CSE-1004", "CSE-1006", "CSE-1008", "CSE-1009", "CSE-1015"}:
-            continue
-        for sec_idx in range(2):
-            tpl = templates[(idx + sec_idx) % len(templates)]
-            sections.append(
-                section(
-                    f"{canonical}-SEC-{sec_idx + 1:03d}",
-                    canonical,
-                    code,
-                    name,
-                    f"{sec_idx + 1:03d}",
-                    tpl[0],
-                    tpl[1],
-                    tpl[2],
-                    LOCATIONS[(idx + sec_idx) % len(LOCATIONS)],
-                )
-            )
-
-    return sections
 
 
 def build_students():
     students = []
-    for person in CAST:
+    for p in CAST:
         students.append({
-            "id": person["id"],
-            "name": person["name"],
-            "email": person["email"],
-            "schoolId": "vt",
-            "year": person["year"],
-            "major": person["major"],
+            "id": p["id"], "name": p["name"], "email": p["email"], "schoolId": "vt",
+            "year": p["year"], "major": p["major"],
             "privacy": {"shareSchedule": "full", "shareClassDetails": True},
-            "phoneNumber": person["phone"],
-            "suggestedVia": person["suggestedVia"],
+            "phoneNumber": p["phone"], "suggestedVia": p["suggestedVia"],
         })
-
-    for i, (first, last, major) in enumerate(EXTRA_NAMES):
-        handle = f"{first.lower()}.{last.lower()}"
+    for i, (first, last, major) in enumerate(SUGGESTIONS):
         students.append({
-            "id": f"stu-{i + 100:03d}",
+            "id": f"stu-sug-{i:02d}",
             "name": f"{first} {last}",
-            "email": f"{handle}@vt.edu",
+            "email": f"{first.lower()}.{last.lower()}@vt.edu",
             "schoolId": "vt",
-            "year": ["Freshman", "Sophomore", "Junior", "Senior"][i % 4],
+            "year": ["Sophomore", "Junior", "Senior"][i % 3],
             "major": major,
-            "privacy": {
-                "shareSchedule": "freeBusy" if i % 3 == 0 else "full",
-                "shareClassDetails": i % 2 == 0,
-            },
+            "privacy": {"shareSchedule": "freeBusy", "shareClassDetails": True},
             "phoneNumber": None,
-            "suggestedVia": None,
+            "suggestedVia": "contacts" if i % 2 == 0 else None,
         })
     return students
 
 
-def build_enrollments(sections, students):
-    enrollments = []
-    section_ids = [s["sectionId"] for s in sections]
-    by_id = {s["sectionId"]: s for s in sections}
-
-    curated = {
-        "stu-alex": ["CS2114-001", "MATH2204-001", "CS3214-001", "STAT3005-001", "CSE-1017-SEC-001"],
-        "stu-john": ["CS2114-001", "ECON2005-001", "CS3214-002", "CSE-1001-SEC-001", "CSE-1013-SEC-001"],
-        "stu-rachel": ["CS3214-002", "CMDA2005-001", "CSE-1006-SEC-001", "CSE-1014-SEC-001", "CSE-1019-SEC-001"],
-        "stu-sarah": ["CS2114-001", "CSE-1005-SEC-001", "CSE-1010-SEC-001", "CSE-1016-SEC-001"],
-        "stu-mia": ["CSE-1015-SEC-001", "CSE-1008-SEC-001", "CSE-1003-SEC-001", "CSE-1018-SEC-001"],
-    }
-
-    import random
-    random.seed(42)
-
-    for student in students:
-        sid = student["id"]
-        if sid in curated:
-            picks = curated[sid]
-        else:
-            picks = [s["sectionId"] for s in random.sample(sections, random.randint(4, 5))]
-        for sec in picks:
-            if sec in by_id:
-                enrollments.append({"studentId": sid, "sectionId": sec})
-
-    return enrollments
-
-
-def build_friendships(students):
-    friendships = [
-        ("stu-alex", "stu-john"),
-        ("stu-alex", "stu-rachel"),
-        ("stu-alex", "stu-sarah"),
-        ("stu-john", "stu-rachel"),
-        ("stu-alex", "stu-mia"),
-        ("stu-john", "stu-100"),
-        ("stu-rachel", "stu-101"),
-    ]
+def build_enrollments():
+    """Wednesday-shaped schedules. Lunch overlap ~12:00–1:30 for core friends."""
     return [
-        {"studentA": a, "studentB": b, "status": "accepted"}
-        for a, b in friendships
+        # Alex — Wed: Phys 8, CS 9, Math 11, lunch free, Systems 2, done ~3:15
+        {"studentId": "stu-alex", "sectionId": "PHYS2305-001"},
+        {"studentId": "stu-alex", "sectionId": "CS2114-001"},
+        {"studentId": "stu-alex", "sectionId": "MATH2204-001"},
+        {"studentId": "stu-alex", "sectionId": "CS3214-001"},
+        # John — same CS section, Econ 11, long lunch overlap with Alex
+        {"studentId": "stu-john", "sectionId": "CS2114-001"},
+        {"studentId": "stu-john", "sectionId": "ECON2005-001"},
+        {"studentId": "stu-john", "sectionId": "CS3214-002"},
+        # Rachel — CMDA 10, Systems diff section 3:30, lunch partial overlap
+        {"studentId": "stu-rachel", "sectionId": "CMDA2005-001"},
+        {"studentId": "stu-rachel", "sectionId": "CS3214-002"},
+        {"studentId": "stu-rachel", "sectionId": "MATH2204-002"},
+        # Sarah — same CS as Alex
+        {"studentId": "stu-sarah", "sectionId": "CS2114-001"},
+        {"studentId": "stu-sarah", "sectionId": "STAT3005-002"},
+        {"studentId": "stu-sarah", "sectionId": "BIT2405-001"},
+        # Mia
+        {"studentId": "stu-mia", "sectionId": "CS2114-001"},
+        {"studentId": "stu-mia", "sectionId": "CMDA2005-001"},
+        {"studentId": "stu-mia", "sectionId": "COMM2004-001"},
+        # Chris, Taylor — CS 2114 same section
+        {"studentId": "stu-chris", "sectionId": "CS2114-001"},
+        {"studentId": "stu-chris", "sectionId": "CS3214-001"},
+        {"studentId": "stu-taylor", "sectionId": "CS2114-001"},
+        {"studentId": "stu-taylor", "sectionId": "MATH2204-001"},
+        # Jordan — CS 2114 sec 002 (different section, same course)
+        {"studentId": "stu-jordan", "sectionId": "CS2114-002"},
+        {"studentId": "stu-jordan", "sectionId": "STAT3005-002"},
+        # Casey — lunch overlap window
+        {"studentId": "stu-casey", "sectionId": "CS2114-002"},
+        {"studentId": "stu-casey", "sectionId": "ECON2005-001"},
+        # Avery — Systems with Rachel
+        {"studentId": "stu-avery", "sectionId": "CS3214-002"},
+        {"studentId": "stu-avery", "sectionId": "CS2114-002"},
+        # Riley
+        {"studentId": "stu-riley", "sectionId": "CS2114-001"},
+        {"studentId": "stu-riley", "sectionId": "BIT2405-001"},
+        # Quinn
+        {"studentId": "stu-quinn", "sectionId": "MATH2204-001"},
+        {"studentId": "stu-quinn", "sectionId": "PHYS2305-001"},
     ]
 
 
-def build_friend_requests(students):
+def build_friendships():
+    alex_friends = [
+        "stu-john", "stu-rachel", "stu-sarah", "stu-mia", "stu-chris", "stu-taylor",
+        "stu-jordan", "stu-casey", "stu-avery", "stu-riley", "stu-quinn",
+    ]
+    pairs = [( "stu-alex", f) for f in alex_friends]
+    pairs += [
+        ("stu-john", "stu-rachel"), ("stu-john", "stu-chris"),
+        ("stu-rachel", "stu-avery"), ("stu-sarah", "stu-mia"),
+    ]
+    return [{"studentA": a, "studentB": b, "status": "accepted"} for a, b in pairs]
+
+
+def build_friend_requests():
     now = datetime.now(timezone.utc)
     return [
-        {
-            "id": "req-0001",
-            "fromStudentId": "stu-102",
-            "toStudentId": "stu-alex",
-            "status": "pending",
-            "createdAt": (now - timedelta(days=1)).isoformat(),
-        },
-        {
-            "id": "req-0002",
-            "fromStudentId": "stu-103",
-            "toStudentId": "stu-alex",
-            "status": "pending",
-            "createdAt": (now - timedelta(days=2)).isoformat(),
-        },
+        {"id": "req-0001", "fromStudentId": "stu-sug-00", "toStudentId": "stu-alex",
+         "status": "pending", "createdAt": (now - timedelta(hours=5)).isoformat()},
+        {"id": "req-0002", "fromStudentId": "stu-sug-01", "toStudentId": "stu-alex",
+         "status": "pending", "createdAt": (now - timedelta(days=1)).isoformat()},
+        {"id": "req-0003", "fromStudentId": "stu-sug-02", "toStudentId": "stu-alex",
+         "status": "pending", "createdAt": (now - timedelta(days=2)).isoformat()},
     ]
 
 
 def build_presence(students):
     now = datetime.now(timezone.utc)
-    statuses = ["freeNow", "onTheWay", "studying", "busy"]
-    activities = ["Free", "Coffee", "Study sprint", "Headed to class", "Gym"]
+    status_map = {
+        "stu-john": ("freeNow", "Free", "Turner Place"),
+        "stu-rachel": ("freeNow", "Coffee", "Newman Library"),
+        "stu-sarah": ("studying", "Library", "Newman Library"),
+        "stu-mia": ("onTheWay", "Headed to McBryde", "Drillfield"),
+        "stu-chris": ("freeNow", "Free", "Squires"),
+    }
     records = []
-    for i, student in enumerate(students):
-        status = "freeNow" if student["id"] in {"stu-john", "stu-rachel"} else statuses[i % len(statuses)]
+    for i, s in enumerate(students):
+        if s["id"] in status_map:
+            st, act, loc = status_map[s["id"]]
+        else:
+            st, act, loc = "busy", "In class", LOCATIONS[i % len(LOCATIONS)]
         records.append({
-            "studentId": student["id"],
-            "status": status,
-            "activity": activities[i % len(activities)],
-            "location": LOCATIONS[i % len(LOCATIONS)],
-            "lastUpdated": (now - timedelta(minutes=i % 20)).isoformat(),
+            "studentId": s["id"], "status": st, "activity": act, "location": loc,
+            "lastUpdated": (now - timedelta(minutes=(i * 3) % 25)).isoformat(),
         })
     return records
 
 
-def build_plans(students):
+def build_plans():
     now = datetime.now(timezone.utc)
     return [
-        {
-            "id": "plan-0001",
-            "creatorId": "stu-john",
-            "type": "Food",
-            "title": "Turner lunch",
-            "location": "Turner Place",
-            "startTime": (now + timedelta(minutes=45)).isoformat(),
-            "visibility": "friends",
-        },
-        {
-            "id": "plan-0002",
-            "creatorId": "stu-rachel",
-            "type": "Study",
-            "title": "Library sprint",
-            "location": "Newman Library",
-            "startTime": (now + timedelta(minutes=120)).isoformat(),
-            "visibility": "friends",
-        },
+        {"id": "plan-0001", "creatorId": "stu-john", "type": "food", "title": "Lunch at Turner",
+         "location": "Turner Place", "startTime": (now + timedelta(minutes=90)).isoformat(),
+         "visibility": "friends"},
     ]
 
 
 def generate_data():
-    sections = build_sections()
     students = build_students()
     now = datetime.now(timezone.utc)
     return {
         "generatedAt": now.isoformat(),
-        "universities": [{
-            "id": "vt",
-            "name": "Virginia Tech",
-            "emailDomain": "vt.edu",
-            "timezone": "America/New_York",
-        }],
-        "sections": sections,
+        "universities": [{"id": "vt", "name": "Virginia Tech", "emailDomain": "vt.edu",
+                          "timezone": "America/New_York"}],
+        "sections": build_sections(),
         "students": students,
-        "enrollments": build_enrollments(sections, students),
-        "friendships": build_friendships(students),
-        "friendRequests": build_friend_requests(students),
+        "enrollments": build_enrollments(),
+        "friendships": build_friendships(),
+        "friendRequests": build_friend_requests(),
         "presence": build_presence(students),
-        "plans": build_plans(students),
+        "plans": build_plans(),
     }
 
 
 def main():
-    output_path = Path(__file__).resolve().parents[1] / "Between" / "Resources" / "seed_data.json"
-    output_path.parent.mkdir(parents=True, exist_ok=True)
+    output = Path(__file__).resolve().parents[1] / "Between" / "Resources" / "seed_data.json"
+    output.parent.mkdir(parents=True, exist_ok=True)
     payload = generate_data()
-    output_path.write_text(json.dumps(payload, indent=2))
-    print(f"Wrote {output_path}")
-    print(
-        f"students={len(payload['students'])}, "
-        f"sections={len(payload['sections'])}, "
-        f"enrollments={len(payload['enrollments'])}"
-    )
+    output.write_text(json.dumps(payload, indent=2))
+    alex_friends = sum(1 for f in payload["friendships"] if "stu-alex" in (f["studentA"], f["studentB"]))
+    print(f"Wrote {output}")
+    print(f"students={len(payload['students'])}, sections={len(payload['sections'])}, alex_friendships={alex_friends}")
 
 
 if __name__ == "__main__":

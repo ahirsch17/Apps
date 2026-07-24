@@ -1,10 +1,13 @@
 import Foundation
 
 enum ScheduleEngine {
-    static let startMinutes = 6 * 60
-    static let endMinutes = 23 * 60
+    /// Campus day window — avoids 6am–11pm empty blocks in the UI.
+    static let startMinutes = 8 * 60
+    static let endMinutes = 18 * 60
     static let minFreeBlockMinutes = 30
     static let minOverlapMinutes = 25
+    /// Hide empty free blocks longer than this; overlaps always show.
+    static let maxEmptyFreeBlockMinutes = 90
 
     private enum TimelineBlock {
         case free(start: Int, end: Int)
@@ -16,10 +19,15 @@ enum ScheduleEngine {
     ]
 
     static func formatRange(start: Int, end: Int) -> String {
-        if end - start >= 16 * 60 {
-            return "Most of the day"
-        }
         return "\(formatTime12Hour(start)) – \(formatTime12Hour(end))"
+    }
+
+    static func formatDuration(_ minutes: Int) -> String {
+        if minutes < 60 { return "\(minutes) min" }
+        let h = minutes / 60
+        let m = minutes % 60
+        if m == 0 { return h == 1 ? "1 hr" : "\(h) hr" }
+        return "\(h) hr \(m) min"
     }
 
     static func buildTodayPlan(
@@ -28,14 +36,16 @@ enum ScheduleEngine {
         friendNamesById: [String: String],
         now: Date = Date()
     ) -> [TodayPlanItem] {
-        let dayIdx = todayIndex(from: now)
-        let nowMinutes = Calendar.current.component(.hour, from: now) * 60
-            + Calendar.current.component(.minute, from: now)
+        let dayIdx = BackendConfiguration.demoWeekdayIndex ?? todayIndex(from: now)
+        let nowMinutes = BackendConfiguration.demoNowMinutes
+            ?? (Calendar.current.component(.hour, from: now) * 60
+                + Calendar.current.component(.minute, from: now))
 
         let busy = busyIntervals(on: dayIdx, sections: mySections)
         let free = freeIntervals(on: dayIdx, sections: mySections)
 
         var timeline: [TodayPlanItem] = []
+
         var freeIndex = 0
         var busyIndex = 0
 
@@ -48,24 +58,54 @@ enum ScheduleEngine {
             switch block {
             case let .free(start, end):
                 let overlaps = friendOverlaps(
-                    start: start,
-                    end: end,
-                    dayIdx: dayIdx,
+                    start: start, end: end, dayIdx: dayIdx,
                     friendSectionsById: friendSectionsById,
                     friendNamesById: friendNamesById
                 )
-                appendIfFuture(
-                    TodayPlanItem(
-                        id: "free-\(start)-\(end)",
-                        kind: .freeBlock,
-                        startMinutes: start,
-                        endMinutes: end,
-                        section: nil,
-                        friendOverlaps: overlaps
-                    ),
-                    nowMinutes: nowMinutes,
-                    into: &timeline
-                )
+                if overlaps.isEmpty {
+                    let duration = end - start
+                    if duration >= minFreeBlockMinutes && duration <= maxEmptyFreeBlockMinutes {
+                        appendIfFuture(
+                            TodayPlanItem(
+                                id: "free-\(start)-\(end)",
+                                kind: .freeBlock,
+                                startMinutes: start,
+                                endMinutes: end,
+                                section: nil,
+                                friendOverlaps: []
+                            ),
+                            nowMinutes: nowMinutes,
+                            into: &timeline
+                        )
+                    }
+                } else {
+                    for overlap in overlaps {
+                        guard let best = overlap.intervals
+                            .filter({ $0.end - $0.start >= minOverlapMinutes })
+                            .max(by: { ($0.end - $0.start) < ($1.end - $1.start) })
+                        else { continue }
+
+                        let clipped = FriendOverlap(
+                            id: "\(overlap.friendId)-\(best.start)",
+                            friendId: overlap.friendId,
+                            friendName: overlap.friendName,
+                            intervals: [best],
+                            totalMinutes: best.end - best.start
+                        )
+                        appendIfFuture(
+                            TodayPlanItem(
+                                id: "overlap-\(overlap.friendId)-\(best.start)",
+                                kind: .freeBlock,
+                                startMinutes: best.start,
+                                endMinutes: best.end,
+                                section: nil,
+                                friendOverlaps: [clipped]
+                            ),
+                            nowMinutes: nowMinutes,
+                            into: &timeline
+                        )
+                    }
+                }
                 freeIndex += 1
 
             case let .busy(start, end, section):
@@ -85,7 +125,7 @@ enum ScheduleEngine {
             }
         }
 
-        return timeline
+        return timeline.sorted { $0.startMinutes < $1.startMinutes }
     }
 
     // MARK: - Private helpers
@@ -100,14 +140,12 @@ enum ScheduleEngine {
         return hour * 60 + minute
     }
 
-    private static func formatTime12Hour(_ minutes: Int) -> String {
+    static func formatTime12Hour(_ minutes: Int) -> String {
         let hours = minutes / 60
         let mins = minutes % 60
         let h12 = hours == 0 ? 12 : (hours > 12 ? hours - 12 : hours)
         let ampm = hours < 12 ? "AM" : "PM"
-        if mins == 0 {
-            return "\(h12):00 \(ampm)"
-        }
+        if mins == 0 { return "\(h12) \(ampm)" }
         return String(format: "%d:%02d %@", h12, mins, ampm)
     }
 
@@ -165,14 +203,8 @@ enum ScheduleEngine {
             let right = sortedB[j]
             let start = max(left.start, right.start)
             let end = min(left.end, right.end)
-            if end > start {
-                result.append((start: start, end: end))
-            }
-            if left.end < right.end {
-                i += 1
-            } else {
-                j += 1
-            }
+            if end > start { result.append((start: start, end: end)) }
+            if left.end < right.end { i += 1 } else { j += 1 }
         }
         return result
     }
@@ -182,17 +214,13 @@ enum ScheduleEngine {
         busy: (start: Int, end: Int, section: CourseSection)?
     ) -> TimelineBlock? {
         switch (free, busy) {
-        case let (freeBlock?, nil):
-            return .free(start: freeBlock.start, end: freeBlock.end)
-        case let (nil, classBlock?):
-            return .busy(start: classBlock.start, end: classBlock.end, section: classBlock.section)
+        case let (freeBlock?, nil): return .free(start: freeBlock.start, end: freeBlock.end)
+        case let (nil, classBlock?): return .busy(start: classBlock.start, end: classBlock.end, section: classBlock.section)
         case let (freeBlock?, classBlock?):
-            if freeBlock.start <= classBlock.start {
-                return .free(start: freeBlock.start, end: freeBlock.end)
-            }
-            return .busy(start: classBlock.start, end: classBlock.end, section: classBlock.section)
-        case (nil, nil):
-            return nil
+            return freeBlock.start <= classBlock.start
+                ? .free(start: freeBlock.start, end: freeBlock.end)
+                : .busy(start: classBlock.start, end: classBlock.end, section: classBlock.section)
+        case (nil, nil): return nil
         }
     }
 
@@ -210,11 +238,30 @@ enum ScheduleEngine {
                     startMinutes: nowMinutes,
                     endMinutes: item.endMinutes,
                     section: item.section,
-                    friendOverlaps: item.friendOverlaps
+                    friendOverlaps: clipOverlaps(item.friendOverlaps, nowMinutes: nowMinutes)
                 )
             )
         } else {
             timeline.append(item)
+        }
+    }
+
+    private static func clipOverlaps(_ overlaps: [FriendOverlap], nowMinutes: Int) -> [FriendOverlap] {
+        overlaps.compactMap { overlap in
+            let intervals = overlap.intervals.compactMap { interval -> (start: Int, end: Int)? in
+                let start = max(interval.start, nowMinutes)
+                guard interval.end > start, interval.end - start >= minOverlapMinutes else { return nil }
+                return (start: start, end: interval.end)
+            }
+            guard !intervals.isEmpty else { return nil }
+            let total = intervals.reduce(0) { $0 + ($1.end - $1.start) }
+            return FriendOverlap(
+                id: overlap.id,
+                friendId: overlap.friendId,
+                friendName: overlap.friendName,
+                intervals: intervals,
+                totalMinutes: total
+            )
         }
     }
 
@@ -231,7 +278,6 @@ enum ScheduleEngine {
         for (friendId, sections) in friendSectionsById {
             let friendFree = freeIntervals(on: dayIdx, sections: sections)
             let intervals = intersectIntervals(userFree, friendFree)
-            guard !intervals.isEmpty else { continue }
             let qualifying = intervals.filter { $0.end - $0.start >= minOverlapMinutes }
             guard !qualifying.isEmpty else { continue }
             let totalMinutes = qualifying.reduce(0) { $0 + ($1.end - $1.start) }

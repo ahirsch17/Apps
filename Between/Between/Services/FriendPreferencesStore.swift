@@ -49,13 +49,20 @@ final class FriendPreferencesStore: ObservableObject {
         save(shareFreeTimeWith, key: shareKey)
     }
 
-    func suggestStars(from overlaps: [FriendOverlap], limit: Int = 5) {
+    func suggestStars(from overlaps: [FriendOverlap], limit: Int = 8) {
         guard starredFriendIds.isEmpty else { return }
         let top = overlaps
             .sorted { $0.totalMinutes > $1.totalMinutes }
             .prefix(limit)
             .map(\.friendId)
         starredFriendIds = Set(top)
+        save(starredFriendIds, key: starredKey)
+    }
+
+    /// DEBUG demo: star everyone you share time with today so the home screen feels alive.
+    func ensureDemoStars(friendIds: [String], overlapFriendIds: Set<String>) {
+        let prioritized = overlapFriendIds.isEmpty ? Set(friendIds.prefix(8)) : overlapFriendIds
+        starredFriendIds = prioritized
         save(starredFriendIds, key: starredKey)
     }
 

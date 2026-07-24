@@ -56,6 +56,14 @@ final class AppViewModel: ObservableObject {
     var suggested: [Student] { dashboard?.suggestedStudents ?? [] }
     var todayPlan: [TodayPlanItem] { dashboard?.todayPlan ?? [] }
 
+    var today: TodayPresenter.Snapshot {
+        TodayPresenter.build(
+            plan: todayPlan,
+            friends: nearbyFriends,
+            starredIds: preferences.starredFriendIds
+        )
+    }
+
     var notificationCount: Int {
         pendingIncoming.count
     }
@@ -190,14 +198,15 @@ final class AppViewModel: ObservableObject {
     }
 
     private func autoSuggestStars(from data: DashboardData) {
+        #if DEBUG
+        preferences.ensureDemoStars(
+            friendIds: data.nearbyFriends.map(\.id),
+            overlapFriendIds: Set(data.todayPlan.flatMap(\.friendOverlaps).map(\.friendId))
+        )
+        #else
         let allOverlaps = data.todayPlan.flatMap(\.friendOverlaps)
-        preferences.suggestStars(from: allOverlaps, limit: 5)
-        for friendId in ["stu-john", "stu-rachel"] {
-            if data.nearbyFriends.contains(where: { $0.id == friendId }),
-               !preferences.isStarred(friendId) {
-                preferences.toggleStar(friendId)
-            }
-        }
+        preferences.suggestStars(from: allOverlaps, limit: 8)
+        #endif
     }
 
     private func applyDashboard(_ data: DashboardData) {

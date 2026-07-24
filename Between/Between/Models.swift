@@ -227,6 +227,11 @@ struct TodayPlanItem: Identifiable {
         }
     }
 
+    /// All meaningful overlaps — not gated on starred friends.
+    func qualifyingOverlaps(minMinutes: Int = ScheduleEngine.minOverlapMinutes) -> [FriendOverlap] {
+        friendOverlaps.filter { $0.longestIntervalMinutes >= minMinutes }
+    }
+
     func segments(for starredIds: Set<String>) -> [FriendTimelineSegment] {
         starredOverlaps(starredIds: starredIds).flatMap { overlap in
             overlap.intervals
