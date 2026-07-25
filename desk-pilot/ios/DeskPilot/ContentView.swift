@@ -13,19 +13,19 @@ struct ContentView: View {
                 ControlView()
                     .tag(0)
                     .tabItem {
-                        Label("Control", systemImage: "cursorarrow")
+                        Label("Control", systemImage: "cursorarrow.rays")
                     }
 
                 MediaView()
                     .tag(1)
                     .tabItem {
-                        Label("Media", systemImage: "speaker.wave.2.fill")
+                        Label("Media", systemImage: "play.tv")
                     }
 
                 PowerView()
                     .tag(2)
                     .tabItem {
-                        Label("Power", systemImage: "power")
+                        Label("Power", systemImage: "power.circle")
                     }
             }
             .tint(AppTheme.accent)

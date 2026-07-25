@@ -1,5 +1,4 @@
 import SwiftUI
-import UIKit
 
 struct PowerView: View {
     @EnvironmentObject private var connection: ConnectionManager
@@ -25,51 +24,63 @@ struct PowerView: View {
 
     var body: some View {
         NavigationStack {
-            VStack(spacing: 16) {
+            VStack(spacing: 18) {
                 ConnectionBanner()
 
-                Spacer()
+                Spacer(minLength: 8)
 
                 Button {
                     Task { await wakePC() }
                 } label: {
-                    VStack(spacing: 12) {
-                        Image(systemName: "power.circle.fill")
-                            .font(.system(size: 56))
-                        Text("Wake PC")
-                            .font(.title3.weight(.semibold))
-                        Text("Wake & sign in")
-                            .font(.caption)
-                            .foregroundStyle(AppTheme.textSecondary)
+                    VStack(spacing: 14) {
+                        ZStack {
+                            Circle()
+                                .fill(AppTheme.accent.opacity(0.15))
+                                .frame(width: 88, height: 88)
+                            Image(systemName: isWaking ? "ellipsis" : "power.circle.fill")
+                                .font(.system(size: 52))
+                                .foregroundStyle(AppTheme.accent)
+                                .symbolEffect(.pulse, isActive: isWaking)
+                        }
+
+                        VStack(spacing: 4) {
+                            Text(isWaking ? "Waking PC…" : "Wake PC")
+                                .font(.title3.weight(.semibold))
+                            Text("Wake & sign in")
+                                .font(.caption)
+                                .foregroundStyle(AppTheme.textSecondary)
+                        }
                     }
                     .frame(maxWidth: .infinity)
-                    .padding(.vertical, 28)
+                    .padding(.vertical, 24)
                 }
-                .buttonStyle(TileButtonStyle())
+                .buttonStyle(AccentHeroButtonStyle())
                 .disabled(isWaking)
 
                 if !wakeMessage.isEmpty {
-                    Text(wakeMessage)
-                        .font(.caption)
-                        .foregroundStyle(AppTheme.textSecondary)
-                        .multilineTextAlignment(.center)
+                    StatusMessage(text: wakeMessage)
                 }
 
-                HStack(spacing: 12) {
-                    powerTile("Sleep", icon: "moon.fill") { confirmAction = .sleep }
-                    powerTile("Lock", icon: "lock.fill") {
-                        connection.send(command: RemoteCommand.shortcut("lock"))
-                        haptic()
+                VStack(alignment: .leading, spacing: 12) {
+                    SectionHeader(title: "PC controls", icon: "desktopcomputer")
+
+                    HStack(spacing: 12) {
+                        powerTile("Sleep", icon: "moon.fill") { confirmAction = .sleep }
+                        powerTile("Lock", icon: "lock.fill") {
+                            connection.send(command: RemoteCommand.shortcut("lock"))
+                            Haptics.medium(enabled: settings.hapticsEnabled)
+                        }
+                        powerTile("Off", icon: "power", destructive: true) { confirmAction = .shutdown }
                     }
-                    powerTile("Off", icon: "power", destructive: true) { confirmAction = .shutdown }
                 }
+                .padding(16)
+                .cardStyle()
 
                 Spacer()
             }
             .padding(16)
-            .background(AppTheme.background.ignoresSafeArea())
-            .navigationTitle("Power")
-            .navigationBarTitleDisplayMode(.inline)
+            .screenBackground()
+            .deskPilotNavigation("Power")
             .onChange(of: connection.wakeRoutineMessage) { _, message in
                 if !message.isEmpty {
                     wakeMessage = message
@@ -88,7 +99,7 @@ struct PowerView: View {
                         case .shutdown:
                             connection.send(command: RemoteCommand.power(action: "shutdown"))
                         }
-                        haptic()
+                        Haptics.medium(enabled: settings.hapticsEnabled)
                     },
                     secondaryButton: .cancel()
                 )
@@ -105,16 +116,16 @@ struct PowerView: View {
         Button(action: action) {
             VStack(spacing: 10) {
                 Image(systemName: icon)
-                    .font(.title2)
+                    .font(.title3)
                     .foregroundStyle(destructive ? AppTheme.danger : AppTheme.accent)
                 Text(title)
-                    .font(.subheadline.weight(.medium))
+                    .font(.caption.weight(.semibold))
                     .foregroundStyle(AppTheme.textPrimary)
             }
             .frame(maxWidth: .infinity)
-            .frame(minHeight: 88)
+            .frame(minHeight: 84)
         }
-        .buttonStyle(TileButtonStyle())
+        .buttonStyle(TileButtonStyle(tint: destructive ? AppTheme.danger : AppTheme.accent))
         .disabled(!connection.isConnected)
     }
 
@@ -132,7 +143,7 @@ struct PowerView: View {
                 broadcastHost: settings.wolBroadcast
             )
             wakeMessage = "Wake signal sent — waiting for PC to respond…"
-            haptic()
+            Haptics.medium(enabled: settings.hapticsEnabled)
         } catch {
             wakeMessage = error.localizedDescription
             return
@@ -149,12 +160,6 @@ struct PowerView: View {
 
         wakeMessage = "PC online — signing in…"
         connection.send(command: RemoteCommand.wakeRoutine())
-    }
-
-    private func haptic() {
-        if settings.hapticsEnabled {
-            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-        }
     }
 }
 

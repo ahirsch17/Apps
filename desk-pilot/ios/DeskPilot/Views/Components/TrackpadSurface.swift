@@ -8,34 +8,33 @@ struct TrackpadSurface: View {
     var body: some View {
         GeometryReader { _ in
             ZStack {
-                RoundedRectangle(cornerRadius: AppTheme.cornerRadius)
+                RoundedRectangle(cornerRadius: AppTheme.cornerRadius, style: .continuous)
                     .fill(
                         LinearGradient(
-                            colors: [
-                                AppTheme.card,
-                                AppTheme.card.opacity(0.7)
-                            ],
+                            colors: [AppTheme.cardHighlight, AppTheme.card.opacity(0.85)],
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
                         )
                     )
+                    .overlay(trackpadGrid)
                     .overlay(
-                        RoundedRectangle(cornerRadius: AppTheme.cornerRadius)
-                            .stroke(AppTheme.accent.opacity(0.15), lineWidth: 1)
+                        RoundedRectangle(cornerRadius: AppTheme.cornerRadius, style: .continuous)
+                            .stroke(
+                                connection.isConnected ? AppTheme.accent.opacity(0.22) : AppTheme.cardBorder,
+                                lineWidth: 1
+                            )
                     )
 
-                VStack(spacing: 8) {
-                    Image(systemName: "cursorarrow")
+                VStack(spacing: 6) {
+                    Image(systemName: "cursorarrow.rays")
                         .font(.title2)
-                        .foregroundStyle(AppTheme.textSecondary.opacity(0.35))
-                    Text("1 finger move")
-                        .font(.caption)
-                        .foregroundStyle(AppTheme.textSecondary.opacity(0.35))
-                    Text("2 fingers scroll")
-                        .font(.caption2)
-                        .foregroundStyle(AppTheme.textSecondary.opacity(0.28))
+                        .foregroundStyle(AppTheme.textTertiary)
+                    Text("Move · Tap · Scroll")
+                        .font(.caption2.weight(.medium))
+                        .foregroundStyle(AppTheme.textTertiary)
                 }
                 .allowsHitTesting(false)
+                .opacity(connection.isConnected ? 0.55 : 0.25)
 
                 TrackpadTouchRepresentable(
                     onMove: { dx, dy in
@@ -49,9 +48,7 @@ struct TrackpadSurface: View {
                     onTap: {
                         guard connection.isConnected else { return }
                         connection.send(command: RemoteCommand.mouseClick(button: "left"))
-                        if settings.hapticsEnabled {
-                            UIImpactFeedbackGenerator(style: .light).impactOccurred()
-                        }
+                        Haptics.light(enabled: settings.hapticsEnabled)
                     },
                     tapToClick: settings.tapToClick,
                     moveSensitivity: settings.trackpadSensitivity,
@@ -60,6 +57,23 @@ struct TrackpadSurface: View {
                 )
             }
         }
+    }
+
+    private var trackpadGrid: some View {
+        Canvas { context, size in
+            let spacing: CGFloat = 28
+            var path = Path()
+            stride(from: spacing, to: size.width, by: spacing).forEach { x in
+                path.move(to: CGPoint(x: x, y: 0))
+                path.addLine(to: CGPoint(x: x, y: size.height))
+            }
+            stride(from: spacing, to: size.height, by: spacing).forEach { y in
+                path.move(to: CGPoint(x: 0, y: y))
+                path.addLine(to: CGPoint(x: size.width, y: y))
+            }
+            context.stroke(path, with: .color(AppTheme.textTertiary.opacity(0.08)), lineWidth: 1)
+        }
+        .clipShape(RoundedRectangle(cornerRadius: AppTheme.cornerRadius, style: .continuous))
     }
 }
 

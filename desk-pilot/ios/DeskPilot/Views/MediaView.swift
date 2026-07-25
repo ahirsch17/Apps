@@ -1,5 +1,4 @@
 import SwiftUI
-import UIKit
 
 struct MediaView: View {
     @EnvironmentObject private var connection: ConnectionManager
@@ -11,74 +10,62 @@ struct MediaView: View {
 
     var body: some View {
         NavigationStack {
-            VStack(spacing: 20) {
-                ConnectionBanner()
+            ScrollView {
+                VStack(spacing: 16) {
+                    ConnectionBanner()
 
-                appsCard
-                volumeCard
-                transportCard
+                    appsCard
+                    volumeCard
+                    transportCard
 
-                if !appLaunchMessage.isEmpty {
-                    Text(appLaunchMessage)
-                        .font(.caption)
-                        .foregroundStyle(AppTheme.textSecondary)
-                        .multilineTextAlignment(.center)
+                    if !appLaunchMessage.isEmpty {
+                        StatusMessage(text: appLaunchMessage)
+                    }
                 }
-
-                Spacer()
+                .padding(16)
             }
-            .padding(16)
-            .background(AppTheme.background.ignoresSafeArea())
-            .navigationTitle("Media")
-            .navigationBarTitleDisplayMode(.inline)
+            .screenBackground()
+            .deskPilotNavigation("Media")
         }
     }
 
     private var appsCard: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("Apps")
-                .font(.title3.weight(.semibold))
-                .foregroundStyle(AppTheme.textPrimary)
+        VStack(alignment: .leading, spacing: 14) {
+            SectionHeader(title: "Apps", icon: "apps.ipad")
 
             HStack(spacing: 12) {
-                appButton(title: "Netflix", icon: "play.tv.fill", appName: PCDefaults.netflixApp)
-                appButton(title: "Prime Video", icon: "film.fill", appName: PCDefaults.primeVideoApp)
+                ForEach(StreamingApp.catalog) { app in
+                    appButton(app)
+                }
             }
         }
         .padding(16)
         .cardStyle()
     }
 
-    private func appButton(title: String, icon: String, appName: String) -> some View {
+    private func appButton(_ app: StreamingApp) -> some View {
         Button {
-            connection.send(command: RemoteCommand.launchApp(appName))
-            appLaunchMessage = "Opening \(title)…"
-            haptic()
+            connection.send(command: RemoteCommand.launchApp(app.launchName))
+            appLaunchMessage = "Opening \(app.title)…"
+            Haptics.medium(enabled: settings.hapticsEnabled)
         } label: {
-            VStack(spacing: 10) {
-                Image(systemName: icon)
-                    .font(.title)
-                Text(title)
+            VStack(spacing: 12) {
+                Image(systemName: app.icon)
+                    .font(.system(size: 28, weight: .semibold))
+                    .foregroundStyle(app.accent)
+                Text(app.title)
                     .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(AppTheme.textPrimary)
                     .multilineTextAlignment(.center)
             }
-            .frame(maxWidth: .infinity)
-            .frame(minHeight: 96)
         }
-        .buttonStyle(TileButtonStyle())
+        .buttonStyle(StreamingAppButtonStyle(accent: app.accent))
         .disabled(!connection.isConnected)
     }
 
     private var volumeCard: some View {
-        VStack(spacing: 20) {
-            Image(systemName: "speaker.wave.3.fill")
-                .font(.system(size: 44))
-                .foregroundStyle(AppTheme.accent)
-                .padding(.top, 8)
-
-            Text("Volume")
-                .font(.title3.weight(.semibold))
-                .foregroundStyle(AppTheme.textPrimary)
+        VStack(spacing: 18) {
+            SectionHeader(title: "Volume", icon: "speaker.wave.2.fill")
 
             HStack(spacing: 10) {
                 volumeStepButton(systemName: "minus") {
@@ -100,42 +87,47 @@ struct MediaView: View {
                 }
             }
 
-            Button("Mute") {
+            Button {
                 connection.send(command: RemoteCommand.volume(action: "mute"))
-                haptic()
+                Haptics.medium(enabled: settings.hapticsEnabled)
+            } label: {
+                Label("Mute", systemImage: "speaker.slash.fill")
+                    .frame(maxWidth: .infinity)
             }
-            .buttonStyle(PrimaryButtonStyle(isActive: true))
+            .buttonStyle(PrimaryButtonStyle())
             .disabled(!connection.isConnected)
         }
-        .padding(20)
+        .padding(16)
         .cardStyle()
     }
 
     private func volumeStepButton(systemName: String, action: @escaping () -> Void) -> some View {
         Button {
             action()
-            haptic()
+            Haptics.light(enabled: settings.hapticsEnabled)
         } label: {
             Image(systemName: systemName)
-                .font(.body.weight(.semibold))
-                .frame(width: 32, height: 44)
         }
-        .buttonStyle(PrimaryButtonStyle())
+        .buttonStyle(IconButtonStyle())
         .disabled(!connection.isConnected)
     }
 
     private var transportCard: some View {
-        HStack(spacing: 16) {
-            mediaButton(icon: "backward.fill", label: "Prev") {
-                connection.send(command: RemoteCommand.media(action: "prev"))
-            }
+        VStack(alignment: .leading, spacing: 14) {
+            SectionHeader(title: "Playback", icon: "play.circle.fill")
 
-            mediaButton(icon: "playpause.fill", label: "Play") {
-                connection.send(command: RemoteCommand.media(action: "play_pause"))
-            }
+            HStack(spacing: 12) {
+                mediaButton(icon: "backward.fill", label: "Prev") {
+                    connection.send(command: RemoteCommand.media(action: "prev"))
+                }
 
-            mediaButton(icon: "forward.fill", label: "Next") {
-                connection.send(command: RemoteCommand.media(action: "next"))
+                mediaButton(icon: "playpause.fill", label: "Play") {
+                    connection.send(command: RemoteCommand.media(action: "play_pause"))
+                }
+
+                mediaButton(icon: "forward.fill", label: "Next") {
+                    connection.send(command: RemoteCommand.media(action: "next"))
+                }
             }
         }
         .padding(16)
@@ -145,16 +137,18 @@ struct MediaView: View {
     private func mediaButton(icon: String, label: String, action: @escaping () -> Void) -> some View {
         Button {
             action()
-            haptic()
+            Haptics.medium(enabled: settings.hapticsEnabled)
         } label: {
             VStack(spacing: 8) {
                 Image(systemName: icon)
                     .font(.title2)
+                    .foregroundStyle(AppTheme.accent)
                 Text(label)
-                    .font(.caption)
+                    .font(.caption.weight(.medium))
+                    .foregroundStyle(AppTheme.textSecondary)
             }
             .frame(maxWidth: .infinity)
-            .frame(minHeight: 80)
+            .frame(minHeight: 76)
         }
         .buttonStyle(TileButtonStyle())
         .disabled(!connection.isConnected)
@@ -166,12 +160,6 @@ struct MediaView: View {
         let action = delta > 0 ? "up" : "down"
         connection.send(command: RemoteCommand.volume(action: action, steps: abs(delta)))
         volumeBaseline = volumeLevel
-    }
-
-    private func haptic() {
-        if settings.hapticsEnabled {
-            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-        }
     }
 }
 

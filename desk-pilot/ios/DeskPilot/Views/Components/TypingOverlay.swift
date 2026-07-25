@@ -14,14 +14,15 @@ struct TypingOverlay: View {
         VStack(spacing: 0) {
             Spacer()
 
-            VStack(alignment: .leading, spacing: 8) {
+            VStack(alignment: .leading, spacing: 10) {
                 HStack {
-                    Text("Typing on your PC")
-                        .font(.caption.weight(.medium))
+                    Label("Typing on PC", systemImage: "keyboard")
+                        .font(.caption.weight(.semibold))
                         .foregroundStyle(AppTheme.accent)
                     Spacer()
                     Button("Done") { dismissKeyboard() }
-                        .font(.caption.weight(.semibold))
+                        .font(.caption.weight(.bold))
+                        .foregroundStyle(AppTheme.textPrimary)
                 }
 
                 TextField("Start typing…", text: $typedBuffer, axis: .vertical)
@@ -31,17 +32,27 @@ struct TypingOverlay: View {
                     .submitLabel(.return)
                     .autocorrectionDisabled()
                     .textInputAutocapitalization(.never)
-                    .padding(12)
-                    .background(AppTheme.background)
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                    .padding(14)
+                    .background(AppTheme.backgroundElevated)
+                    .clipShape(RoundedRectangle(cornerRadius: AppTheme.compactRadius, style: .continuous))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: AppTheme.compactRadius, style: .continuous)
+                            .stroke(AppTheme.cardBorder, lineWidth: 1)
+                    )
                     .onSubmit { submitTyping() }
                     .onChange(of: typedBuffer) { oldValue, newValue in
                         syncLiveTyping(from: oldValue, to: newValue)
                     }
             }
             .padding(16)
-            .background(AppTheme.card)
-            .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+            .background(.ultraThinMaterial)
+            .background(AppTheme.card.opacity(0.88))
+            .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: 22, style: .continuous)
+                    .stroke(AppTheme.accent.opacity(0.25), lineWidth: 1)
+            )
+            .shadow(color: .black.opacity(0.25), radius: 16, y: 8)
             .padding(.horizontal, 12)
             .padding(.bottom, 8)
             .opacity(isVisible ? 1 : 0)
@@ -49,7 +60,7 @@ struct TypingOverlay: View {
             .allowsHitTesting(isVisible)
         }
         .allowsHitTesting(isVisible)
-        .animation(.easeOut(duration: 0.2), value: isVisible)
+        .animation(.spring(response: 0.28, dampingFraction: 0.88), value: isVisible)
         .onChange(of: connection.keyboardFocusRequestID) { _, _ in
             presentKeyboard()
         }
@@ -100,9 +111,7 @@ struct TypingOverlay: View {
     private func submitTyping() {
         connection.send(command: RemoteCommand.key("enter"))
         dismissKeyboard()
-        if settings.hapticsEnabled {
-            UIImpactFeedbackGenerator(style: .light).impactOccurred()
-        }
+        Haptics.light(enabled: settings.hapticsEnabled)
     }
 
     private func clearLocalBuffer() {
