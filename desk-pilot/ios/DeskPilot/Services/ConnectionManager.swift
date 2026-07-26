@@ -18,23 +18,28 @@ final class ConnectionManager: ObservableObject {
     @Published private(set) var keyboardFocusRequestID = 0
     @Published private(set) var keyboardIsOpen = false
     @Published private(set) var wakeRoutineMessage = ""
+    @Published private(set) var appLaunchMessage = ""
 
     private var webSocket: URLSessionWebSocketTask?
     private var session: URLSession?
     private var pingTimer: Timer?
     private var reconnectWorkItem: DispatchWorkItem?
     private var reconnectAttempt = 0
+    private var bootstrapTask: Task<Void, Never>?
 
     private var currentHost: String = ""
     private var currentPort: Int = 8765
     private var authToken: String?
 
     var isConnected: Bool {
+        if case .connected = state { return true }
+        return false
+    }
+
+    var isBusyConnecting: Bool {
         switch state {
-        case .connected, .pairing:
-            return true
-        default:
-            return false
+        case .connecting, .pairing: return true
+        default: return bootstrapTask != nil
         }
     }
 
@@ -46,18 +51,16 @@ final class ConnectionManager: ObservableObject {
         keyboardIsOpen = isOpen
     }
 
-    /// Wait for the PC server after Wake-on-LAN, retrying pairing in the background.
     func waitForConnection(timeout: TimeInterval, settings: SettingsStore) async -> Bool {
         let deadline = Date().addingTimeInterval(timeout)
         while Date() < deadline {
             if isConnected { return true }
-            await bootstrap(settings: settings)
-            try? await Task.sleep(nanoseconds: 3_000_000_000)
+            await bootstrap(settings: settings, force: false)
+            try? await Task.sleep(nanoseconds: 4_000_000_000)
         }
         return isConnected
     }
 
-    /// Clears a stale socket so wake flow waits for the PC to actually come back.
     func prepareForWakeReconnect() {
         cancelReconnect()
         reconnectAttempt = 0
@@ -97,6 +100,8 @@ final class ConnectionManager: ObservableObject {
     }
 
     func disconnect() {
+        bootstrapTask?.cancel()
+        bootstrapTask = nil
         teardownSockets()
         state = .disconnected
         serverName = ""
@@ -163,21 +168,50 @@ final class ConnectionManager: ObservableObject {
               let text = String(data: data, encoding: .utf8) else { return }
 
         Task {
-            try? await send(text: text)
+            do {
+                try await send(text: text)
+            } catch {
+                if isConnected {
+                    state = .error("Connection lost — tap banner to retry")
+                    teardownSockets(keepReconnectPlan: true)
+                    scheduleReconnect()
+                }
+            }
         }
     }
 
-    /// Connect using saved token, or auto-pair with preset PC credentials.
-    func bootstrap(settings: SettingsStore) async {
-        state = .connecting
+    func bootstrap(settings: SettingsStore, force: Bool = true) async {
+        if !force, isConnected { return }
+
+        if let existing = bootstrapTask {
+            await existing.value
+            return
+        }
+
+        let task = Task { @MainActor in
+            await performBootstrap(settings: settings, force: force)
+        }
+        bootstrapTask = task
+        await task.value
+        bootstrapTask = nil
+    }
+
+    private func performBootstrap(settings: SettingsStore, force: Bool) async {
+        if !force, isConnected { return }
+        if !force, case .connecting = state { return }
+        if !force, case .pairing = state { return }
 
         if settings.isPaired, let token = settings.authToken {
+            state = .connecting
             if await connectWithAuth(host: settings.host, port: settings.port, token: token) {
                 return
             }
-            settings.authToken = nil
+            if case .error(let message) = state, message.contains("Session expired") {
+                settings.authToken = nil
+            }
         }
 
+        state = .pairing
         if let token = await pair(
             host: settings.host,
             port: settings.port,
@@ -197,8 +231,19 @@ final class ConnectionManager: ObservableObject {
 
     private func connectWithAuth(host: String, port: Int, token: String) async -> Bool {
         connect(host: host, port: port, token: token)
-        try? await Task.sleep(nanoseconds: 2_500_000_000)
-        return isConnected
+
+        let deadline = Date().addingTimeInterval(8)
+        while Date() < deadline {
+            if isConnected { return true }
+            if case .error = state { return false }
+            try? await Task.sleep(nanoseconds: 200_000_000)
+        }
+
+        if case .connecting = state {
+            state = .error("PC not responding — tap banner to retry")
+            teardownSockets()
+        }
+        return false
     }
 
     private func sendAuthIfNeeded() {
@@ -288,16 +333,6 @@ final class ConnectionManager: ObservableObject {
               let type = json["type"] as? String else { return }
 
         switch type {
-        case "pair_ok":
-            if case .pairing = state, let token = json["token"] as? String {
-                authToken = token
-                serverName = json["hostname"] as? String ?? currentHost
-                serverMacAddress = json["mac_address"] as? String ?? ""
-                state = .connected
-                reconnectAttempt = 0
-                cancelReconnect()
-                startPingLoop()
-            }
         case "auth_ok":
             serverName = json["hostname"] as? String ?? currentHost
             if let mac = json["mac_address"] as? String, !mac.isEmpty {
@@ -326,6 +361,13 @@ final class ConnectionManager: ObservableObject {
                 wakeRoutineMessage = json["message"] as? String ?? "Wake routine failed"
             default:
                 break
+            }
+        case "launch_app_status":
+            let status = json["status"] as? String ?? ""
+            if status == "done", let app = json["app"] as? String {
+                appLaunchMessage = "Opened \(app)"
+            } else {
+                appLaunchMessage = json["message"] as? String ?? "Could not open app"
             }
         case "focus_text":
             if !keyboardIsOpen {
@@ -376,7 +418,6 @@ final class ConnectionManager: ObservableObject {
     }
 }
 
-/// WebSocket I/O isolated from `@MainActor` so URLSession callbacks compile under strict concurrency.
 private enum WebSocketIO {
     static func send(_ text: String, on socket: URLSessionWebSocketTask) async throws {
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in

@@ -9,14 +9,13 @@ struct PowerView: View {
     @State private var isWaking = false
 
     enum PowerAction: String, Identifiable {
-        case sleep, lock, shutdown
+        case sleep, shutdown
 
         var id: String { rawValue }
 
         var title: String {
             switch self {
             case .sleep: return "Sleep PC?"
-            case .lock: return "Lock PC?"
             case .shutdown: return "Shut down PC?"
             }
         }
@@ -25,8 +24,6 @@ struct PowerView: View {
     var body: some View {
         NavigationStack {
             VStack(spacing: 18) {
-                ConnectionBanner()
-
                 Spacer(minLength: 8)
 
                 Button {
@@ -78,12 +75,14 @@ struct PowerView: View {
 
                 Spacer()
             }
-            .padding(16)
+            .padding(.horizontal, 16)
             .screenBackground()
             .deskPilotNavigation("Power")
             .onChange(of: connection.wakeRoutineMessage) { _, message in
-                if !message.isEmpty {
-                    wakeMessage = message
+                guard !message.isEmpty else { return }
+                wakeMessage = message
+                if message == "Signed in" || message.contains("failed") {
+                    isWaking = false
                 }
             }
             .alert(item: $confirmAction) { action in
@@ -94,8 +93,6 @@ struct PowerView: View {
                         switch action {
                         case .sleep:
                             connection.send(command: RemoteCommand.power(action: "sleep"))
-                        case .lock:
-                            connection.send(command: RemoteCommand.shortcut("lock"))
                         case .shutdown:
                             connection.send(command: RemoteCommand.power(action: "shutdown"))
                         }
@@ -132,8 +129,6 @@ struct PowerView: View {
     private func wakePC() async {
         isWaking = true
         wakeMessage = ""
-        defer { isWaking = false }
-
         connection.prepareForWakeReconnect()
 
         do {
@@ -146,6 +141,7 @@ struct PowerView: View {
             Haptics.medium(enabled: settings.hapticsEnabled)
         } catch {
             wakeMessage = error.localizedDescription
+            isWaking = false
             return
         }
 
@@ -155,11 +151,32 @@ struct PowerView: View {
             PC did not respond. Sleep the PC instead of shutting down, run enable-wol.bat on the PC, \
             and stay on the same Wi‑Fi.
             """
+            isWaking = false
             return
         }
 
         wakeMessage = "PC online — signing in…"
         connection.send(command: RemoteCommand.wakeRoutine())
+
+        let signedIn = await waitForWakeRoutineCompletion(timeout: 90)
+        if !signedIn, wakeMessage == "PC online — signing in…" {
+            wakeMessage = "Sign-in timed out — tap Wake PC to retry"
+            isWaking = false
+        }
+    }
+
+    private func waitForWakeRoutineCompletion(timeout: TimeInterval) async -> Bool {
+        let deadline = Date().addingTimeInterval(timeout)
+        while Date() < deadline {
+            if connection.wakeRoutineMessage == "Signed in" {
+                return true
+            }
+            if connection.wakeRoutineMessage.contains("failed") {
+                return false
+            }
+            try? await Task.sleep(nanoseconds: 300_000_000)
+        }
+        return connection.wakeRoutineMessage == "Signed in"
     }
 }
 

@@ -44,7 +44,8 @@ def load_config() -> dict:
                 data.setdefault("mac_address", get_mac_address())
                 data.setdefault("windows_user", PRESET_WINDOWS_USER)
                 data.setdefault("windows_pin", PRESET_WINDOWS_PIN)
-                data["pair_pin"] = PRESET_PIN
+                if "pair_pin" not in data:
+                    data["pair_pin"] = PRESET_PIN
                 save_config(data)
                 return data
         except (json.JSONDecodeError, OSError):

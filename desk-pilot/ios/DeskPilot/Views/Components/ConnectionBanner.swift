@@ -8,7 +8,7 @@ struct ConnectionBanner: View {
 
     var body: some View {
         Button {
-            Task { await connection.bootstrap(settings: settings) }
+            Task { await connection.bootstrap(settings: settings, force: true) }
         } label: {
             HStack(spacing: 10) {
                 statusDot
@@ -100,7 +100,8 @@ struct ConnectionBanner: View {
 
     private var statusText: String {
         switch connection.state {
-        case .connected, .pairing: return "Connected to PC"
+        case .connected: return "Connected to PC"
+        case .pairing: return "Pairing…"
         case .connecting: return "Connecting…"
         case .disconnected: return "Not connected"
         case .error(let message): return message

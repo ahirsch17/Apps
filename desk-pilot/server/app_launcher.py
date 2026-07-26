@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import subprocess
 from typing import Callable
 
@@ -9,12 +10,19 @@ LogFn = Callable[[str], None]
 
 
 def launch_app(app_name: str, log: LogFn = print) -> bool:
-    safe_name = app_name.replace('"', "")
+    cleaned = app_name.strip()
+    if not cleaned:
+        return False
+
     ps = (
-        "$app = Get-StartApps | Where-Object { $_.Name -like '*"
-        + safe_name
-        + "*' } | Select-Object -First 1; "
-        "if ($app) { Start-Process ('shell:AppsFolder\\' + $app.AppID) } "
+        "$name = "
+        + json.dumps(cleaned)
+        + "; "
+        "$app = Get-StartApps | Where-Object { $_.Name -eq $name } | Select-Object -First 1; "
+        "if (-not $app) { "
+        "$app = Get-StartApps | Where-Object { $_.Name -like ('*' + $name + '*') } | Select-Object -First 1 "
+        "}; "
+        "if ($app) { Start-Process ('shell:AppsFolder\\' + $app.AppID); exit 0 } "
         "else { exit 1 }"
     )
     try:
@@ -26,10 +34,10 @@ def launch_app(app_name: str, log: LogFn = print) -> bool:
             creationflags=subprocess.CREATE_NO_WINDOW,
         )
         if result.returncode == 0:
-            log(f"Launched {app_name}")
+            log(f"Launched {cleaned}")
             return True
-        log(f"Could not find app: {app_name}")
+        log(f"Could not find app: {cleaned}")
         return False
     except Exception as exc:
-        log(f"Launch failed for {app_name}: {exc}")
+        log(f"Launch failed for {cleaned}: {exc}")
         return False

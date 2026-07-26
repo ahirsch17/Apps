@@ -30,6 +30,9 @@ PAIR_PIN = str(CONFIG["pair_pin"])
 SESSION_TOKENS: dict[str, str] = dict(CONFIG.get("session_tokens", {}))
 MAC_ADDRESS = str(CONFIG.get("mac_address", ""))
 AUTHED_CLIENTS: set[Any] = set()
+_wake_task: asyncio.Task | None = None
+_focus_task: asyncio.Task | None = None
+_scroll_accumulator = [0.0, 0.0]
 
 KEY_MAP: dict[str, Any] = {
     "enter": Key.enter,
@@ -215,12 +218,19 @@ async def send_json(websocket: websockets.WebSocketServerProtocol, payload: dict
 
 
 async def maybe_notify_text_focus(websocket: websockets.WebSocketServerProtocol) -> None:
-    for delay in (0.2, 0.45, 0.75):
-        await asyncio.sleep(delay)
-        if pc_text_field_is_focused():
-            log_line(f"Text focus detected ({describe_focus_target()})")
-            await send_json(websocket, {"type": "focus_text"})
-            return
+    global _focus_task
+    if _focus_task and not _focus_task.done():
+        _focus_task.cancel()
+
+    async def _check() -> None:
+        for delay in (0.2, 0.45, 0.75):
+            await asyncio.sleep(delay)
+            if pc_text_field_is_focused():
+                log_line(f"Text focus detected ({describe_focus_target()})")
+                await send_json(websocket, {"type": "focus_text"})
+                return
+
+    _focus_task = asyncio.create_task(_check())
 
 
 def wake_settings() -> tuple[str, str]:
@@ -230,6 +240,10 @@ def wake_settings() -> tuple[str, str]:
 
 
 async def handle_wake_routine(websocket: websockets.WebSocketServerProtocol) -> None:
+    global _wake_task
+    if _wake_task and not _wake_task.done():
+        return
+
     user, pin = wake_settings()
     if not pin:
         await send_json(
@@ -238,24 +252,27 @@ async def handle_wake_routine(websocket: websockets.WebSocketServerProtocol) -> 
         )
         return
 
-    await send_json(websocket, {"type": "wake_routine_status", "status": "started"})
+    async def _run() -> None:
+        await send_json(websocket, {"type": "wake_routine_status", "status": "started"})
 
-    def log(message: str) -> None:
-        log_line(message)
+        def log(message: str) -> None:
+            log_line(message)
 
-    try:
-        await asyncio.to_thread(
-            run_wake_routine,
-            windows_user=user,
-            windows_pin=pin,
-            log=log,
-        )
-        await send_json(websocket, {"type": "wake_routine_status", "status": "done"})
-    except Exception as exc:
-        await send_json(
-            websocket,
-            {"type": "wake_routine_status", "status": "error", "message": str(exc)},
-        )
+        try:
+            await asyncio.to_thread(
+                run_wake_routine,
+                windows_user=user,
+                windows_pin=pin,
+                log=log,
+            )
+            await send_json(websocket, {"type": "wake_routine_status", "status": "done"})
+        except Exception as exc:
+            await send_json(
+                websocket,
+                {"type": "wake_routine_status", "status": "error", "message": str(exc)},
+            )
+
+    _wake_task = asyncio.create_task(_run())
 
 
 async def handle_launch_app(websocket: websockets.WebSocketServerProtocol, app_name: str) -> None:
@@ -335,7 +352,16 @@ async def handle_message(websocket: websockets.WebSocketServerProtocol, data: di
         return
 
     if msg_type == "scroll":
-        mouse.scroll(int(data.get("dx", 0)), int(data.get("dy", 0)))
+        dx = float(data.get("dx", 0))
+        dy = float(data.get("dy", 0))
+        _scroll_accumulator[0] += dx
+        _scroll_accumulator[1] += dy
+        step_x = int(_scroll_accumulator[0])
+        step_y = int(_scroll_accumulator[1])
+        if step_x != 0 or step_y != 0:
+            mouse.scroll(step_x, step_y)
+            _scroll_accumulator[0] -= step_x
+            _scroll_accumulator[1] -= step_y
         return
 
     if msg_type == "key":
@@ -365,7 +391,7 @@ async def handle_message(websocket: websockets.WebSocketServerProtocol, data: di
         return
 
     if msg_type == "wake_routine":
-        asyncio.create_task(handle_wake_routine(websocket))
+        await handle_wake_routine(websocket)
         return
 
     if msg_type == "launch_app":

@@ -192,9 +192,11 @@ private final class TrackpadTouchView: UIView {
     private var didMove = false
 
     private var scrollTouches: [UITouch] = []
+    private var didScrollSession = false
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard let event else { return }
+        didScrollSession = false
         let allTouches = event.allTouches?.filter { $0.view == self } ?? Array(touches)
 
         if allTouches.count >= 2 {
@@ -244,7 +246,7 @@ private final class TrackpadTouchView: UIView {
         }
 
         guard let touch = activeMoveTouch, touches.contains(touch) else { return }
-        if coordinator.tapToClick && !didMove {
+        if coordinator.tapToClick && !didMove && !didScrollSession {
             coordinator.onTap()
         }
 
@@ -260,6 +262,7 @@ private final class TrackpadTouchView: UIView {
     private func beginScroll(with touches: [UITouch]) {
         activeMoveTouch = nil
         didMove = true
+        didScrollSession = true
         scrollTouches = Array(touches.prefix(2))
         coordinator?.resetScroll()
         coordinator?.resetMove()

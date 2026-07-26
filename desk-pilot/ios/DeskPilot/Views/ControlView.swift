@@ -10,8 +10,6 @@ struct ControlView: View {
     var body: some View {
         NavigationStack {
             VStack(spacing: 14) {
-                ConnectionBanner()
-
                 TrackpadSurface()
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
 

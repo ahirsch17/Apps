@@ -75,7 +75,7 @@ def _accepts_text_input(control, *, focused_control) -> bool:
     if control.ControlTypeName == "ComboBoxControl" and (is_focused or has_hint):
         return True
 
-    if control.ControlTypeName == "DocumentControl" and has_hint and is_focused:
+    if control.ControlTypeName == "DocumentControl" and is_focused:
         return True
 
     return has_hint and control.ControlTypeName in TEXT_FIELD_TYPES

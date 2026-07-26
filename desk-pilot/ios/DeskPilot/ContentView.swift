@@ -9,26 +9,33 @@ struct ContentView: View {
 
     var body: some View {
         ZStack(alignment: .bottom) {
-            TabView(selection: $selectedTab) {
-                ControlView()
-                    .tag(0)
-                    .tabItem {
-                        Label("Control", systemImage: "cursorarrow.rays")
-                    }
+            VStack(spacing: 0) {
+                ConnectionBanner()
+                    .padding(.horizontal, 16)
+                    .padding(.top, 8)
+                    .padding(.bottom, 4)
 
-                MediaView()
-                    .tag(1)
-                    .tabItem {
-                        Label("Media", systemImage: "play.tv")
-                    }
+                TabView(selection: $selectedTab) {
+                    ControlView()
+                        .tag(0)
+                        .tabItem {
+                            Label("Control", systemImage: "cursorarrow.rays")
+                        }
 
-                PowerView()
-                    .tag(2)
-                    .tabItem {
-                        Label("Power", systemImage: "power.circle")
-                    }
+                    MediaView()
+                        .tag(1)
+                        .tabItem {
+                            Label("Media", systemImage: "play.tv")
+                        }
+
+                    PowerView()
+                        .tag(2)
+                        .tabItem {
+                            Label("Power", systemImage: "power.circle")
+                        }
+                }
+                .tint(AppTheme.accent)
             }
-            .tint(AppTheme.accent)
 
             TypingOverlay()
         }
@@ -40,7 +47,7 @@ struct ContentView: View {
         }
         .onChange(of: scenePhase) { _, phase in
             if phase == .active, !connection.isConnected {
-                Task { await connection.bootstrap(settings: settings) }
+                Task { await connection.bootstrap(settings: settings, force: false) }
             }
         }
     }

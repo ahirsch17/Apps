@@ -3,12 +3,33 @@
 from __future__ import annotations
 
 import time
-from typing import Callable
+from contextlib import contextmanager
+from pathlib import Path
+from typing import Callable, Iterator
 
 from pynput.keyboard import Controller as KeyboardController, Key
 
 keyboard = KeyboardController()
 LogFn = Callable[[str], None]
+WAKE_LOCK_PATH = Path.home() / "AppData" / "Local" / "DeskPilot" / "wake.lock"
+
+
+@contextmanager
+def wake_lock(timeout_seconds: int = 120) -> Iterator[bool]:
+    WAKE_LOCK_PATH.parent.mkdir(parents=True, exist_ok=True)
+    if WAKE_LOCK_PATH.exists():
+        age = time.time() - WAKE_LOCK_PATH.stat().st_mtime
+        if age < timeout_seconds:
+            yield False
+            return
+    WAKE_LOCK_PATH.write_text(str(time.time()), encoding="utf-8")
+    try:
+        yield True
+    finally:
+        try:
+            WAKE_LOCK_PATH.unlink(missing_ok=True)
+        except OSError:
+            pass
 
 
 def _log(message: str, log: LogFn = print) -> None:
@@ -38,7 +59,7 @@ def is_sign_in_screen() -> bool:
                 return True
         return False
     except Exception:
-        return False
+        return True
 
 
 def select_user_profile(user_name: str, log: LogFn = print) -> bool:
@@ -54,17 +75,16 @@ def select_user_profile(user_name: str, log: LogFn = print) -> bool:
             name = (control.Name or "").strip()
             if not name:
                 continue
-            if target not in name.lower():
-                continue
-            if control.ControlTypeName in {
-                "ListItemControl",
-                "ButtonControl",
-                "HyperlinkControl",
-            }:
-                _log(f"Selecting profile: {name}", log)
-                control.Click()
-                time.sleep(0.8)
-                return True
+            if name.lower() == target:
+                if control.ControlTypeName in {
+                    "ListItemControl",
+                    "ButtonControl",
+                    "HyperlinkControl",
+                }:
+                    _log(f"Selecting profile: {name}", log)
+                    control.Click()
+                    time.sleep(0.8)
+                    return True
         return False
     except Exception as exc:
         _log(f"Could not select profile: {exc}", log)
@@ -86,18 +106,26 @@ def type_pin(pin: str, log: LogFn = print) -> None:
 
 
 def run_wake_routine(*, windows_user: str, windows_pin: str, log: LogFn = print) -> None:
-    _log("Wake routine started", log)
-    time.sleep(4)
+    with wake_lock() as acquired:
+        if not acquired:
+            _log("Wake routine already running — skipped", log)
+            return
 
-    if is_sign_in_screen():
-        select_user_profile(windows_user, log=log)
-        time.sleep(0.6)
-        type_pin(windows_pin, log=log)
-        time.sleep(10)
-    else:
-        _log("Already signed in — skipping PIN entry", log)
+        _log("Wake routine started", log)
+        time.sleep(4)
 
-    _log("Wake routine finished", log)
+        if is_sign_in_screen():
+            profile_selected = select_user_profile(windows_user, log=log) if windows_user.strip() else True
+            time.sleep(0.6)
+            if profile_selected or not windows_user.strip():
+                type_pin(windows_pin, log=log)
+                time.sleep(10)
+            else:
+                _log("Could not select Windows profile", log)
+        else:
+            _log("Already signed in — skipping PIN entry", log)
+
+        _log("Wake routine finished", log)
 
 
 def run_login_watch(

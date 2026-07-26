@@ -54,7 +54,7 @@ struct TypingOverlay: View {
             )
             .shadow(color: .black.opacity(0.25), radius: 16, y: 8)
             .padding(.horizontal, 12)
-            .padding(.bottom, 8)
+            .padding(.bottom, 88)
             .opacity(isVisible ? 1 : 0)
             .offset(y: isVisible ? 0 : 120)
             .allowsHitTesting(isVisible)
@@ -67,17 +67,12 @@ struct TypingOverlay: View {
     }
 
     private func presentKeyboard() {
-        guard !isVisible else { return }
         clearLocalBuffer()
         isVisible = true
         connection.setKeyboardOpen(true)
         Task { @MainActor in
             try? await Task.sleep(nanoseconds: 50_000_000)
             fieldFocused = true
-            try? await Task.sleep(nanoseconds: 150_000_000)
-            if !fieldFocused {
-                fieldFocused = true
-            }
         }
     }
 
@@ -93,11 +88,7 @@ struct TypingOverlay: View {
 
         if newValue.count > oldValue.count {
             let added = String(newValue.dropFirst(oldValue.count))
-            if added.count == 1, let char = added.first {
-                connection.send(command: RemoteCommand.key(String(char)))
-            } else {
-                connection.send(command: RemoteCommand.text(added))
-            }
+            connection.send(command: RemoteCommand.text(added))
             return
         }
 

@@ -6,23 +6,21 @@ struct MediaView: View {
 
     @State private var volumeLevel: Double = 50
     @State private var volumeBaseline: Double = 50
-    @State private var appLaunchMessage = ""
 
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 16) {
-                    ConnectionBanner()
-
                     appsCard
                     volumeCard
                     transportCard
 
-                    if !appLaunchMessage.isEmpty {
-                        StatusMessage(text: appLaunchMessage)
+                    if !connection.appLaunchMessage.isEmpty {
+                        StatusMessage(text: connection.appLaunchMessage)
                     }
                 }
-                .padding(16)
+                .padding(.horizontal, 16)
+                .padding(.bottom, 16)
             }
             .screenBackground()
             .deskPilotNavigation("Media")
@@ -46,7 +44,6 @@ struct MediaView: View {
     private func appButton(_ app: StreamingApp) -> some View {
         Button {
             connection.send(command: RemoteCommand.launchApp(app.launchName))
-            appLaunchMessage = "Opening \(app.title)…"
             Haptics.medium(enabled: settings.hapticsEnabled)
         } label: {
             VStack(spacing: 12) {
@@ -66,6 +63,11 @@ struct MediaView: View {
     private var volumeCard: some View {
         VStack(spacing: 18) {
             SectionHeader(title: "Volume", icon: "speaker.wave.2.fill")
+
+            Text("Relative — PC volume is not read back")
+                .font(.caption2)
+                .foregroundStyle(AppTheme.textTertiary)
+                .frame(maxWidth: .infinity, alignment: .leading)
 
             HStack(spacing: 10) {
                 volumeStepButton(systemName: "minus") {
