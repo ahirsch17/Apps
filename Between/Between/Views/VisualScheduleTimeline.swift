@@ -94,12 +94,17 @@ struct VisualScheduleTimeline: View {
     
     private var emptyState: some View {
         VStack(spacing: 8) {
-            Image(systemName: "star.fill")
+            Image(systemName: "calendar.badge.clock")
                 .font(.title2)
                 .foregroundStyle(.secondary)
-            Text("Star friends to see their schedules here")
+            Text("No overlapping free time right now")
                 .font(BetweenFont.secondary())
                 .foregroundStyle(.secondary)
+            Text("Star friends with 25+ min shared windows to see them here")
+                .font(BetweenFont.caption())
+                .foregroundStyle(.tertiary)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 20)
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 32)

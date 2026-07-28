@@ -44,8 +44,7 @@ struct TodayView: View {
 
                     ActivityModeBar()
 
-                    VisualScheduleTimeline(
-                        friends: viewModel.nearbyFriends,
+                    HorizontalOverlapTimeline(
                         todayPlan: viewModel.todayPlan,
                         starredIds: viewModel.preferences.starredFriendIds
                     )
