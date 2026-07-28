@@ -69,6 +69,13 @@ final class AppViewModel: ObservableObject {
             starredIds: preferences.starredFriendIds
         )
     }
+    
+    var recurringWindows: [RecurringWindow] {
+        SchedulePatternDetector.detectRecurringWindows(
+            from: todayPlan,
+            starredIds: preferences.starredFriendIds
+        )
+    }
 
     var notificationCount: Int {
         pendingIncoming.count

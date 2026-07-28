@@ -8,6 +8,7 @@ struct TodayView: View {
     @State private var showEvents = false
     @State private var classSheetSection: CourseSection?
     @State private var showScheduleTimeline = false
+    @State private var showWeeklyPatterns = false
 
     private var snapshot: TodayPresenter.Snapshot { viewModel.today }
 
@@ -47,6 +48,10 @@ struct TodayView: View {
                     
                     if viewModel.spontaneousPlanSuggestion() != nil {
                         spontaneousPlanCard
+                    }
+                    
+                    if !viewModel.recurringWindows.isEmpty {
+                        weeklyPatternsSection
                     }
                     
                     scheduleSection
@@ -363,6 +368,27 @@ struct TodayView: View {
                     .surfaceCard()
                 }
                 .buttonStyle(.plain)
+            }
+        }
+    }
+    
+    private var weeklyPatternsSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Button {
+                showWeeklyPatterns.toggle()
+            } label: {
+                HStack {
+                    SectionHeader(title: "Weekly patterns", subtitle: "Recurring overlaps")
+                    Spacer()
+                    Image(systemName: showWeeklyPatterns ? "chevron.up" : "chevron.down")
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(.secondary)
+                }
+            }
+            .buttonStyle(.plain)
+            
+            if showWeeklyPatterns {
+                WeeklyPatternsView(recurringWindows: viewModel.recurringWindows)
             }
         }
     }
