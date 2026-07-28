@@ -31,15 +31,13 @@ struct AuthFlowView: View {
                 .frame(maxWidth: 200, maxHeight: 64)
                 .accessibilityLabel("Between logo")
 
-            VStack(spacing: 10) {
-                Text("Between")
-                    .font(BetweenFont.greeting())
-                Text("Know when you and your friends\nare free between classes.")
+            BetweenWordmark(size: .large)
+                .padding(.top, 12)
+
+            Text("Know when you and your friends\nare free between classes.")
                     .font(BetweenFont.secondary())
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
-            }
-            .padding(.top, 20)
             .padding(.horizontal, 32)
 
             VStack(alignment: .leading, spacing: 14) {

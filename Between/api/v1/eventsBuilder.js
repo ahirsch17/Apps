@@ -24,7 +24,8 @@ function buildEvents(state, viewerId) {
     const partnerSeekingCount = realPartners + (event.promotedPartnerCount || 0);
     const isInterested = parts.some((p) => p.studentId === viewerId);
     const isLooking = viewerPartnerEvents.has(event.id);
-    const canView = isLooking;
+    const matchingKind = event.matchingKind || 'partner';
+    const canView = isLooking && matchingKind !== 'none';
 
     const interest = interests.find((i) => i.id === event.interestId);
     const end = event.endTime ? new Date(event.endTime) : new Date(new Date(event.startTime).getTime() + 3600000);
@@ -45,6 +46,8 @@ function buildEvents(state, viewerId) {
       interestIcon: interest?.icon || 'calendar',
       interestedCount,
       partnerSeekingCount,
+      matchingKind,
+      recurrenceLabel: event.recurrenceLabel || null,
       isInterested,
       isLookingForPartner: isLooking,
       canViewPartners: canView,

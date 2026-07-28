@@ -323,6 +323,8 @@ struct CampusEventCardDTO: Decodable {
     let interestIcon: String
     let interestedCount: Int
     let partnerSeekingCount: Int
+    let matchingKind: EventMatchingKind
+    let recurrenceLabel: String?
     let isInterested: Bool
     let isLookingForPartner: Bool
     let canViewPartners: Bool
@@ -339,6 +341,8 @@ struct CampusEventCardDTO: Decodable {
             interestIcon: interestIcon,
             interestedCount: interestedCount,
             partnerSeekingCount: partnerSeekingCount,
+            matchingKind: matchingKind,
+            recurrenceLabel: recurrenceLabel,
             isInterested: isInterested,
             isLookingForPartner: isLookingForPartner,
             canViewPartners: canViewPartners,

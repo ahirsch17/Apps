@@ -6,6 +6,8 @@ struct NetworkSheet: View {
     @Environment(\.colorScheme) private var colorScheme
     @State private var settingsFriend: FriendCard?
     @State private var searchText = ""
+    @State private var showCourseLookup = false
+    @State private var showNotifications = false
 
     private var filteredFriends: [FriendCard] {
         guard !searchText.isEmpty else { return viewModel.nearbyFriends }
@@ -40,11 +42,32 @@ struct NetworkSheet: View {
             .navigationTitle("Friends")
             .navigationBarTitleDisplayMode(.large)
             .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button {
+                        showCourseLookup = true
+                    } label: {
+                        Image(systemName: "magnifyingglass")
+                    }
+                }
+                ToolbarItem(placement: .topBarLeading) {
+                    Button {
+                        showNotifications = true
+                    } label: {
+                        Image(systemName: "bell.fill")
+                    }
+                    .badge(viewModel.notificationCount)
+                }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Done") { dismiss() }
                         .fontWeight(.semibold)
                 }
             }
+        }
+        .sheet(isPresented: $showCourseLookup) {
+            CourseLookupSheet()
+        }
+        .sheet(isPresented: $showNotifications) {
+            NotificationsSheet()
         }
         .sheet(item: $settingsFriend) { friend in
             FriendSettingsSheet(friend: friend, preferences: viewModel.preferences)

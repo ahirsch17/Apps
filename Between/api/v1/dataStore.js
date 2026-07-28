@@ -240,6 +240,34 @@ class DataStore {
     this.plans.push(plan);
     return plan;
   }
+
+  /** Match classmates by hashed course IDs — server never sees raw CRNs. */
+  courseHashMatches(studentId, hashedCourseIds) {
+    const me = this.findStudentById(studentId);
+    if (!me) return [];
+    const schoolId = me.schoolId;
+    const sectionById = Object.fromEntries(this.sections.map((s) => [s.sectionId, s]));
+    const crypto = require('crypto');
+
+    const hashFor = (canonicalCourseId) =>
+      crypto.createHash('sha256').update(`${schoolId}:${canonicalCourseId}`).digest('hex');
+
+    const myHashes = new Set(hashedCourseIds);
+    const counts = {};
+
+    for (const enrollment of this.enrollments) {
+      if (enrollment.studentId === studentId) continue;
+      const peer = this.findStudentById(enrollment.studentId);
+      if (!peer || peer.schoolId !== schoolId) continue;
+      const section = sectionById[enrollment.sectionId];
+      if (!section) continue;
+      const h = hashFor(section.canonicalCourseId);
+      if (!myHashes.has(h)) continue;
+      counts[h] = (counts[h] || 0) + 1;
+    }
+
+    return Object.entries(counts).map(([hash, classmateCount]) => ({ hash, classmateCount }));
+  }
 }
 
 module.exports = new DataStore();

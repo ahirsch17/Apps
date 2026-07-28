@@ -1,127 +1,148 @@
-# Between — VT Pitch Deck (10 slides)
-
-**Audience:** Student Engagement, Rec Sports, IT Security, Hokie Wellness  
-**Ask:** One-semester pilot · 500–1,000 students · SSO + privacy review  
-**Duration:** 12 minutes + Q&A
-
----
-
-## Slide 1 — Title
-
-**Between**  
-*Find your people between classes.*
-
-Virginia Tech pilot proposal · [Your names] · [Date]
-
----
-
-## Slide 2 — The problem
-
-- Students have **structured class time** but **unstructured free time**
-- Social media spreads events; it doesn't **match you with a partner**
-- Showing up alone to IM volleyball or a club meeting is **high friction**
-- Result: students stay in their room even when they'd rather be active
-
-> "I picked volleyball as an interest but forgot about it. I assumed nobody I know was going."
-
----
-
-## Slide 3 — The insight
-
-**Two numbers change behavior:**
-1. **How many people are interested** (social proof)
-2. **Who else needs a partner** (mutual opt-in, privacy-safe)
-
-Between shows counts first. Partner details unlock only when **you're also looking**.
-
----
-
-## Slide 4 — What Between does (3 things)
-
-1. **Free-time matches** — When are you and friends both free? (no minute math — human times)
-2. **Class connections** — Who's in your section vs another section?
-3. **Activity modes + events** — Hungry, Study, Gym · campus events with partner matching
-
-*Optional:* Canvas schedule sync · VT SSO · encrypted partner profiles
-
----
-
-## Slide 5 — Live demo flow (2 min)
-
-1. Sign in with VT email (demo: alex.hirsch@vt.edu)
-2. Home: "Free with John 'til 11" · 11 friends connected
-3. Tap **Hungry** mode → friends also hungry surface
-4. Events: **IM Volleyball · 48 interested · 9 looking for partner**
-5. Tap "Looking for partner" → unlock anonymized profiles (year, note)
-6. Security slide: encrypted in transit · SSO · FERPA-aligned consent
-
----
-
-## Slide 6 — Privacy & trust (for IT / Legal)
-
-| Commitment | How |
-|------------|-----|
-| School isolation | VT data never mixes with other schools |
-| Schedule control | Student chooses share level; per-friend overrides |
-| Partner privacy | No identity leak without mutual opt-in |
-| Encryption | TLS + field-level encryption for sensitive fields |
-| SSO | VT credentials; no password reuse |
-| FERPA | Schedule = education record; minimal retention policy |
-
----
-
-## Slide 7 — Why VT should care
-
-- **Student involvement** — More IM, club, and pickup attendance
-- **Wellness** — Reduces isolation; encourages in-person connection
-- **Complements Canvas** — Schedule in, social layer on top
-- **Low lift pilot** — Seed cohort (CS + Rec Sports), measure in one semester
-
----
-
-## Slide 8 — Pilot plan
-
-| Week | Milestone |
-|------|-----------|
-| 1–2 | SSO sandbox + privacy review |
-| 3–4 | TestFlight to 100 students |
-| 5–8 | Rec Sports events live (volleyball, soccer) |
-| 9–12 | Measure attendance lift + survey |
-
-**Success metrics:** WAU, mode usage, event interest → partner conversion, post-event survey
-
----
-
-## Slide 9 — Team & credibility
-
-- Built by VT students who feel this problem
-- Working iOS demo with realistic campus data
-- Architecture ready for production API + Postgres
-- Open to security audit before wide rollout
-
----
-
-## Slide 10 — The ask
-
-**We request:**
-1. Intro to Student Engagement + Rec Sports for event seeding
-2. SSO test environment (OIDC)
-3. One-semester pilot endorsement to 500–1,000 students
-
-**Contact:** [email] · Demo: TestFlight link · Repo available for security review
-
----
-
-## Appendix — Anticipated questions
-
-**Q: Another social app?**  
-A: No feed. One screen answers "who can I see right now?" Counts, not scroll.
-
-**Q: Harassment via partner profiles?**  
-A: Mutual opt-in only. Report block. No DMs to strangers in v1.
-
-**Q: Canvas?**  
-A: Optional token sync. VT CRN import is primary for pilot.
-
-**Q: Cost?**  
-A: Pilot on modest cloud (~$50–200/mo). Scale with adoption.
+# Between — VT Pitch Deck (10 slides)
+
+**Audience:** Student Engagement, Rec Sports, IT Security, Hokies Wellness  
+**Ask:** One-semester pilot · 500–1,000 students · SSO + FERPA agreement (Handshake-level)  
+**Duration:** 12 minutes + Q&A
+
+---
+
+## Slide 1 — Title
+
+**Between**  
+*Find your people between classes.*
+
+Virginia Tech pilot · [Your names] · [Date]
+
+---
+
+## Slide 2 — The problem (issue)
+
+Students are told to **get involved** — but the system works against them:
+
+- **Information is scattered** — Gobbler Connect, Instagram, GroupMe, department emails. Nothing is on the phone when you're actually free.
+- **Web-first tools** — Checking Gobbler Connect between classes isn't convenient. Many students don't use social media.
+- **Freshman reality** — Dorm life helps you make friends, but not **get back into your hobbies** (volleyball, soccer). Out-of-state students lose continuity.
+- **Sophomore+ isolation** — Off-campus housing → stay home. Hard to coordinate free time with friends. Participation drops.
+- **Resume padding** — Students join clubs on Gobbler Connect for the line on the resume, never attend, never enjoy it.
+
+> "I lost volleyball even though I made friends in the dorm." — Alex
+
+**Research-backed barriers:** don't know about events · intimidated · burnout · fear of overcommitment · no early hobby connections · homework feels higher-value than a pickup game.
+
+**Holistic cost:** mental health, grades, community morale, Hokie spirit.
+
+---
+
+## Slide 3 — The insight
+
+**Participation fails at the last mile** — not because students don't care, but because:
+1. They don't know **who else is going** (social proof)
+2. They don't have **someone to go with** (accountability)
+3. They don't see events **when they're actually free** (schedule + phone)
+
+**Two numbers change behavior:**
+- **How many people are interested**
+- **Who else is in the same boat** (partner OR "don't know anyone" — privacy-safe)
+
+---
+
+## Slide 4 — The resolution (what Between does)
+
+1. **Free-time matches** — When are you and friends both free? Human copy, not minute math.
+2. **Class connections** — Hashed course IDs match classmates **without the server seeing course titles**.
+3. **Campus events** — School-specific feed; recurring pickup soccer vs IM volleyball with different matching types.
+4. **Activity modes** — Hungry, Study, Gym — implementation intentions, auto-expire.
+
+*Not a feed. Not LinkedIn. One screen: who can I see right now?*
+
+---
+
+## Slide 5 — Live demo (2 min)
+
+1. **Sign in with Virginia Tech SSO** (demo email)
+2. **Consent screen** — FERPA, hashed courses explained
+3. Home: "Free with John 'til 11" · 11 friends
+4. **Saturday Night Pickup Soccer** — 31 interested · 8 don't know anyone
+5. Opt in as newcomer → see others who opted in (mutual only)
+6. **IM Volleyball** — 48 interested · 9 need a partner
+7. Security: encrypted blob → device decrypt → hash upload → match counts
+
+---
+
+## Slide 6 — Privacy & trust (for IT / Legal)
+
+| Commitment | How |
+|------------|-----|
+| School isolation | VT data never mixes with other schools |
+| **Course hashing** | Device hashes CRNs; server stores hashes only |
+| **No grades** | Not collected, not requested |
+| Schedule control | Student chooses share level |
+| Partner/newcomer privacy | Mutual opt-in only |
+| Encryption | TLS + AES-256-GCM blobs; decrypt on device |
+| SSO | VT credentials via OIDC |
+| FERPA | **Institutional agreement** — same bar as Handshake |
+
+**Why we need course data:** Handshake doesn't use it. We do — for classmate overlap. **Hashing is how we earn that trust.**
+
+---
+
+## Slide 7 — Why VT should care
+
+- **Involvement** — IM, Rec Sports, clubs see real attendance lift
+- **Wellness** — Fights isolation; especially off-campus sophomores+
+- **Out-of-state retention** — Helps students rebuild hobby communities
+- **Complements Gobbler Connect** — Discovery + accountability, not replacement
+- **Low-lift pilot** — CS + Rec Sports cohort, one semester, measurable
+
+---
+
+## Slide 8 — Pilot plan
+
+| Week | Milestone |
+|------|-----------|
+| 1–2 | FERPA agreement draft + SSO sandbox |
+| 3–4 | TestFlight · 100 students |
+| 5–8 | Rec Sports events (volleyball, pickup soccer) |
+| 9–12 | Attendance lift + loneliness survey |
+
+**Metrics:** WAU · mode usage · event interest → opt-in conversion · post-event survey
+
+---
+
+## Slide 9 — Team
+
+- Built by VT students who lived this problem
+- Working iOS app + `/v1` API with realistic campus data
+- Multi-tenant architecture ready for production Postgres
+- Open to security audit before wide rollout
+
+---
+
+## Slide 10 — The ask
+
+1. **FERPA / data-use agreement** — Handshake precedent, with course hashing addendum
+2. **SSO test environment** (OIDC)
+3. **Rec Sports + Student Engagement** intro for event seeding
+4. **Pilot endorsement** — 500–1,000 students, one semester
+
+**Contact:** [email] · TestFlight · Repo for security review
+
+---
+
+## Appendix — Q&A prep
+
+**Q: Another social app?**  
+A: No feed. Two home actions: events + friends. Answers one question.
+
+**Q: Why course data if Handshake doesn't need it?**  
+A: Handshake matches jobs. We match **classmates and free time**. Hashes protect course identity.
+
+**Q: Harassment?**  
+A: Mutual opt-in. First name only. Report/block. No stranger DMs in v1.
+
+**Q: Gobbler Connect?**  
+A: We drive **attendance**, not club registration. Complementary.
+
+**Q: Cost?**  
+A: Pilot ~$50–200/mo cloud. Scale with adoption.
+

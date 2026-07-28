@@ -19,9 +19,15 @@ struct EventDetailSheet: View {
                         Text(event.description)
                             .font(BetweenFont.secondary())
                             .foregroundStyle(.secondary)
-                        Text("\(event.timeLabel) · \(event.location)")
-                            .font(BetweenFont.caption())
-                            .foregroundStyle(.secondary)
+                        HStack(spacing: 6) {
+                            Text("\(event.timeLabel) · \(event.location)")
+                            if let recurrence = event.recurrenceLabel {
+                                Text("·")
+                                Text(recurrence)
+                            }
+                        }
+                        .font(BetweenFont.caption())
+                        .foregroundStyle(.secondary)
                     }
 
                     socialProofCard
@@ -35,7 +41,9 @@ struct EventDetailSheet: View {
                         .buttonStyle(BetweenPrimaryButtonStyle())
                     }
 
-                    partnerSection
+                    if event.matchingKind != .none {
+                        matchingSection
+                    }
                 }
                 .padding(20)
             }
@@ -46,22 +54,42 @@ struct EventDetailSheet: View {
                 }
             }
         }
+        .onAppear {
+            if event.matchingKind == .newcomer {
+                partnerNote = "First time — would love to meet people"
+                experience = "Never played pickup here before"
+            }
+        }
     }
 
     private var socialProofCard: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack(spacing: 20) {
                 statBlock(value: "\(event.interestedCount)", label: "interested")
-                if event.partnerSeekingCount > 0 {
-                    statBlock(value: "\(event.partnerSeekingCount)", label: "need a partner")
+                if event.showsMatching {
+                    statBlock(
+                        value: "\(event.partnerSeekingCount)",
+                        label: event.matchingKind.seekingStatLabel
+                    )
                 }
             }
-            Text("You're not alone — others on campus want to go too.")
+            Text(socialProofCopy)
                 .font(BetweenFont.caption())
                 .foregroundStyle(.secondary)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .surfaceCard()
+    }
+
+    private var socialProofCopy: String {
+        switch event.matchingKind {
+        case .partner:
+            return "You're not alone — others on campus want a partner too."
+        case .newcomer:
+            return "Plenty of Hokies are interested. Some don't know anyone either — opt in to connect."
+        case .none:
+            return "Others are going — show up and work together."
+        }
     }
 
     private func statBlock(value: String, label: String) -> some View {
@@ -76,34 +104,40 @@ struct EventDetailSheet: View {
     }
 
     @ViewBuilder
-    private var partnerSection: some View {
+    private var matchingSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Looking for a partner?")
+            Text(event.matchingKind.optInTitle)
                 .font(BetweenFont.sectionTitle())
 
             if !event.canViewPartners {
-                Text("Partner profiles are private until you opt in too. Your info stays visible only to other seekers.")
+                Text(event.matchingKind.privacyNote)
                     .font(BetweenFont.caption())
                     .foregroundStyle(.secondary)
 
-                TextField("Quick intro (e.g. need a setter)", text: $partnerNote)
-                    .padding(12)
-                    .background(BetweenTheme.surfaceMuted(colorScheme))
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                TextField(
+                    event.matchingKind == .newcomer ? "Quick intro (e.g. first time on campus)" : "Quick intro (e.g. need a setter)",
+                    text: $partnerNote
+                )
+                .padding(12)
+                .background(BetweenTheme.surfaceMuted(colorScheme))
+                .clipShape(RoundedRectangle(cornerRadius: 10))
 
-                TextField("Your experience", text: $experience)
-                    .padding(12)
-                    .background(BetweenTheme.surfaceMuted(colorScheme))
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                TextField(
+                    event.matchingKind == .newcomer ? "Your comfort level" : "Your experience",
+                    text: $experience
+                )
+                .padding(12)
+                .background(BetweenTheme.surfaceMuted(colorScheme))
+                .clipShape(RoundedRectangle(cornerRadius: 10))
 
                 Button {
                     Task { await viewModel.markLookingForPartner(event, note: partnerNote, experience: experience) }
                 } label: {
-                    Label("I'm looking for a partner", systemImage: "lock.open")
+                    Label(event.matchingKind.optInButton, systemImage: "lock.open")
                 }
                 .buttonStyle(BetweenPrimaryButtonStyle())
             } else {
-                Text("Others looking for a partner")
+                Text(event.matchingKind.seekersSectionTitle)
                     .font(BetweenFont.captionMedium())
                     .foregroundStyle(BetweenTheme.free)
 
@@ -130,4 +164,3 @@ struct EventDetailSheet: View {
         }
     }
 }
-

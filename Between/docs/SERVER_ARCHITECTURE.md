@@ -19,110 +19,132 @@ Local demo today, production-ready shape for VT deployment.
   students    students     students
   sections    sections     sections
   events      events       events
+  interests   interests    interests
 ```
 
 **Rule:** Every query scoped by `school_id`. No cross-school joins. Enforced in middleware + DB RLS.
 
+See `DATA_MODEL.md` for full schema.
+
 ---
 
-## API surface (matches iOS `BetweenBackendServicing`)
+## SSO + token + encrypted blob flow
+
+```
+┌──────────┐     OIDC      ┌──────────┐
+│ VT IdP   │ ────────────► │ Between  │
+└──────────┘               │   API    │
+                           └────┬─────┘
+                                │ JWT (sub, email, school_id)
+                                │ + encrypted schedule blob
+                                ▼
+                           ┌──────────┐
+                           │  iOS app │
+                           └────┬─────┘
+                                │ decrypt blob locally (CryptoKit)
+                                │ hash canonical_course_ids on device
+                                │ POST /v1/me/course-hashes { hashes[] }
+                                ▼
+                           ┌──────────┐
+                           │   API    │  returns { hash, classmateCount }
+                           └──────────┘  — never raw course titles from client
+```
+
+### Step by step
+
+1. **SSO login** — VT IdP returns OIDC token; API exchanges for Between JWT
+2. **Consent** — FERPA screen; record `consent_at`
+3. **Encrypted blob** — Server sends schedule/enrollment payload encrypted to session key (AES-256-GCM demo in `/v1/auth/sso`)
+4. **Client decrypt** — Course sections live on device only
+5. **Client hash** — `SHA256(school_id + canonical_course_id)` via `CourseHashService`
+6. **Client upload hashes** — `POST /v1/me/course-hashes` with hash array only
+7. **Server match** — Group students by hash within same `school_id`; return counts (friends layer adds identity)
+
+**Server never receives:** raw CRNs, course titles, grades, Canvas tokens in logs.
+
+---
+
+## Course data protection (why schools care)
+
+| Data | Sensitivity | Between handling |
+|------|-------------|------------------|
+| Email | Medium | SSO only |
+| Schedule blocks | High (FERPA) | Encrypted blob, student-controlled share |
+| Course identity | **Highest** | Hashed on device; server stores hash only |
+| Grades | N/A | **Not collected** |
+| Partner/newcomer notes | Medium | Encrypted field; mutual opt-in visibility |
+
+This is the Handshake-level bar: institutional agreement + technical minimization.
+
+---
+
+## API surface
 
 | Method | Path | Purpose |
 |--------|------|---------|
-| POST | `/v1/auth/login` | Email/password or SSO token exchange |
-| POST | `/v1/auth/activate` | VT activation code |
-| GET | `/v1/me/dashboard` | Friends, schedule, today plan, events summary |
-| GET | `/v1/events` | Events for my interests + school |
-| POST | `/v1/events/:id/interested` | Mark interested |
-| POST | `/v1/events/:id/partner` | Post partner-seeking profile |
-| GET | `/v1/events/:id/partners` | **Only if caller also seeking** |
-| PATCH | `/v1/me/presence` | Mode + activity + expiry |
-| PATCH | `/v1/me/interests` | Update interest IDs |
-| POST | `/v1/friends/request` | Friend request |
-| GET | `/v1/sections/search` | Course lookup |
+| POST | `/v1/auth/sso` | VT OIDC exchange + encrypted claims |
+| POST | `/v1/me/consent` | FERPA / privacy consent |
+| POST | `/v1/me/course-hashes` | Upload hashed enrollments; get match counts |
+| GET | `/v1/me/events` | School events + matching kind |
+| POST | `/v1/events/:id/partner` | Partner OR newcomer opt-in |
+| GET | `/v1/events/:id/partners` | Only if caller also opted in |
+
+Full list in `api/README.md`.
 
 ---
 
-## Database schema (Postgres)
+## Event matching kinds (server-enforced)
 
-```sql
-schools (id, name, email_domain, timezone)
-students (id, school_id, email, name, year, major, privacy_json, interests[])
-sections (id, school_id, course_code, …)
-enrollments (student_id, section_id)
-friendships (student_a, student_b, status)
-friend_requests (…)
-presence (student_id, mode, activity, location, expires_at)
-events (id, school_id, interest_tag, title, description, starts_at, location)
-event_interest (event_id, student_id, kind)  -- 'interested' | 'partner'
-partner_profiles (event_id, student_id, year, note, experience, social_handle_enc)
+```javascript
+matching_kind: 'partner' | 'newcomer' | 'none'
 ```
 
----
+- `partner` — IM volleyball, doubles sports
+- `newcomer` — Pickup soccer, open mic — "don't know anyone" copy
+- `none` — Study groups — interest count only
 
-## Privacy & encryption
+Visibility rule identical for partner and newcomer:
 
-### In transit
-- TLS 1.3 everywhere
-
-### At rest
-- Postgres TDE or cloud provider encryption
-- `partner_profiles.social_handle` encrypted field-level (AES-256-GCM)
-- Canvas API keys: encrypted, per-student, never returned in API responses
-
-### Client-side demo (pitch)
-1. Server returns `partner_profiles` blob encrypted with user's session key
-2. iOS `CryptoKit` decrypts locally
-3. UI shows "Decrypted on your device" badge in demo mode
-
-### Partner visibility rule (server-enforced)
 ```sql
--- Return partner profiles only if:
-SELECT * FROM partner_profiles pp
-WHERE pp.event_id = $1
-AND EXISTS (
-  SELECT 1 FROM event_interest ei
-  WHERE ei.event_id = $1
-  AND ei.student_id = $current_user
-  AND ei.kind = 'partner'
+-- Return profiles only if viewer opted in on same event
+EXISTS (
+  SELECT 1 FROM event_participation
+  WHERE event_id = $1 AND student_id = $current_user
+  AND kind = 'lookingForPartner'
 )
 ```
 
 ---
 
-## SSO (VT pilot)
+## Database (Postgres production)
 
-1. VT IdP (Azure AD / Shibboleth) → OIDC
-2. App receives `email`, `sub`, optional `name`
-3. Match or create student row with `school_id = vt`
-4. Consent screen: schedule sharing, class visibility, FERPA notice
+Per-school tables or single schema with `school_id` + RLS:
 
----
+```sql
+schools, students, sections, enrollments_hash, friendships,
+friend_requests, presence, interests, campus_events,
+event_participation, connection_profiles
+```
 
-## Canvas integration (optional)
-
-- Student pastes API token in Settings (encrypted storage)
-- Background job: `GET /api/v1/courses` → map to canonical sections
-- Merge with VT CRN import (dedupe by course code)
-- **Never** store Canvas token in plaintext logs
+`enrollments_hash(student_id, course_hash, school_id)` — no plaintext course names in this table.
 
 ---
 
-## Local demo backend (current)
+## Local demo backend
 
-`LocalBackendService` actor:
-- Loads `seed_data.json`
-- Mutates in memory (friends, presence, event interest)
-- Same method signatures as production
-- Swap via `BackendConfiguration.mode`
+`Between/api/v1/` — seed-backed, in-memory mutations, same JWT + route shapes as production.
+
+iOS `LocalBackendService` — bundled `seed_data.json`, plain enrollments for overlap demo.
+
+Swap via `BackendConfiguration.mode`.
 
 ---
 
-## Deployment target
+## Deployment
 
 | Layer | Suggestion |
 |-------|------------|
-| API | Fly.io / Railway / AWS ECS |
-| DB | Neon Postgres (RLS) |
-| Secrets | AWS Secrets Manager / Doppler |
-| iOS | TestFlight → App Store (VT enterprise optional) |
+| API | Fly.io / Railway |
+| DB | Neon Postgres + RLS |
+| Secrets | Doppler / AWS Secrets Manager |
+| IdP | VT Azure AD / Shibboleth OIDC |

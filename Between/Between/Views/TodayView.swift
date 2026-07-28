@@ -5,8 +5,6 @@ struct TodayView: View {
     @Environment(\.colorScheme) private var colorScheme
 
     @State private var showNetwork = false
-    @State private var showNotifications = false
-    @State private var showCourseLookup = false
     @State private var showEvents = false
     @State private var classSheetSection: CourseSection?
 
@@ -72,12 +70,6 @@ struct TodayView: View {
         .sheet(isPresented: $showNetwork) {
             NetworkSheet()
         }
-        .sheet(isPresented: $showNotifications) {
-            NotificationsSheet()
-        }
-        .sheet(isPresented: $showCourseLookup) {
-            CourseLookupSheet()
-        }
         .sheet(item: $classSheetSection) { section in
             ClassFriendsSheet(section: section)
         }
@@ -97,11 +89,15 @@ struct TodayView: View {
 
     private var topBar: some View {
         HStack {
-            ToolbarIconButton(systemName: "magnifyingglass", action: { showCourseLookup = true })
             ToolbarIconButton(systemName: "calendar", action: { showEvents = true })
             Spacer()
-            ToolbarIconButton(systemName: "bell.fill", badge: viewModel.notificationCount, action: { showNotifications = true })
-            ToolbarIconButton(systemName: "person.2.fill", action: { showNetwork = true })
+            BetweenWordmark(size: .compact)
+            Spacer()
+            ToolbarIconButton(
+                systemName: "person.2.fill",
+                badge: viewModel.notificationCount,
+                action: { showNetwork = true }
+            )
         }
     }
 
@@ -122,7 +118,7 @@ struct TodayView: View {
                     Text(event.title)
                         .font(BetweenFont.secondary().weight(.semibold))
                         .foregroundStyle(.primary)
-                    Text("\(event.interestedCount) interested · \(event.partnerSeekingCount) need a partner")
+                    Text(subtitleForFeatured(event))
                         .font(BetweenFont.caption())
                         .foregroundStyle(.secondary)
                 }
@@ -133,6 +129,17 @@ struct TodayView: View {
             .surfaceCard()
         }
         .buttonStyle(.plain)
+    }
+
+    private func subtitleForFeatured(_ event: CampusEventCard) -> String {
+        var parts = ["\(event.interestedCount) interested"]
+        if event.showsMatching {
+            parts.append("\(event.partnerSeekingCount) \(event.matchingKind.seekingShortLabel)")
+        }
+        if let recurrence = event.recurrenceLabel {
+            parts.append(recurrence)
+        }
+        return parts.joined(separator: " · ")
     }
 
     private func headlineCard(_ headline: TodayPresenter.Headline) -> some View {

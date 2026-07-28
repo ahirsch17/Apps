@@ -14,25 +14,24 @@ Three missions, one product. Build in this order.
 - [x] Local seed backend (dynamic mutations, no hardcoded UI)
 - [x] Student-facing Today home (no raw minutes)
 
-### Phase 1B — Now (this sprint)
-- [ ] **Activity modes** — Quiet (2h default), Hungry, Study, Gym/Sports, Social
-- [ ] **Interests onboarding** — volleyball, soccer, etc. (persisted per student)
-- [ ] **Campus events** — interest counts + partner-seeking with privacy gate
-- [ ] **Expanded seed** — credible VT events (IM volleyball, pickup soccer, study groups)
-- [ ] **Privacy enforcement** — schedule visibility respects student + per-friend settings
+### Phase 1B — Done
+- [x] **Activity modes** — Quiet (2h default), Hungry, Study, Gym/Sports, Social
+- [x] **Interests onboarding** — volleyball, soccer, etc. (persisted per student)
+- [x] **Campus events** — interest counts + partner/newcomer matching with privacy gate
+- [x] **Expanded seed** — IM volleyball (partner), Saturday pickup soccer (newcomer), study (none)
+- [x] **Event matching kinds** — `partner` | `newcomer` | `none` per event
 
-### Phase 1C — Demo server (fake but real-shaped)
-- [ ] `/v1` API matching `BetweenBackendServicing`
-- [ ] Multi-tenant schema: `schools → students, sections, events` (strict isolation)
-- [ ] In-memory or Postgres with same contract as production
-- [ ] Canvas API key slot (optional sync) — stored encrypted, never logged
+### Phase 1C — Demo server
+- [x] `/v1` API matching `BetweenBackendServicing`
+- [x] Multi-tenant schema documented: `schools → students, sections, events`
+- [x] Course hash endpoint (`POST /v1/me/course-hashes`)
+- [ ] Postgres with RLS (production)
 
 ### Phase 1D — Production path
-- [ ] VT SSO (SAML/OIDC) + consent flow in-app
-- [ ] Server-side encryption at rest; TLS in transit
-- [ ] Client-side decryption demo for sensitive fields (partner profiles)
-- [ ] VT schedule import on registration (CRN → sections)
-- [ ] Deploy: API + Postgres (Neon/RDS), separate per-school DB or row-level `school_id`
+- [x] VT SSO mock + consent flow in-app
+- [x] Client-side course hashing (`CourseHashService`)
+- [ ] Institutional FERPA agreement (Handshake-level)
+- [ ] Full OIDC with VT IdP
 
 ---
 

@@ -176,6 +176,18 @@ router.post('/plans', authMiddleware, (req, res) => {
   res.json(plan);
 });
 
+router.post('/me/course-hashes', authMiddleware, (req, res) => {
+  const { hashedCourseIds } = req.body || {};
+  if (!Array.isArray(hashedCourseIds)) {
+    return res.status(400).json({ error: 'hashedCourseIds array required' });
+  }
+  const matches = store.courseHashMatches(req.user.sub, hashedCourseIds);
+  res.json({
+    matches,
+    note: 'Server stores hashes only. Raw course titles never leave the device.',
+  });
+});
+
 router.post('/nudges', authMiddleware, (req, res) => {
   res.json({ ok: true });
 });

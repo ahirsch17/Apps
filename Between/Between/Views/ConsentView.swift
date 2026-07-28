@@ -38,8 +38,8 @@ struct ConsentView: View {
                 )
                 consentRow(
                     icon: "key.fill",
-                    title: "Encrypted on device",
-                    detail: "Sensitive partner profiles decrypt only on your phone."
+                    title: "Courses stay private",
+                    detail: "Your phone hashes course IDs before anything is sent. We never see CRNs or grades."
                 )
             }
             .padding(.horizontal, 28)

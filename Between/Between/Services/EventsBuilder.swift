@@ -29,7 +29,7 @@ enum EventsBuilder {
                 let partnerCount = realPartners + event.promotedPartnerCount
                 let isInterested = eventParts.contains { $0.studentId == viewerId }
                 let isLooking = viewerPartnerEventIds.contains(event.id)
-                let canView = isLooking
+                let canView = isLooking && event.matchingKind != .none
 
                 let profiles: [PartnerSeekingProfile] = canView
                     ? partnerProfiles.filter { $0.eventId == event.id && $0.studentId != viewerId }
@@ -52,6 +52,8 @@ enum EventsBuilder {
                     interestIcon: interest?.icon ?? "calendar",
                     interestedCount: interestedCount,
                     partnerSeekingCount: partnerCount,
+                    matchingKind: event.matchingKind,
+                    recurrenceLabel: event.recurrenceLabel,
                     isInterested: isInterested,
                     isLookingForPartner: isLooking,
                     canViewPartners: canView,

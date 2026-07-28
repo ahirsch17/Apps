@@ -32,6 +32,7 @@
 		3V3NTD3T41L00000000001 /* EventDetailSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3V3NTD3T41L00000000002 /* EventDetailSheet.swift */; };
 		1NT3R3ST0NB00000000001 /* InterestsOnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1NT3R3ST0NB00000000002 /* InterestsOnboardingView.swift */; };
 		C0NS3NTV13W000000000001 /* ConsentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0NS3NTV13W000000000002 /* ConsentView.swift */; };
+		C0URSH4SHS3RV1C000000001 /* CourseHashService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0URSH4SHS3RV1C000000002 /* CourseHashService.swift */; };
 		B9127AFB0729CFFBFADF82E2 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCCE475D181E553671608741 /* Models.swift */; };
 		4D5E6F708192A3B4C5D6E7F /* FriendPreferencesStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E6F708192A3B4C5D6E7F80 /* FriendPreferencesStore.swift */; };
 		6F708192A3B4C5D6E7F8091 /* BetweenBackendServicing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 708192A3B4C5D6E7F8091A2 /* BetweenBackendServicing.swift */; };
@@ -69,6 +70,7 @@
 		3V3NTD3T41L00000000002 /* EventDetailSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventDetailSheet.swift; sourceTree = "<group>"; };
 		1NT3R3ST0NB00000000002 /* InterestsOnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterestsOnboardingView.swift; sourceTree = "<group>"; };
 		C0NS3NTV13W000000000002 /* ConsentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsentView.swift; sourceTree = "<group>"; };
+		C0URSH4SHS3RV1C000000002 /* CourseHashService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CourseHashService.swift; sourceTree = "<group>"; };
 		E6F708192A3B4C5D6E7F8091 /* DayTimelineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayTimelineView.swift; sourceTree = "<group>"; };
 		F8091A2B3C4D5E6F708192A /* InfoTipButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfoTipButton.swift; sourceTree = "<group>"; };
 		1A2B3C4D5E6F708192A3B4C /* ClassConnectionsStrip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClassConnectionsStrip.swift; sourceTree = "<group>"; };
@@ -99,6 +101,7 @@
 				B2C3D4E5F60718293A4B5C6D /* ScheduleEngine.swift */,
 				T0DAYPR3S3NT3R0000000002 /* TodayPresenter.swift */,
 				3V3NTSBU1LD3R0000000002 /* EventsBuilder.swift */,
+				C0URSH4SHS3RV1C000000002 /* CourseHashService.swift */,
 				5E6F708192A3B4C5D6E7F80 /* FriendPreferencesStore.swift */,
 			);
 			path = Services;
@@ -260,6 +263,7 @@
 				T0DAYPR3S3NT3R0000000001 /* TodayPresenter.swift in Sources */,
 				C4MPUSM0D3LS00000000001 /* CampusModels.swift in Sources */,
 				3V3NTSBU1LD3R0000000001 /* EventsBuilder.swift in Sources */,
+				C0URSH4SHS3RV1C000000001 /* CourseHashService.swift in Sources */,
 				4CT1V1TYM0D3B0000000001 /* ActivityModeBar.swift in Sources */,
 				3V3NT5SH33T00000000001 /* EventsSheet.swift in Sources */,
 				3V3NTD3T41L00000000001 /* EventDetailSheet.swift in Sources */,

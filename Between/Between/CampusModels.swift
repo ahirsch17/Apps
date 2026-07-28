@@ -67,6 +67,65 @@ enum ActivityMode: String, Codable, CaseIterable, Identifiable {
     }
 }
 
+// MARK: - Event matching (partner vs newcomer vs none)
+
+enum EventMatchingKind: String, Codable, CaseIterable {
+    case partner
+    case newcomer
+    case none
+
+    var seekingShortLabel: String {
+        switch self {
+        case .partner: return "need a partner"
+        case .newcomer: return "new to this"
+        case .none: return ""
+        }
+    }
+
+    var seekingStatLabel: String {
+        switch self {
+        case .partner: return "need a partner"
+        case .newcomer: return "don't know anyone"
+        case .none: return ""
+        }
+    }
+
+    var optInTitle: String {
+        switch self {
+        case .partner: return "Looking for a partner?"
+        case .newcomer: return "Don't know anyone going?"
+        case .none: return ""
+        }
+    }
+
+    var optInButton: String {
+        switch self {
+        case .partner: return "I'm looking for a partner"
+        case .newcomer: return "I'm new — want to meet people"
+        case .none: return ""
+        }
+    }
+
+    var privacyNote: String {
+        switch self {
+        case .partner:
+            return "Partner profiles stay private until you opt in too. Only other seekers see your note."
+        case .newcomer:
+            return "Nobody sees that you're new unless you opt in. Then you only see others who opted in too."
+        case .none:
+            return ""
+        }
+    }
+
+    var seekersSectionTitle: String {
+        switch self {
+        case .partner: return "Others looking for a partner"
+        case .newcomer: return "Others who don't know anyone"
+        case .none: return ""
+        }
+    }
+}
+
 // MARK: - Interests & events (seed + API)
 
 struct Interest: Codable, Identifiable, Hashable {
@@ -94,11 +153,17 @@ struct CampusEvent: Codable, Identifiable, Hashable {
     /// Demo credibility: adds to real participation counts (campus-scale social proof).
     let promotedInterestedCount: Int
     let promotedPartnerCount: Int
+    let matchingKind: EventMatchingKind
+    let isRecurring: Bool
+    let recurrenceLabel: String?
 
     init(
         id: String, schoolId: String, interestId: String, title: String,
         description: String, location: String, startTime: Date, endTime: Date? = nil,
-        promotedInterestedCount: Int = 0, promotedPartnerCount: Int = 0
+        promotedInterestedCount: Int = 0, promotedPartnerCount: Int = 0,
+        matchingKind: EventMatchingKind = .partner,
+        isRecurring: Bool = false,
+        recurrenceLabel: String? = nil
     ) {
         self.id = id
         self.schoolId = schoolId
@@ -110,11 +175,15 @@ struct CampusEvent: Codable, Identifiable, Hashable {
         self.endTime = endTime
         self.promotedInterestedCount = promotedInterestedCount
         self.promotedPartnerCount = promotedPartnerCount
+        self.matchingKind = matchingKind
+        self.isRecurring = isRecurring
+        self.recurrenceLabel = recurrenceLabel
     }
 
     enum CodingKeys: String, CodingKey {
         case id, schoolId, interestId, title, description, location, startTime, endTime
         case promotedInterestedCount, promotedPartnerCount
+        case matchingKind, isRecurring, recurrenceLabel
     }
 
     init(from decoder: Decoder) throws {
@@ -129,6 +198,9 @@ struct CampusEvent: Codable, Identifiable, Hashable {
         endTime = try c.decodeIfPresent(Date.self, forKey: .endTime)
         promotedInterestedCount = try c.decodeIfPresent(Int.self, forKey: .promotedInterestedCount) ?? 0
         promotedPartnerCount = try c.decodeIfPresent(Int.self, forKey: .promotedPartnerCount) ?? 0
+        matchingKind = try c.decodeIfPresent(EventMatchingKind.self, forKey: .matchingKind) ?? .partner
+        isRecurring = try c.decodeIfPresent(Bool.self, forKey: .isRecurring) ?? false
+        recurrenceLabel = try c.decodeIfPresent(String.self, forKey: .recurrenceLabel)
     }
 }
 
@@ -167,10 +239,14 @@ struct CampusEventCard: Identifiable, Hashable {
     let interestIcon: String
     let interestedCount: Int
     let partnerSeekingCount: Int
+    let matchingKind: EventMatchingKind
+    let recurrenceLabel: String?
     let isInterested: Bool
     let isLookingForPartner: Bool
     let canViewPartners: Bool
     let partnerProfiles: [PartnerSeekingProfile]
+
+    var showsMatching: Bool { matchingKind != .none && partnerSeekingCount > 0 }
 }
 
 struct EventsData {

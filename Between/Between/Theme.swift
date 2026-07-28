@@ -46,6 +46,30 @@ enum BetweenFont {
     static func secondary() -> Font { .subheadline }
     static func caption() -> Font { .caption }
     static func captionMedium() -> Font { .caption.weight(.medium) }
+    static func wordmark(_ size: BetweenWordmark.Size) -> Font {
+        switch size {
+        case .large: return .system(size: 34, weight: .bold, design: .rounded)
+        case .compact: return .system(size: 20, weight: .bold, design: .rounded)
+        }
+    }
+}
+
+// MARK: - Wordmark
+
+struct BetweenWordmark: View {
+    enum Size { case large, compact }
+    var size: Size = .large
+
+    var body: some View {
+        HStack(spacing: 0) {
+            Text("Be")
+                .foregroundStyle(BetweenTheme.accent)
+            Text("tween")
+                .foregroundStyle(BetweenTheme.accentSecondary)
+        }
+        .font(BetweenFont.wordmark(size))
+        .accessibilityLabel("Between")
+    }
 }
 
 // MARK: - Cards & buttons

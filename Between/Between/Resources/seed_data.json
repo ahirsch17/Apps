@@ -1048,19 +1048,25 @@
       "startTime": "2026-07-29T18:00:00+00:00",
       "endTime": "2026-07-29T20:00:00+00:00",
       "promotedInterestedCount": 48,
-      "promotedPartnerCount": 9
+      "promotedPartnerCount": 9,
+      "matchingKind": "partner",
+      "isRecurring": true,
+      "recurrenceLabel": "Every Wednesday"
     },
     {
       "id": "evt-soccer-pickup",
       "schoolId": "vt",
       "interestId": "int-soccer",
-      "title": "Pickup Soccer on Drillfield",
-      "description": "Casual game \u2014 cleats optional.",
+      "title": "Saturday Night Pickup Soccer",
+      "description": "Casual game on the Drillfield \u2014 cleats optional. New to pickup? Opt in to meet others who don't know anyone either.",
       "location": "Drillfield",
       "startTime": "2026-07-30T20:36:37.897241+00:00",
       "endTime": "2026-07-30T22:36:37.897241+00:00",
       "promotedInterestedCount": 31,
-      "promotedPartnerCount": 6
+      "promotedPartnerCount": 8,
+      "matchingKind": "newcomer",
+      "isRecurring": true,
+      "recurrenceLabel": "Every Saturday night"
     },
     {
       "id": "evt-study-lib",
@@ -1072,7 +1078,10 @@
       "startTime": "2026-07-29T17:36:37.897241+00:00",
       "endTime": "2026-07-29T19:36:37.897241+00:00",
       "promotedInterestedCount": 22,
-      "promotedPartnerCount": 0
+      "promotedPartnerCount": 0,
+      "matchingKind": "none",
+      "isRecurring": false,
+      "recurrenceLabel": null
     }
   ],
   "eventParticipations": [
@@ -1107,6 +1116,16 @@
       "kind": "interested"
     },
     {
+      "eventId": "evt-soccer-pickup",
+      "studentId": "stu-sarah",
+      "kind": "lookingForPartner"
+    },
+    {
+      "eventId": "evt-soccer-pickup",
+      "studentId": "stu-mia",
+      "kind": "lookingForPartner"
+    },
+    {
       "eventId": "evt-study-lib",
       "studentId": "stu-rachel",
       "kind": "interested"
@@ -1138,6 +1157,24 @@
       "year": "Junior",
       "experienceNote": "Beginner friendly",
       "lookingNote": "New to IM \u2014 want a buddy",
+      "socialHandle": null
+    },
+    {
+      "studentId": "stu-sarah",
+      "eventId": "evt-soccer-pickup",
+      "displayName": "Sarah",
+      "year": "Sophomore",
+      "experienceNote": "Never played pickup at VT",
+      "lookingNote": "Out-of-state \u2014 don't know anyone who plays",
+      "socialHandle": null
+    },
+    {
+      "studentId": "stu-mia",
+      "eventId": "evt-soccer-pickup",
+      "displayName": "Mia",
+      "year": "Junior",
+      "experienceNote": "Played intramural in high school",
+      "lookingNote": "First time at Drillfield pickup",
       "socialHandle": null
     }
   ]

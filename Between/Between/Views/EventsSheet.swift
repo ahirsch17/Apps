@@ -67,8 +67,14 @@ struct EventsSheet: View {
                 .foregroundStyle(.secondary)
             HStack(spacing: 16) {
                 Label("\(event.interestedCount) interested", systemImage: "hand.thumbsup")
-                if event.partnerSeekingCount > 0 {
-                    Label("\(event.partnerSeekingCount) need a partner", systemImage: "person.2")
+                if event.showsMatching {
+                    Label(
+                        "\(event.partnerSeekingCount) \(event.matchingKind.seekingShortLabel)",
+                        systemImage: event.matchingKind == .newcomer ? "person.wave.2" : "person.2"
+                    )
+                }
+                if let recurrence = event.recurrenceLabel {
+                    Label(recurrence, systemImage: "repeat")
                 }
             }
             .font(BetweenFont.caption())
