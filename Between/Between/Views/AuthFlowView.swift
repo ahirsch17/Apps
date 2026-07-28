@@ -15,6 +15,8 @@ struct AuthFlowView: View {
                 returningScreen
             case .newUser:
                 newUserScreen
+            case .sso:
+                ssoScreen
             }
         }
     }
@@ -114,6 +116,44 @@ struct AuthFlowView: View {
                 HStack {
                     if viewModel.isLoading { ProgressView().tint(.white) }
                     Text(viewModel.isLoading ? "Signing in…" : "Sign in")
+                }
+            }
+            .buttonStyle(BetweenPrimaryButtonStyle())
+            .disabled(viewModel.loginEmail.isEmpty || viewModel.isLoading)
+
+            Button {
+                viewModel.authStep = .sso
+                viewModel.errorMessage = nil
+            } label: {
+                HStack(spacing: 8) {
+                    Image(systemName: "building.columns.fill")
+                    Text("Sign in with Virginia Tech")
+                }
+            }
+            .buttonStyle(BetweenSecondaryButtonStyle())
+            .disabled(viewModel.isLoading)
+        }
+    }
+
+    private var ssoScreen: some View {
+        authForm(
+            title: "Virginia Tech SSO",
+            subtitle: "Demo: uses your @vt.edu email — no password needed."
+        ) {
+            TextField("you@vt.edu", text: $viewModel.loginEmail)
+                .textContentType(.emailAddress)
+                .keyboardType(.emailAddress)
+                .autocapitalization(.none)
+                .padding(12)
+                .background(BetweenTheme.surfaceMuted(colorScheme))
+                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+
+            Button {
+                Task { await viewModel.loginWithSSO() }
+            } label: {
+                HStack {
+                    if viewModel.isLoading { ProgressView().tint(.white) }
+                    Text(viewModel.isLoading ? "Verifying…" : "Continue with VT")
                 }
             }
             .buttonStyle(BetweenPrimaryButtonStyle())

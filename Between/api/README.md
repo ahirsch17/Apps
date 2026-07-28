@@ -1,32 +1,54 @@
-# Between API (Postgres / VT)
+# Between API — V1 Seed Mode
 
-Node + Express backend carried over from the earlier SamePath prototype. Handles VT import, activation codes, CRN storage, and friend match lists.
+Dynamic demo server that mirrors the iOS `LocalBackendService` contract.
 
-The Swift app’s production contract lives in `Between/Services/BetweenAPIClient.swift` (`/v1/...`). This server is the database layer to evolve or wrap behind those routes.
-
-## Run locally
+## Quick start
 
 ```bash
+cd Between/api
 npm install
-export DATABASE_URL="postgresql://..."
 npm start
 ```
 
-## Deploy
+Server runs on **http://localhost:3000**. V1 routes are mounted at `/v1`.
 
-```bash
-vercel --prod
+## Demo login
+
+| Field | Value |
+|-------|-------|
+| Email | `alex.hirsch@vt.edu` |
+| Password | `demo123` |
+| Activation code | `482910` |
+
+## Switch iOS to remote
+
+In `BackendConfiguration.swift` (DEBUG):
+
+```swift
+static var mode: BackendMode = .remote(baseURL: URL(string: "http://localhost:3000")!)
 ```
 
-Set `DATABASE_URL` in your host environment.
+Use your Mac's LAN IP instead of `localhost` when running on a physical device.
 
-## Key routes
+## Key endpoints
 
-| Route | Purpose |
-|-------|---------|
-| `POST /vt-import` | VT pushes student + CRNs |
-| `POST /vt-activate` | User activates with email + code |
-| `POST /login` | Sign in |
-| `GET /users/:vtEmail/friends` | Friend schedules |
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/v1/health` | Health check |
+| POST | `/v1/auth/login` | Email/password login |
+| POST | `/v1/auth/sso` | Mock VT SSO |
+| POST | `/v1/auth/activate` | New user activation |
+| GET | `/v1/me/dashboard` | Full dashboard |
+| GET | `/v1/me/events` | Campus events + interests |
+| PATCH | `/v1/me/mode` | Set activity mode |
+| POST | `/v1/events/:id/partner` | Mark looking for partner |
 
-See `../docs/VT_INTEGRATION_GUIDE.md` for the full VT onboarding flow.
+## Environment
+
+| Variable | Default | Purpose |
+|----------|---------|---------|
+| `BETWEEN_SEED_MODE` | `true` | Set `false` to disable v1 seed API |
+| `JWT_SECRET` | demo secret | JWT signing |
+| `DATABASE_URL` | — | Optional Postgres for legacy routes |
+
+Legacy Postgres routes in `index.js` only activate when `DATABASE_URL` is set.

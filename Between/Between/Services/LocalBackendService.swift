@@ -41,6 +41,17 @@ actor LocalBackendService: BetweenBackendServicing {
         return AuthSession(userId: me.id, email: me.email, token: "local-\(me.id)")
     }
 
+    func loginWithSSO(email: String) async throws -> AuthSession {
+        guard email.lowercased().hasSuffix("@vt.edu") else {
+            throw BackendError.server(message: "SSO requires a @vt.edu email.")
+        }
+        return try await login(email: email, password: nil)
+    }
+
+    func submitConsent(session: AuthSession) async throws {
+        _ = session
+    }
+
     func activateNewUser(email: String, code: String) async throws -> AuthSession {
         guard code == "482910" else {
             throw BackendError.server(message: "Invalid activation code. Demo code is 482910.")

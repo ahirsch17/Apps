@@ -5,6 +5,7 @@ import Foundation
 actor RemoteBackendService: BetweenBackendServicing {
     private let client: BetweenAPIClient
     private var cachedDashboard: DashboardData?
+    private var cachedEvents: EventsData?
 
     init(baseURL: URL) {
         client = BetweenAPIClient(baseURL: baseURL)
@@ -24,15 +25,40 @@ actor RemoteBackendService: BetweenBackendServicing {
         return response.session
     }
 
+    func loginWithSSO(email: String) async throws -> AuthSession {
+        let response: LoginResponseBody = try await client.post(
+            .sso,
+            body: SSORequestBody(email: email)
+        )
+        cachedDashboard = response.dashboard.asDashboardData()
+        return response.session
+    }
+
     func activateNewUser(email: String, code: String) async throws -> AuthSession {
-        _ = email
-        _ = code
-        throw BackendError.notImplemented
+        let response: LoginResponseBody = try await client.post(
+            .activate,
+            body: ActivateRequestBody(email: email, code: code)
+        )
+        cachedDashboard = response.dashboard.asDashboardData()
+        return response.session
+    }
+
+    func submitConsent(session: AuthSession) async throws {
+        struct Response: Decodable { let ok: Bool }
+        let _: Response = try await client.post(
+            .consent,
+            body: ConsentRequestBody(accepted: true, ferpaAcknowledged: true, privacyVersion: "2026-07"),
+            token: session.token
+        )
     }
 
     func searchSections(query: String) async -> [CourseSection] {
-        _ = query
-        return []
+        guard !query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return [] }
+        let sections: [CourseSection] = (try? await client.get(
+            .sectionsSearch,
+            query: [URLQueryItem(name: "q", value: query)]
+        )) ?? []
+        return sections
     }
 
     func refreshDashboard(session: AuthSession) async throws -> DashboardData {
@@ -44,11 +70,11 @@ actor RemoteBackendService: BetweenBackendServicing {
 
     func sendFriendRequest(session: AuthSession, to studentId: String) async throws {
         struct Body: Encodable { let toStudentId: String }
-        let _: EmptyResponse = try await client.post(.friendRequest, body: Body(toStudentId: studentId), token: session.token)
+        let _: OkResponse = try await client.post(.friendRequest, body: Body(toStudentId: studentId), token: session.token)
     }
 
     func acceptFriendRequest(session: AuthSession, requestId: String) async throws {
-        let _: EmptyResponse = try await client.post(.acceptFriendRequest(requestId), body: EmptyBody(), token: session.token)
+        let _: AcceptResponse = try await client.post(.acceptFriendRequest(requestId), body: EmptyBody(), token: session.token)
     }
 
     func setPresence(session: AuthSession, status: PresenceStatus, activity: String) async throws {
@@ -61,27 +87,49 @@ actor RemoteBackendService: BetweenBackendServicing {
     }
 
     func setActivityMode(session: AuthSession, mode: ActivityMode) async throws {
-        try await setPresence(session: session, status: mode.presenceStatus, activity: mode.label)
+        struct Body: Encodable { let mode: String }
+        let response: ModeResponseBody = try await client.patch(
+            .activityMode,
+            body: Body(mode: mode.rawValue),
+            token: session.token
+        )
+        cachedEvents = response.events.asEventsData()
     }
 
     func fetchEvents(session: AuthSession) async throws -> EventsData {
-        _ = session
-        throw BackendError.notImplemented
+        let dto: EventsDataDTO = try await client.get(.events, token: session.token)
+        let data = dto.asEventsData()
+        cachedEvents = data
+        return data
     }
 
     func markEventInterested(session: AuthSession, eventId: String) async throws {
-        _ = session; _ = eventId
-        throw BackendError.notImplemented
+        let dto: EventsDataDTO = try await client.post(
+            .eventInterested(eventId),
+            body: EmptyBody(),
+            token: session.token
+        )
+        cachedEvents = dto.asEventsData()
     }
 
     func markLookingForPartner(session: AuthSession, eventId: String, note: String, experience: String) async throws {
-        _ = session; _ = eventId; _ = note; _ = experience
-        throw BackendError.notImplemented
+        struct Body: Encodable { let note: String; let experience: String }
+        let response: PartnerResponseBody = try await client.post(
+            .eventPartner(eventId),
+            body: Body(note: note, experience: experience),
+            token: session.token
+        )
+        cachedEvents = response.events.asEventsData()
     }
 
     func updateInterests(session: AuthSession, interestIds: [String]) async throws {
-        _ = session; _ = interestIds
-        throw BackendError.notImplemented
+        struct Body: Encodable { let interestIds: [String] }
+        let dto: EventsDataDTO = try await client.patch(
+            .interests,
+            body: Body(interestIds: interestIds),
+            token: session.token
+        )
+        cachedEvents = dto.asEventsData()
     }
 
     func createPlan(session: AuthSession, type: String, title: String, location: String) async throws -> Plan {
@@ -91,11 +139,10 @@ actor RemoteBackendService: BetweenBackendServicing {
 
     func sendNudge(session: AuthSession, to friendId: String, message: String) async throws {
         struct Body: Encodable { let toFriendId: String; let message: String }
-        let _: EmptyResponse = try await client.post(.nudge, body: Body(toFriendId: friendId, message: message), token: session.token)
+        let _: OkResponse = try await client.post(.nudge, body: Body(toFriendId: friendId, message: message), token: session.token)
     }
 
     func connectPresenceStream(session: AuthSession) async -> AsyncStream<PresenceRecord> {
-        // Until SSE/WebSocket is deployed, poll dashboard on an interval.
         AsyncStream { continuation in
             let task = Task {
                 while !Task.isCancelled {
@@ -121,4 +168,8 @@ actor RemoteBackendService: BetweenBackendServicing {
 }
 
 private struct EmptyBody: Encodable {}
-private struct EmptyResponse: Decodable {}
+private struct OkResponse: Decodable { let ok: Bool }
+private struct AcceptResponse: Decodable {
+    let ok: Bool
+    let dashboard: DashboardDTO?
+}

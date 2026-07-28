@@ -6,21 +6,32 @@ const jwt = require('jsonwebtoken');
 
 const app = express();
 const port = process.env.PORT || 3000;
+const useSeedV1 = process.env.BETWEEN_SEED_MODE !== 'false';
 
 // Middleware
 app.use(cors());
 app.use(express.json());
 
-// Database connection
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: {
-    rejectUnauthorized: false
-  }
-});
+// V1 seed-backed API (dynamic demo — mirrors iOS LocalBackendService)
+if (useSeedV1) {
+  app.use('/v1', require('./v1/routes'));
+  console.log('✅ V1 seed API mounted at /v1 (set BETWEEN_SEED_MODE=false to disable)');
+}
+
+// Database connection (optional — legacy Postgres routes)
+let pool = null;
+if (process.env.DATABASE_URL) {
+  pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: { rejectUnauthorized: false },
+  });
+} else {
+  console.log('ℹ️  DATABASE_URL not set — legacy Postgres routes disabled');
+}
 
 // Initialize database tables
 async function initializeDatabase() {
+  if (!pool) return;
   try {
     const createUsersTable = `
       CREATE TABLE IF NOT EXISTS users (
@@ -824,9 +835,10 @@ app.put('/courses/batch', async (req, res) => {
 async function startServer() {
   try {
     await initializeDatabase();
-    
+
     app.listen(port, () => {
       console.log(`🚀 Between API server running on port ${port}`);
+      if (useSeedV1) console.log(`   Demo login: alex.hirsch@vt.edu / demo123`);
     });
   } catch (error) {
     console.error('❌ Failed to start server:', error);

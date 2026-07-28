@@ -10,6 +10,8 @@ struct ContentView: View {
 
             if viewModel.me == nil {
                 AuthFlowView()
+            } else if viewModel.needsConsent {
+                ConsentView()
             } else if viewModel.showOnboarding {
                 InterestsOnboardingView()
             } else {

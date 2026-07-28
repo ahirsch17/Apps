@@ -4,10 +4,19 @@ import Foundation
 enum APIRoute {
     case loginCandidates
     case login
+    case activate
+    case sso
+    case consent
     case dashboard
+    case events
+    case sectionsSearch
     case friendRequest
     case acceptFriendRequest(String)
     case presence
+    case activityMode
+    case interests
+    case eventInterested(String)
+    case eventPartner(String)
     case plans
     case nudge
     case presenceStream
@@ -18,14 +27,32 @@ enum APIRoute {
             return baseURL.appending(path: "/v1/auth/demo-candidates")
         case .login:
             return baseURL.appending(path: "/v1/auth/login")
+        case .activate:
+            return baseURL.appending(path: "/v1/auth/activate")
+        case .sso:
+            return baseURL.appending(path: "/v1/auth/sso")
+        case .consent:
+            return baseURL.appending(path: "/v1/me/consent")
         case .dashboard:
             return baseURL.appending(path: "/v1/me/dashboard")
+        case .events:
+            return baseURL.appending(path: "/v1/me/events")
+        case .sectionsSearch:
+            return baseURL.appending(path: "/v1/sections/search")
         case .friendRequest:
             return baseURL.appending(path: "/v1/friends/requests")
         case .acceptFriendRequest(let id):
             return baseURL.appending(path: "/v1/friends/requests/\(id)/accept")
         case .presence:
             return baseURL.appending(path: "/v1/me/presence")
+        case .activityMode:
+            return baseURL.appending(path: "/v1/me/mode")
+        case .interests:
+            return baseURL.appending(path: "/v1/me/interests")
+        case .eventInterested(let id):
+            return baseURL.appending(path: "/v1/events/\(id)/interested")
+        case .eventPartner(let id):
+            return baseURL.appending(path: "/v1/events/\(id)/partner")
         case .plans:
             return baseURL.appending(path: "/v1/plans")
         case .nudge:
@@ -51,8 +78,10 @@ struct BetweenAPIClient {
         self.encoder.dateEncodingStrategy = .iso8601
     }
 
-    func get<T: Decodable>(_ route: APIRoute, token: String? = nil) async throws -> T {
-        var request = URLRequest(url: route.path(baseURL: baseURL))
+    func get<T: Decodable>(_ route: APIRoute, token: String? = nil, query: [URLQueryItem] = []) async throws -> T {
+        var components = URLComponents(url: route.path(baseURL: baseURL), resolvingAgainstBaseURL: false)!
+        if !query.isEmpty { components.queryItems = query }
+        var request = URLRequest(url: components.url!)
         request.httpMethod = "GET"
         applyAuth(&request, token: token)
         return try await perform(request)
@@ -118,6 +147,21 @@ struct BetweenAPIClient {
 struct LoginRequestBody: Encodable {
     let email: String
     let password: String?
+}
+
+struct ActivateRequestBody: Encodable {
+    let email: String
+    let code: String
+}
+
+struct SSORequestBody: Encodable {
+    let email: String
+}
+
+struct ConsentRequestBody: Encodable {
+    let accepted: Bool
+    let ferpaAcknowledged: Bool
+    let privacyVersion: String
 }
 
 struct LoginResponseBody: Decodable {
@@ -247,4 +291,68 @@ extension TodayPlanItemDTO {
             }
         )
     }
+}
+
+struct EventsDataDTO: Decodable {
+    let events: [CampusEventCardDTO]
+    let interests: [Interest]
+    let myInterestIds: [String]
+    let onboardingComplete: Bool
+    let activeMode: String?
+    let modeExpiresAt: Date?
+
+    func asEventsData() -> EventsData {
+        EventsData(
+            events: events.map { $0.asModel() },
+            interests: interests,
+            myInterestIds: myInterestIds,
+            onboardingComplete: onboardingComplete,
+            activeMode: activeMode.flatMap { ActivityMode(rawValue: $0) },
+            modeExpiresAt: modeExpiresAt
+        )
+    }
+}
+
+struct CampusEventCardDTO: Decodable {
+    let id: String
+    let title: String
+    let description: String
+    let location: String
+    let timeLabel: String
+    let interestName: String
+    let interestIcon: String
+    let interestedCount: Int
+    let partnerSeekingCount: Int
+    let isInterested: Bool
+    let isLookingForPartner: Bool
+    let canViewPartners: Bool
+    let partnerProfiles: [PartnerSeekingProfile]
+
+    func asModel() -> CampusEventCard {
+        CampusEventCard(
+            id: id,
+            title: title,
+            description: description,
+            location: location,
+            timeLabel: timeLabel,
+            interestName: interestName,
+            interestIcon: interestIcon,
+            interestedCount: interestedCount,
+            partnerSeekingCount: partnerSeekingCount,
+            isInterested: isInterested,
+            isLookingForPartner: isLookingForPartner,
+            canViewPartners: canViewPartners,
+            partnerProfiles: partnerProfiles
+        )
+    }
+}
+
+struct ModeResponseBody: Decodable {
+    let presence: PresenceRecord
+    let mode: String
+    let events: EventsDataDTO
+}
+
+struct PartnerResponseBody: Decodable {
+    let events: EventsDataDTO
 }

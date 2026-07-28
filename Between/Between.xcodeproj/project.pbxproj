@@ -31,6 +31,7 @@
 		3V3NT5SH33T00000000001 /* EventsSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3V3NT5SH33T00000000002 /* EventsSheet.swift */; };
 		3V3NTD3T41L00000000001 /* EventDetailSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3V3NTD3T41L00000000002 /* EventDetailSheet.swift */; };
 		1NT3R3ST0NB00000000001 /* InterestsOnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1NT3R3ST0NB00000000002 /* InterestsOnboardingView.swift */; };
+		C0NS3NTV13W000000000001 /* ConsentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0NS3NTV13W000000000002 /* ConsentView.swift */; };
 		B9127AFB0729CFFBFADF82E2 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCCE475D181E553671608741 /* Models.swift */; };
 		4D5E6F708192A3B4C5D6E7F /* FriendPreferencesStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E6F708192A3B4C5D6E7F80 /* FriendPreferencesStore.swift */; };
 		6F708192A3B4C5D6E7F8091 /* BetweenBackendServicing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 708192A3B4C5D6E7F8091A2 /* BetweenBackendServicing.swift */; };
@@ -67,6 +68,7 @@
 		3V3NT5SH33T00000000002 /* EventsSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventsSheet.swift; sourceTree = "<group>"; };
 		3V3NTD3T41L00000000002 /* EventDetailSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventDetailSheet.swift; sourceTree = "<group>"; };
 		1NT3R3ST0NB00000000002 /* InterestsOnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterestsOnboardingView.swift; sourceTree = "<group>"; };
+		C0NS3NTV13W000000000002 /* ConsentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsentView.swift; sourceTree = "<group>"; };
 		E6F708192A3B4C5D6E7F8091 /* DayTimelineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayTimelineView.swift; sourceTree = "<group>"; };
 		F8091A2B3C4D5E6F708192A /* InfoTipButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfoTipButton.swift; sourceTree = "<group>"; };
 		1A2B3C4D5E6F708192A3B4C /* ClassConnectionsStrip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClassConnectionsStrip.swift; sourceTree = "<group>"; };
@@ -118,6 +120,7 @@
 				3V3NT5SH33T00000000002 /* EventsSheet.swift */,
 				3V3NTD3T41L00000000002 /* EventDetailSheet.swift */,
 				1NT3R3ST0NB00000000002 /* InterestsOnboardingView.swift */,
+				C0NS3NTV13W000000000002 /* ConsentView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -261,6 +264,7 @@
 				3V3NT5SH33T00000000001 /* EventsSheet.swift in Sources */,
 				3V3NTD3T41L00000000001 /* EventDetailSheet.swift in Sources */,
 				1NT3R3ST0NB00000000001 /* InterestsOnboardingView.swift in Sources */,
+				C0NS3NTV13W000000000001 /* ConsentView.swift in Sources */,
 				20210B7736BF59A2B80BC25B /* Theme.swift in Sources */,
 				D5E6F708192A3B4C5D6E7F80 /* DayTimelineView.swift in Sources */,
 				E7F8091A2B3C4D5E6F70819 /* InfoTipButton.swift in Sources */,

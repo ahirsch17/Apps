@@ -6,6 +6,7 @@ enum AuthStep {
     case welcome
     case returning
     case newUser
+    case sso
 }
 
 @MainActor
@@ -25,6 +26,7 @@ final class AppViewModel: ObservableObject {
     @Published var courseSearchResults: [CourseSection] = []
     @Published var eventsData: EventsData?
     @Published var showOnboarding = false
+    @Published var needsConsent = false
 
     let preferences = FriendPreferencesStore()
 
@@ -33,6 +35,8 @@ final class AppViewModel: ObservableObject {
     private var streamTask: Task<Void, Never>?
     private var preferenceCancellable: AnyCancellable?
     private var searchTask: Task<Void, Never>?
+
+    private static let consentKey = "between.consent.accepted"
 
     init(service: any BetweenBackendServicing) {
         self.service = service
@@ -95,6 +99,32 @@ final class AppViewModel: ObservableObject {
         do {
             let auth = try await service.login(email: loginEmail, password: loginPassword)
             try await completeSignIn(auth)
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
+
+    func loginWithSSO() async {
+        guard !loginEmail.isEmpty else { return }
+        isLoading = true
+        errorMessage = nil
+        defer { isLoading = false }
+        do {
+            let auth = try await service.loginWithSSO(email: loginEmail)
+            try await completeSignIn(auth)
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
+
+    func acceptConsent() async {
+        guard let session else { return }
+        isLoading = true
+        defer { isLoading = false }
+        do {
+            try await service.submitConsent(session: session)
+            UserDefaults.standard.set(true, forKey: Self.consentKey)
+            needsConsent = false
         } catch {
             errorMessage = error.localizedDescription
         }
@@ -247,6 +277,7 @@ final class AppViewModel: ObservableObject {
     func signOut() {
         session = nil
         dashboard = nil
+        needsConsent = false
         streamTask?.cancel()
         authStep = .welcome
         loginPassword = ""
@@ -262,6 +293,7 @@ final class AppViewModel: ObservableObject {
         autoSuggestStars(from: data)
         listenForPresence()
         await loadEvents()
+        needsConsent = !UserDefaults.standard.bool(forKey: Self.consentKey)
         authStep = .welcome
     }
 
