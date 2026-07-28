@@ -152,7 +152,7 @@ enum TodayPresenter {
             let place = first.location.isEmpty ? nil : first.location
             return Headline(
                 title: "\(name)'s free — say hi?",
-                subtitle: place.map { "At \(place)" },
+                subtitle: place.map { "At \($0)" },
                 friendId: first.id,
                 friendName: first.name
             )
