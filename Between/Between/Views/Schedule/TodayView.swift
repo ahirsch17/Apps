@@ -7,6 +7,7 @@ struct TodayView: View {
     @State private var showNetwork = false
     @State private var showEvents = false
     @State private var classSheetSection: CourseSection?
+    @State private var showScheduleTimeline = false
 
     private var snapshot: TodayPresenter.Snapshot { viewModel.today }
 
@@ -38,28 +39,17 @@ struct TodayView: View {
                         meetupsSection
                     }
 
+                    quickActionsCard
+                    
                     if let featured = viewModel.featuredEvent() {
                         featuredEventCard(featured)
                     }
-
-                    ActivityModeBar()
-
-                    HorizontalOverlapTimeline(
-                        todayPlan: viewModel.todayPlan,
-                        starredIds: viewModel.preferences.starredFriendIds
-                    )
                     
-                    DayTimelineView(
-                        entries: snapshot.timeline,
-                        onClassFriendsTap: { classSheetSection = $0 }
-                    )
-
-                    Button {
-                        Task { await viewModel.setActivityMode(.social) }
-                    } label: {
-                        Label("Tap if you're free", systemImage: "hand.wave.fill")
+                    if viewModel.spontaneousPlanSuggestion() != nil {
+                        spontaneousPlanCard
                     }
-                    .buttonStyle(BetweenPrimaryButtonStyle())
+                    
+                    scheduleSection
                 }
                 .padding(.horizontal, 20)
                 .padding(.bottom, 32)
@@ -178,39 +168,86 @@ struct TodayView: View {
 
     private var friendsFreeNowSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            SectionHeader(title: "Free right now", subtitle: "On campus")
+            HStack {
+                Image(systemName: "location.fill")
+                    .font(.caption)
+                    .foregroundStyle(BetweenTheme.accent)
+                SectionHeader(title: "Free right now", subtitle: "\(snapshot.friendsFreeNow.count) nearby")
+            }
 
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 10) {
-                    ForEach(snapshot.friendsFreeNow) { friend in
-                        freeNowChip(friend)
-                    }
-                }
+            ForEach(snapshot.friendsFreeNow.prefix(5)) { friend in
+                freeNowCard(friend)
             }
         }
     }
 
-    private func freeNowChip(_ friend: FriendCard) -> some View {
-        VStack(spacing: 8) {
+    private func freeNowCard(_ friend: FriendCard) -> some View {
+        HStack(spacing: 14) {
             FriendAvatarView(
                 name: friend.name,
                 friendId: friend.id,
                 size: 52,
                 showsFreeRing: true
             )
-            Text(FriendColorPalette.firstName(friend.name))
-                .font(BetweenFont.captionMedium())
-            Text(friend.location)
-                .font(.caption2)
-                .foregroundStyle(.secondary)
-                .lineLimit(1)
+            
+            VStack(alignment: .leading, spacing: 4) {
+                HStack(spacing: 6) {
+                    Text(FriendColorPalette.firstName(friend.name))
+                        .font(BetweenFont.cardTitle())
+                    if friend.status == .freeNow {
+                        Text(activityEmoji(friend.activity))
+                            .font(.caption)
+                    }
+                }
+                
+                HStack(spacing: 4) {
+                    Image(systemName: "mappin.circle.fill")
+                        .font(.caption2)
+                        .foregroundStyle(BetweenTheme.accent)
+                    Text(friend.location)
+                        .font(BetweenFont.caption())
+                        .foregroundStyle(.secondary)
+                    
+                    if !friend.distanceLabel.isEmpty {
+                        Text("•")
+                            .font(.caption2)
+                            .foregroundStyle(.tertiary)
+                        Text(friend.distanceLabel)
+                            .font(BetweenFont.caption())
+                            .foregroundStyle(BetweenTheme.accent)
+                    }
+                }
+            }
+            
+            Spacer()
+            
+            HStack(spacing: 8) {
+                Button {
+                    viewModel.showToast("Coming soon")
+                } label: {
+                    Image(systemName: "message.fill")
+                        .font(.body)
+                        .foregroundStyle(.white)
+                        .frame(width: 38, height: 38)
+                        .background(BetweenTheme.accent)
+                        .clipShape(Circle())
+                }
+                .buttonStyle(.plain)
+            }
         }
-        .frame(width: 88)
-        .padding(.vertical, 12)
-        .padding(.horizontal, 8)
+        .padding(14)
         .background(BetweenTheme.surface(colorScheme))
-        .clipShape(RoundedRectangle(cornerRadius: BetweenTheme.cornerRadius, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
         .shadow(color: .black.opacity(colorScheme == .dark ? 0.2 : 0.05), radius: 6, y: 2)
+    }
+    
+    private func activityEmoji(_ activity: String) -> String {
+        let lower = activity.lowercased()
+        if lower.contains("hungry") || lower.contains("food") || lower.contains("lunch") { return "🍔" }
+        if lower.contains("study") || lower.contains("library") { return "📚" }
+        if lower.contains("gym") || lower.contains("workout") { return "🏃" }
+        if lower.contains("coffee") { return "☕" }
+        return "😊"
     }
 
     private func nextClassCard(_ next: TodayPresenter.NextClass) -> some View {
@@ -288,6 +325,115 @@ struct TodayView: View {
             ForEach(Array(zip(ids, names).prefix(3)), id: \.0) { id, name in
                 FriendAvatarView(name: name, friendId: id, size: 30)
                     .overlay(Circle().stroke(BetweenTheme.surface(colorScheme), lineWidth: 2))
+            }
+        }
+    }
+    
+    private var quickActionsCard: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            SectionHeader(title: "What are you up for?", subtitle: "Let friends know")
+            
+            ActivityModeBar()
+            
+            Button {
+                Task { await viewModel.setActivityMode(.social) }
+            } label: {
+                HStack {
+                    Image(systemName: "sparkles")
+                        .font(.title3)
+                    Text("I'm free right now")
+                        .font(BetweenFont.secondary().weight(.semibold))
+                    Spacer()
+                    Image(systemName: "arrow.right")
+                        .font(.caption.weight(.bold))
+                }
+                .padding(.horizontal, 20)
+                .padding(.vertical, 18)
+                .background(BetweenTheme.accent.opacity(0.12))
+                .foregroundStyle(BetweenTheme.accent)
+                .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+            }
+            .buttonStyle(.plain)
+        }
+    }
+    
+    private var spontaneousPlanCard: some View {
+        Group {
+            if let suggestion = viewModel.spontaneousPlanSuggestion() {
+                VStack(spacing: 14) {
+                    HStack {
+                        Image(systemName: "lightbulb.fill")
+                            .font(.title3)
+                            .foregroundStyle(BetweenTheme.accent)
+                        Text("Suggested")
+                            .font(BetweenFont.captionMedium())
+                            .foregroundStyle(BetweenTheme.accent)
+                        Spacer()
+                    }
+                    
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text(suggestion.title)
+                            .font(BetweenFont.cardTitle())
+                        Text(suggestion.subtitle)
+                            .font(BetweenFont.secondary())
+                            .foregroundStyle(.secondary)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    
+                    HStack(spacing: 10) {
+                        Button {
+                            Task { await viewModel.acceptSpontaneousPlan(suggestion) }
+                        } label: {
+                            HStack {
+                                Text("Yes, let's do it!")
+                                Image(systemName: suggestion.icon)
+                            }
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 12)
+                            .background(BetweenTheme.accent)
+                            .foregroundStyle(.white)
+                            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                        }
+                        .buttonStyle(.plain)
+                        
+                        Button {
+                            viewModel.dismissSpontaneousPlan(suggestion)
+                        } label: {
+                            Text("Not right now")
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 12)
+                                .background(BetweenTheme.surfaceMuted(colorScheme))
+                                .foregroundStyle(.secondary)
+                                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+                .surfaceCard()
+            }
+        }
+    }
+    
+    private var scheduleSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Button {
+                showScheduleTimeline.toggle()
+            } label: {
+                HStack {
+                    SectionHeader(title: "Schedule", subtitle: "Today's timeline")
+                    Spacer()
+                    Image(systemName: showScheduleTimeline ? "chevron.up" : "chevron.down")
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(.secondary)
+                }
+            }
+            .buttonStyle(.plain)
+            
+            if showScheduleTimeline {
+                HorizontalOverlapTimeline(
+                    todayPlan: viewModel.todayPlan,
+                    starredIds: viewModel.preferences.starredFriendIds
+                )
             }
         }
     }

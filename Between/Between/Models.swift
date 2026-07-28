@@ -322,3 +322,11 @@ struct DashboardData {
     let todayPlan: [TodayPlanItem]
     let syncTimestamp: Date
 }
+
+struct SpontaneousPlan: Identifiable {
+    let id: String
+    let title: String
+    let subtitle: String
+    let friendId: String
+    let icon: String
+}

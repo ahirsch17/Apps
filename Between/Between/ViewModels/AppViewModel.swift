@@ -274,6 +274,31 @@ final class AppViewModel: ObservableObject {
                 .map { data.myInterestIds.contains($0.id) } ?? false
         } ?? data.events.first
     }
+    
+    func spontaneousPlanSuggestion() -> SpontaneousPlan? {
+        let freeNow = nearbyFriends.filter { $0.status == .freeNow }
+        guard let nearestFriend = freeNow.first(where: { preferences.isStarred($0.id) }) else { return nil }
+        
+        let firstName = nearestFriend.name.components(separatedBy: " ").first ?? nearestFriend.name
+        let place = nearestFriend.location.isEmpty ? "on campus" : nearestFriend.location
+        
+        return SpontaneousPlan(
+            id: nearestFriend.id,
+            title: "Coffee with \(firstName) in 15 min?",
+            subtitle: "They're at \(place)",
+            friendId: nearestFriend.id,
+            icon: "cup.and.saucer.fill"
+        )
+    }
+    
+    func acceptSpontaneousPlan(_ plan: SpontaneousPlan) async {
+        showToast("Great! We'll let \(plan.title.components(separatedBy: " ").dropFirst().first ?? "them") know")
+        await setActivityMode(.social)
+    }
+    
+    func dismissSpontaneousPlan(_ plan: SpontaneousPlan) {
+        showToast("Got it")
+    }
 
     func signOut() {
         session = nil
@@ -318,7 +343,7 @@ final class AppViewModel: ObservableObject {
         lastSyncText = "Updated \(formatter.localizedString(for: data.syncTimestamp, relativeTo: Date()))"
     }
 
-    private func showToast(_ message: String) {
+    func showToast(_ message: String) {
         toastMessage = message
         Task {
             try? await Task.sleep(for: .seconds(2.5))
