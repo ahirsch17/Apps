@@ -172,10 +172,10 @@ struct TodayView: View {
                 Image(systemName: "location.fill")
                     .font(.caption)
                     .foregroundStyle(BetweenTheme.accent)
-                SectionHeader(title: "Free right now", subtitle: "\(snapshot.friendsFreeNow.count) nearby")
+                SectionHeader(title: "Free right now", subtitle: "\(snapshot.friendsFreeNow.count) on campus")
             }
 
-            ForEach(snapshot.friendsFreeNow.prefix(5)) { friend in
+            ForEach(snapshot.friendsFreeNow.prefix(3)) { friend in
                 freeNowCard(friend)
             }
         }
@@ -191,14 +191,8 @@ struct TodayView: View {
             )
             
             VStack(alignment: .leading, spacing: 4) {
-                HStack(spacing: 6) {
-                    Text(FriendColorPalette.firstName(friend.name))
-                        .font(BetweenFont.cardTitle())
-                    if friend.status == .freeNow {
-                        Text(activityEmoji(friend.activity))
-                            .font(.caption)
-                    }
-                }
+                Text(FriendColorPalette.firstName(friend.name))
+                    .font(BetweenFont.cardTitle())
                 
                 HStack(spacing: 4) {
                     Image(systemName: "mappin.circle.fill")
@@ -207,15 +201,6 @@ struct TodayView: View {
                     Text(friend.location)
                         .font(BetweenFont.caption())
                         .foregroundStyle(.secondary)
-                    
-                    if !friend.distanceLabel.isEmpty {
-                        Text("•")
-                            .font(.caption2)
-                            .foregroundStyle(.tertiary)
-                        Text(friend.distanceLabel)
-                            .font(BetweenFont.caption())
-                            .foregroundStyle(BetweenTheme.accent)
-                    }
                 }
             }
             
@@ -239,15 +224,6 @@ struct TodayView: View {
         .background(BetweenTheme.surface(colorScheme))
         .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
         .shadow(color: .black.opacity(colorScheme == .dark ? 0.2 : 0.05), radius: 6, y: 2)
-    }
-    
-    private func activityEmoji(_ activity: String) -> String {
-        let lower = activity.lowercased()
-        if lower.contains("hungry") || lower.contains("food") || lower.contains("lunch") { return "🍔" }
-        if lower.contains("study") || lower.contains("library") { return "📚" }
-        if lower.contains("gym") || lower.contains("workout") { return "🏃" }
-        if lower.contains("coffee") { return "☕" }
-        return "😊"
     }
 
     private func nextClassCard(_ next: TodayPresenter.NextClass) -> some View {
@@ -291,7 +267,7 @@ struct TodayView: View {
 
     private var meetupsSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            SectionHeader(title: "Find time together", subtitle: "Shared free windows today")
+            SectionHeader(title: "Free later today", subtitle: "Overlapping time")
 
             ForEach(snapshot.meetups.prefix(3)) { meetup in
                 HStack(spacing: 14) {
@@ -303,12 +279,9 @@ struct TodayView: View {
                         .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
 
                     VStack(alignment: .leading, spacing: 4) {
-                        Text(meetup.contextLabel)
-                            .font(BetweenFont.captionMedium())
-                            .foregroundStyle(BetweenTheme.accent)
                         Text(meetup.timeLabel)
                             .font(BetweenFont.cardTitle())
-                        Text("With \(meetup.namesLine)")
+                        Text(meetup.namesLine)
                             .font(BetweenFont.secondary())
                             .foregroundStyle(.secondary)
                     }
@@ -331,7 +304,8 @@ struct TodayView: View {
     
     private var quickActionsCard: some View {
         VStack(alignment: .leading, spacing: 16) {
-            SectionHeader(title: "What are you up for?", subtitle: "Let friends know")
+            Text("Down for...")
+                .font(BetweenFont.sectionTitle())
             
             ActivityModeBar()
             
@@ -339,9 +313,9 @@ struct TodayView: View {
                 Task { await viewModel.setActivityMode(.social) }
             } label: {
                 HStack {
-                    Image(systemName: "sparkles")
+                    Image(systemName: "hand.wave.fill")
                         .font(.title3)
-                    Text("I'm free right now")
+                    Text("Available to hang")
                         .font(BetweenFont.secondary().weight(.semibold))
                     Spacer()
                     Image(systemName: "arrow.right")
@@ -360,56 +334,35 @@ struct TodayView: View {
     private var spontaneousPlanCard: some View {
         Group {
             if let suggestion = viewModel.spontaneousPlanSuggestion() {
-                VStack(spacing: 14) {
-                    HStack {
-                        Image(systemName: "lightbulb.fill")
-                            .font(.title3)
+                Button {
+                    viewModel.showToast("Tap to message them")
+                } label: {
+                    HStack(spacing: 14) {
+                        Image(systemName: "bubble.left.and.bubble.right.fill")
+                            .font(.title2)
                             .foregroundStyle(BetweenTheme.accent)
-                        Text("Suggested")
-                            .font(BetweenFont.captionMedium())
-                            .foregroundStyle(BetweenTheme.accent)
-                        Spacer()
-                    }
-                    
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text(suggestion.title)
-                            .font(BetweenFont.cardTitle())
-                        Text(suggestion.subtitle)
-                            .font(BetweenFont.secondary())
-                            .foregroundStyle(.secondary)
-                    }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    
-                    HStack(spacing: 10) {
-                        Button {
-                            Task { await viewModel.acceptSpontaneousPlan(suggestion) }
-                        } label: {
-                            HStack {
-                                Text("Yes, let's do it!")
-                                Image(systemName: suggestion.icon)
-                            }
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 12)
-                            .background(BetweenTheme.accent)
-                            .foregroundStyle(.white)
-                            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
-                        }
-                        .buttonStyle(.plain)
+                            .frame(width: 44, height: 44)
+                            .background(BetweenTheme.accentSoft)
+                            .clipShape(Circle())
                         
-                        Button {
-                            viewModel.dismissSpontaneousPlan(suggestion)
-                        } label: {
-                            Text("Not right now")
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical, 12)
-                                .background(BetweenTheme.surfaceMuted(colorScheme))
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(suggestion.title)
+                                .font(BetweenFont.cardTitle())
+                                .foregroundStyle(.primary)
+                            Text(suggestion.subtitle)
+                                .font(BetweenFont.secondary())
                                 .foregroundStyle(.secondary)
-                                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                         }
-                        .buttonStyle(.plain)
+                        
+                        Spacer()
+                        
+                        Image(systemName: "chevron.right")
+                            .font(.caption.weight(.semibold))
+                            .foregroundStyle(.tertiary)
                     }
+                    .surfaceCard()
                 }
-                .surfaceCard()
+                .buttonStyle(.plain)
             }
         }
     }

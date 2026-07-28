@@ -141,10 +141,10 @@ enum TodayPresenter {
             let until = ScheduleEngine.formatTime12Hour(current.endMinutes)
             let extras = current.otherCount
             let subtitle: String? = extras > 0
-                ? "+\(extras) more friend\(extras == 1 ? "" : "s") free right now"
-                : (freeNow.count > 1 ? "\(freeNow.count - 1) more friends free on campus" : nil)
+                ? "+\(extras) more free right now"
+                : (freeNow.count > 1 ? "\(freeNow.count - 1) more on campus" : nil)
             return Headline(
-                title: "You've got time with \(first) 'til \(until)",
+                title: "\(first) is free til \(until)",
                 subtitle: subtitle,
                 friendId: current.friendId,
                 friendName: current.friendName
@@ -155,8 +155,8 @@ enum TodayPresenter {
             let name = first.name.components(separatedBy: " ").first ?? first.name
             let place = first.location.isEmpty ? nil : first.location
             return Headline(
-                title: "\(name)'s free — say hi?",
-                subtitle: place.map { "At \($0)" },
+                title: "\(name) is free",
+                subtitle: place.map { "\($0)" },
                 friendId: first.id,
                 friendName: first.name
             )
@@ -164,8 +164,8 @@ enum TodayPresenter {
 
         if let lunch = meetups.first(where: { $0.startMinutes >= nowMinutes && !$0.friendNames.isEmpty }) {
             return Headline(
-                title: "Lunch with \(lunch.namesLine)",
-                subtitle: lunch.timeLabel,
+                title: "Free \(lunch.timeLabel.lowercased())",
+                subtitle: lunch.namesLine,
                 friendId: lunch.friendIds.first,
                 friendName: lunch.friendNames.first
             )

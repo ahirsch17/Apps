@@ -284,10 +284,10 @@ final class AppViewModel: ObservableObject {
         
         return SpontaneousPlan(
             id: nearestFriend.id,
-            title: "Coffee with \(firstName) in 15 min?",
-            subtitle: "They're at \(place)",
+            title: "\(firstName) is at \(place)",
+            subtitle: "Free right now",
             friendId: nearestFriend.id,
-            icon: "cup.and.saucer.fill"
+            icon: "location.fill"
         )
     }
     
