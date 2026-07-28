@@ -59,9 +59,9 @@ final class FriendPreferencesStore: ObservableObject {
         save(starredFriendIds, key: starredKey)
     }
 
-    /// DEBUG demo: star everyone you share time with today so the home screen feels alive.
+    /// DEBUG demo: star top 2-3 friends you share time with today.
     func ensureDemoStars(friendIds: [String], overlapFriendIds: Set<String>) {
-        let prioritized = overlapFriendIds.isEmpty ? Set(friendIds.prefix(8)) : overlapFriendIds
+        let prioritized = overlapFriendIds.isEmpty ? Set(friendIds.prefix(2)) : Set(Array(overlapFriendIds).prefix(3))
         starredFriendIds = prioritized
         save(starredFriendIds, key: starredKey)
     }

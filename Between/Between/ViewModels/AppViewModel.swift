@@ -118,12 +118,13 @@ final class AppViewModel: ObservableObject {
     }
 
     func acceptConsent() async {
-        guard let session else { return }
+        guard let session, let me = dashboard?.me else { return }
         isLoading = true
         defer { isLoading = false }
         do {
             try await service.submitConsent(session: session)
-            UserDefaults.standard.set(true, forKey: Self.consentKey)
+            let consentKey = "\(Self.consentKey).\(me.id)"
+            UserDefaults.standard.set(true, forKey: consentKey)
             needsConsent = false
         } catch {
             errorMessage = error.localizedDescription
@@ -293,7 +294,8 @@ final class AppViewModel: ObservableObject {
         autoSuggestStars(from: data)
         listenForPresence()
         await loadEvents()
-        needsConsent = !UserDefaults.standard.bool(forKey: Self.consentKey)
+        let consentKey = "\(Self.consentKey).\(data.me.id)"
+        needsConsent = !UserDefaults.standard.bool(forKey: consentKey)
         authStep = .welcome
     }
 
@@ -331,9 +333,26 @@ final class AppViewModel: ObservableObject {
         guard let session else { return }
         streamTask = Task {
             let stream = await service.connectPresenceStream(session: session)
-            for await _ in stream {
-                await refresh()
+            for await updatedPresence in stream {
+                await updatePresence(updatedPresence)
             }
+        }
+    }
+    
+    private func updatePresence(_ presence: PresenceRecord) {
+        guard var dashboard = dashboard else { return }
+        if let idx = dashboard.nearbyFriends.firstIndex(where: { $0.id == presence.studentId }) {
+            dashboard.nearbyFriends[idx] = FriendCard(
+                id: dashboard.nearbyFriends[idx].id,
+                name: dashboard.nearbyFriends[idx].name,
+                email: dashboard.nearbyFriends[idx].email,
+                avatarEmoji: dashboard.nearbyFriends[idx].avatarEmoji,
+                status: presence.status,
+                activity: presence.activity,
+                location: presence.location,
+                distanceLabel: dashboard.nearbyFriends[idx].distanceLabel
+            )
+            self.dashboard = dashboard
         }
     }
 }

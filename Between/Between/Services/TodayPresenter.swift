@@ -86,7 +86,11 @@ enum TodayPresenter {
                 + Calendar.current.component(.minute, from: Date()))
     ) -> Snapshot {
         let freeNow = friends
-            .filter { $0.status == .freeNow }
+            .filter { friend in
+                friend.status == .freeNow && 
+                !friend.activity.lowercased().contains("class") &&
+                !friend.activity.lowercased().contains("headed")
+            }
             .sorted { lhs, rhs in
                 rank(starredIds, lhs.id) < rank(starredIds, rhs.id)
             }

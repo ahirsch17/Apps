@@ -141,23 +141,17 @@ actor LocalBackendService: BetweenBackendServicing {
 
     func markEventInterested(session: AuthSession, eventId: String) async throws {
         guard database.students.contains(where: { $0.id == session.userId }),
-              database.enrollments.contains(where: { $0.studentId == session.userId }),
               database.campusEvents.contains(where: { $0.id == eventId }) else {
             throw BackendError.invalidRequest
         }
-        eventParticipations.removeAll { $0.eventId == eventId && $0.studentId == session.userId && $0.kind == .interested }
-        if !eventParticipations.contains(where: {
-            $0.eventId == eventId && $0.studentId == session.userId
-        }) {
-            eventParticipations.append(
-                EventParticipation(eventId: eventId, studentId: session.userId, kind: .interested)
-            )
-        }
+        eventParticipations.removeAll { $0.eventId == eventId && $0.studentId == session.userId }
+        eventParticipations.append(
+            EventParticipation(eventId: eventId, studentId: session.userId, kind: .interested)
+        )
     }
 
     func markLookingForPartner(session: AuthSession, eventId: String, note: String, experience: String) async throws {
         guard let me = database.students.first(where: { $0.id == session.userId }),
-              database.enrollments.contains(where: { $0.studentId == session.userId }),
               let event = database.campusEvents.first(where: { $0.id == eventId }),
               event.matchingKind != .none else {
             throw BackendError.invalidRequest
