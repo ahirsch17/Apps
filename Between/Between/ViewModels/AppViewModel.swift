@@ -23,6 +23,8 @@ final class AppViewModel: ObservableObject {
     @Published var lastSyncText = "Not synced"
     @Published var courseSearchQuery: String = ""
     @Published var courseSearchResults: [CourseSection] = []
+    @Published var eventsData: EventsData?
+    @Published var showOnboarding = false
 
     let preferences = FriendPreferencesStore()
 
@@ -167,14 +169,79 @@ final class AppViewModel: ObservableObject {
     }
 
     func markFreeNow() async {
+        await setActivityMode(.social)
+    }
+
+    func setActivityMode(_ mode: ActivityMode) async {
         guard let session else { return }
         do {
-            try await service.setPresence(session: session, status: .freeNow, activity: "Free")
-            showToast("You're marked free")
+            try await service.setActivityMode(session: session, mode: mode)
+            showToast(mode.encouragement)
+            await loadEvents()
             await refresh()
         } catch {
             errorMessage = error.localizedDescription
         }
+    }
+
+    func loadEvents() async {
+        guard let session else { return }
+        do {
+            eventsData = try await service.fetchEvents(session: session)
+            showOnboarding = !(eventsData?.onboardingComplete ?? false)
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
+
+    func completeOnboarding(selected interestIds: [String]) async {
+        guard let session else { return }
+        do {
+            try await service.updateInterests(session: session, interestIds: interestIds)
+            showOnboarding = false
+            await loadEvents()
+            showToast("You're set — we'll show matching events")
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
+
+    func markInterested(_ event: CampusEventCard) async {
+        guard let session else { return }
+        do {
+            try await service.markEventInterested(session: session, eventId: event.id)
+            showToast("You're on the list")
+            await loadEvents()
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
+
+    func markLookingForPartner(_ event: CampusEventCard, note: String, experience: String) async {
+        guard let session else { return }
+        do {
+            try await service.markLookingForPartner(
+                session: session, eventId: event.id, note: note, experience: experience
+            )
+            showToast("Partner profile live — others can find you")
+            await loadEvents()
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
+
+    func isEventForMyInterests(_ event: CampusEventCard) -> Bool {
+        guard let data = eventsData else { return false }
+        guard let interest = data.interests.first(where: { $0.name == event.interestName }) else { return false }
+        return data.myInterestIds.contains(interest.id)
+    }
+
+    func featuredEvent() -> CampusEventCard? {
+        guard let data = eventsData else { return nil }
+        return data.events.first { event in
+            data.interests.first(where: { $0.name == event.interestName })
+                .map { data.myInterestIds.contains($0.id) } ?? false
+        } ?? data.events.first
     }
 
     func signOut() {
@@ -194,6 +261,7 @@ final class AppViewModel: ObservableObject {
         preferences.bind(userId: data.me.id, friendIds: data.nearbyFriends.map(\.id))
         autoSuggestStars(from: data)
         listenForPresence()
+        await loadEvents()
         authStep = .welcome
     }
 

@@ -7,6 +7,7 @@ struct TodayView: View {
     @State private var showNetwork = false
     @State private var showNotifications = false
     @State private var showCourseLookup = false
+    @State private var showEvents = false
     @State private var classSheetSection: CourseSection?
 
     private var snapshot: TodayPresenter.Snapshot { viewModel.today }
@@ -39,13 +40,19 @@ struct TodayView: View {
                         meetupsSection
                     }
 
+                    if let featured = viewModel.featuredEvent() {
+                        featuredEventCard(featured)
+                    }
+
+                    ActivityModeBar()
+
                     DayTimelineView(
                         entries: snapshot.timeline,
                         onClassFriendsTap: { classSheetSection = $0 }
                     )
 
                     Button {
-                        Task { await viewModel.markFreeNow() }
+                        Task { await viewModel.setActivityMode(.social) }
                     } label: {
                         Label("Tap if you're free", systemImage: "hand.wave.fill")
                     }
@@ -56,7 +63,11 @@ struct TodayView: View {
             }
             .refreshable {
                 await viewModel.refresh()
+                await viewModel.loadEvents()
             }
+        }
+        .sheet(isPresented: $showEvents) {
+            EventsSheet()
         }
         .sheet(isPresented: $showNetwork) {
             NetworkSheet()
@@ -87,10 +98,41 @@ struct TodayView: View {
     private var topBar: some View {
         HStack {
             ToolbarIconButton(systemName: "magnifyingglass", action: { showCourseLookup = true })
+            ToolbarIconButton(systemName: "calendar", action: { showEvents = true })
             Spacer()
             ToolbarIconButton(systemName: "bell.fill", badge: viewModel.notificationCount, action: { showNotifications = true })
             ToolbarIconButton(systemName: "person.2.fill", action: { showNetwork = true })
         }
+    }
+
+    private func featuredEventCard(_ event: CampusEventCard) -> some View {
+        Button { showEvents = true } label: {
+            HStack(spacing: 14) {
+                Image(systemName: event.interestIcon)
+                    .font(.title2)
+                    .foregroundStyle(BetweenTheme.accent)
+                    .frame(width: 48, height: 48)
+                    .background(BetweenTheme.accentSoft)
+                    .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Because you picked \(event.interestName.lowercased())")
+                        .font(BetweenFont.captionMedium())
+                        .foregroundStyle(BetweenTheme.accent)
+                    Text(event.title)
+                        .font(BetweenFont.secondary().weight(.semibold))
+                        .foregroundStyle(.primary)
+                    Text("\(event.interestedCount) interested · \(event.partnerSeekingCount) need a partner")
+                        .font(BetweenFont.caption())
+                        .foregroundStyle(.secondary)
+                }
+                Spacer()
+                Image(systemName: "chevron.right")
+                    .foregroundStyle(.tertiary)
+            }
+            .surfaceCard()
+        }
+        .buttonStyle(.plain)
     }
 
     private func headlineCard(_ headline: TodayPresenter.Headline) -> some View {

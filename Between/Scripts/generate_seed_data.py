@@ -229,6 +229,88 @@ def build_plans():
     ]
 
 
+def build_interests():
+    return [
+        {"id": "int-volleyball", "schoolId": "vt", "name": "Volleyball", "icon": "sportscourt.fill"},
+        {"id": "int-soccer", "schoolId": "vt", "name": "Soccer", "icon": "soccerball"},
+        {"id": "int-basketball", "schoolId": "vt", "name": "Basketball", "icon": "basketball.fill"},
+        {"id": "int-study", "schoolId": "vt", "name": "Study groups", "icon": "book.fill"},
+        {"id": "int-intramurals", "schoolId": "vt", "name": "Intramurals", "icon": "figure.run"},
+    ]
+
+
+def build_campus_events():
+    now = datetime.now(timezone.utc)
+    tomorrow_eve = now + timedelta(days=1)
+    return [
+        {"id": "evt-vb-im", "schoolId": "vt", "interestId": "int-volleyball",
+         "title": "IM Volleyball — Open Gym",
+         "description": "Drop-in at War Memorial. All skill levels. Bring a friend or find a partner here.",
+         "location": "War Memorial Gym",
+         "startTime": tomorrow_eve.replace(hour=18, minute=0, second=0, microsecond=0).isoformat(),
+         "endTime": tomorrow_eve.replace(hour=20, minute=0, second=0, microsecond=0).isoformat(),
+         "promotedInterestedCount": 48, "promotedPartnerCount": 9},
+        {"id": "evt-soccer-pickup", "schoolId": "vt", "interestId": "int-soccer",
+         "title": "Pickup Soccer on Drillfield",
+         "description": "Casual game — cleats optional.",
+         "location": "Drillfield",
+         "startTime": (now + timedelta(days=2, hours=17)).isoformat(),
+         "endTime": (now + timedelta(days=2, hours=19)).isoformat(),
+         "promotedInterestedCount": 31, "promotedPartnerCount": 6},
+        {"id": "evt-study-lib", "schoolId": "vt", "interestId": "int-study",
+         "title": "CS 2114 Study Session",
+         "description": "Newman Library 2nd floor. Work problems together.",
+         "location": "Newman Library",
+         "startTime": (now + timedelta(days=1, hours=14)).isoformat(),
+         "endTime": (now + timedelta(days=1, hours=16)).isoformat(),
+         "promotedInterestedCount": 22, "promotedPartnerCount": 0},
+    ]
+
+
+def build_student_profiles(students):
+    return [
+        {"studentId": "stu-alex", "interestIds": ["int-volleyball", "int-study"], "onboardingComplete": True},
+        {"studentId": "stu-john", "interestIds": ["int-soccer", "int-intramurals"], "onboardingComplete": True},
+        {"studentId": "stu-rachel", "interestIds": ["int-volleyball", "int-study"], "onboardingComplete": True},
+    ] + [
+        {"studentId": s["id"], "interestIds": [], "onboardingComplete": False}
+        for s in students if s["id"] not in ("stu-alex", "stu-john", "stu-rachel")
+    ]
+
+
+def build_event_participations():
+    return [
+        {"eventId": "evt-vb-im", "studentId": "stu-john", "kind": "lookingForPartner"},
+        {"eventId": "evt-vb-im", "studentId": "stu-rachel", "kind": "lookingForPartner"},
+        {"eventId": "evt-vb-im", "studentId": "stu-sarah", "kind": "interested"},
+        {"eventId": "evt-vb-im", "studentId": "stu-mia", "kind": "lookingForPartner"},
+        {"eventId": "evt-vb-im", "studentId": "stu-chris", "kind": "interested"},
+        {"eventId": "evt-soccer-pickup", "studentId": "stu-john", "kind": "interested"},
+        {"eventId": "evt-study-lib", "studentId": "stu-rachel", "kind": "interested"},
+    ]
+
+
+def build_partner_profiles(students):
+    by_id = {s["id"]: s for s in students}
+    profiles = [
+        ("stu-john", "evt-vb-im", "Intermediate", "Need a setter for IM team"),
+        ("stu-rachel", "evt-vb-im", "Played in high school", "Looking for a co-ed pair"),
+        ("stu-mia", "evt-vb-im", "Beginner friendly", "New to IM — want a buddy"),
+    ]
+    out = []
+    for sid, eid, exp, note in profiles:
+        s = by_id[sid]
+        out.append({
+            "studentId": sid, "eventId": eid,
+            "displayName": s["name"].split()[0],
+            "year": s["year"],
+            "experienceNote": exp,
+            "lookingNote": note,
+            "socialHandle": None,
+        })
+    return out
+
+
 def generate_data():
     students = build_students()
     now = datetime.now(timezone.utc)
@@ -243,6 +325,11 @@ def generate_data():
         "friendRequests": build_friend_requests(),
         "presence": build_presence(students),
         "plans": build_plans(),
+        "interests": build_interests(),
+        "studentProfiles": build_student_profiles(students),
+        "campusEvents": build_campus_events(),
+        "eventParticipations": build_event_participations(),
+        "partnerProfiles": build_partner_profiles(students),
     }
 
 

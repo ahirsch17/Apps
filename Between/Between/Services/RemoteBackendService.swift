@@ -60,6 +60,30 @@ actor RemoteBackendService: BetweenBackendServicing {
         )
     }
 
+    func setActivityMode(session: AuthSession, mode: ActivityMode) async throws {
+        try await setPresence(session: session, status: mode.presenceStatus, activity: mode.label)
+    }
+
+    func fetchEvents(session: AuthSession) async throws -> EventsData {
+        _ = session
+        throw BackendError.notImplemented
+    }
+
+    func markEventInterested(session: AuthSession, eventId: String) async throws {
+        _ = session; _ = eventId
+        throw BackendError.notImplemented
+    }
+
+    func markLookingForPartner(session: AuthSession, eventId: String, note: String, experience: String) async throws {
+        _ = session; _ = eventId; _ = note; _ = experience
+        throw BackendError.notImplemented
+    }
+
+    func updateInterests(session: AuthSession, interestIds: [String]) async throws {
+        _ = session; _ = interestIds
+        throw BackendError.notImplemented
+    }
+
     func createPlan(session: AuthSession, type: String, title: String, location: String) async throws -> Plan {
         struct Body: Encodable { let type: String; let title: String; let location: String }
         return try await client.post(.plans, body: Body(type: type, title: title, location: location), token: session.token)

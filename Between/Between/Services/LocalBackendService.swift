@@ -7,6 +7,10 @@ actor LocalBackendService: BetweenBackendServicing {
     private var friendships: [Friendship]
     private var presenceByStudentId: [String: PresenceRecord]
     private var plans: [Plan]
+    private var studentProfiles: [StudentProfile]
+    private var eventParticipations: [EventParticipation]
+    private var partnerProfiles: [PartnerSeekingProfile]
+    private var activeModeByStudentId: [String: (mode: ActivityMode, expiresAt: Date)] = [:]
 
     init(database: SeedDatabase) {
         self.database = database
@@ -14,6 +18,9 @@ actor LocalBackendService: BetweenBackendServicing {
         self.friendships = database.friendships
         self.presenceByStudentId = Dictionary(uniqueKeysWithValues: database.presence.map { ($0.studentId, $0) })
         self.plans = database.plans
+        self.studentProfiles = database.studentProfiles
+        self.eventParticipations = database.eventParticipations
+        self.partnerProfiles = database.partnerProfiles
     }
 
     static func live() throws -> LocalBackendService {
@@ -107,6 +114,68 @@ actor LocalBackendService: BetweenBackendServicing {
         presenceByStudentId[session.userId] = presence
     }
 
+    func setActivityMode(session: AuthSession, mode: ActivityMode) async throws {
+        let expires = Date().addingTimeInterval(mode.defaultDuration)
+        activeModeByStudentId[session.userId] = (mode, expires)
+        try await setPresence(
+            session: session,
+            status: mode.presenceStatus,
+            activity: mode.label
+        )
+    }
+
+    func fetchEvents(session: AuthSession) async throws -> EventsData {
+        try eventsData(for: session.userId)
+    }
+
+    func markEventInterested(session: AuthSession, eventId: String) async throws {
+        guard database.campusEvents.contains(where: { $0.id == eventId }) else {
+            throw BackendError.invalidRequest
+        }
+        eventParticipations.removeAll { $0.eventId == eventId && $0.studentId == session.userId && $0.kind == .interested }
+        if !eventParticipations.contains(where: {
+            $0.eventId == eventId && $0.studentId == session.userId
+        }) {
+            eventParticipations.append(
+                EventParticipation(eventId: eventId, studentId: session.userId, kind: .interested)
+            )
+        }
+    }
+
+    func markLookingForPartner(session: AuthSession, eventId: String, note: String, experience: String) async throws {
+        guard let me = database.students.first(where: { $0.id == session.userId }),
+              database.campusEvents.contains(where: { $0.id == eventId }) else {
+            throw BackendError.invalidRequest
+        }
+        eventParticipations.removeAll { $0.eventId == eventId && $0.studentId == session.userId }
+        eventParticipations.append(
+            EventParticipation(eventId: eventId, studentId: session.userId, kind: .lookingForPartner)
+        )
+        partnerProfiles.removeAll { $0.eventId == eventId && $0.studentId == session.userId }
+        partnerProfiles.append(
+            PartnerSeekingProfile(
+                studentId: session.userId,
+                eventId: eventId,
+                displayName: me.name.components(separatedBy: " ").first ?? me.name,
+                year: me.year,
+                experienceNote: experience,
+                lookingNote: note,
+                socialHandle: nil
+            )
+        )
+    }
+
+    func updateInterests(session: AuthSession, interestIds: [String]) async throws {
+        if let idx = studentProfiles.firstIndex(where: { $0.studentId == session.userId }) {
+            studentProfiles[idx].interestIds = interestIds
+            studentProfiles[idx].onboardingComplete = true
+        } else {
+            studentProfiles.append(
+                StudentProfile(studentId: session.userId, interestIds: interestIds, onboardingComplete: true)
+            )
+        }
+    }
+
     func createPlan(session: AuthSession, type: String, title: String, location: String) async throws -> Plan {
         let plan = Plan(
             id: "plan-\(UUID().uuidString.prefix(8))",
@@ -144,6 +213,33 @@ actor LocalBackendService: BetweenBackendServicing {
             }
             continuation.onTermination = { _ in task.cancel() }
         }
+    }
+
+    private func eventsData(for studentId: String) throws -> EventsData {
+        guard database.students.contains(where: { $0.id == studentId }) else {
+            throw BackendError.userNotFound
+        }
+        let profile = studentProfiles.first(where: { $0.studentId == studentId })
+        let modeEntry = activeModeByStudentId[studentId]
+        let schoolEvents = database.campusEvents.filter { $0.schoolId == profileSchoolId(for: studentId) }
+        let schoolInterests = database.interests.filter { $0.schoolId == profileSchoolId(for: studentId) }
+
+        return EventsBuilder.build(
+            events: schoolEvents,
+            interests: schoolInterests,
+            participations: eventParticipations,
+            partnerProfiles: partnerProfiles,
+            students: database.students,
+            viewerId: studentId,
+            myInterestIds: profile?.interestIds ?? [],
+            activeMode: modeEntry?.mode,
+            modeExpiresAt: modeEntry?.expiresAt,
+            onboardingComplete: profile?.onboardingComplete ?? false
+        )
+    }
+
+    private func profileSchoolId(for studentId: String) -> String {
+        database.students.first(where: { $0.id == studentId })?.schoolId ?? "vt"
     }
 
     private func dashboard(for studentId: String) throws -> DashboardData {

@@ -11,6 +11,11 @@ protocol BetweenBackendServicing: Sendable {
     func sendFriendRequest(session: AuthSession, to studentId: String) async throws
     func acceptFriendRequest(session: AuthSession, requestId: String) async throws
     func setPresence(session: AuthSession, status: PresenceStatus, activity: String) async throws
+    func setActivityMode(session: AuthSession, mode: ActivityMode) async throws
+    func fetchEvents(session: AuthSession) async throws -> EventsData
+    func markEventInterested(session: AuthSession, eventId: String) async throws
+    func markLookingForPartner(session: AuthSession, eventId: String, note: String, experience: String) async throws
+    func updateInterests(session: AuthSession, interestIds: [String]) async throws
     func createPlan(session: AuthSession, type: String, title: String, location: String) async throws -> Plan
     func sendNudge(session: AuthSession, to friendId: String, message: String) async throws
     func connectPresenceStream(session: AuthSession) async -> AsyncStream<PresenceRecord>

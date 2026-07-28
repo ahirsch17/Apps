@@ -25,6 +25,12 @@
 		F91A2B3C4D5E6F708192A3B /* ClassConnectionsStrip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A2B3C4D5E6F708192A3B4C /* ClassConnectionsStrip.swift */; };
 		A1B2C3D4E5F60718293A4B5C /* ScheduleEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C3D4E5F60718293A4B5C6D /* ScheduleEngine.swift */; };
 		T0DAYPR3S3NT3R0000000001 /* TodayPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = T0DAYPR3S3NT3R0000000002 /* TodayPresenter.swift */; };
+		C4MPUSM0D3LS00000000001 /* CampusModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4MPUSM0D3LS00000000002 /* CampusModels.swift */; };
+		3V3NTSBU1LD3R0000000001 /* EventsBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3V3NTSBU1LD3R0000000002 /* EventsBuilder.swift */; };
+		4CT1V1TYM0D3B0000000001 /* ActivityModeBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CT1V1TYM0D3B0000000002 /* ActivityModeBar.swift */; };
+		3V3NT5SH33T00000000001 /* EventsSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3V3NT5SH33T00000000002 /* EventsSheet.swift */; };
+		3V3NTD3T41L00000000001 /* EventDetailSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3V3NTD3T41L00000000002 /* EventDetailSheet.swift */; };
+		1NT3R3ST0NB00000000001 /* InterestsOnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1NT3R3ST0NB00000000002 /* InterestsOnboardingView.swift */; };
 		B9127AFB0729CFFBFADF82E2 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCCE475D181E553671608741 /* Models.swift */; };
 		4D5E6F708192A3B4C5D6E7F /* FriendPreferencesStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E6F708192A3B4C5D6E7F80 /* FriendPreferencesStore.swift */; };
 		6F708192A3B4C5D6E7F8091 /* BetweenBackendServicing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 708192A3B4C5D6E7F8091A2 /* BetweenBackendServicing.swift */; };
@@ -55,6 +61,12 @@
 		FC147388B2C51BF6FE2BC85A /* LocalBackendService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalBackendService.swift; sourceTree = "<group>"; };
 		B2C3D4E5F60718293A4B5C6D /* ScheduleEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleEngine.swift; sourceTree = "<group>"; };
 		T0DAYPR3S3NT3R0000000002 /* TodayPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayPresenter.swift; sourceTree = "<group>"; };
+		C4MPUSM0D3LS00000000002 /* CampusModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CampusModels.swift; sourceTree = "<group>"; };
+		3V3NTSBU1LD3R0000000002 /* EventsBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventsBuilder.swift; sourceTree = "<group>"; };
+		4CT1V1TYM0D3B0000000002 /* ActivityModeBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityModeBar.swift; sourceTree = "<group>"; };
+		3V3NT5SH33T00000000002 /* EventsSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventsSheet.swift; sourceTree = "<group>"; };
+		3V3NTD3T41L00000000002 /* EventDetailSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventDetailSheet.swift; sourceTree = "<group>"; };
+		1NT3R3ST0NB00000000002 /* InterestsOnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterestsOnboardingView.swift; sourceTree = "<group>"; };
 		E6F708192A3B4C5D6E7F8091 /* DayTimelineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayTimelineView.swift; sourceTree = "<group>"; };
 		F8091A2B3C4D5E6F708192A /* InfoTipButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfoTipButton.swift; sourceTree = "<group>"; };
 		1A2B3C4D5E6F708192A3B4C /* ClassConnectionsStrip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClassConnectionsStrip.swift; sourceTree = "<group>"; };
@@ -84,6 +96,7 @@
 				3B4C5D6E7F8091A2B3C4D5F /* RemoteBackendService.swift */,
 				B2C3D4E5F60718293A4B5C6D /* ScheduleEngine.swift */,
 				T0DAYPR3S3NT3R0000000002 /* TodayPresenter.swift */,
+				3V3NTSBU1LD3R0000000002 /* EventsBuilder.swift */,
 				5E6F708192A3B4C5D6E7F80 /* FriendPreferencesStore.swift */,
 			);
 			path = Services;
@@ -101,6 +114,10 @@
 				CLASFR1END5HEET000000002 /* ClassFriendsSheet.swift */,
 				F8091A2B3C4D5E6F708192A /* InfoTipButton.swift */,
 				3C4D5E6F708192A3B4C5D6E /* FriendSettingsSheet.swift */,
+				4CT1V1TYM0D3B0000000002 /* ActivityModeBar.swift */,
+				3V3NT5SH33T00000000002 /* EventsSheet.swift */,
+				3V3NTD3T41L00000000002 /* EventDetailSheet.swift */,
+				1NT3R3ST0NB00000000002 /* InterestsOnboardingView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -119,6 +136,7 @@
 				5A2D1926CA26D82F91AE16B6 /* BetweenApp.swift */,
 				FDF199F746A50225E095F90A /* ContentView.swift */,
 				CCCE475D181E553671608741 /* Models.swift */,
+				C4MPUSM0D3LS00000000002 /* CampusModels.swift */,
 				BFE6A3F160FDFB0A4D9A1C9C /* Theme.swift */,
 				B2D3E4F5061728394A5B6C7D /* Assets.xcassets */,
 				D373AE391246A04481EC2279 /* Resources */,
@@ -237,6 +255,12 @@
 				B9127AFB0729CFFBFADF82E2 /* Models.swift in Sources */,
 				A1B2C3D4E5F60718293A4B5C /* ScheduleEngine.swift in Sources */,
 				T0DAYPR3S3NT3R0000000001 /* TodayPresenter.swift in Sources */,
+				C4MPUSM0D3LS00000000001 /* CampusModels.swift in Sources */,
+				3V3NTSBU1LD3R0000000001 /* EventsBuilder.swift in Sources */,
+				4CT1V1TYM0D3B0000000001 /* ActivityModeBar.swift in Sources */,
+				3V3NT5SH33T00000000001 /* EventsSheet.swift in Sources */,
+				3V3NTD3T41L00000000001 /* EventDetailSheet.swift in Sources */,
+				1NT3R3ST0NB00000000001 /* InterestsOnboardingView.swift in Sources */,
 				20210B7736BF59A2B80BC25B /* Theme.swift in Sources */,
 				D5E6F708192A3B4C5D6E7F80 /* DayTimelineView.swift in Sources */,
 				E7F8091A2B3C4D5E6F70819 /* InfoTipButton.swift in Sources */,

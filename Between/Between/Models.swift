@@ -10,6 +10,67 @@ struct SeedDatabase: Codable {
     let friendRequests: [FriendRequest]
     let presence: [PresenceRecord]
     let plans: [Plan]
+    let interests: [Interest]
+    let studentProfiles: [StudentProfile]
+    let campusEvents: [CampusEvent]
+    let eventParticipations: [EventParticipation]
+    let partnerProfiles: [PartnerSeekingProfile]
+
+    init(
+        generatedAt: Date,
+        universities: [University],
+        sections: [CourseSection],
+        students: [Student],
+        enrollments: [Enrollment],
+        friendships: [Friendship],
+        friendRequests: [FriendRequest],
+        presence: [PresenceRecord],
+        plans: [Plan],
+        interests: [Interest] = [],
+        studentProfiles: [StudentProfile] = [],
+        campusEvents: [CampusEvent] = [],
+        eventParticipations: [EventParticipation] = [],
+        partnerProfiles: [PartnerSeekingProfile] = []
+    ) {
+        self.generatedAt = generatedAt
+        self.universities = universities
+        self.sections = sections
+        self.students = students
+        self.enrollments = enrollments
+        self.friendships = friendships
+        self.friendRequests = friendRequests
+        self.presence = presence
+        self.plans = plans
+        self.interests = interests
+        self.studentProfiles = studentProfiles
+        self.campusEvents = campusEvents
+        self.eventParticipations = eventParticipations
+        self.partnerProfiles = partnerProfiles
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case generatedAt, universities, sections, students, enrollments
+        case friendships, friendRequests, presence, plans
+        case interests, studentProfiles, campusEvents, eventParticipations, partnerProfiles
+    }
+
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        generatedAt = try c.decode(Date.self, forKey: .generatedAt)
+        universities = try c.decode([University].self, forKey: .universities)
+        sections = try c.decode([CourseSection].self, forKey: .sections)
+        students = try c.decode([Student].self, forKey: .students)
+        enrollments = try c.decode([Enrollment].self, forKey: .enrollments)
+        friendships = try c.decode([Friendship].self, forKey: .friendships)
+        friendRequests = try c.decode([FriendRequest].self, forKey: .friendRequests)
+        presence = try c.decode([PresenceRecord].self, forKey: .presence)
+        plans = try c.decode([Plan].self, forKey: .plans)
+        interests = try c.decodeIfPresent([Interest].self, forKey: .interests) ?? []
+        studentProfiles = try c.decodeIfPresent([StudentProfile].self, forKey: .studentProfiles) ?? []
+        campusEvents = try c.decodeIfPresent([CampusEvent].self, forKey: .campusEvents) ?? []
+        eventParticipations = try c.decodeIfPresent([EventParticipation].self, forKey: .eventParticipations) ?? []
+        partnerProfiles = try c.decodeIfPresent([PartnerSeekingProfile].self, forKey: .partnerProfiles) ?? []
+    }
 }
 
 struct University: Codable, Identifiable {
