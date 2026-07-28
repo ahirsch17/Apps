@@ -24,7 +24,24 @@ struct VisualScheduleTimeline: View {
     }
     
     private var displayedFriends: [FriendCard] {
-        friends.filter { starredIds.contains($0.id) }.prefix(4).map { $0 }
+        // Only show starred friends who have meaningful overlap (>=25min) with your free time
+        let minOverlapMinutes = 25
+        
+        return friends
+            .filter { friend in
+                guard starredIds.contains(friend.id) else { return false }
+                
+                // Check if this friend has any meaningful overlap with your free blocks
+                let hasOverlap = todayPlan.contains { planItem in
+                    guard planItem.kind == .freeBlock else { return false }
+                    return planItem.friendOverlaps.contains { overlap in
+                        overlap.friendId == friend.id && overlap.longestIntervalMinutes >= minOverlapMinutes
+                    }
+                }
+                return hasOverlap
+            }
+            .prefix(4)
+            .map { $0 }
     }
     
     var body: some View {
