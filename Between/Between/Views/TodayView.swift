@@ -44,6 +44,12 @@ struct TodayView: View {
 
                     ActivityModeBar()
 
+                    VisualScheduleTimeline(
+                        friends: viewModel.nearbyFriends,
+                        todayPlan: viewModel.todayPlan,
+                        starredIds: viewModel.preferences.starredFriendIds
+                    )
+                    
                     DayTimelineView(
                         entries: snapshot.timeline,
                         onClassFriendsTap: { classSheetSection = $0 }
