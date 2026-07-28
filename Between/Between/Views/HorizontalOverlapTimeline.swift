@@ -58,13 +58,7 @@ struct HorizontalOverlapTimeline: View {
                     // Time header
                     timeHeader
                     
-                    // Your classes row
-                    yourClassesRow
-                    
-                    Divider()
-                        .padding(.vertical, 8)
-                    
-                    // Friend overlap rows
+                    // Friend overlap rows (no separate "your classes" row)
                     ForEach(Array(friendsWithOverlaps.enumerated()), id: \.element.friendId) { index, friend in
                         friendRow(friend: friend, colorIndex: index)
                         if index < friendsWithOverlaps.count - 1 {
