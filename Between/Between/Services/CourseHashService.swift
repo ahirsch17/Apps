@@ -1,8 +1,8 @@
 import CryptoKit
 import Foundation
 
-/// Client-side course hashing — the server never receives raw CRNs or course titles.
-/// Only salted SHA-256 digests leave the device for classmate matching.
+// Client-side course hashing: server never sees raw CRNs/titles
+// Only SHA-256 hashes leave device for classmate matching
 enum CourseHashService {
     /// Salt is per-school; in production delivered via SSO consent payload.
     static func hash(canonicalCourseId: String, schoolId: String) -> String {

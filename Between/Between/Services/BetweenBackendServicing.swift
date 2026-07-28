@@ -1,7 +1,7 @@
 import Foundation
 
 /// Contract between the iOS app and any backend (local seed file or deployed API).
-/// UI and ViewModels depend only on this protocol — swap implementations via `BackendConfiguration`.
+// UI depends only on this protocol, swap implementations via BackendConfiguration
 protocol BetweenBackendServicing: Sendable {
     func fetchLoginCandidates() async -> [Student]
     func login(email: String, password: String?) async throws -> AuthSession

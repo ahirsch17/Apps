@@ -184,7 +184,21 @@ struct HorizontalOverlapTimeline: View {
                         .frame(height: 28)
                         .clipShape(RoundedRectangle(cornerRadius: 6))
                     
-                    // Overlap blocks
+                    // YOUR class blocks (blocking time for friend row)
+                    ForEach(todayPlan.filter { $0.kind == .classBlock && blockInRange($0) }) { item in
+                        yourClassBlock(item, totalMinutes: totalMinutes, width: width)
+                    }
+                    
+                    // Current time indicator
+                    if nowMinutes >= timeRange.lowerBound && nowMinutes <= timeRange.upperBound {
+                        let offset = CGFloat(nowMinutes - timeRange.lowerBound) / CGFloat(totalMinutes) * width
+                        Rectangle()
+                            .fill(BetweenTheme.accent)
+                            .frame(width: 2, height: 28)
+                            .offset(x: offset)
+                    }
+                    
+                    // Friend overlap blocks (colored sections where BOTH free)
                     ForEach(friend.overlaps.filter { blockInRange($0) }) { item in
                         overlapBlock(item, friendId: friend.friendId, totalMinutes: totalMinutes, width: width, color: color)
                     }
@@ -192,6 +206,31 @@ struct HorizontalOverlapTimeline: View {
             }
             .frame(height: 28)
         }
+    }
+    
+    private func yourClassBlock(_ item: TodayPlanItem, totalMinutes: Int, width: CGFloat) -> some View {
+        let clampedStart = max(item.startMinutes, timeRange.lowerBound)
+        let clampedEnd = min(item.endMinutes, timeRange.upperBound)
+        let offsetMinutes = clampedStart - timeRange.lowerBound
+        let durationMinutes = clampedEnd - clampedStart
+        
+        let xOffset = CGFloat(offsetMinutes) / CGFloat(totalMinutes) * width
+        let blockWidth = CGFloat(durationMinutes) / CGFloat(totalMinutes) * width
+        
+        return RoundedRectangle(cornerRadius: 5, style: .continuous)
+            .fill(Color.gray.opacity(0.4))
+            .frame(width: max(blockWidth, 4), height: 24)
+            .offset(x: xOffset)
+            .overlay {
+                if let section = item.section, blockWidth > 60 {
+                    Text(section.courseCode)
+                        .font(.system(size: 9, weight: .medium))
+                        .foregroundStyle(.white)
+                        .lineLimit(1)
+                        .frame(width: blockWidth - 8)
+                        .offset(x: xOffset)
+                }
+            }
     }
     
     private func classBlock(_ item: TodayPlanItem, totalMinutes: Int, width: CGFloat) -> some View {

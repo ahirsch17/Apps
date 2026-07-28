@@ -288,7 +288,7 @@ struct TodayPlanItem: Identifiable {
         }
     }
 
-    /// All meaningful overlaps — not gated on starred friends.
+    // All meaningful overlaps (not gated on starred friends)
     func qualifyingOverlaps(minMinutes: Int = ScheduleEngine.minOverlapMinutes) -> [FriendOverlap] {
         friendOverlaps.filter { $0.longestIntervalMinutes >= minMinutes }
     }

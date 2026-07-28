@@ -1,12 +1,12 @@
 import Foundation
 
 enum ScheduleEngine {
-    /// Campus day window — avoids 6am–11pm empty blocks in the UI.
+    // Campus day window: 8am-6pm to avoid early/late empty blocks
     static let startMinutes = 8 * 60
     static let endMinutes = 18 * 60
     static let minFreeBlockMinutes = 30
     static let minOverlapMinutes = 25
-    /// Hide empty free blocks longer than this; overlaps always show.
+    // Hide empty free blocks longer than this (overlaps always show)
     static let maxEmptyFreeBlockMinutes = 90
 
     private enum TimelineBlock {

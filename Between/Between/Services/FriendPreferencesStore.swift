@@ -2,7 +2,7 @@ import Foundation
 import SwiftUI
 import Combine
 
-/// Per-user friend preferences — starred close friends and visibility toggles.
+// Per-user friend preferences: starred close friends and visibility toggles
 @MainActor
 final class FriendPreferencesStore: ObservableObject {
     @Published private(set) var starredFriendIds: Set<String> = []

@@ -3,22 +3,22 @@ import SwiftUI
 // MARK: - Brand & surfaces
 //
 // Student-facing UI uses warm product colors (approachable daily use).
-// VT maroon/orange appears only on SSO / pilot co-brand — not every button.
+// VT maroon/orange on SSO/pilot co-brand only, not every button
 // See docs/BRAND_GUIDE.md for psychology rationale.
 
 enum BetweenTheme {
-    /// Product maroon — slightly warmer than Chicago Maroon; identity, wordmark, headers
+    // Product maroon: warmer than Chicago Maroon, for identity/wordmark/headers
     static let accent = Color(red: 0.545, green: 0.165, blue: 0.290) // #8B2A4A
     static let accentSoft = accent.opacity(0.10)
 
-    /// Action coral — primary CTAs; reads energetic without feeling "admin portal"
+    // Action coral: primary CTAs, energetic without "admin portal" feel
     static let accentAction = Color(red: 0.910, green: 0.365, blue: 0.278) // #E85D47
     static let accentActionSoft = accentAction.opacity(0.12)
 
     /// Legacy alias + wordmark second syllable
     static let accentSecondary = accentAction
 
-    /// VT official tones — SSO screen & "Virginia Tech pilot" co-brand only
+    // VT official tones: SSO screen & pilot co-brand only
     static let vtMaroon = Color(red: 0.525, green: 0.122, blue: 0.255) // #861F41
     static let vtOrange = Color(red: 0.812, green: 0.267, blue: 0.125) // #CF4420
 
@@ -70,7 +70,7 @@ enum BetweenFont {
 
 // MARK: - Wordmark & mark
 
-/// Two bars with a gap — the time *between* classes. Vector, no PNG required.
+// Two bars with gap representing time between classes
 struct BetweenMark: View {
     enum Size { case hero, compact, toolbar }
     var size: Size = .hero
