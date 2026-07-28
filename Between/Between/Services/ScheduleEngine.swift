@@ -213,15 +213,19 @@ enum ScheduleEngine {
         free: (start: Int, end: Int)?,
         busy: (start: Int, end: Int, section: CourseSection)?
     ) -> TimelineBlock? {
-        switch (free, busy) {
-        case let (freeBlock?, nil): return .free(start: freeBlock.start, end: freeBlock.end)
-        case let (nil, classBlock?): return .busy(start: classBlock.start, end: classBlock.end, section: classBlock.section)
-        case let (freeBlock?, classBlock?):
+        if free == nil && busy == nil { return nil }
+        if let freeBlock = free, busy == nil {
+            return .free(start: freeBlock.start, end: freeBlock.end)
+        }
+        if free == nil, let classBlock = busy {
+            return .busy(start: classBlock.start, end: classBlock.end, section: classBlock.section)
+        }
+        if let freeBlock = free, let classBlock = busy {
             return freeBlock.start <= classBlock.start
                 ? .free(start: freeBlock.start, end: freeBlock.end)
                 : .busy(start: classBlock.start, end: classBlock.end, section: classBlock.section)
-        case (nil, nil): return nil
         }
+        return nil
     }
 
     private static func appendIfFuture(

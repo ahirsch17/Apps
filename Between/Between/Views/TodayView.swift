@@ -89,14 +89,14 @@ struct TodayView: View {
 
     private var topBar: some View {
         HStack {
-            ToolbarIconButton(systemName: "calendar", action: { showEvents = true })
+            ToolbarIconButton(systemName: "calendar", onTap: { showEvents = true })
             Spacer()
             BetweenBrandLockup(style: .toolbar)
             Spacer()
             ToolbarIconButton(
                 systemName: "person.2.fill",
                 badge: viewModel.notificationCount,
-                action: { showNetwork = true }
+                onTap: { showNetwork = true }
             )
         }
     }

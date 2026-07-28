@@ -103,6 +103,66 @@ describe('DataStore event mutations', () => {
   });
 });
 
+describe('DataStore auth & dashboard', () => {
+  /** @type {ReturnType<typeof createFreshStore>} */
+  let store;
+
+  beforeEach(() => {
+    store = createFreshStore();
+  });
+
+  it('login accepts demo credentials', () => {
+    const result = store.login('alex.hirsch@vt.edu', 'demo123');
+    assert.equal(result.userId, 'stu-alex');
+  });
+
+  it('login rejects wrong password', () => {
+    const result = store.login('alex.hirsch@vt.edu', 'nope');
+    assert.equal(result.error, 'badPassword');
+  });
+
+  it('activate accepts demo code', () => {
+    const result = store.activate('alex.hirsch@vt.edu', '482910');
+    assert.equal(result.userId, 'stu-alex');
+  });
+
+  it('dashboard returns 11 friends for Alex', () => {
+    const dash = store.dashboard('stu-alex');
+    assert.equal(dash.me.id, 'stu-alex');
+    assert.ok(dash.nearbyFriends.length >= 10);
+    assert.ok(dash.todayPlan.length > 0);
+  });
+
+  it('sendFriendRequest and acceptFriendRequest add friend', () => {
+    const before = store.dashboard('stu-alex').nearbyFriends.length;
+    store.acceptFriendRequest('stu-alex', 'req-0001');
+    const after = store.dashboard('stu-alex').nearbyFriends.length;
+    assert.equal(after, before + 1);
+  });
+
+  it('updateInterests requires profile update', () => {
+    store.updateInterests('stu-alex', ['int-volleyball', 'int-soccer']);
+    const events = store.events('stu-alex');
+    assert.ok(events.onboardingComplete);
+    assert.deepEqual(events.myInterestIds, ['int-volleyball', 'int-soccer']);
+  });
+
+  it('setActivityMode updates presence and events', () => {
+    const result = store.setActivityMode('stu-alex', 'hungry');
+    assert.equal(result.status, 'freeNow');
+    const events = store.events('stu-alex');
+    assert.equal(events.activeMode, 'hungry');
+  });
+
+  it('courseHashMatches finds CS 2114 classmates', () => {
+    const crypto = require('crypto');
+    const hash = crypto.createHash('sha256').update('vt:CSE-1002').digest('hex');
+    const matches = store.courseHashMatches('stu-alex', [hash]);
+    assert.ok(matches.length >= 1);
+    assert.ok(matches[0].classmateCount >= 5);
+  });
+});
+
 describe('validateSeed', () => {
   it('flags participation without enrollment', () => {
     const db = JSON.parse(fs.readFileSync(SEED_PATH, 'utf8'));

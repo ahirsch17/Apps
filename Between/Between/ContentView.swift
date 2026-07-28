@@ -36,7 +36,7 @@ struct ContentView: View {
                 .animation(.easeOut(duration: 0.25), value: viewModel.toastMessage)
             }
         }
-        .dynamicTypeSize(...DynamicTypeSize.accessibility2)
+        .dynamicTypeSize(.xSmall ... .accessibility2)
         .task {
             await viewModel.bootstrap()
         }

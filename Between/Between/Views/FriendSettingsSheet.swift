@@ -8,17 +8,20 @@ struct FriendSettingsSheet: View {
     var body: some View {
         NavigationStack {
             List {
-                Section {
-                    Toggle(isOn: starBinding) {
-                        Label("Close friend", systemImage: "star.fill")
+                Section(
+                    content: {
+                        Toggle(isOn: starBinding) {
+                            Label("Close friend", systemImage: "star.fill")
+                        }
+                        Toggle(isOn: shareBinding) {
+                            Label("Share my free time", systemImage: "eye")
+                        }
+                    },
+                    footer: {
+                        Text("Close friends show up first on your home screen.")
+                            .font(BetweenFont.caption())
                     }
-                    Toggle(isOn: shareBinding) {
-                        Label("Share my free time", systemImage: "eye")
-                    }
-                } footer: {
-                    Text("Close friends show up first on your home screen.")
-                        .font(BetweenFont.caption())
-                }
+                )
             }
             .navigationTitle(FriendColorPalette.firstName(friend.name))
             .navigationBarTitleDisplayMode(.inline)

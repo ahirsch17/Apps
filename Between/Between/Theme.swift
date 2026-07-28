@@ -252,10 +252,10 @@ struct StatusPill: View {
 struct ToolbarIconButton: View {
     let systemName: String
     var badge: Int = 0
-    let action: () -> Void
+    let onTap: () -> Void
 
     var body: some View {
-        Button(action: action) {
+        Button(action: onTap) {
             ZStack(alignment: .topTrailing) {
                 Image(systemName: systemName)
                     .font(.body.weight(.medium))
