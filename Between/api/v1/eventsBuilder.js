@@ -20,8 +20,8 @@ function buildEvents(state, viewerId) {
     const parts = state.eventParticipations.filter((p) => p.eventId === event.id);
     const realInterested = new Set(parts.map((p) => p.studentId)).size;
     const realPartners = parts.filter((p) => p.kind === 'lookingForPartner').length;
-    const interestedCount = realInterested + (event.promotedInterestedCount || 0);
-    const partnerSeekingCount = realPartners + (event.promotedPartnerCount || 0);
+    const interestedCount = realInterested;
+    const partnerSeekingCount = realPartners;
     const isInterested = parts.some((p) => p.studentId === viewerId);
     const isLooking = viewerPartnerEvents.has(event.id);
     const matchingKind = event.matchingKind || 'partner';

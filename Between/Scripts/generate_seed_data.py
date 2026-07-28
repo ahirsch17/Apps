@@ -242,7 +242,7 @@ def build_interests():
 def build_campus_events():
     now = datetime.now(timezone.utc)
     tomorrow_eve = now + timedelta(days=1)
-    # promoted* = campus-wide padding; real CAST students fill eventParticipations
+    # Counts come only from eventParticipations — one row per real enrolled student.
     return [
         {"id": "evt-vb-im", "schoolId": "vt", "interestId": "int-volleyball",
          "title": "IM Volleyball — Open Gym",
@@ -250,7 +250,6 @@ def build_campus_events():
          "location": "War Memorial Gym",
          "startTime": tomorrow_eve.replace(hour=18, minute=0, second=0, microsecond=0).isoformat(),
          "endTime": tomorrow_eve.replace(hour=20, minute=0, second=0, microsecond=0).isoformat(),
-         "promotedInterestedCount": 37, "promotedPartnerCount": 6,
          "matchingKind": "partner", "isRecurring": True, "recurrenceLabel": "Every Wednesday"},
         {"id": "evt-soccer-pickup", "schoolId": "vt", "interestId": "int-soccer",
          "title": "Saturday Night Pickup Soccer",
@@ -258,7 +257,6 @@ def build_campus_events():
          "location": "Drillfield",
          "startTime": (now + timedelta(days=2, hours=17)).isoformat(),
          "endTime": (now + timedelta(days=2, hours=19)).isoformat(),
-         "promotedInterestedCount": 23, "promotedPartnerCount": 5,
          "matchingKind": "newcomer", "isRecurring": True, "recurrenceLabel": "Every Saturday night"},
         {"id": "evt-study-lib", "schoolId": "vt", "interestId": "int-study",
          "title": "CS 2114 Study Session",
@@ -266,7 +264,6 @@ def build_campus_events():
          "location": "Newman Library",
          "startTime": (now + timedelta(days=1, hours=14)).isoformat(),
          "endTime": (now + timedelta(days=1, hours=16)).isoformat(),
-         "promotedInterestedCount": 14, "promotedPartnerCount": 0,
          "matchingKind": "none", "isRecurring": False, "recurrenceLabel": None},
     ]
 
@@ -280,11 +277,11 @@ ENROLLED_CAST = [
 
 def build_event_participations():
     """
-    Every participant is a real student from the VT seed roster with enrollments.
-    promoted* counts on events pad to campus-scale totals for social proof.
+    Every participant is a real enrolled student. Displayed counts = len(unique studentIds).
+    Alex (stu-alex) is left off events so the demo can join and bump the count live.
     """
     parts = []
-    # IM Volleyball — partner matching (11 enrolled friends interested/seeking)
+    # IM Volleyball — 11/12 enrolled CAST (everyone except Alex)
     vb_interested = ["stu-sarah", "stu-chris", "stu-taylor", "stu-jordan", "stu-casey",
                      "stu-avery", "stu-riley", "stu-quinn"]
     vb_partner = ["stu-john", "stu-rachel", "stu-mia"]
@@ -293,20 +290,18 @@ def build_event_participations():
     for sid in vb_partner:
         parts.append({"eventId": "evt-vb-im", "studentId": sid, "kind": "lookingForPartner"})
 
-    # Pickup soccer — newcomer matching
-    soccer_interested = ["stu-john", "stu-taylor", "stu-jordan", "stu-casey", "stu-riley", "stu-chris"]
+    # Pickup soccer — 11/12 enrolled CAST
+    soccer_interested = ["stu-john", "stu-taylor", "stu-jordan", "stu-casey", "stu-riley",
+                         "stu-chris", "stu-rachel", "stu-avery"]
     soccer_newcomer = ["stu-sarah", "stu-mia", "stu-quinn"]
     for sid in soccer_interested:
         parts.append({"eventId": "evt-soccer-pickup", "studentId": sid, "kind": "interested"})
     for sid in soccer_newcomer:
         parts.append({"eventId": "evt-soccer-pickup", "studentId": sid, "kind": "lookingForPartner"})
 
-    # CS 2114 study — same-section classmates (matchingKind none)
-    cs2114_students = ["stu-alex", "stu-john", "stu-sarah", "stu-mia", "stu-chris",
-                       "stu-taylor", "stu-riley"]
-    for sid in cs2114_students:
+    # CS 2114 study — all 12 enrolled CAST
+    for sid in ENROLLED_CAST:
         parts.append({"eventId": "evt-study-lib", "studentId": sid, "kind": "interested"})
-    parts.append({"eventId": "evt-study-lib", "studentId": "stu-rachel", "kind": "interested"})
 
     return parts
 

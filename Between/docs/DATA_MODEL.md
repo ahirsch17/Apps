@@ -93,8 +93,8 @@ Server receives **hashes only** from the client after SSO. Server groups student
 | is_recurring | bool | |
 | recurrence_label | text | "Every Saturday night" |
 | matching_kind | enum | `partner` \| `newcomer` \| `none` |
-| promoted_interested_count | int | Demo credibility (optional) |
-| promoted_seeking_count | int | Demo credibility (optional) |
+
+**Counts rule:** `interestedCount` and `partnerSeekingCount` are computed only from `event_participation` rows — one row per real student. No synthetic padding.
 
 ### Matching kinds
 

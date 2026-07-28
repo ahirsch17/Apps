@@ -25,8 +25,8 @@ enum EventsBuilder {
                 let eventParts = participations.filter { $0.eventId == event.id }
                 let realInterested = Set(eventParts.map(\.studentId)).count
                 let realPartners = eventParts.filter { $0.kind == .lookingForPartner }.count
-                let interestedCount = realInterested + event.promotedInterestedCount
-                let partnerCount = realPartners + event.promotedPartnerCount
+                let interestedCount = realInterested
+                let partnerCount = realPartners
                 let isInterested = eventParts.contains { $0.studentId == viewerId }
                 let isLooking = viewerPartnerEventIds.contains(event.id)
                 let canView = isLooking && event.matchingKind != .none

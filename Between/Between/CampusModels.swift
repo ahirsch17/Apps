@@ -150,9 +150,6 @@ struct CampusEvent: Codable, Identifiable, Hashable {
     let location: String
     let startTime: Date
     let endTime: Date?
-    /// Demo credibility: adds to real participation counts (campus-scale social proof).
-    let promotedInterestedCount: Int
-    let promotedPartnerCount: Int
     let matchingKind: EventMatchingKind
     let isRecurring: Bool
     let recurrenceLabel: String?
@@ -160,7 +157,6 @@ struct CampusEvent: Codable, Identifiable, Hashable {
     init(
         id: String, schoolId: String, interestId: String, title: String,
         description: String, location: String, startTime: Date, endTime: Date? = nil,
-        promotedInterestedCount: Int = 0, promotedPartnerCount: Int = 0,
         matchingKind: EventMatchingKind = .partner,
         isRecurring: Bool = false,
         recurrenceLabel: String? = nil
@@ -173,8 +169,6 @@ struct CampusEvent: Codable, Identifiable, Hashable {
         self.location = location
         self.startTime = startTime
         self.endTime = endTime
-        self.promotedInterestedCount = promotedInterestedCount
-        self.promotedPartnerCount = promotedPartnerCount
         self.matchingKind = matchingKind
         self.isRecurring = isRecurring
         self.recurrenceLabel = recurrenceLabel
@@ -182,7 +176,6 @@ struct CampusEvent: Codable, Identifiable, Hashable {
 
     enum CodingKeys: String, CodingKey {
         case id, schoolId, interestId, title, description, location, startTime, endTime
-        case promotedInterestedCount, promotedPartnerCount
         case matchingKind, isRecurring, recurrenceLabel
     }
 
@@ -196,8 +189,6 @@ struct CampusEvent: Codable, Identifiable, Hashable {
         location = try c.decode(String.self, forKey: .location)
         startTime = try c.decode(Date.self, forKey: .startTime)
         endTime = try c.decodeIfPresent(Date.self, forKey: .endTime)
-        promotedInterestedCount = try c.decodeIfPresent(Int.self, forKey: .promotedInterestedCount) ?? 0
-        promotedPartnerCount = try c.decodeIfPresent(Int.self, forKey: .promotedPartnerCount) ?? 0
         matchingKind = try c.decodeIfPresent(EventMatchingKind.self, forKey: .matchingKind) ?? .partner
         isRecurring = try c.decodeIfPresent(Bool.self, forKey: .isRecurring) ?? false
         recurrenceLabel = try c.decodeIfPresent(String.self, forKey: .recurrenceLabel)

@@ -39,13 +39,14 @@ describe('DataStore event mutations', () => {
     store = createFreshStore();
   });
 
-  it('markEventInterested adds enrolled student and events reflect it', () => {
-    assert.ok(store.markEventInterested('stu-alex', 'evt-vb-im'));
-    const events = store.events('stu-alex');
-    const vb = events.events.find((e) => e.id === 'evt-vb-im');
-    assert.ok(vb);
-    assert.equal(vb.isInterested, true);
-    assert.ok(vb.interestedCount >= 12);
+  it('markEventInterested increments displayed count by exactly one', () => {
+    const before = store.events('stu-alex').events.find((e) => e.id === 'evt-vb-im');
+    assert.equal(before.isInterested, false);
+    assert.equal(before.interestedCount, 11);
+    store.markEventInterested('stu-alex', 'evt-vb-im');
+    const after = store.events('stu-alex').events.find((e) => e.id === 'evt-vb-im');
+    assert.equal(after.isInterested, true);
+    assert.equal(after.interestedCount, 12);
   });
 
   it('markEventInterested rejects unknown student', () => {
@@ -76,15 +77,15 @@ describe('DataStore event mutations', () => {
     );
   });
 
-  it('events() counts real seed students plus promoted padding', () => {
+  it('events() counts only real participations — no synthetic padding', () => {
     const events = store.events('stu-alex');
     const vb = events.events.find((e) => e.id === 'evt-vb-im');
     const realVb = new Set(
       store.eventParticipations.filter((p) => p.eventId === 'evt-vb-im').map((p) => p.studentId)
     ).size;
-    assert.ok(realVb >= 11);
-    assert.equal(vb.interestedCount, realVb + 37);
-    assert.equal(vb.partnerSeekingCount, 3 + 6);
+    assert.equal(vb.interestedCount, realVb);
+    assert.equal(vb.partnerSeekingCount, 3);
+    assert.equal(vb.interestedCount, 11);
   });
 
   it('mutual opt-in hides partner profiles until viewer opts in', () => {

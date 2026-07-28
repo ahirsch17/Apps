@@ -55,8 +55,8 @@ function validateSeed(db) {
     const real = new Set(
       (db.eventParticipations || []).filter((p) => p.eventId === ev.id).map((p) => p.studentId)
     );
-    if (real.size === 0 && (ev.promotedInterestedCount || 0) === 0) {
-      errors.push(`event ${ev.id} has no participations and no promoted count`);
+    if (real.size === 0) {
+      errors.push(`event ${ev.id} has no enrolled student participations`);
     }
   }
 
