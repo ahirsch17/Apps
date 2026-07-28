@@ -85,23 +85,27 @@ Interests on onboarding (pick 2–3). Home surfaces one matching event: "Because
 
 ---
 
-## 6. Color, logo & name (modern, not flashy)
+## 6. Color, logo & name
 
-**Direction:** Campus-trusted, not startup-neon.
+**Name:** Keep **Between** — see `BRAND_GUIDE.md` for full analysis.
+
+**Direction:** Campus-trusted for admins, warm and modern for students — not startup-neon, not full VT maroon on every button.
 
 | Token | Value | Use |
 |-------|-------|-----|
-| Primary | Chicago Maroon `#861F41` | "Be" in wordmark, CTAs, trust |
-| Accent | Burnt Orange `#CF4420` | "tween" in wordmark, badges, energy |
-| Background | Off-white `#F7F7F8` | Calm canvas |
-| Free | Soft green | Availability — not alarm red |
-| Type | SF Pro Rounded (wordmark) | Native, friendly, not childish |
+| Product maroon | `#8B2A4A` | Wordmark "Be", icons, headers |
+| Action coral | `#E85D47` | Primary buttons, badges — energy without admin-portal feel |
+| VT maroon/orange | `#861F41` / `#CF4420` | SSO + "Virginia Tech pilot" badge **only** |
+| Background | Warm off-white `#FAF9F7` | Calm canvas |
+| Free | Soft green | Availability |
 
-**Wordmark:** `Be` (maroon) + `tween` (orange) — subtle two-tone, no gradients, no glow.
+**Mark:** `BetweenMark` — two bars with a gap (time between classes). Vector, no PNG.
 
-**Avoid:** Neon gradients, gamification badges, dashboard density, emoji avatars in production, flashy animations on launch.
+**Wordmark:** `Be` (maroon) + `tween` (coral).
 
-**Modern = confident restraint.** VT students trust tools that feel official-adjacent, not TikTok-adjacent.
+**Avoid:** Full school colors on every surface (feels like Banner/HokieSPA), neon gradients, gamification badges.
+
+**Modern = confident restraint.** Students open this between classes — it should feel like a helpful friend, not a university form.
 
 ---
 

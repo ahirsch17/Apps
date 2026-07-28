@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const { buildDashboard } = require('./dashboardBuilder');
 const { buildEvents } = require('./eventsBuilder');
+const { assertValidSeed } = require('./seedValidator');
 
 const SEED_PATH = path.join(__dirname, '../../Between/Resources/seed_data.json');
 const MODE_MAP = {
@@ -30,6 +31,7 @@ class DataStore {
   reload() {
     const raw = fs.readFileSync(SEED_PATH, 'utf8');
     const db = JSON.parse(raw);
+    assertValidSeed(db);
     this.generatedAt = db.generatedAt;
     this.universities = db.universities;
     this.sections = db.sections;
@@ -54,6 +56,14 @@ class DataStore {
 
   findStudentById(id) {
     return this.students.find((s) => s.id === id);
+  }
+
+  studentHasEnrollment(studentId) {
+    return this.enrollments.some((e) => e.studentId === studentId);
+  }
+
+  findEventById(eventId) {
+    return this.campusEvents.find((e) => e.id === eventId);
   }
 
   loginCandidates() {
@@ -184,7 +194,8 @@ class DataStore {
   }
 
   markEventInterested(studentId, eventId) {
-    if (!this.campusEvents.some((e) => e.id === eventId)) return false;
+    if (!this.findStudentById(studentId) || !this.studentHasEnrollment(studentId)) return false;
+    if (!this.findEventById(eventId)) return false;
     this.eventParticipations = this.eventParticipations.filter(
       (p) => !(p.eventId === eventId && p.studentId === studentId && p.kind === 'interested')
     );
@@ -196,7 +207,9 @@ class DataStore {
 
   markLookingForPartner(studentId, eventId, note, experience) {
     const me = this.findStudentById(studentId);
-    if (!me || !this.campusEvents.some((e) => e.id === eventId)) return false;
+    const event = this.findEventById(eventId);
+    if (!me || !event || !this.studentHasEnrollment(studentId)) return false;
+    if (event.matchingKind === 'none') return false;
     this.eventParticipations = this.eventParticipations.filter(
       (p) => !(p.eventId === eventId && p.studentId === studentId)
     );
@@ -271,3 +284,5 @@ class DataStore {
 }
 
 module.exports = new DataStore();
+module.exports.DataStore = DataStore;
+module.exports.createFreshStore = () => new DataStore();

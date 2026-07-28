@@ -25,20 +25,17 @@ struct AuthFlowView: View {
         VStack(spacing: 0) {
             Spacer()
 
-            Image("BrandLogo")
-                .resizable()
-                .scaledToFit()
-                .frame(maxWidth: 200, maxHeight: 64)
-                .accessibilityLabel("Between logo")
-
-            BetweenWordmark(size: .large)
-                .padding(.top, 12)
+            BetweenBrandLockup(style: .welcome)
 
             Text("Know when you and your friends\nare free between classes.")
-                    .font(BetweenFont.secondary())
-                    .foregroundStyle(.secondary)
-                    .multilineTextAlignment(.center)
-            .padding(.horizontal, 32)
+                .font(BetweenFont.secondary())
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+                .padding(.top, 8)
+                .padding(.horizontal, 32)
+
+            VTPilotBadge()
+                .padding(.top, 12)
 
             VStack(alignment: .leading, spacing: 14) {
                 featureRow(icon: "person.2.fill", text: "See who's free right now")
@@ -138,6 +135,9 @@ struct AuthFlowView: View {
             title: "Virginia Tech SSO",
             subtitle: "Demo: uses your @vt.edu email — no password needed."
         ) {
+            VTPilotBadge()
+                .frame(maxWidth: .infinity, alignment: .leading)
+
             TextField("you@vt.edu", text: $viewModel.loginEmail)
                 .textContentType(.emailAddress)
                 .keyboardType(.emailAddress)

@@ -91,7 +91,7 @@ struct TodayView: View {
         HStack {
             ToolbarIconButton(systemName: "calendar", action: { showEvents = true })
             Spacer()
-            BetweenWordmark(size: .compact)
+            BetweenBrandLockup(style: .toolbar)
             Spacer()
             ToolbarIconButton(
                 systemName: "person.2.fill",

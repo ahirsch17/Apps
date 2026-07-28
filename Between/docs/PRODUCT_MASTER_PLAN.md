@@ -62,9 +62,10 @@ Students skip events because:
 | Social | 1 hour | Friends free + event interested |
 
 ### Name & logo direction
-- **Between** — already strong: "the time between classes"
-- Logo: minimal wordmark + optional clock/window mark
-- Avoid: social-network clutter, gamification badges, minute counters
+- **Between** — keep; 8.5/10 for this product (see `BRAND_GUIDE.md`)
+- **BetweenMark** — two-bar gap symbol + Be/tween wordmark
+- **VT co-brand** — official colors on SSO/pilot badge only; coral CTAs for daily use
+- Avoid: full maroon chrome (feels like admin portal), neon gradients, minute counters
 
 See `DESIGN_PSYCHOLOGY.md` for research-backed patterns.
 

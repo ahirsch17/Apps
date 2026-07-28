@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-28T03:36:37.897241+00:00",
+  "generatedAt": "2026-07-28T03:51:11.884008+00:00",
   "universities": [
     {
       "id": "vt",
@@ -724,21 +724,21 @@
       "fromStudentId": "stu-sug-00",
       "toStudentId": "stu-alex",
       "status": "pending",
-      "createdAt": "2026-07-27T22:36:37.897241+00:00"
+      "createdAt": "2026-07-27T22:51:11.884008+00:00"
     },
     {
       "id": "req-0002",
       "fromStudentId": "stu-sug-01",
       "toStudentId": "stu-alex",
       "status": "pending",
-      "createdAt": "2026-07-27T03:36:37.897241+00:00"
+      "createdAt": "2026-07-27T03:51:11.884008+00:00"
     },
     {
       "id": "req-0003",
       "fromStudentId": "stu-sug-02",
       "toStudentId": "stu-alex",
       "status": "pending",
-      "createdAt": "2026-07-26T03:36:37.897241+00:00"
+      "createdAt": "2026-07-26T03:51:11.884008+00:00"
     }
   ],
   "presence": [
@@ -747,140 +747,140 @@
       "status": "busy",
       "activity": "In class",
       "location": "McBryde Hall",
-      "lastUpdated": "2026-07-28T03:36:37.897241+00:00"
+      "lastUpdated": "2026-07-28T03:51:11.884008+00:00"
     },
     {
       "studentId": "stu-john",
       "status": "freeNow",
       "activity": "Free",
       "location": "Turner Place",
-      "lastUpdated": "2026-07-28T03:33:37.897241+00:00"
+      "lastUpdated": "2026-07-28T03:48:11.884008+00:00"
     },
     {
       "studentId": "stu-rachel",
       "status": "freeNow",
       "activity": "Coffee",
       "location": "Newman Library",
-      "lastUpdated": "2026-07-28T03:30:37.897241+00:00"
+      "lastUpdated": "2026-07-28T03:45:11.884008+00:00"
     },
     {
       "studentId": "stu-sarah",
       "status": "studying",
       "activity": "Library",
       "location": "Newman Library",
-      "lastUpdated": "2026-07-28T03:27:37.897241+00:00"
+      "lastUpdated": "2026-07-28T03:42:11.884008+00:00"
     },
     {
       "studentId": "stu-mia",
       "status": "onTheWay",
       "activity": "Headed to McBryde",
       "location": "Drillfield",
-      "lastUpdated": "2026-07-28T03:24:37.897241+00:00"
+      "lastUpdated": "2026-07-28T03:39:11.884008+00:00"
     },
     {
       "studentId": "stu-chris",
       "status": "freeNow",
       "activity": "Free",
       "location": "Squires",
-      "lastUpdated": "2026-07-28T03:21:37.897241+00:00"
+      "lastUpdated": "2026-07-28T03:36:11.884008+00:00"
     },
     {
       "studentId": "stu-taylor",
       "status": "busy",
       "activity": "In class",
       "location": "Pamplin Hall",
-      "lastUpdated": "2026-07-28T03:18:37.897241+00:00"
+      "lastUpdated": "2026-07-28T03:33:11.884008+00:00"
     },
     {
       "studentId": "stu-jordan",
       "status": "busy",
       "activity": "In class",
       "location": "Turner Place",
-      "lastUpdated": "2026-07-28T03:15:37.897241+00:00"
+      "lastUpdated": "2026-07-28T03:30:11.884008+00:00"
     },
     {
       "studentId": "stu-casey",
       "status": "busy",
       "activity": "In class",
       "location": "McBryde Hall",
-      "lastUpdated": "2026-07-28T03:12:37.897241+00:00"
+      "lastUpdated": "2026-07-28T03:27:11.884008+00:00"
     },
     {
       "studentId": "stu-avery",
       "status": "busy",
       "activity": "In class",
       "location": "Newman Library",
-      "lastUpdated": "2026-07-28T03:34:37.897241+00:00"
+      "lastUpdated": "2026-07-28T03:49:11.884008+00:00"
     },
     {
       "studentId": "stu-riley",
       "status": "busy",
       "activity": "In class",
       "location": "Torgersen Hall",
-      "lastUpdated": "2026-07-28T03:31:37.897241+00:00"
+      "lastUpdated": "2026-07-28T03:46:11.884008+00:00"
     },
     {
       "studentId": "stu-quinn",
       "status": "busy",
       "activity": "In class",
       "location": "Goodwin Hall",
-      "lastUpdated": "2026-07-28T03:28:37.897241+00:00"
+      "lastUpdated": "2026-07-28T03:43:11.884008+00:00"
     },
     {
       "studentId": "stu-sug-00",
       "status": "busy",
       "activity": "In class",
       "location": "Burruss Hall",
-      "lastUpdated": "2026-07-28T03:25:37.897241+00:00"
+      "lastUpdated": "2026-07-28T03:40:11.884008+00:00"
     },
     {
       "studentId": "stu-sug-01",
       "status": "busy",
       "activity": "In class",
       "location": "Derring Hall",
-      "lastUpdated": "2026-07-28T03:22:37.897241+00:00"
+      "lastUpdated": "2026-07-28T03:37:11.884008+00:00"
     },
     {
       "studentId": "stu-sug-02",
       "status": "busy",
       "activity": "In class",
       "location": "Pamplin Hall",
-      "lastUpdated": "2026-07-28T03:19:37.897241+00:00"
+      "lastUpdated": "2026-07-28T03:34:11.884008+00:00"
     },
     {
       "studentId": "stu-sug-03",
       "status": "busy",
       "activity": "In class",
       "location": "Turner Place",
-      "lastUpdated": "2026-07-28T03:16:37.897241+00:00"
+      "lastUpdated": "2026-07-28T03:31:11.884008+00:00"
     },
     {
       "studentId": "stu-sug-04",
       "status": "busy",
       "activity": "In class",
       "location": "McBryde Hall",
-      "lastUpdated": "2026-07-28T03:13:37.897241+00:00"
+      "lastUpdated": "2026-07-28T03:28:11.884008+00:00"
     },
     {
       "studentId": "stu-sug-05",
       "status": "busy",
       "activity": "In class",
       "location": "Newman Library",
-      "lastUpdated": "2026-07-28T03:35:37.897241+00:00"
+      "lastUpdated": "2026-07-28T03:50:11.884008+00:00"
     },
     {
       "studentId": "stu-sug-06",
       "status": "busy",
       "activity": "In class",
       "location": "Torgersen Hall",
-      "lastUpdated": "2026-07-28T03:32:37.897241+00:00"
+      "lastUpdated": "2026-07-28T03:47:11.884008+00:00"
     },
     {
       "studentId": "stu-sug-07",
       "status": "busy",
       "activity": "In class",
       "location": "Goodwin Hall",
-      "lastUpdated": "2026-07-28T03:29:37.897241+00:00"
+      "lastUpdated": "2026-07-28T03:44:11.884008+00:00"
     }
   ],
   "plans": [
@@ -890,7 +890,7 @@
       "type": "food",
       "title": "Lunch at Turner",
       "location": "Turner Place",
-      "startTime": "2026-07-28T05:06:37.897241+00:00",
+      "startTime": "2026-07-28T05:21:11.884008+00:00",
       "visibility": "friends"
     }
   ],
@@ -1047,8 +1047,8 @@
       "location": "War Memorial Gym",
       "startTime": "2026-07-29T18:00:00+00:00",
       "endTime": "2026-07-29T20:00:00+00:00",
-      "promotedInterestedCount": 48,
-      "promotedPartnerCount": 9,
+      "promotedInterestedCount": 37,
+      "promotedPartnerCount": 6,
       "matchingKind": "partner",
       "isRecurring": true,
       "recurrenceLabel": "Every Wednesday"
@@ -1058,12 +1058,12 @@
       "schoolId": "vt",
       "interestId": "int-soccer",
       "title": "Saturday Night Pickup Soccer",
-      "description": "Casual game on the Drillfield \u2014 cleats optional. New to pickup? Opt in to meet others who don't know anyone either.",
+      "description": "Casual game on the Drillfield. New? Opt in to meet others who don't know anyone either.",
       "location": "Drillfield",
-      "startTime": "2026-07-30T20:36:37.897241+00:00",
-      "endTime": "2026-07-30T22:36:37.897241+00:00",
-      "promotedInterestedCount": 31,
-      "promotedPartnerCount": 8,
+      "startTime": "2026-07-30T20:51:11.884008+00:00",
+      "endTime": "2026-07-30T22:51:11.884008+00:00",
+      "promotedInterestedCount": 23,
+      "promotedPartnerCount": 5,
       "matchingKind": "newcomer",
       "isRecurring": true,
       "recurrenceLabel": "Every Saturday night"
@@ -1075,9 +1075,9 @@
       "title": "CS 2114 Study Session",
       "description": "Newman Library 2nd floor. Work problems together.",
       "location": "Newman Library",
-      "startTime": "2026-07-29T17:36:37.897241+00:00",
-      "endTime": "2026-07-29T19:36:37.897241+00:00",
-      "promotedInterestedCount": 22,
+      "startTime": "2026-07-29T17:51:11.884008+00:00",
+      "endTime": "2026-07-29T19:51:11.884008+00:00",
+      "promotedInterestedCount": 14,
       "promotedPartnerCount": 0,
       "matchingKind": "none",
       "isRecurring": false,
@@ -1085,6 +1085,46 @@
     }
   ],
   "eventParticipations": [
+    {
+      "eventId": "evt-vb-im",
+      "studentId": "stu-sarah",
+      "kind": "interested"
+    },
+    {
+      "eventId": "evt-vb-im",
+      "studentId": "stu-chris",
+      "kind": "interested"
+    },
+    {
+      "eventId": "evt-vb-im",
+      "studentId": "stu-taylor",
+      "kind": "interested"
+    },
+    {
+      "eventId": "evt-vb-im",
+      "studentId": "stu-jordan",
+      "kind": "interested"
+    },
+    {
+      "eventId": "evt-vb-im",
+      "studentId": "stu-casey",
+      "kind": "interested"
+    },
+    {
+      "eventId": "evt-vb-im",
+      "studentId": "stu-avery",
+      "kind": "interested"
+    },
+    {
+      "eventId": "evt-vb-im",
+      "studentId": "stu-riley",
+      "kind": "interested"
+    },
+    {
+      "eventId": "evt-vb-im",
+      "studentId": "stu-quinn",
+      "kind": "interested"
+    },
     {
       "eventId": "evt-vb-im",
       "studentId": "stu-john",
@@ -1097,18 +1137,8 @@
     },
     {
       "eventId": "evt-vb-im",
-      "studentId": "stu-sarah",
-      "kind": "interested"
-    },
-    {
-      "eventId": "evt-vb-im",
       "studentId": "stu-mia",
       "kind": "lookingForPartner"
-    },
-    {
-      "eventId": "evt-vb-im",
-      "studentId": "stu-chris",
-      "kind": "interested"
     },
     {
       "eventId": "evt-soccer-pickup",
@@ -1117,6 +1147,31 @@
     },
     {
       "eventId": "evt-soccer-pickup",
+      "studentId": "stu-taylor",
+      "kind": "interested"
+    },
+    {
+      "eventId": "evt-soccer-pickup",
+      "studentId": "stu-jordan",
+      "kind": "interested"
+    },
+    {
+      "eventId": "evt-soccer-pickup",
+      "studentId": "stu-casey",
+      "kind": "interested"
+    },
+    {
+      "eventId": "evt-soccer-pickup",
+      "studentId": "stu-riley",
+      "kind": "interested"
+    },
+    {
+      "eventId": "evt-soccer-pickup",
+      "studentId": "stu-chris",
+      "kind": "interested"
+    },
+    {
+      "eventId": "evt-soccer-pickup",
       "studentId": "stu-sarah",
       "kind": "lookingForPartner"
     },
@@ -1124,6 +1179,46 @@
       "eventId": "evt-soccer-pickup",
       "studentId": "stu-mia",
       "kind": "lookingForPartner"
+    },
+    {
+      "eventId": "evt-soccer-pickup",
+      "studentId": "stu-quinn",
+      "kind": "lookingForPartner"
+    },
+    {
+      "eventId": "evt-study-lib",
+      "studentId": "stu-alex",
+      "kind": "interested"
+    },
+    {
+      "eventId": "evt-study-lib",
+      "studentId": "stu-john",
+      "kind": "interested"
+    },
+    {
+      "eventId": "evt-study-lib",
+      "studentId": "stu-sarah",
+      "kind": "interested"
+    },
+    {
+      "eventId": "evt-study-lib",
+      "studentId": "stu-mia",
+      "kind": "interested"
+    },
+    {
+      "eventId": "evt-study-lib",
+      "studentId": "stu-chris",
+      "kind": "interested"
+    },
+    {
+      "eventId": "evt-study-lib",
+      "studentId": "stu-taylor",
+      "kind": "interested"
+    },
+    {
+      "eventId": "evt-study-lib",
+      "studentId": "stu-riley",
+      "kind": "interested"
     },
     {
       "eventId": "evt-study-lib",
@@ -1175,6 +1270,15 @@
       "year": "Junior",
       "experienceNote": "Played intramural in high school",
       "lookingNote": "First time at Drillfield pickup",
+      "socialHandle": null
+    },
+    {
+      "studentId": "stu-quinn",
+      "eventId": "evt-soccer-pickup",
+      "displayName": "Quinn",
+      "year": "Junior",
+      "experienceNote": "Casual player",
+      "lookingNote": "Don't know anyone on the field yet",
       "socialHandle": null
     }
   ]

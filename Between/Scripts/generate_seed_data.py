@@ -242,6 +242,7 @@ def build_interests():
 def build_campus_events():
     now = datetime.now(timezone.utc)
     tomorrow_eve = now + timedelta(days=1)
+    # promoted* = campus-wide padding; real CAST students fill eventParticipations
     return [
         {"id": "evt-vb-im", "schoolId": "vt", "interestId": "int-volleyball",
          "title": "IM Volleyball — Open Gym",
@@ -249,22 +250,122 @@ def build_campus_events():
          "location": "War Memorial Gym",
          "startTime": tomorrow_eve.replace(hour=18, minute=0, second=0, microsecond=0).isoformat(),
          "endTime": tomorrow_eve.replace(hour=20, minute=0, second=0, microsecond=0).isoformat(),
-         "promotedInterestedCount": 48, "promotedPartnerCount": 9},
+         "promotedInterestedCount": 37, "promotedPartnerCount": 6,
+         "matchingKind": "partner", "isRecurring": True, "recurrenceLabel": "Every Wednesday"},
         {"id": "evt-soccer-pickup", "schoolId": "vt", "interestId": "int-soccer",
-         "title": "Pickup Soccer on Drillfield",
-         "description": "Casual game — cleats optional.",
+         "title": "Saturday Night Pickup Soccer",
+         "description": "Casual game on the Drillfield. New? Opt in to meet others who don't know anyone either.",
          "location": "Drillfield",
          "startTime": (now + timedelta(days=2, hours=17)).isoformat(),
          "endTime": (now + timedelta(days=2, hours=19)).isoformat(),
-         "promotedInterestedCount": 31, "promotedPartnerCount": 6},
+         "promotedInterestedCount": 23, "promotedPartnerCount": 5,
+         "matchingKind": "newcomer", "isRecurring": True, "recurrenceLabel": "Every Saturday night"},
         {"id": "evt-study-lib", "schoolId": "vt", "interestId": "int-study",
          "title": "CS 2114 Study Session",
          "description": "Newman Library 2nd floor. Work problems together.",
          "location": "Newman Library",
          "startTime": (now + timedelta(days=1, hours=14)).isoformat(),
          "endTime": (now + timedelta(days=1, hours=16)).isoformat(),
-         "promotedInterestedCount": 22, "promotedPartnerCount": 0},
+         "promotedInterestedCount": 14, "promotedPartnerCount": 0,
+         "matchingKind": "none", "isRecurring": False, "recurrenceLabel": None},
     ]
+
+
+# CAST members with enrollments — used for realistic event rosters
+ENROLLED_CAST = [
+    "stu-alex", "stu-john", "stu-rachel", "stu-sarah", "stu-mia", "stu-chris",
+    "stu-taylor", "stu-jordan", "stu-casey", "stu-avery", "stu-riley", "stu-quinn",
+]
+
+
+def build_event_participations():
+    """
+    Every participant is a real student from the VT seed roster with enrollments.
+    promoted* counts on events pad to campus-scale totals for social proof.
+    """
+    parts = []
+    # IM Volleyball — partner matching (11 enrolled friends interested/seeking)
+    vb_interested = ["stu-sarah", "stu-chris", "stu-taylor", "stu-jordan", "stu-casey",
+                     "stu-avery", "stu-riley", "stu-quinn"]
+    vb_partner = ["stu-john", "stu-rachel", "stu-mia"]
+    for sid in vb_interested:
+        parts.append({"eventId": "evt-vb-im", "studentId": sid, "kind": "interested"})
+    for sid in vb_partner:
+        parts.append({"eventId": "evt-vb-im", "studentId": sid, "kind": "lookingForPartner"})
+
+    # Pickup soccer — newcomer matching
+    soccer_interested = ["stu-john", "stu-taylor", "stu-jordan", "stu-casey", "stu-riley", "stu-chris"]
+    soccer_newcomer = ["stu-sarah", "stu-mia", "stu-quinn"]
+    for sid in soccer_interested:
+        parts.append({"eventId": "evt-soccer-pickup", "studentId": sid, "kind": "interested"})
+    for sid in soccer_newcomer:
+        parts.append({"eventId": "evt-soccer-pickup", "studentId": sid, "kind": "lookingForPartner"})
+
+    # CS 2114 study — same-section classmates (matchingKind none)
+    cs2114_students = ["stu-alex", "stu-john", "stu-sarah", "stu-mia", "stu-chris",
+                       "stu-taylor", "stu-riley"]
+    for sid in cs2114_students:
+        parts.append({"eventId": "evt-study-lib", "studentId": sid, "kind": "interested"})
+    parts.append({"eventId": "evt-study-lib", "studentId": "stu-rachel", "kind": "interested"})
+
+    return parts
+
+
+def build_partner_profiles(students):
+    """Profiles derived from real student records — one per lookingForPartner row."""
+    by_id = {s["id"]: s for s in students}
+    specs = [
+        ("stu-john", "evt-vb-im", "Intermediate", "Need a setter for IM team"),
+        ("stu-rachel", "evt-vb-im", "Played in high school", "Looking for a co-ed pair"),
+        ("stu-mia", "evt-vb-im", "Beginner friendly", "New to IM — want a buddy"),
+        ("stu-sarah", "evt-soccer-pickup", "Never played pickup at VT", "Out-of-state — don't know anyone who plays"),
+        ("stu-mia", "evt-soccer-pickup", "Played intramural in high school", "First time at Drillfield pickup"),
+        ("stu-quinn", "evt-soccer-pickup", "Casual player", "Don't know anyone on the field yet"),
+    ]
+    out = []
+    for sid, eid, exp, note in specs:
+        s = by_id[sid]
+        out.append({
+            "studentId": sid, "eventId": eid,
+            "displayName": s["name"].split()[0],
+            "year": s["year"],
+            "experienceNote": exp,
+            "lookingNote": note,
+            "socialHandle": None,
+        })
+    return out
+
+
+def validate_seed(payload):
+    """Ensure participations reference enrolled students only."""
+    student_ids = {s["id"] for s in payload["students"]}
+    event_ids = {e["id"] for e in payload["campusEvents"]}
+    section_ids = {s["sectionId"] for s in payload["sections"]}
+    enrolled = {e["studentId"] for e in payload["enrollments"]}
+    errors = []
+
+    for e in payload["enrollments"]:
+        if e["studentId"] not in student_ids:
+            errors.append(f"enrollment unknown student {e['studentId']}")
+        if e["sectionId"] not in section_ids:
+            errors.append(f"enrollment unknown section {e['sectionId']}")
+
+    for p in payload["eventParticipations"]:
+        if p["studentId"] not in student_ids:
+            errors.append(f"participation unknown student {p['studentId']}")
+        elif p["studentId"] not in enrolled:
+            errors.append(f"participation {p['studentId']} has no enrollment")
+        if p["eventId"] not in event_ids:
+            errors.append(f"participation unknown event {p['eventId']}")
+
+    seeking = {(p["eventId"], p["studentId"]) for p in payload["eventParticipations"]
+               if p["kind"] == "lookingForPartner"}
+    for pp in payload["partnerProfiles"]:
+        if (pp["eventId"], pp["studentId"]) not in seeking:
+            errors.append(f"partner profile missing participation for {pp['studentId']}")
+
+    if errors:
+        raise ValueError("Seed validation failed:\n" + "\n".join(f"  - {x}" for x in errors))
 
 
 def build_student_profiles(students):
@@ -276,39 +377,6 @@ def build_student_profiles(students):
         {"studentId": s["id"], "interestIds": [], "onboardingComplete": False}
         for s in students if s["id"] not in ("stu-alex", "stu-john", "stu-rachel")
     ]
-
-
-def build_event_participations():
-    return [
-        {"eventId": "evt-vb-im", "studentId": "stu-john", "kind": "lookingForPartner"},
-        {"eventId": "evt-vb-im", "studentId": "stu-rachel", "kind": "lookingForPartner"},
-        {"eventId": "evt-vb-im", "studentId": "stu-sarah", "kind": "interested"},
-        {"eventId": "evt-vb-im", "studentId": "stu-mia", "kind": "lookingForPartner"},
-        {"eventId": "evt-vb-im", "studentId": "stu-chris", "kind": "interested"},
-        {"eventId": "evt-soccer-pickup", "studentId": "stu-john", "kind": "interested"},
-        {"eventId": "evt-study-lib", "studentId": "stu-rachel", "kind": "interested"},
-    ]
-
-
-def build_partner_profiles(students):
-    by_id = {s["id"]: s for s in students}
-    profiles = [
-        ("stu-john", "evt-vb-im", "Intermediate", "Need a setter for IM team"),
-        ("stu-rachel", "evt-vb-im", "Played in high school", "Looking for a co-ed pair"),
-        ("stu-mia", "evt-vb-im", "Beginner friendly", "New to IM — want a buddy"),
-    ]
-    out = []
-    for sid, eid, exp, note in profiles:
-        s = by_id[sid]
-        out.append({
-            "studentId": sid, "eventId": eid,
-            "displayName": s["name"].split()[0],
-            "year": s["year"],
-            "experienceNote": exp,
-            "lookingNote": note,
-            "socialHandle": None,
-        })
-    return out
 
 
 def generate_data():
@@ -337,10 +405,12 @@ def main():
     output = Path(__file__).resolve().parents[1] / "Between" / "Resources" / "seed_data.json"
     output.parent.mkdir(parents=True, exist_ok=True)
     payload = generate_data()
+    validate_seed(payload)
     output.write_text(json.dumps(payload, indent=2))
-    alex_friends = sum(1 for f in payload["friendships"] if "stu-alex" in (f["studentA"], f["studentB"]))
+    vb_real = len({p["studentId"] for p in payload["eventParticipations"] if p["eventId"] == "evt-vb-im"})
     print(f"Wrote {output}")
-    print(f"students={len(payload['students'])}, sections={len(payload['sections'])}, alex_friendships={alex_friends}")
+    print(f"students={len(payload['students'])}, sections={len(payload['sections'])}, "
+          f"event_participations={len(payload['eventParticipations'])}, vb_real={vb_real}")
 
 
 if __name__ == "__main__":

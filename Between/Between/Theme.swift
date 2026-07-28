@@ -1,12 +1,26 @@
 import SwiftUI
 
 // MARK: - Brand & surfaces
+//
+// Student-facing UI uses warm product colors (approachable daily use).
+// VT maroon/orange appears only on SSO / pilot co-brand — not every button.
+// See docs/BRAND_GUIDE.md for psychology rationale.
 
 enum BetweenTheme {
-    /// VT Chicago Maroon — campus-native but readable on white
-    static let accent = Color(red: 0.53, green: 0.12, blue: 0.26)
-    static let accentSoft = Color(red: 0.53, green: 0.12, blue: 0.26).opacity(0.10)
-    static let accentSecondary = Color(red: 0.81, green: 0.27, blue: 0.13)
+    /// Product maroon — slightly warmer than Chicago Maroon; identity, wordmark, headers
+    static let accent = Color(red: 0.545, green: 0.165, blue: 0.290) // #8B2A4A
+    static let accentSoft = accent.opacity(0.10)
+
+    /// Action coral — primary CTAs; reads energetic without feeling "admin portal"
+    static let accentAction = Color(red: 0.910, green: 0.365, blue: 0.278) // #E85D47
+    static let accentActionSoft = accentAction.opacity(0.12)
+
+    /// Legacy alias + wordmark second syllable
+    static let accentSecondary = accentAction
+
+    /// VT official tones — SSO screen & "Virginia Tech pilot" co-brand only
+    static let vtMaroon = Color(red: 0.525, green: 0.122, blue: 0.255) // #861F41
+    static let vtOrange = Color(red: 0.812, green: 0.267, blue: 0.125) // #CF4420
 
     static let free = Color(red: 0.18, green: 0.72, blue: 0.48)
     static let busy = Color(red: 0.55, green: 0.55, blue: 0.58)
@@ -17,13 +31,13 @@ enum BetweenTheme {
     static let neonMint = free
     static let neonGreen = free
     static let neonViolet = studying
-    static let neonAmber = accentSecondary
+    static let neonAmber = accentAction
 
     static let cornerRadius: CGFloat = 14
     static let cardPadding: CGFloat = 16
 
     static func screenBackground(_ scheme: ColorScheme) -> Color {
-        scheme == .dark ? Color(red: 0.06, green: 0.06, blue: 0.08) : Color(red: 0.97, green: 0.97, blue: 0.98)
+        scheme == .dark ? Color(red: 0.06, green: 0.06, blue: 0.08) : Color(red: 0.98, green: 0.975, blue: 0.97)
     }
 
     static func surface(_ scheme: ColorScheme) -> Color {
@@ -31,7 +45,7 @@ enum BetweenTheme {
     }
 
     static func surfaceMuted(_ scheme: ColorScheme) -> Color {
-        scheme == .dark ? Color(red: 0.14, green: 0.14, blue: 0.16) : Color(red: 0.94, green: 0.94, blue: 0.96)
+        scheme == .dark ? Color(red: 0.14, green: 0.14, blue: 0.16) : Color(red: 0.945, green: 0.945, blue: 0.955)
     }
 }
 
@@ -54,7 +68,49 @@ enum BetweenFont {
     }
 }
 
-// MARK: - Wordmark
+// MARK: - Wordmark & mark
+
+/// Two bars with a gap — the time *between* classes. Vector, no PNG required.
+struct BetweenMark: View {
+    enum Size { case hero, compact, toolbar }
+    var size: Size = .hero
+
+    private var barWidth: CGFloat {
+        switch size {
+        case .hero: return 14
+        case .compact: return 8
+        case .toolbar: return 6
+        }
+    }
+
+    private var barHeight: CGFloat {
+        switch size {
+        case .hero: return 52
+        case .compact: return 32
+        case .toolbar: return 22
+        }
+    }
+
+    private var gap: CGFloat {
+        switch size {
+        case .hero: return 10
+        case .compact: return 6
+        case .toolbar: return 5
+        }
+    }
+
+    var body: some View {
+        HStack(spacing: gap) {
+            RoundedRectangle(cornerRadius: barWidth / 2, style: .continuous)
+                .fill(BetweenTheme.accent)
+                .frame(width: barWidth, height: barHeight)
+            RoundedRectangle(cornerRadius: barWidth / 2, style: .continuous)
+                .fill(BetweenTheme.accentAction)
+                .frame(width: barWidth, height: barHeight)
+        }
+        .accessibilityHidden(true)
+    }
+}
 
 struct BetweenWordmark: View {
     enum Size { case large, compact }
@@ -65,10 +121,43 @@ struct BetweenWordmark: View {
             Text("Be")
                 .foregroundStyle(BetweenTheme.accent)
             Text("tween")
-                .foregroundStyle(BetweenTheme.accentSecondary)
+                .foregroundStyle(BetweenTheme.accentAction)
         }
         .font(BetweenFont.wordmark(size))
         .accessibilityLabel("Between")
+    }
+}
+
+struct BetweenBrandLockup: View {
+    enum Style { case welcome, toolbar }
+    var style: Style = .welcome
+
+    var body: some View {
+        VStack(spacing: style == .welcome ? 14 : 6) {
+            BetweenMark(size: style == .welcome ? .hero : .compact)
+            if style == .welcome {
+                BetweenWordmark(size: .large)
+            }
+        }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("Between")
+    }
+}
+
+struct VTPilotBadge: View {
+    var body: some View {
+        HStack(spacing: 6) {
+            Circle()
+                .fill(BetweenTheme.vtOrange)
+                .frame(width: 8, height: 8)
+            Text("Virginia Tech pilot")
+                .font(BetweenFont.captionMedium())
+                .foregroundStyle(BetweenTheme.vtMaroon)
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 6)
+        .background(BetweenTheme.vtMaroon.opacity(0.08))
+        .clipShape(Capsule())
     }
 }
 
@@ -91,7 +180,7 @@ struct BetweenPrimaryButtonStyle: ButtonStyle {
         configuration.label
             .font(.body.weight(.semibold))
             .frame(maxWidth: .infinity, minHeight: 50)
-            .background(BetweenTheme.accent.opacity(configuration.isPressed ? 0.85 : 1))
+            .background(BetweenTheme.accentAction.opacity(configuration.isPressed ? 0.85 : 1))
             .foregroundStyle(.white)
             .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
     }
@@ -181,7 +270,7 @@ struct ToolbarIconButton: View {
                         .foregroundStyle(.white)
                         .padding(.horizontal, 5)
                         .padding(.vertical, 2)
-                        .background(BetweenTheme.accentSecondary)
+                        .background(BetweenTheme.accentAction)
                         .clipShape(Capsule())
                         .offset(x: 6, y: -4)
                 }
