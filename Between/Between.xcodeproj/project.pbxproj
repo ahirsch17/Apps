@@ -45,6 +45,12 @@
 		F8091A2B3C4D5E6F708192C /* DashboardBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8091A2B3C4D5E6F708192B /* DashboardBuilder.swift */; };
 		091A2B3C4D5E6F708192A3B /* SeedDataLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A2B3C4D5E6F708192A3B4D /* SeedDataLoader.swift */; };
 		2A3B4C5D6E7F8091A2B3C4E /* RemoteBackendService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B4C5D6E7F8091A2B3C4D5F /* RemoteBackendService.swift */; };
+		VISUALTLB001 /* VisualScheduleTimeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = VISUALTLF001 /* VisualScheduleTimeline.swift */; };
+		SINGLETLB001 /* SingleDayTimeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = SINGLETLF001 /* SingleDayTimeline.swift */; };
+		HORZTLB001 /* HorizontalOverlapTimeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = HORZTLF001 /* HorizontalOverlapTimeline.swift */; };
+		WEEKLYPVB001 /* WeeklyPatternsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = WEEKLYPVF001 /* WeeklyPatternsView.swift */; };
+		SCHEDPATTERNB001 /* SchedulePattern.swift in Sources */ = {isa = PBXBuildFile; fileRef = SCHEDPATTERNF001 /* SchedulePattern.swift */; };
+		INTTESTB001 /* IntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = INTTESTF001 /* IntegrationTests.swift */; };
 		CE64052987978BED734ADDDC /* BetweenApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A2D1926CA26D82F91AE16B6 /* BetweenApp.swift */; };
 /* End PBXBuildFile section */
 
@@ -90,6 +96,12 @@
 		1A2B3C4D5E6F708192A3B4D /* SeedDataLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeedDataLoader.swift; sourceTree = "<group>"; };
 		3B4C5D6E7F8091A2B3C4D5F /* RemoteBackendService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteBackendService.swift; sourceTree = "<group>"; };
 		FDF199F746A50225E095F90A /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		SCHEDPATTERNF001 /* SchedulePattern.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchedulePattern.swift; sourceTree = "<group>"; };
+		VISUALTLF001 /* VisualScheduleTimeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisualScheduleTimeline.swift; sourceTree = "<group>"; };
+		SINGLETLF001 /* SingleDayTimeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleDayTimeline.swift; sourceTree = "<group>"; };
+		HORZTLF001 /* HorizontalOverlapTimeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HorizontalOverlapTimeline.swift; sourceTree = "<group>"; };
+		WEEKLYPVF001 /* WeeklyPatternsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyPatternsView.swift; sourceTree = "<group>"; };
+		INTTESTF001 /* IntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntegrationTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -116,22 +128,82 @@
 		1609F75150C20B7B2F9A1103 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				48660899B49583F7CBCA5515 /* AuthFlowView.swift */,
-				30A315A13B219DC4DC53B71E /* TodayView.swift */,
-				E6F708192A3B4C5D6E7F8091 /* DayTimelineView.swift */,
-				N3TWORK5HEET000000000002 /* NetworkSheet.swift */,
-				N0TIF1CAT10N000000000002 /* NotificationsSheet.swift */,
-				C0URSEL00KUP000000000002 /* CourseLookupSheet.swift */,
-				CLASFR1END5HEET000000002 /* ClassFriendsSheet.swift */,
-				F8091A2B3C4D5E6F708192A /* InfoTipButton.swift */,
-				3C4D5E6F708192A3B4C5D6E /* FriendSettingsSheet.swift */,
-				4CT1V1TYM0D3B0000000002 /* ActivityModeBar.swift */,
-				3V3NT5SH33T00000000002 /* EventsSheet.swift */,
-				3V3NTD3T41L00000000002 /* EventDetailSheet.swift */,
-				1NT3R3ST0NB00000000002 /* InterestsOnboardingView.swift */,
-				C0NS3NTV13W000000000002 /* ConsentView.swift */,
+				VIEWSAUTH000000000001 /* Auth */,
+				VIEWSCOMP000000000001 /* Components */,
+				VIEWSEVNT000000000001 /* Events */,
+				VIEWSFRND000000000001 /* Friends */,
+				VIEWSSCHD000000000001 /* Schedule */,
+				VIEWSTMLN000000000001 /* Timeline */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		VIEWSAUTH000000000001 /* Auth */ = {
+			isa = PBXGroup;
+			children = (
+				48660899B49583F7CBCA5515 /* AuthFlowView.swift */,
+				C0NS3NTV13W000000000002 /* ConsentView.swift */,
+			);
+			path = Auth;
+			sourceTree = "<group>";
+		};
+		VIEWSCOMP000000000001 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				4CT1V1TYM0D3B0000000002 /* ActivityModeBar.swift */,
+				F8091A2B3C4D5E6F708192A /* InfoTipButton.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		VIEWSEVNT000000000001 /* Events */ = {
+			isa = PBXGroup;
+			children = (
+				3V3NTD3T41L00000000002 /* EventDetailSheet.swift */,
+				3V3NT5SH33T00000000002 /* EventsSheet.swift */,
+				1NT3R3ST0NB00000000002 /* InterestsOnboardingView.swift */,
+			);
+			path = Events;
+			sourceTree = "<group>";
+		};
+		VIEWSFRND000000000001 /* Friends */ = {
+			isa = PBXGroup;
+			children = (
+				CLASFR1END5HEET000000002 /* ClassFriendsSheet.swift */,
+				3C4D5E6F708192A3B4C5D6E /* FriendSettingsSheet.swift */,
+				N3TWORK5HEET000000000002 /* NetworkSheet.swift */,
+				N0TIF1CAT10N000000000002 /* NotificationsSheet.swift */,
+			);
+			path = Friends;
+			sourceTree = "<group>";
+		};
+		VIEWSSCHD000000000001 /* Schedule */ = {
+			isa = PBXGroup;
+			children = (
+				C0URSEL00KUP000000000002 /* CourseLookupSheet.swift */,
+				30A315A13B219DC4DC53B71E /* TodayView.swift */,
+				WEEKLYPVF001 /* WeeklyPatternsView.swift */,
+			);
+			path = Schedule;
+			sourceTree = "<group>";
+		};
+		VIEWSTMLN000000000001 /* Timeline */ = {
+			isa = PBXGroup;
+			children = (
+				E6F708192A3B4C5D6E7F8091 /* DayTimelineView.swift */,
+				HORZTLF001 /* HorizontalOverlapTimeline.swift */,
+				SINGLETLF001 /* SingleDayTimeline.swift */,
+				VISUALTLF001 /* VisualScheduleTimeline.swift */,
+			);
+			path = Timeline;
+			sourceTree = "<group>";
+		};
+		MODELSGROUP00000000001 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				SCHEDPATTERNF001 /* SchedulePattern.swift */,
+			);
+			path = Models;
 			sourceTree = "<group>";
 		};
 		37C7A7C0C888547F14BBD0DB = {
@@ -150,6 +222,7 @@
 				B3TW33N735TF002 /* SeedIntegrityTests.swift */,
 				B3TW33N735TF003 /* LocalBackendServiceTests.swift */,
 				B3TW33N735TF004 /* TestFixtures.swift */,
+				INTTESTF001 /* IntegrationTests.swift */,
 			);
 			path = BetweenTests;
 			sourceTree = "<group>";
@@ -160,6 +233,7 @@
 				5A2D1926CA26D82F91AE16B6 /* BetweenApp.swift */,
 				FDF199F746A50225E095F90A /* ContentView.swift */,
 				CCCE475D181E553671608741 /* Models.swift */,
+				MODELSGROUP00000000001 /* Models */,
 				C4MPUSM0D3LS00000000002 /* CampusModels.swift */,
 				BFE6A3F160FDFB0A4D9A1C9C /* Theme.swift */,
 				B2D3E4F5061728394A5B6C7D /* Assets.xcassets */,
@@ -349,6 +423,11 @@
 				F8091A2B3C4D5E6F708192C /* DashboardBuilder.swift in Sources */,
 				091A2B3C4D5E6F708192A3B /* SeedDataLoader.swift in Sources */,
 				2A3B4C5D6E7F8091A2B3C4E /* RemoteBackendService.swift in Sources */,
+				SCHEDPATTERNB001 /* SchedulePattern.swift in Sources */,
+				WEEKLYPVB001 /* WeeklyPatternsView.swift in Sources */,
+				HORZTLB001 /* HorizontalOverlapTimeline.swift in Sources */,
+				SINGLETLB001 /* SingleDayTimeline.swift in Sources */,
+				VISUALTLB001 /* VisualScheduleTimeline.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -360,6 +439,7 @@
 				B3TW33N735TB002 /* SeedIntegrityTests.swift in Sources */,
 				B3TW33N735TB003 /* LocalBackendServiceTests.swift in Sources */,
 				B3TW33N735TB004 /* TestFixtures.swift in Sources */,
+				INTTESTB001 /* IntegrationTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
