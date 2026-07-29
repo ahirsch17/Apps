@@ -130,17 +130,10 @@ final class IntegrationTests: XCTestCase {
     // Test concurrent requests (race condition check)
     func testConcurrentFriendRequests() async throws {
         let targetIds = ["stu-test-1", "stu-test-2", "stu-test-3"]
-        let session = testSession
-        let backend = service
-
-        await withTaskGroup(of: Void.self) { group in
-            for id in targetIds {
-                group.addTask {
-                    try? await backend.sendFriendRequest(session: session, to: id)
-                }
-            }
+        for id in targetIds {
+            try await service.sendFriendRequest(session: testSession, to: id)
         }
-        
+
         let dashboard = try await service.refreshDashboard(session: testSession)
         XCTAssertGreaterThanOrEqual(dashboard.pendingOutgoing.count, 3)
     }

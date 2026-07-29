@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-28T03:58:30.640226+00:00",
+  "generatedAt": "2026-07-29T03:50:07.233277+00:00",
   "universities": [
     {
       "id": "vt",
@@ -658,6 +658,46 @@
       "status": "accepted"
     },
     {
+      "studentA": "stu-alex",
+      "studentB": "stu-mia",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-alex",
+      "studentB": "stu-chris",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-alex",
+      "studentB": "stu-taylor",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-alex",
+      "studentB": "stu-jordan",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-alex",
+      "studentB": "stu-casey",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-alex",
+      "studentB": "stu-avery",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-alex",
+      "studentB": "stu-riley",
+      "status": "accepted"
+    },
+    {
+      "studentA": "stu-alex",
+      "studentB": "stu-quinn",
+      "status": "accepted"
+    },
+    {
       "studentA": "stu-john",
       "studentB": "stu-rachel",
       "status": "accepted"
@@ -684,21 +724,21 @@
       "fromStudentId": "stu-sug-00",
       "toStudentId": "stu-alex",
       "status": "pending",
-      "createdAt": "2026-07-27T22:58:30.640226+00:00"
+      "createdAt": "2026-07-28T22:50:07.233277+00:00"
     },
     {
       "id": "req-0002",
       "fromStudentId": "stu-sug-01",
       "toStudentId": "stu-alex",
       "status": "pending",
-      "createdAt": "2026-07-27T03:58:30.640226+00:00"
+      "createdAt": "2026-07-28T03:50:07.233277+00:00"
     },
     {
       "id": "req-0003",
       "fromStudentId": "stu-sug-02",
       "toStudentId": "stu-alex",
       "status": "pending",
-      "createdAt": "2026-07-26T03:58:30.640226+00:00"
+      "createdAt": "2026-07-27T03:50:07.233277+00:00"
     }
   ],
   "presence": [
@@ -707,140 +747,140 @@
       "status": "busy",
       "activity": "In class",
       "location": "McBryde Hall",
-      "lastUpdated": "2026-07-28T03:58:30.640226+00:00"
+      "lastUpdated": "2026-07-29T03:50:07.233277+00:00"
     },
     {
       "studentId": "stu-john",
       "status": "freeNow",
-      "activity": "Getting lunch",
-      "location": "D2 (Dietrick)",
-      "lastUpdated": "2026-07-28T03:55:30.640226+00:00"
+      "activity": "Free",
+      "location": "Turner Place",
+      "lastUpdated": "2026-07-29T03:47:07.233277+00:00"
     },
     {
       "studentId": "stu-rachel",
       "status": "freeNow",
-      "activity": "Grabbing food",
-      "location": "West End (Chick-fil-A)",
-      "lastUpdated": "2026-07-28T03:52:30.640226+00:00"
+      "activity": "Coffee",
+      "location": "Newman Library",
+      "lastUpdated": "2026-07-29T03:44:07.233277+00:00"
     },
     {
       "studentId": "stu-sarah",
       "status": "studying",
       "activity": "Library",
       "location": "Newman Library",
-      "lastUpdated": "2026-07-28T03:49:30.640226+00:00"
+      "lastUpdated": "2026-07-29T03:41:07.233277+00:00"
     },
     {
       "studentId": "stu-mia",
       "status": "onTheWay",
       "activity": "Headed to McBryde",
       "location": "Drillfield",
-      "lastUpdated": "2026-07-28T03:46:30.640226+00:00"
+      "lastUpdated": "2026-07-29T03:38:07.233277+00:00"
     },
     {
       "studentId": "stu-chris",
       "status": "freeNow",
-      "activity": "Lunch break",
-      "location": "Owens (Tazon)",
-      "lastUpdated": "2026-07-28T03:43:30.640226+00:00"
+      "activity": "Free",
+      "location": "Squires",
+      "lastUpdated": "2026-07-29T03:35:07.233277+00:00"
     },
     {
       "studentId": "stu-taylor",
       "status": "busy",
       "activity": "In class",
       "location": "Pamplin Hall",
-      "lastUpdated": "2026-07-28T03:40:30.640226+00:00"
+      "lastUpdated": "2026-07-29T03:32:07.233277+00:00"
     },
     {
       "studentId": "stu-jordan",
       "status": "busy",
       "activity": "In class",
       "location": "Turner Place",
-      "lastUpdated": "2026-07-28T03:37:30.640226+00:00"
+      "lastUpdated": "2026-07-29T03:29:07.233277+00:00"
     },
     {
       "studentId": "stu-casey",
       "status": "busy",
       "activity": "In class",
       "location": "McBryde Hall",
-      "lastUpdated": "2026-07-28T03:34:30.640226+00:00"
+      "lastUpdated": "2026-07-29T03:26:07.233277+00:00"
     },
     {
       "studentId": "stu-avery",
       "status": "busy",
       "activity": "In class",
       "location": "Newman Library",
-      "lastUpdated": "2026-07-28T03:56:30.640226+00:00"
+      "lastUpdated": "2026-07-29T03:48:07.233277+00:00"
     },
     {
       "studentId": "stu-riley",
       "status": "busy",
       "activity": "In class",
       "location": "Torgersen Hall",
-      "lastUpdated": "2026-07-28T03:53:30.640226+00:00"
+      "lastUpdated": "2026-07-29T03:45:07.233277+00:00"
     },
     {
       "studentId": "stu-quinn",
       "status": "busy",
       "activity": "In class",
       "location": "Goodwin Hall",
-      "lastUpdated": "2026-07-28T03:50:30.640226+00:00"
+      "lastUpdated": "2026-07-29T03:42:07.233277+00:00"
     },
     {
       "studentId": "stu-sug-00",
       "status": "busy",
       "activity": "In class",
       "location": "Burruss Hall",
-      "lastUpdated": "2026-07-28T03:47:30.640226+00:00"
+      "lastUpdated": "2026-07-29T03:39:07.233277+00:00"
     },
     {
       "studentId": "stu-sug-01",
       "status": "busy",
       "activity": "In class",
       "location": "Derring Hall",
-      "lastUpdated": "2026-07-28T03:44:30.640226+00:00"
+      "lastUpdated": "2026-07-29T03:36:07.233277+00:00"
     },
     {
       "studentId": "stu-sug-02",
       "status": "busy",
       "activity": "In class",
       "location": "Pamplin Hall",
-      "lastUpdated": "2026-07-28T03:41:30.640226+00:00"
+      "lastUpdated": "2026-07-29T03:33:07.233277+00:00"
     },
     {
       "studentId": "stu-sug-03",
       "status": "busy",
       "activity": "In class",
       "location": "Turner Place",
-      "lastUpdated": "2026-07-28T03:38:30.640226+00:00"
+      "lastUpdated": "2026-07-29T03:30:07.233277+00:00"
     },
     {
       "studentId": "stu-sug-04",
       "status": "busy",
       "activity": "In class",
       "location": "McBryde Hall",
-      "lastUpdated": "2026-07-28T03:35:30.640226+00:00"
+      "lastUpdated": "2026-07-29T03:27:07.233277+00:00"
     },
     {
       "studentId": "stu-sug-05",
       "status": "busy",
       "activity": "In class",
       "location": "Newman Library",
-      "lastUpdated": "2026-07-28T03:57:30.640226+00:00"
+      "lastUpdated": "2026-07-29T03:49:07.233277+00:00"
     },
     {
       "studentId": "stu-sug-06",
       "status": "busy",
       "activity": "In class",
       "location": "Torgersen Hall",
-      "lastUpdated": "2026-07-28T03:54:30.640226+00:00"
+      "lastUpdated": "2026-07-29T03:46:07.233277+00:00"
     },
     {
       "studentId": "stu-sug-07",
       "status": "busy",
       "activity": "In class",
       "location": "Goodwin Hall",
-      "lastUpdated": "2026-07-28T03:51:30.640226+00:00"
+      "lastUpdated": "2026-07-29T03:43:07.233277+00:00"
     }
   ],
   "plans": [
@@ -850,7 +890,7 @@
       "type": "food",
       "title": "Lunch at Turner",
       "location": "Turner Place",
-      "startTime": "2026-07-28T05:28:30.640226+00:00",
+      "startTime": "2026-07-29T05:20:07.233277+00:00",
       "visibility": "friends"
     }
   ],
@@ -1005,8 +1045,8 @@
       "title": "IM Volleyball \u2014 Open Gym",
       "description": "Drop-in at War Memorial. All skill levels. Bring a friend or find a partner here.",
       "location": "War Memorial Gym",
-      "startTime": "2026-07-29T18:00:00+00:00",
-      "endTime": "2026-07-29T20:00:00+00:00",
+      "startTime": "2026-07-30T18:00:00+00:00",
+      "endTime": "2026-07-30T20:00:00+00:00",
       "matchingKind": "partner",
       "isRecurring": true,
       "recurrenceLabel": "Every Wednesday"
@@ -1018,8 +1058,8 @@
       "title": "Saturday Night Pickup Soccer",
       "description": "Casual game on the Drillfield. New? Opt in to meet others who don't know anyone either.",
       "location": "Drillfield",
-      "startTime": "2026-07-30T20:58:30.640226+00:00",
-      "endTime": "2026-07-30T22:58:30.640226+00:00",
+      "startTime": "2026-07-31T20:50:07.233277+00:00",
+      "endTime": "2026-07-31T22:50:07.233277+00:00",
       "matchingKind": "newcomer",
       "isRecurring": true,
       "recurrenceLabel": "Every Saturday night"
@@ -1031,8 +1071,8 @@
       "title": "CS 2114 Study Session",
       "description": "Newman Library 2nd floor. Work problems together.",
       "location": "Newman Library",
-      "startTime": "2026-07-29T17:58:30.640226+00:00",
-      "endTime": "2026-07-29T19:58:30.640226+00:00",
+      "startTime": "2026-07-30T17:50:07.233277+00:00",
+      "endTime": "2026-07-30T19:50:07.233277+00:00",
       "matchingKind": "none",
       "isRecurring": false,
       "recurrenceLabel": null

@@ -109,7 +109,8 @@ struct HorizontalOverlapTimeline: View {
                     if hour <= 19 {
                         let position = CGFloat(index) / 11 * width
                         Text(formatHourShort(hour))
-                            .font(.caption2.monospacedDigit())
+                            .font(.caption2)
+                            .monospacedDigit()
                             .foregroundStyle(.secondary)
                             .frame(width: 40)
                             .position(x: position, y: 10)

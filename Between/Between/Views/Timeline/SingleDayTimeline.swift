@@ -58,7 +58,8 @@ struct SingleDayTimeline: View {
                 let hour = (timeRange.lowerBound / 60) + index
                 if hour <= 19 {
                     Text(formatHour(hour))
-                        .font(.caption.monospacedDigit())
+                        .font(.caption)
+                        .monospacedDigit()
                         .foregroundStyle(.secondary)
                         .frame(height: CGFloat(60.0 / CGFloat(hourCount) * 400.0), alignment: .top)
                 }

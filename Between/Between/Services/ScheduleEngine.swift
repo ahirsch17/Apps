@@ -91,7 +91,7 @@ enum ScheduleEngine {
                             id: "\(overlap.friendId)-\(best.start)",
                             friendId: overlap.friendId,
                             friendName: overlap.friendName,
-                            intervals: [best],
+                            intervals: [OverlapInterval(start: best.start, end: best.end)],
                             totalMinutes: best.end - best.start
                         )
                         appendIfFuture(
@@ -254,10 +254,10 @@ enum ScheduleEngine {
 
     private static func clipOverlaps(_ overlaps: [FriendOverlap], nowMinutes: Int) -> [FriendOverlap] {
         overlaps.compactMap { overlap in
-            let intervals = overlap.intervals.compactMap { interval -> (start: Int, end: Int)? in
+            let intervals = overlap.intervals.compactMap { interval -> OverlapInterval? in
                 let start = max(interval.start, nowMinutes)
                 guard interval.end > start, interval.end - start >= minOverlapMinutes else { return nil }
-                return (start: start, end: interval.end)
+                return OverlapInterval(start: start, end: interval.end)
             }
             guard !intervals.isEmpty else { return nil }
             let total = intervals.reduce(0) { $0 + ($1.end - $1.start) }
@@ -294,7 +294,7 @@ enum ScheduleEngine {
                     id: "\(friendId)-\(start)",
                     friendId: friendId,
                     friendName: friendNamesById[friendId] ?? "Friend",
-                    intervals: qualifying,
+                    intervals: qualifying.map { OverlapInterval(start: $0.start, end: $0.end) },
                     totalMinutes: totalMinutes
                 )
             )

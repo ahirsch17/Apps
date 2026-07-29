@@ -264,7 +264,8 @@ struct DayOverlapBoardView: View {
                         .frame(height: 10)
 
                         Text("\(row.totalOverlapMinutes)m")
-                            .font(.caption2.monospacedDigit())
+                            .font(.caption2)
+                            .monospacedDigit()
                             .foregroundStyle(.secondary)
                             .frame(width: 32, alignment: .trailing)
                     }

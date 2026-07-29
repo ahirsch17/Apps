@@ -38,9 +38,11 @@ struct DayTimelineView: View {
         let (start, end) = timeRange(for: entry)
         return VStack(alignment: .trailing, spacing: 2) {
             Text(compactTime(start))
-                .font(BetweenFont.captionMedium().monospacedDigit())
+                .font(BetweenFont.captionMedium())
+                .monospacedDigit()
             Text(compactTime(end))
-                .font(.caption2.monospacedDigit())
+                .font(.caption2)
+                .monospacedDigit()
                 .foregroundStyle(.secondary)
         }
         .frame(width: 48, alignment: .trailing)

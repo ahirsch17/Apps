@@ -228,11 +228,16 @@ struct ClassConnection: Identifiable, Hashable, Codable {
     let meetingDays: [String]
 }
 
+struct OverlapInterval: Hashable, Sendable {
+    let start: Int
+    let end: Int
+}
+
 struct FriendOverlap: Identifiable {
     let id: String
     let friendId: String
     let friendName: String
-    let intervals: [(start: Int, end: Int)]
+    let intervals: [OverlapInterval]
     let totalMinutes: Int
 
     var longestIntervalMinutes: Int {
@@ -309,6 +314,8 @@ struct TodayPlanItem: Identifiable {
         }
     }
 }
+
+extension SeedDatabase: @unchecked Sendable {}
 
 struct DashboardData {
     let me: Student
