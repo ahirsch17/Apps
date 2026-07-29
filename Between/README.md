@@ -8,7 +8,7 @@ Between helps college students find shared free time and class overlap with peop
 
 1. Open `Between.xcodeproj` on your Mac.
 2. Select the **Between** scheme → Run on Simulator or iPhone.
-3. Sign in as **Alex Hirsch (`alex.hirsch@vt.edu`)**.
+3. **Sign in with Virginia Tech** → `alex.hirsch@vt.edu` (demo SSO — no password).
 
 Works offline in demo mode (bundled seed data).
 
@@ -68,12 +68,12 @@ Contact-style suggestions show **“In your contacts”** (simulated via `sugges
 
 ## Demo flow (Sunday)
 
-1. **I'm returning** → `alex.hirsch@vt.edu` / `demo123`
+1. **Sign in with Virginia Tech** → `alex.hirsch@vt.edu` (SSO demo — password never entered in app)
 2. **Today** — main screen: schedule, free-time overlap bars, shared-free-time hero
 3. **Bell** — friend requests · **People icon** — network, star friends, add suggestions
 4. **Search** — course/CRN lookup · **People on class row** — friends in that section
 
-New users: **I'm new** → any seed email + code `482910`.
+New users: **Activate account** → any seed `@vt.edu` email + code `482910`.
 
 ## Repo layout
 

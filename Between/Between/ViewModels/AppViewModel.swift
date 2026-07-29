@@ -4,7 +4,6 @@ import Combine
 
 enum AuthStep {
     case welcome
-    case returning
     case newUser
     case sso
 }
@@ -13,7 +12,6 @@ enum AuthStep {
 final class AppViewModel: ObservableObject {
     @Published var authStep: AuthStep = .welcome
     @Published var loginEmail: String = ""
-    @Published var loginPassword: String = ""
     @Published var activationCode: String = ""
     @Published var candidates: [Student] = []
     @Published var dashboard: DashboardData?
@@ -98,20 +96,11 @@ final class AppViewModel: ObservableObject {
         }
     }
 
-    func loginReturning() async {
-        guard !loginEmail.isEmpty else { return }
-        isLoading = true
-        errorMessage = nil
-        defer { isLoading = false }
-        do {
-            let auth = try await service.login(email: loginEmail, password: loginPassword)
-            try await completeSignIn(auth)
-        } catch {
-            errorMessage = error.localizedDescription
-        }
-    }
-
     func loginWithSSO() async {
+        guard loginEmail.lowercased().hasSuffix("@vt.edu") else {
+            errorMessage = "Sign in requires a @vt.edu email address."
+            return
+        }
         guard !loginEmail.isEmpty else { return }
         isLoading = true
         errorMessage = nil
@@ -139,6 +128,10 @@ final class AppViewModel: ObservableObject {
     }
 
     func activateNewUser() async {
+        guard loginEmail.lowercased().hasSuffix("@vt.edu") else {
+            errorMessage = "Activation requires a @vt.edu email address."
+            return
+        }
         guard !loginEmail.isEmpty, activationCode.count >= 6 else { return }
         isLoading = true
         errorMessage = nil
@@ -313,7 +306,6 @@ final class AppViewModel: ObservableObject {
         needsConsent = false
         streamTask?.cancel()
         authStep = .welcome
-        loginPassword = ""
         activationCode = ""
         errorMessage = nil
     }

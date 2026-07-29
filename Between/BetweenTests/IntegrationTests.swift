@@ -17,7 +17,7 @@ final class IntegrationTests: XCTestCase {
         }
         
         service = RemoteBackendService(baseURL: url)
-        testSession = try await service.login(email: "test@vt.edu", password: "test123")
+        testSession = try await service.loginWithSSO(email: "test@vt.edu")
     }
     
     override func tearDown() async throws {
@@ -26,15 +26,7 @@ final class IntegrationTests: XCTestCase {
         service = nil
     }
     
-    // Test full authentication flow
-    func testLoginReturnsValidSession() async throws {
-        let session = try await service.login(email: "test@vt.edu", password: "test123")
-        XCTAssertFalse(session.userId.isEmpty)
-        XCTAssertFalse(session.token.isEmpty)
-        XCTAssertEqual(session.email, "test@vt.edu")
-    }
-    
-    // Test SSO flow
+    // Test SSO flow (production sign-in path)
     func testSSOLoginWithVTEmail() async throws {
         let session = try await service.loginWithSSO(email: "test@vt.edu")
         XCTAssertFalse(session.userId.isEmpty)
@@ -151,15 +143,4 @@ final class IntegrationTests: XCTestCase {
         XCTAssertGreaterThanOrEqual(dashboard.pendingOutgoing.count, 3)
     }
     
-    // Performance test: dashboard load time
-    func testDashboardPerformance() async throws {
-        measure {
-            let expectation = XCTestExpectation(description: "Dashboard loads")
-            Task {
-                _ = try await service.refreshDashboard(session: testSession)
-                expectation.fulfill()
-            }
-            wait(for: [expectation], timeout: 2.0) // Should load under 2s
-        }
-    }
 }

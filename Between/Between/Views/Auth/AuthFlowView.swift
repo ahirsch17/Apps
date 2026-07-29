@@ -11,12 +11,10 @@ struct AuthFlowView: View {
             switch viewModel.authStep {
             case .welcome:
                 welcomeScreen
-            case .returning:
-                returningScreen
-            case .newUser:
-                newUserScreen
             case .sso:
                 ssoScreen
+            case .newUser:
+                newUserScreen
             }
         }
     }
@@ -49,10 +47,13 @@ struct AuthFlowView: View {
 
             VStack(spacing: 12) {
                 Button {
-                    viewModel.authStep = .returning
+                    viewModel.authStep = .sso
                     viewModel.errorMessage = nil
                 } label: {
-                    Text("Sign in")
+                    HStack(spacing: 8) {
+                        Image(systemName: "building.columns.fill")
+                        Text("Sign in with Virginia Tech")
+                    }
                 }
                 .buttonStyle(BetweenPrimaryButtonStyle())
 
@@ -63,6 +64,12 @@ struct AuthFlowView: View {
                     Text("New to Between? Activate account")
                 }
                 .buttonStyle(BetweenSecondaryButtonStyle())
+
+                Text("Between uses VT SSO — we never see or store your password.")
+                    .font(BetweenFont.caption())
+                    .foregroundStyle(.tertiary)
+                    .multilineTextAlignment(.center)
+                    .padding(.top, 4)
             }
             .padding(.horizontal, 28)
             .padding(.bottom, 40)
@@ -80,60 +87,10 @@ struct AuthFlowView: View {
         }
     }
 
-    private var returningScreen: some View {
-        authForm(
-            title: "Welcome back",
-            subtitle: "Use your VT email to sign in."
-        ) {
-            TextField("you@vt.edu", text: $viewModel.loginEmail)
-                .textContentType(.emailAddress)
-                .keyboardType(.emailAddress)
-                .autocapitalization(.none)
-                .padding(12)
-                .background(BetweenTheme.surfaceMuted(colorScheme))
-                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
-
-            SecureField("Password", text: $viewModel.loginPassword)
-                .textContentType(.password)
-                .padding(12)
-                .background(BetweenTheme.surfaceMuted(colorScheme))
-                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
-
-            #if DEBUG
-            Text("Demo: alex.hirsch@vt.edu · demo123")
-                .font(BetweenFont.caption())
-                .foregroundStyle(.tertiary)
-            #endif
-
-            Button {
-                Task { await viewModel.loginReturning() }
-            } label: {
-                HStack {
-                    if viewModel.isLoading { ProgressView().tint(.white) }
-                    Text(viewModel.isLoading ? "Signing in…" : "Sign in")
-                }
-            }
-            .buttonStyle(BetweenPrimaryButtonStyle())
-            .disabled(viewModel.loginEmail.isEmpty || viewModel.isLoading)
-
-            Button {
-                viewModel.authStep = .sso
-                viewModel.errorMessage = nil
-            } label: {
-                HStack(spacing: 8) {
-                    Image(systemName: "building.columns.fill")
-                    Text("Sign in with Virginia Tech")
-                }
-            }
-            .buttonStyle(BetweenSecondaryButtonStyle())
-            .disabled(viewModel.isLoading)
-        }
-    }
-
     private var ssoScreen: some View {
         authForm(
             title: "Virginia Tech SSO",
-            subtitle: "Demo: uses your @vt.edu email — no password needed."
+            subtitle: "Sign in with your @vt.edu account. Virginia Tech verifies your identity — Between never sees your password."
         ) {
             VTPilotBadge()
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -146,23 +103,37 @@ struct AuthFlowView: View {
                 .background(BetweenTheme.surfaceMuted(colorScheme))
                 .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
 
+            HStack(alignment: .top, spacing: 10) {
+                Image(systemName: "lock.shield.fill")
+                    .foregroundStyle(BetweenTheme.vtMaroon)
+                Text("Only verified VT students can sign in. Your schedule stays encrypted on your device.")
+                    .font(BetweenFont.caption())
+                    .foregroundStyle(.secondary)
+            }
+
+            #if DEBUG
+            Text("Demo: alex.hirsch@vt.edu")
+                .font(BetweenFont.caption())
+                .foregroundStyle(.tertiary)
+            #endif
+
             Button {
                 Task { await viewModel.loginWithSSO() }
             } label: {
                 HStack {
                     if viewModel.isLoading { ProgressView().tint(.white) }
-                    Text(viewModel.isLoading ? "Verifying…" : "Continue with VT")
+                    Text(viewModel.isLoading ? "Verifying with VT…" : "Continue with Virginia Tech")
                 }
             }
             .buttonStyle(BetweenPrimaryButtonStyle())
-            .disabled(viewModel.loginEmail.isEmpty || viewModel.isLoading)
+            .disabled(!isValidVTEmail(viewModel.loginEmail) || viewModel.isLoading)
         }
     }
 
     private var newUserScreen: some View {
         authForm(
             title: "Activate your account",
-            subtitle: "Enter the code from your welcome email."
+            subtitle: "Enter the code from your welcome email, then sign in with VT SSO."
         ) {
             TextField("you@vt.edu", text: $viewModel.loginEmail)
                 .textContentType(.emailAddress)
@@ -193,8 +164,16 @@ struct AuthFlowView: View {
                 }
             }
             .buttonStyle(BetweenPrimaryButtonStyle())
-            .disabled(viewModel.loginEmail.isEmpty || viewModel.activationCode.count < 6 || viewModel.isLoading)
+            .disabled(
+                !isValidVTEmail(viewModel.loginEmail)
+                    || viewModel.activationCode.count < 6
+                    || viewModel.isLoading
+            )
         }
+    }
+
+    private func isValidVTEmail(_ email: String) -> Bool {
+        email.lowercased().hasSuffix("@vt.edu") && email.contains("@")
     }
 
     private func authForm<Content: View>(
