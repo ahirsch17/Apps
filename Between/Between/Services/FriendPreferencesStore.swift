@@ -56,7 +56,7 @@ final class FriendPreferencesStore: ObservableObject {
         save(shareFreeTimeWith, key: shareKey)
     }
 
-    var onSharePreferenceChanged: ((String, Bool) -> Void)?
+    var onSharePreferenceChanged: (@Sendable (String, Bool) -> Void)?
 
     func suggestStars(from overlaps: [FriendOverlap], limit: Int = 8) {
         guard starredFriendIds.isEmpty else { return }

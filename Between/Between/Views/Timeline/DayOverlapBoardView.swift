@@ -1,5 +1,4 @@
 import SwiftUI
-import Charts
 
 /// Central overlap board: 8am–7pm horizontal axis, up to 4 favorite-friend rows,
 /// colored overlap blocks, class blocks blocking all rows, live now indicator.
@@ -12,6 +11,13 @@ struct DayOverlapBoardView: View {
     private let labelWidth: CGFloat = 54
     private let rowHeight: CGFloat = 34
     private let rowSpacing: CGFloat = 8
+
+    private static let rowColors: [Color] = [
+        Color(red: 0.35, green: 0.78, blue: 0.55),
+        Color(red: 0.95, green: 0.55, blue: 0.35),
+        Color(red: 0.40, green: 0.62, blue: 0.95),
+        Color(red: 0.75, green: 0.45, blue: 0.88),
+    ]
 
     private var board: OverlapTimelineModel.Board {
         OverlapTimelineModel.build(from: todayPlan, starredIds: starredIds)
@@ -57,7 +63,8 @@ struct DayOverlapBoardView: View {
             Spacer()
             if nowMinutes >= board.dayRange.lowerBound, nowMinutes <= board.dayRange.upperBound {
                 Text(ScheduleEngine.formatTime12Hour(nowMinutes))
-                    .font(.caption.weight(.semibold).monospacedDigit())
+                    .font(.caption.weight(.semibold))
+                    .monospacedDigit()
                     .foregroundStyle(BetweenTheme.accentAction)
                     .padding(.horizontal, 10)
                     .padding(.vertical, 5)
@@ -104,7 +111,8 @@ struct DayOverlapBoardView: View {
                             .fill(Color.primary.opacity(0.08))
                             .frame(width: 1, height: 4)
                         Text(shortHour(minutes / 60))
-                            .font(.system(size: 10, weight: .medium, design: .rounded).monospacedDigit())
+                            .font(.system(size: 10, weight: .medium, design: .rounded))
+                            .monospacedDigit()
                             .foregroundStyle(.secondary)
                     }
                     .position(x: x, y: 10)
@@ -115,19 +123,20 @@ struct DayOverlapBoardView: View {
     }
 
     private func friendRow(_ row: OverlapTimelineModel.FriendRow) -> some View {
-        HStack(spacing: 8) {
+        let color = rowColor(for: row)
+        return HStack(spacing: 8) {
             Text(row.firstName)
                 .font(.system(size: 11, weight: .semibold))
                 .lineLimit(1)
                 .minimumScaleFactor(0.8)
                 .frame(width: labelWidth, alignment: .trailing)
-                .foregroundStyle(row.color)
+                .foregroundStyle(color)
 
-            timelineTrack(row: row)
+            timelineTrack(row: row, color: color)
         }
     }
 
-    private func timelineTrack(row: OverlapTimelineModel.FriendRow) -> some View {
+    private func timelineTrack(row: OverlapTimelineModel.FriendRow, color: Color) -> some View {
         GeometryReader { geo in
             let width = geo.size.width
             ZStack(alignment: .leading) {
@@ -139,7 +148,7 @@ struct DayOverlapBoardView: View {
                 }
 
                 ForEach(row.overlapBlocks) { block in
-                    overlapBlockView(block, color: row.color, width: width)
+                    overlapBlockView(block, color: color, width: width)
                 }
             }
             .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
@@ -169,7 +178,7 @@ struct DayOverlapBoardView: View {
                     .lineLimit(1)
                     .minimumScaleFactor(0.7)
                     .padding(.horizontal, 4)
-                    .frame(width: w - 4)
+                    .frame(width: max(w - 4, 0))
             }
         }
         .frame(width: max(w, 6), height: rowHeight - 6)
@@ -202,7 +211,7 @@ struct DayOverlapBoardView: View {
                     .lineLimit(1)
                     .minimumScaleFactor(0.6)
                     .padding(.horizontal, 3)
-                    .frame(width: w - 4)
+                    .frame(width: max(w - 4, 0))
             }
         }
         .frame(width: max(w, 8), height: rowHeight - 8)
@@ -232,34 +241,44 @@ struct DayOverlapBoardView: View {
     }
 
     private var overlapSummaryChart: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        let maxMinutes = board.friendRows.map(\.totalOverlapMinutes).max() ?? 1
+
+        return VStack(alignment: .leading, spacing: 8) {
             Text("Overlap minutes")
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(.secondary)
 
-            Chart(board.friendRows) { row in
-                BarMark(
-                    x: .value("Minutes", row.totalOverlapMinutes),
-                    y: .value("Friend", row.firstName)
-                )
-                .foregroundStyle(row.color.gradient)
-                .cornerRadius(4)
-            }
-            .chartXAxis {
-                AxisMarks(values: .automatic(desiredCount: 4)) { _ in
-                    AxisGridLine(stroke: StrokeStyle(lineWidth: 0.5, dash: [4]))
-                    AxisValueLabel()
+            VStack(spacing: 6) {
+                ForEach(board.friendRows) { row in
+                    HStack(spacing: 8) {
+                        Text(row.firstName)
+                            .font(.caption2)
+                            .frame(width: labelWidth, alignment: .trailing)
+
+                        GeometryReader { geo in
+                            let barWidth = geo.size.width * CGFloat(row.totalOverlapMinutes) / CGFloat(maxMinutes)
+                            RoundedRectangle(cornerRadius: 4, style: .continuous)
+                                .fill(rowColor(for: row))
+                                .frame(width: max(barWidth, 4), height: 10)
+                        }
+                        .frame(height: 10)
+
+                        Text("\(row.totalOverlapMinutes)m")
+                            .font(.caption2.monospacedDigit())
+                            .foregroundStyle(.secondary)
+                            .frame(width: 32, alignment: .trailing)
+                    }
                 }
             }
-            .chartYAxis {
-                AxisMarks { _ in
-                    AxisValueLabel()
-                        .font(.caption2)
-                }
-            }
-            .frame(height: CGFloat(board.friendRows.count) * 28 + 16)
         }
         .padding(.top, 4)
+    }
+
+    private func rowColor(for row: OverlapTimelineModel.FriendRow) -> Color {
+        if row.colorIndex < Self.rowColors.count {
+            return Self.rowColors[row.colorIndex]
+        }
+        return FriendColorPalette.color(for: row.id)
     }
 
     private var emptyBoard: some View {

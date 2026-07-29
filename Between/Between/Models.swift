@@ -325,13 +325,13 @@ struct DashboardData {
     let shareFreeTimeWith: [String]
 }
 
-struct CourseHashMatch: Codable, Hashable, Sendable {
+struct CourseHashMatch: Codable, Hashable {
     let hash: String
     let classmateCount: Int
     let friendConnections: [ClassConnection]
 }
 
-struct CourseHashSyncResult: Codable, Hashable, Sendable {
+struct CourseHashSyncResult: Hashable {
     let matches: [CourseHashMatch]
 }
 
@@ -364,4 +364,6 @@ extension FriendTimelineSegment: Sendable {}
 extension TodayPlanItem: Sendable {}
 extension TodayPlanItem.Kind: Sendable {}
 extension DashboardData: Sendable {}
+extension CourseHashMatch: Sendable {}
+extension CourseHashSyncResult: Sendable {}
 extension SpontaneousPlan: Sendable {}

@@ -1,4 +1,5 @@
-import SwiftUI
+import CoreGraphics
+import Foundation
 
 /// Data for the day overlap board: 8am–7pm, top starred friends, class + overlap blocks.
 enum OverlapTimelineModel {
@@ -7,7 +8,7 @@ enum OverlapTimelineModel {
     static let maxFriendRows = 4
     static let minOverlapMinutes = ScheduleEngine.minOverlapMinutes
 
-    struct TimeBlock: Identifiable, Hashable {
+    struct TimeBlock: Identifiable, Hashable, Sendable {
         let id: String
         let startMinutes: Int
         let endMinutes: Int
@@ -23,10 +24,10 @@ enum OverlapTimelineModel {
         }
     }
 
-    struct FriendRow: Identifiable {
+    struct FriendRow: Identifiable, Sendable {
         let id: String
         let name: String
-        let color: Color
+        let colorIndex: Int
         let overlapBlocks: [TimeBlock]
         let totalOverlapMinutes: Int
 
@@ -35,7 +36,7 @@ enum OverlapTimelineModel {
         }
     }
 
-    struct Board {
+    struct Board: Sendable {
         let friendRows: [FriendRow]
         let classBlocks: [TimeBlock]
         let dayRange: ClosedRange<Int>
@@ -96,7 +97,7 @@ enum OverlapTimelineModel {
             return FriendRow(
                 id: pair.key,
                 name: pair.value.name,
-                color: rowColor(index: index, friendId: pair.key),
+                colorIndex: index,
                 overlapBlocks: blocks,
                 totalOverlapMinutes: pair.value.minutes
             )
@@ -142,16 +143,5 @@ enum OverlapTimelineModel {
             }
         }
         return merged
-    }
-
-    private static func rowColor(index: Int, friendId: String) -> Color {
-        let palette: [Color] = [
-            Color(red: 0.35, green: 0.78, blue: 0.55),
-            Color(red: 0.95, green: 0.55, blue: 0.35),
-            Color(red: 0.40, green: 0.62, blue: 0.95),
-            Color(red: 0.75, green: 0.45, blue: 0.88),
-        ]
-        if index < palette.count { return palette[index] }
-        return FriendColorPalette.color(for: friendId)
     }
 }

@@ -74,7 +74,7 @@ final class BackendLogicTests: XCTestCase {
             return XCTFail("expected at least one friend")
         }
 
-        var sharePrefs: [String: Set<String>] = [blockedFriend: []]
+        var sharePrefs: [String: Set<String>] = [blockedFriend: Set<String>()]
 
         let withoutBlock = DashboardBuilder.build(
             DashboardBuilder.Input(
@@ -96,7 +96,7 @@ final class BackendLogicTests: XCTestCase {
         )
         XCTAssertTrue(blockedOverlapIds.contains(blockedFriend))
 
-        sharePrefs = [blockedFriend: []]
+        sharePrefs = [blockedFriend: Set<String>()]
         let withBlock = DashboardBuilder.build(
             DashboardBuilder.Input(
                 me: me,

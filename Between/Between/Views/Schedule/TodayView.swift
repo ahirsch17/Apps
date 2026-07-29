@@ -150,7 +150,8 @@ struct TodayView: View {
                 ForEach(laterMeetups.prefix(2)) { meetup in
                     HStack(spacing: 12) {
                         Text(meetup.timeLabel)
-                            .font(.caption.weight(.semibold).monospacedDigit())
+                            .font(.caption.weight(.semibold))
+                            .monospacedDigit()
                             .foregroundStyle(BetweenTheme.accent)
                             .frame(width: 96, alignment: .leading)
                         Text(meetup.namesLine)
