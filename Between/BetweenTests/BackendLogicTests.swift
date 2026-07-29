@@ -23,7 +23,7 @@ final class BackendLogicTests: XCTestCase {
     }
 
     func testEventsBuilderCountsRealParticipantsOnly() throws {
-        let db = try SeedDataLoader.loadFromBundle()
+        let db = try TestFixtures.seedDatabase()
         let profile = db.studentProfiles.first(where: { $0.studentId == "stu-alex" })
         let data = EventsBuilder.build(
             events: db.campusEvents,
@@ -46,7 +46,7 @@ final class BackendLogicTests: XCTestCase {
     }
 
     func testEventsBuilderMutualOptIn() throws {
-        let db = try SeedDataLoader.loadFromBundle()
+        let db = try TestFixtures.seedDatabase()
         let profile = db.studentProfiles.first(where: { $0.studentId == "stu-alex" })
         let before = EventsBuilder.build(
             events: db.campusEvents,

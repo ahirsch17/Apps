@@ -23,7 +23,6 @@ final class SeedIntegrityTests: XCTestCase {
     }
 
     private func seedJSONURL() -> URL {
-        // BetweenTests/BetweenTests/ -> repo Between/Resources/seed_data.json
         URL(fileURLWithPath: #filePath)
             .deletingLastPathComponent()
             .deletingLastPathComponent()

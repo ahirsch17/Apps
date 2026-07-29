@@ -3,7 +3,7 @@ import XCTest
 
 final class LocalBackendServiceTests: XCTestCase {
     func testMarkEventInterestedIncrementsRealCount() async throws {
-        let db = try SeedDataLoader.loadFromBundle()
+        let db = try TestFixtures.seedDatabase()
         let service = LocalBackendService(database: db)
         let session = AuthSession(userId: "stu-alex", email: "alex.hirsch@vt.edu", token: "test")
 
@@ -21,7 +21,7 @@ final class LocalBackendServiceTests: XCTestCase {
     }
 
     func testMarkEventInterestedRejectsUnenrolledStudent() async throws {
-        let db = try SeedDataLoader.loadFromBundle()
+        let db = try TestFixtures.seedDatabase()
         let service = LocalBackendService(database: db)
         let session = AuthSession(userId: "stu-sug-00", email: "emerson.clark@vt.edu", token: "test")
 
