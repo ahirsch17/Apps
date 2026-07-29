@@ -259,27 +259,35 @@ struct HorizontalOverlapTimeline: View {
     }
     
     private func overlapBlock(_ item: TodayPlanItem, friendId: String, totalMinutes: Int, width: CGFloat, color: Color) -> some View {
-        // Get the specific overlap intervals for this friend
         let friendOverlap = item.friendOverlaps.first { $0.friendId == friendId }
-        
-        return Group {
-            if let overlap = friendOverlap {
-                ForEach(overlap.intervals.filter { $0.end - $0.start >= 25 }, id: \.start) { interval in
-                    let clampedStart = max(interval.start, timeRange.lowerBound)
-                    let clampedEnd = min(interval.end, timeRange.upperBound)
-                    let offsetMinutes = clampedStart - timeRange.lowerBound
-                    let durationMinutes = clampedEnd - clampedStart
-                    
-                    let xOffset = CGFloat(offsetMinutes) / CGFloat(totalMinutes) * width
-                    let blockWidth = CGFloat(durationMinutes) / CGFloat(totalMinutes) * width
-                    
-                    RoundedRectangle(cornerRadius: 5, style: .continuous)
-                        .fill(color.opacity(0.8))
-                        .frame(width: max(blockWidth, 4), height: 24)
-                        .offset(x: xOffset)
-                }
-            }
+        let bars = friendOverlap.map { overlapBars(for: $0, totalMinutes: totalMinutes, width: width) } ?? []
+
+        return ForEach(bars) { bar in
+            RoundedRectangle(cornerRadius: 5, style: .continuous)
+                .fill(color.opacity(0.8))
+                .frame(width: max(bar.blockWidth, 4), height: 24)
+                .offset(x: bar.xOffset)
         }
+    }
+
+    private struct OverlapBarSegment: Identifiable {
+        let id: Int
+        let xOffset: CGFloat
+        let blockWidth: CGFloat
+    }
+
+    private func overlapBars(for overlap: FriendOverlap, totalMinutes: Int, width: CGFloat) -> [OverlapBarSegment] {
+        overlap.intervals
+            .filter { $0.end - $0.start >= 25 }
+            .map { interval in
+                let clampedStart = max(interval.start, timeRange.lowerBound)
+                let clampedEnd = min(interval.end, timeRange.upperBound)
+                let offsetMinutes = clampedStart - timeRange.lowerBound
+                let durationMinutes = clampedEnd - clampedStart
+                let xOffset = CGFloat(offsetMinutes) / CGFloat(totalMinutes) * width
+                let blockWidth = CGFloat(durationMinutes) / CGFloat(totalMinutes) * width
+                return OverlapBarSegment(id: interval.start, xOffset: xOffset, blockWidth: blockWidth)
+            }
     }
     
     private func blockInRange(_ item: TodayPlanItem) -> Bool {
@@ -311,7 +319,9 @@ struct HorizontalOverlapTimeline: View {
     
     private func startAutoRefresh() {
         Timer.scheduledTimer(withTimeInterval: 1800, repeats: true) { _ in
-            currentTime = Date()
+            Task { @MainActor in
+                currentTime = Date()
+            }
         }
     }
 }

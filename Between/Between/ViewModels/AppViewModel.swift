@@ -38,7 +38,9 @@ final class AppViewModel: ObservableObject {
 
     init(service: any BetweenBackendServicing) {
         self.service = service
-        preferenceCancellable = preferences.objectWillChange.sink { [weak self] _ in
+        preferenceCancellable = preferences.objectWillChange
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
             self?.objectWillChange.send()
         }
     }

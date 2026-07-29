@@ -248,3 +248,14 @@ struct EventsData {
     let activeMode: ActivityMode?
     let modeExpiresAt: Date?
 }
+
+extension ActivityMode: Sendable {}
+extension EventMatchingKind: Sendable {}
+extension Interest: Sendable {}
+extension StudentProfile: Sendable {}
+extension CampusEvent: Sendable {}
+extension EventParticipationKind: Sendable {}
+extension EventParticipation: Sendable {}
+extension PartnerSeekingProfile: Sendable {}
+extension CampusEventCard: Sendable {}
+extension EventsData: Sendable {}

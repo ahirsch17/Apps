@@ -312,7 +312,7 @@ struct TodayPlanItem: Identifiable {
 
 struct DashboardData {
     let me: Student
-    let nearbyFriends: [FriendCard]
+    var nearbyFriends: [FriendCard]
     let classConnections: [ClassConnection]
     let mySections: [CourseSection]
     let pendingIncoming: [IncomingFriendRequest]
@@ -330,3 +330,26 @@ struct SpontaneousPlan: Identifiable {
     let friendId: String
     let icon: String
 }
+
+// MARK: - Sendable (cross-actor backend calls)
+
+extension University: Sendable {}
+extension CourseSection: Sendable {}
+extension Student: Sendable {}
+extension Student.Privacy: Sendable {}
+extension IncomingFriendRequest: Sendable {}
+extension Enrollment: Sendable {}
+extension Friendship: Sendable {}
+extension FriendRequest: Sendable {}
+extension PresenceStatus: Sendable {}
+extension PresenceRecord: Sendable {}
+extension Plan: Sendable {}
+extension FriendCard: Sendable {}
+extension ClassConnection: Sendable {}
+extension ClassConnection.Kind: Sendable {}
+extension FriendOverlap: Sendable {}
+extension FriendTimelineSegment: Sendable {}
+extension TodayPlanItem: Sendable {}
+extension TodayPlanItem.Kind: Sendable {}
+extension DashboardData: Sendable {}
+extension SpontaneousPlan: Sendable {}

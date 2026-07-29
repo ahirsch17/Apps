@@ -199,7 +199,9 @@ struct SingleDayTimeline: View {
     
     private func startAutoRefresh() {
         Timer.scheduledTimer(withTimeInterval: 1800, repeats: true) { _ in
-            currentTime = Date()
+            Task { @MainActor in
+                currentTime = Date()
+            }
         }
     }
 }

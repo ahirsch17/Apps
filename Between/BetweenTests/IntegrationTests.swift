@@ -5,7 +5,7 @@ import XCTest
 // Run these against RemoteBackendService with test database
 final class IntegrationTests: XCTestCase {
     
-    var service: BetweenBackendServicing!
+    var service: (any BetweenBackendServicing)!
     var testSession: AuthSession!
     
     override func setUp() async throws {
@@ -130,11 +130,13 @@ final class IntegrationTests: XCTestCase {
     // Test concurrent requests (race condition check)
     func testConcurrentFriendRequests() async throws {
         let targetIds = ["stu-test-1", "stu-test-2", "stu-test-3"]
-        
+        let session = testSession
+        let backend = service
+
         await withTaskGroup(of: Void.self) { group in
             for id in targetIds {
                 group.addTask {
-                    try? await self.service.sendFriendRequest(session: self.testSession, to: id)
+                    try? await backend.sendFriendRequest(session: session, to: id)
                 }
             }
         }
