@@ -18,7 +18,7 @@ struct ConsentView: View {
             VStack(spacing: 8) {
                 Text("Your schedule, your rules")
                     .font(BetweenFont.screenTitle())
-                Text("Before we sync your classes, here's how Between protects your data.")
+                Text("Between keeps your schedule encrypted end-to-end. Only you and VT can see what it means.")
                     .font(BetweenFont.secondary())
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
@@ -27,19 +27,19 @@ struct ConsentView: View {
 
             VStack(alignment: .leading, spacing: 16) {
                 consentRow(
+                    icon: "lock.shield.fill",
+                    title: "End-to-end encrypted",
+                    detail: "Your schedule is encrypted on your device. Only VT and you know what your courses are. Between never sees your actual schedule."
+                )
+                consentRow(
                     icon: "calendar.badge.checkmark",
-                    title: "Schedule sharing is opt-in",
-                    detail: "Only friends you add see your free windows — never raw class locations."
+                    title: "Free time overlap only",
+                    detail: "Friends you add will only see when your free time overlaps with theirs. You control who can see this for each friend."
                 )
                 consentRow(
                     icon: "person.2.badge.gearshape",
                     title: "FERPA-aligned",
                     detail: "Between is built for campus partners. We don't sell student data."
-                )
-                consentRow(
-                    icon: "key.fill",
-                    title: "Courses stay private",
-                    detail: "Your phone hashes course IDs before anything is sent. We never see CRNs or grades."
                 )
             }
             .padding(.horizontal, 28)
@@ -47,7 +47,7 @@ struct ConsentView: View {
 
             VStack(alignment: .leading, spacing: 14) {
                 Toggle(isOn: $ferpaChecked) {
-                    Text("I understand how my schedule data is shared")
+                    Text("I understand my schedule is encrypted and only I control who sees overlap times")
                         .font(BetweenFont.secondary())
                 }
                 Toggle(isOn: $privacyChecked) {

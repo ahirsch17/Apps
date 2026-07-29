@@ -7,6 +7,8 @@ struct TodayView: View {
     @State private var showNetwork = false
     @State private var showEvents = false
     @State private var classSheetSection: CourseSection?
+    @State private var showScheduleTimeline = false
+    @State private var showWeeklyPatterns = false
 
     private var snapshot: TodayPresenter.Snapshot { viewModel.today }
 
@@ -38,23 +40,21 @@ struct TodayView: View {
                         meetupsSection
                     }
 
+                    quickActionsCard
+                    
                     if let featured = viewModel.featuredEvent() {
                         featuredEventCard(featured)
                     }
-
-                    ActivityModeBar()
-
-                    DayTimelineView(
-                        entries: snapshot.timeline,
-                        onClassFriendsTap: { classSheetSection = $0 }
-                    )
-
-                    Button {
-                        Task { await viewModel.setActivityMode(.social) }
-                    } label: {
-                        Label("Tap if you're free", systemImage: "hand.wave.fill")
+                    
+                    if viewModel.spontaneousPlanSuggestion() != nil {
+                        spontaneousPlanCard
                     }
-                    .buttonStyle(BetweenPrimaryButtonStyle())
+                    
+                    if !viewModel.recurringWindows.isEmpty {
+                        weeklyPatternsSection
+                    }
+                    
+                    scheduleSection
                 }
                 .padding(.horizontal, 20)
                 .padding(.bottom, 32)
@@ -173,38 +173,61 @@ struct TodayView: View {
 
     private var friendsFreeNowSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            SectionHeader(title: "Free right now", subtitle: "On campus")
+            HStack {
+                Image(systemName: "location.fill")
+                    .font(.caption)
+                    .foregroundStyle(BetweenTheme.accent)
+                SectionHeader(title: "Free right now", subtitle: "\(snapshot.friendsFreeNow.count) on campus")
+            }
 
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 10) {
-                    ForEach(snapshot.friendsFreeNow) { friend in
-                        freeNowChip(friend)
-                    }
-                }
+            ForEach(snapshot.friendsFreeNow.prefix(3)) { friend in
+                freeNowCard(friend)
             }
         }
     }
 
-    private func freeNowChip(_ friend: FriendCard) -> some View {
-        VStack(spacing: 8) {
+    private func freeNowCard(_ friend: FriendCard) -> some View {
+        HStack(spacing: 14) {
             FriendAvatarView(
                 name: friend.name,
                 friendId: friend.id,
                 size: 52,
                 showsFreeRing: true
             )
-            Text(FriendColorPalette.firstName(friend.name))
-                .font(BetweenFont.captionMedium())
-            Text(friend.location)
-                .font(.caption2)
-                .foregroundStyle(.secondary)
-                .lineLimit(1)
+            
+            VStack(alignment: .leading, spacing: 4) {
+                Text(FriendColorPalette.firstName(friend.name))
+                    .font(BetweenFont.cardTitle())
+                
+                HStack(spacing: 4) {
+                    Image(systemName: "mappin.circle.fill")
+                        .font(.caption2)
+                        .foregroundStyle(BetweenTheme.accent)
+                    Text(friend.location)
+                        .font(BetweenFont.caption())
+                        .foregroundStyle(.secondary)
+                }
+            }
+            
+            Spacer()
+            
+            HStack(spacing: 8) {
+                Button {
+                    viewModel.showToast("Coming soon")
+                } label: {
+                    Image(systemName: "message.fill")
+                        .font(.body)
+                        .foregroundStyle(.white)
+                        .frame(width: 38, height: 38)
+                        .background(BetweenTheme.accent)
+                        .clipShape(Circle())
+                }
+                .buttonStyle(.plain)
+            }
         }
-        .frame(width: 88)
-        .padding(.vertical, 12)
-        .padding(.horizontal, 8)
+        .padding(14)
         .background(BetweenTheme.surface(colorScheme))
-        .clipShape(RoundedRectangle(cornerRadius: BetweenTheme.cornerRadius, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
         .shadow(color: .black.opacity(colorScheme == .dark ? 0.2 : 0.05), radius: 6, y: 2)
     }
 
@@ -249,7 +272,7 @@ struct TodayView: View {
 
     private var meetupsSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            SectionHeader(title: "Find time together", subtitle: "Shared free windows today")
+            SectionHeader(title: "Free later today", subtitle: "Overlapping time")
 
             ForEach(snapshot.meetups.prefix(3)) { meetup in
                 HStack(spacing: 14) {
@@ -261,12 +284,9 @@ struct TodayView: View {
                         .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
 
                     VStack(alignment: .leading, spacing: 4) {
-                        Text(meetup.contextLabel)
-                            .font(BetweenFont.captionMedium())
-                            .foregroundStyle(BetweenTheme.accent)
                         Text(meetup.timeLabel)
                             .font(BetweenFont.cardTitle())
-                        Text("With \(meetup.namesLine)")
+                        Text(meetup.namesLine)
                             .font(BetweenFont.secondary())
                             .foregroundStyle(.secondary)
                     }
@@ -283,6 +303,116 @@ struct TodayView: View {
             ForEach(Array(zip(ids, names).prefix(3)), id: \.0) { id, name in
                 FriendAvatarView(name: name, friendId: id, size: 30)
                     .overlay(Circle().stroke(BetweenTheme.surface(colorScheme), lineWidth: 2))
+            }
+        }
+    }
+    
+    private var quickActionsCard: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Text("Down for...")
+                .font(BetweenFont.sectionTitle())
+            
+            ActivityModeBar()
+            
+            Button {
+                Task { await viewModel.setActivityMode(.social) }
+            } label: {
+                HStack {
+                    Image(systemName: "hand.wave.fill")
+                        .font(.title3)
+                    Text("Available to hang")
+                        .font(BetweenFont.secondary().weight(.semibold))
+                    Spacer()
+                    Image(systemName: "arrow.right")
+                        .font(.caption.weight(.bold))
+                }
+                .padding(.horizontal, 20)
+                .padding(.vertical, 18)
+                .background(BetweenTheme.accent.opacity(0.12))
+                .foregroundStyle(BetweenTheme.accent)
+                .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+            }
+            .buttonStyle(.plain)
+        }
+    }
+    
+    private var spontaneousPlanCard: some View {
+        Group {
+            if let suggestion = viewModel.spontaneousPlanSuggestion() {
+                Button {
+                    viewModel.showToast("Tap to message them")
+                } label: {
+                    HStack(spacing: 14) {
+                        Image(systemName: "bubble.left.and.bubble.right.fill")
+                            .font(.title2)
+                            .foregroundStyle(BetweenTheme.accent)
+                            .frame(width: 44, height: 44)
+                            .background(BetweenTheme.accentSoft)
+                            .clipShape(Circle())
+                        
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(suggestion.title)
+                                .font(BetweenFont.cardTitle())
+                                .foregroundStyle(.primary)
+                            Text(suggestion.subtitle)
+                                .font(BetweenFont.secondary())
+                                .foregroundStyle(.secondary)
+                        }
+                        
+                        Spacer()
+                        
+                        Image(systemName: "chevron.right")
+                            .font(.caption.weight(.semibold))
+                            .foregroundStyle(.tertiary)
+                    }
+                    .surfaceCard()
+                }
+                .buttonStyle(.plain)
+            }
+        }
+    }
+    
+    private var weeklyPatternsSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Button {
+                showWeeklyPatterns.toggle()
+            } label: {
+                HStack {
+                    SectionHeader(title: "Weekly patterns", subtitle: "Recurring overlaps")
+                    Spacer()
+                    Image(systemName: showWeeklyPatterns ? "chevron.up" : "chevron.down")
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(.secondary)
+                }
+            }
+            .buttonStyle(.plain)
+            
+            if showWeeklyPatterns {
+                WeeklyPatternsView(recurringWindows: viewModel.recurringWindows)
+            }
+        }
+    }
+    
+    private var scheduleSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Button {
+                showScheduleTimeline.toggle()
+            } label: {
+                HStack {
+                    SectionHeader(title: "Schedule", subtitle: "Today's timeline")
+                    Spacer()
+                    Image(systemName: showScheduleTimeline ? "chevron.up" : "chevron.down")
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(.secondary)
+                }
+            }
+            .buttonStyle(.plain)
+            
+            if showScheduleTimeline {
+                HorizontalOverlapTimeline(
+                    todayPlan: viewModel.todayPlan,
+                    starredIds: viewModel.preferences.starredFriendIds
+                )
             }
         }
     }

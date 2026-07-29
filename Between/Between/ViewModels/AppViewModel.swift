@@ -69,6 +69,13 @@ final class AppViewModel: ObservableObject {
             starredIds: preferences.starredFriendIds
         )
     }
+    
+    var recurringWindows: [RecurringWindow] {
+        SchedulePatternDetector.detectRecurringWindows(
+            from: todayPlan,
+            starredIds: preferences.starredFriendIds
+        )
+    }
 
     var notificationCount: Int {
         pendingIncoming.count
@@ -118,12 +125,13 @@ final class AppViewModel: ObservableObject {
     }
 
     func acceptConsent() async {
-        guard let session else { return }
+        guard let session, let me = dashboard?.me else { return }
         isLoading = true
         defer { isLoading = false }
         do {
             try await service.submitConsent(session: session)
-            UserDefaults.standard.set(true, forKey: Self.consentKey)
+            let consentKey = "\(Self.consentKey).\(me.id)"
+            UserDefaults.standard.set(true, forKey: consentKey)
             needsConsent = false
         } catch {
             errorMessage = error.localizedDescription
@@ -273,6 +281,31 @@ final class AppViewModel: ObservableObject {
                 .map { data.myInterestIds.contains($0.id) } ?? false
         } ?? data.events.first
     }
+    
+    func spontaneousPlanSuggestion() -> SpontaneousPlan? {
+        let freeNow = nearbyFriends.filter { $0.status == .freeNow }
+        guard let nearestFriend = freeNow.first(where: { preferences.isStarred($0.id) }) else { return nil }
+        
+        let firstName = nearestFriend.name.components(separatedBy: " ").first ?? nearestFriend.name
+        let place = nearestFriend.location.isEmpty ? "on campus" : nearestFriend.location
+        
+        return SpontaneousPlan(
+            id: nearestFriend.id,
+            title: "\(firstName) is at \(place)",
+            subtitle: "Free right now",
+            friendId: nearestFriend.id,
+            icon: "location.fill"
+        )
+    }
+    
+    func acceptSpontaneousPlan(_ plan: SpontaneousPlan) async {
+        showToast("Great! We'll let \(plan.title.components(separatedBy: " ").dropFirst().first ?? "them") know")
+        await setActivityMode(.social)
+    }
+    
+    func dismissSpontaneousPlan(_ plan: SpontaneousPlan) {
+        showToast("Got it")
+    }
 
     func signOut() {
         session = nil
@@ -293,7 +326,8 @@ final class AppViewModel: ObservableObject {
         autoSuggestStars(from: data)
         listenForPresence()
         await loadEvents()
-        needsConsent = !UserDefaults.standard.bool(forKey: Self.consentKey)
+        let consentKey = "\(Self.consentKey).\(data.me.id)"
+        needsConsent = !UserDefaults.standard.bool(forKey: consentKey)
         authStep = .welcome
     }
 
@@ -316,7 +350,7 @@ final class AppViewModel: ObservableObject {
         lastSyncText = "Updated \(formatter.localizedString(for: data.syncTimestamp, relativeTo: Date()))"
     }
 
-    private func showToast(_ message: String) {
+    func showToast(_ message: String) {
         toastMessage = message
         Task {
             try? await Task.sleep(for: .seconds(2.5))
@@ -331,9 +365,26 @@ final class AppViewModel: ObservableObject {
         guard let session else { return }
         streamTask = Task {
             let stream = await service.connectPresenceStream(session: session)
-            for await _ in stream {
-                await refresh()
+            for await updatedPresence in stream {
+                await updatePresence(updatedPresence)
             }
+        }
+    }
+    
+    private func updatePresence(_ presence: PresenceRecord) {
+        guard var dashboard = dashboard else { return }
+        if let idx = dashboard.nearbyFriends.firstIndex(where: { $0.id == presence.studentId }) {
+            dashboard.nearbyFriends[idx] = FriendCard(
+                id: dashboard.nearbyFriends[idx].id,
+                name: dashboard.nearbyFriends[idx].name,
+                email: dashboard.nearbyFriends[idx].email,
+                avatarEmoji: dashboard.nearbyFriends[idx].avatarEmoji,
+                status: presence.status,
+                activity: presence.activity,
+                location: presence.location,
+                distanceLabel: dashboard.nearbyFriends[idx].distanceLabel
+            )
+            self.dashboard = dashboard
         }
     }
 }

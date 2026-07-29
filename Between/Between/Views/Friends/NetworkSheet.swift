@@ -84,8 +84,15 @@ struct NetworkSheet: View {
             )
 
             VStack(alignment: .leading, spacing: 4) {
-                Text(friend.name)
-                    .font(BetweenFont.secondary().weight(.medium))
+                HStack(spacing: 4) {
+                    Text(friend.name)
+                        .font(BetweenFont.secondary().weight(.medium))
+                    if !viewModel.preferences.sharesFreeTime(with: friend.id) {
+                        Image(systemName: "eye.slash.fill")
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                    }
+                }
                 Text(friendSubtitle(friend))
                     .font(BetweenFont.caption())
                     .foregroundStyle(.secondary)
@@ -101,6 +108,14 @@ struct NetworkSheet: View {
             } label: {
                 Image(systemName: viewModel.preferences.isStarred(friend.id) ? "star.fill" : "star")
                     .foregroundStyle(viewModel.preferences.isStarred(friend.id) ? BetweenTheme.accentSecondary : .secondary)
+            }
+            .buttonStyle(.plain)
+            
+            Button {
+                settingsFriend = friend
+            } label: {
+                Image(systemName: "ellipsis")
+                    .foregroundStyle(.secondary)
             }
             .buttonStyle(.plain)
         }

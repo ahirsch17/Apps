@@ -658,46 +658,6 @@
       "status": "accepted"
     },
     {
-      "studentA": "stu-alex",
-      "studentB": "stu-mia",
-      "status": "accepted"
-    },
-    {
-      "studentA": "stu-alex",
-      "studentB": "stu-chris",
-      "status": "accepted"
-    },
-    {
-      "studentA": "stu-alex",
-      "studentB": "stu-taylor",
-      "status": "accepted"
-    },
-    {
-      "studentA": "stu-alex",
-      "studentB": "stu-jordan",
-      "status": "accepted"
-    },
-    {
-      "studentA": "stu-alex",
-      "studentB": "stu-casey",
-      "status": "accepted"
-    },
-    {
-      "studentA": "stu-alex",
-      "studentB": "stu-avery",
-      "status": "accepted"
-    },
-    {
-      "studentA": "stu-alex",
-      "studentB": "stu-riley",
-      "status": "accepted"
-    },
-    {
-      "studentA": "stu-alex",
-      "studentB": "stu-quinn",
-      "status": "accepted"
-    },
-    {
       "studentA": "stu-john",
       "studentB": "stu-rachel",
       "status": "accepted"
@@ -752,15 +712,15 @@
     {
       "studentId": "stu-john",
       "status": "freeNow",
-      "activity": "Free",
-      "location": "Turner Place",
+      "activity": "Getting lunch",
+      "location": "D2 (Dietrick)",
       "lastUpdated": "2026-07-28T03:55:30.640226+00:00"
     },
     {
       "studentId": "stu-rachel",
       "status": "freeNow",
-      "activity": "Coffee",
-      "location": "Newman Library",
+      "activity": "Grabbing food",
+      "location": "West End (Chick-fil-A)",
       "lastUpdated": "2026-07-28T03:52:30.640226+00:00"
     },
     {
@@ -780,8 +740,8 @@
     {
       "studentId": "stu-chris",
       "status": "freeNow",
-      "activity": "Free",
-      "location": "Squires",
+      "activity": "Lunch break",
+      "location": "Owens (Tazon)",
       "lastUpdated": "2026-07-28T03:43:30.640226+00:00"
     },
     {
