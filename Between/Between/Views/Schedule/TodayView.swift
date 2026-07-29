@@ -7,8 +7,8 @@ struct TodayView: View {
     @State private var showNetwork = false
     @State private var showEvents = false
     @State private var classSheetSection: CourseSection?
-    @State private var showScheduleTimeline = false
-    @State private var showWeeklyPatterns = false
+    @State private var showScheduleTimeline = true
+    @State private var showWeeklyPatterns = true
 
     private var snapshot: TodayPresenter.Snapshot { viewModel.today }
 
@@ -39,6 +39,8 @@ struct TodayView: View {
                     if !snapshot.meetups.isEmpty {
                         meetupsSection
                     }
+
+                    yourDayTimelineSection
 
                     quickActionsCard
                     
@@ -312,7 +314,7 @@ struct TodayView: View {
             Text("Down for...")
                 .font(BetweenFont.sectionTitle())
             
-            ActivityModeBar()
+            ActivityModeBar(showsHeader: false)
             
             Button {
                 Task { await viewModel.setActivityMode(.social) }
@@ -339,39 +341,53 @@ struct TodayView: View {
     private var spontaneousPlanCard: some View {
         Group {
             if let suggestion = viewModel.spontaneousPlanSuggestion() {
-                Button {
-                    viewModel.showToast("Tap to message them")
-                } label: {
-                    HStack(spacing: 14) {
-                        Image(systemName: "bubble.left.and.bubble.right.fill")
-                            .font(.title2)
-                            .foregroundStyle(BetweenTheme.accent)
-                            .frame(width: 44, height: 44)
-                            .background(BetweenTheme.accentSoft)
-                            .clipShape(Circle())
-                        
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(suggestion.title)
-                                .font(BetweenFont.cardTitle())
-                                .foregroundStyle(.primary)
-                            Text(suggestion.subtitle)
-                                .font(BetweenFont.secondary())
-                                .foregroundStyle(.secondary)
+                VStack(alignment: .leading, spacing: 12) {
+                    SectionHeader(title: "Suggested", subtitle: "Based on who's free nearby")
+
+                    Button {
+                        viewModel.showToast("Tap to message them")
+                    } label: {
+                        HStack(spacing: 14) {
+                            Image(systemName: "bubble.left.and.bubble.right.fill")
+                                .font(.title2)
+                                .foregroundStyle(BetweenTheme.accent)
+                                .frame(width: 44, height: 44)
+                                .background(BetweenTheme.accentSoft)
+                                .clipShape(Circle())
+
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(suggestion.title)
+                                    .font(BetweenFont.cardTitle())
+                                    .foregroundStyle(.primary)
+                                Text(suggestion.subtitle)
+                                    .font(BetweenFont.secondary())
+                                    .foregroundStyle(.secondary)
+                            }
+
+                            Spacer()
+
+                            Image(systemName: "chevron.right")
+                                .font(.caption.weight(.semibold))
+                                .foregroundStyle(.tertiary)
                         }
-                        
-                        Spacer()
-                        
-                        Image(systemName: "chevron.right")
-                            .font(.caption.weight(.semibold))
-                            .foregroundStyle(.tertiary)
+                        .surfaceCard()
                     }
-                    .surfaceCard()
+                    .buttonStyle(.plain)
                 }
-                .buttonStyle(.plain)
             }
         }
     }
     
+    private var yourDayTimelineSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            SectionHeader(title: "Your day", subtitle: "Classes and free blocks from now")
+            SingleDayTimeline(
+                todayPlan: viewModel.todayPlan,
+                starredIds: viewModel.preferences.starredFriendIds
+            )
+        }
+    }
+
     private var weeklyPatternsSection: some View {
         VStack(alignment: .leading, spacing: 12) {
             Button {
@@ -399,7 +415,7 @@ struct TodayView: View {
                 showScheduleTimeline.toggle()
             } label: {
                 HStack {
-                    SectionHeader(title: "Schedule", subtitle: "Today's timeline")
+                    SectionHeader(title: "Schedule", subtitle: "Friend overlaps and side-by-side view")
                     Spacer()
                     Image(systemName: showScheduleTimeline ? "chevron.up" : "chevron.down")
                         .font(.caption.weight(.semibold))
@@ -409,6 +425,12 @@ struct TodayView: View {
             .buttonStyle(.plain)
             
             if showScheduleTimeline {
+                VisualScheduleTimeline(
+                    friends: viewModel.nearbyFriends,
+                    todayPlan: viewModel.todayPlan,
+                    starredIds: viewModel.preferences.starredFriendIds
+                )
+
                 HorizontalOverlapTimeline(
                     todayPlan: viewModel.todayPlan,
                     starredIds: viewModel.preferences.starredFriendIds

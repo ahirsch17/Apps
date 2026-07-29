@@ -326,15 +326,12 @@ final class AppViewModel: ObservableObject {
     }
 
     private func autoSuggestStars(from data: DashboardData) {
-        #if DEBUG
+        let overlapIds = Set(data.todayPlan.flatMap(\.friendOverlaps).map(\.friendId))
+        guard preferences.starredFriendIds.isEmpty else { return }
         preferences.ensureDemoStars(
             friendIds: data.nearbyFriends.map(\.id),
-            overlapFriendIds: Set(data.todayPlan.flatMap(\.friendOverlaps).map(\.friendId))
+            overlapFriendIds: overlapIds
         )
-        #else
-        let allOverlaps = data.todayPlan.flatMap(\.friendOverlaps)
-        preferences.suggestStars(from: allOverlaps, limit: 8)
-        #endif
     }
 
     private func applyDashboard(_ data: DashboardData) {

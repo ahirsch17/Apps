@@ -4,11 +4,14 @@ struct ActivityModeBar: View {
     @EnvironmentObject private var viewModel: AppViewModel
     @Environment(\.colorScheme) private var colorScheme
 
+    var showsHeader: Bool = true
     var activeMode: ActivityMode? { viewModel.eventsData?.activeMode }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            SectionHeader(title: "What's the vibe?", subtitle: "Friends in the same mode can find you")
+            if showsHeader {
+                SectionHeader(title: "What's the vibe?", subtitle: "Friends in the same mode can find you")
+            }
 
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 8) {
