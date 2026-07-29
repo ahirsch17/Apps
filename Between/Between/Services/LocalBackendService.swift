@@ -10,6 +10,7 @@ actor LocalBackendService: BetweenBackendServicing {
     private var studentProfiles: [StudentProfile]
     private var eventParticipations: [EventParticipation]
     private var partnerProfiles: [PartnerSeekingProfile]
+    private var shareFreeTimeWithByStudentId: [String: Set<String>] = [:]
     private var activeModeByStudentId: [String: (mode: ActivityMode, expiresAt: Date)] = [:]
 
     init(database: SeedDatabase) {
@@ -185,6 +186,17 @@ actor LocalBackendService: BetweenBackendServicing {
         }
     }
 
+    func updateShareFreeTime(session: AuthSession, friendId: String, allowed: Bool) async throws {
+        guard DashboardBuilder.friendIds(for: session.userId, friendships: friendships).contains(friendId) else {
+            throw BackendError.invalidRequest
+        }
+        setShareFreeTime(studentId: session.userId, friendId: friendId, allowed: allowed)
+    }
+
+    func uploadCourseHashes(session: AuthSession, hashes: [String]) async throws -> CourseHashSyncResult {
+        CourseHashSyncResult(matches: courseHashMatches(studentId: session.userId, hashedCourseIds: hashes))
+    }
+
     func createPlan(session: AuthSession, type: String, title: String, location: String) async throws -> Plan {
         let plan = Plan(
             id: "plan-\(UUID().uuidString.prefix(8))",
@@ -255,6 +267,7 @@ actor LocalBackendService: BetweenBackendServicing {
         guard let me = database.students.first(where: { $0.id == studentId }) else {
             throw BackendError.userNotFound
         }
+        let friendIds = DashboardBuilder.friendIds(for: studentId, friendships: friendships)
         return DashboardBuilder.build(
             DashboardBuilder.Input(
                 me: me,
@@ -265,9 +278,84 @@ actor LocalBackendService: BetweenBackendServicing {
                 friendRequests: friendRequests,
                 presenceByStudentId: presenceByStudentId,
                 plans: plans,
-                syncTime: Date()
+                syncTime: Date(),
+                shareFreeTimeWithByStudentId: shareFreeTimeWithByStudentId,
+                myShareFreeTimeWith: shareFreeTimeWith(for: studentId, friendIds: friendIds)
             )
         )
+    }
+
+    private func shareFreeTimeWith(for studentId: String, friendIds: Set<String>) -> Set<String> {
+        if let saved = shareFreeTimeWithByStudentId[studentId] {
+            return saved
+        }
+        return friendIds
+    }
+
+    private func setShareFreeTime(studentId: String, friendId: String, allowed: Bool) {
+        let friendIds = DashboardBuilder.friendIds(for: studentId, friendships: friendships)
+        var current = shareFreeTimeWith(for: studentId, friendIds: friendIds)
+        if allowed {
+            current.insert(friendId)
+        } else {
+            current.remove(friendId)
+        }
+        shareFreeTimeWithByStudentId[studentId] = current
+    }
+
+    private func courseHashMatches(studentId: String, hashedCourseIds: [String]) -> [CourseHashMatch] {
+        guard let me = database.students.first(where: { $0.id == studentId }) else { return [] }
+        let schoolId = me.schoolId
+        let sectionById = Dictionary(uniqueKeysWithValues: database.sections.map { ($0.sectionId, $0) })
+        let friendIds = DashboardBuilder.friendIds(for: studentId, friendships: friendships)
+        let mySectionIds = Set(database.enrollments.filter { $0.studentId == studentId }.map(\.sectionId))
+        let mySections = mySectionIds.compactMap { sectionById[$0] }
+        let myByCanonical = Dictionary(grouping: mySections, by: \.canonicalCourseId)
+        let hashSet = Set(hashedCourseIds)
+
+        var results: [CourseHashMatch] = []
+        for section in mySections {
+            let hash = CourseHashService.hash(canonicalCourseId: section.canonicalCourseId, schoolId: schoolId)
+            guard hashSet.contains(hash) else { continue }
+
+            var classmateCount = 0
+            var friendConnections: [ClassConnection] = []
+            var seenFriends: Set<String> = []
+
+            for enrollment in database.enrollments where enrollment.studentId != studentId {
+                guard let peerSection = sectionById[enrollment.sectionId],
+                      peerSection.canonicalCourseId == section.canonicalCourseId,
+                      database.students.first(where: { $0.id == enrollment.studentId })?.schoolId == schoolId
+                else { continue }
+
+                classmateCount += 1
+                guard friendIds.contains(enrollment.studentId), !seenFriends.contains(enrollment.studentId),
+                      let friend = database.students.first(where: { $0.id == enrollment.studentId })
+                else { continue }
+
+                seenFriends.insert(enrollment.studentId)
+                let myMatch = myByCanonical[section.canonicalCourseId]?.first
+                let sameSection = myMatch?.sectionId == peerSection.sectionId
+                friendConnections.append(
+                    ClassConnection(
+                        id: "\(friend.id)-\(section.canonicalCourseId)",
+                        courseCode: peerSection.courseCode,
+                        courseName: peerSection.courseName,
+                        friendName: friend.name,
+                        kind: sameSection ? .sameSection : .differentSection,
+                        sectionLabel: sameSection
+                            ? "Section \(peerSection.sectionLabel)"
+                            : "Sec \(myMatch?.sectionLabel ?? "--") vs \(peerSection.sectionLabel)",
+                        meetingDays: peerSection.meetingDays
+                    )
+                )
+            }
+
+            if classmateCount > 0 {
+                results.append(CourseHashMatch(hash: hash, classmateCount: classmateCount, friendConnections: friendConnections))
+            }
+        }
+        return results
     }
 
     private func randomPresenceUpdate() -> PresenceRecord? {

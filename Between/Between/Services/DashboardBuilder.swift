@@ -15,6 +15,9 @@ enum DashboardBuilder {
         let presenceByStudentId: [String: PresenceRecord]
         let plans: [Plan]
         let syncTime: Date
+        /// friendId -> friendIds that friend shares overlap visibility with. Missing key = shares with all friends.
+        let shareFreeTimeWithByStudentId: [String: Set<String>]
+        let myShareFreeTimeWith: Set<String>
     }
 
     static func build(_ input: Input) -> DashboardData {
@@ -83,7 +86,10 @@ enum DashboardBuilder {
                 return lhs.name < rhs.name
             }
 
-        let friendSectionsById = Dictionary(uniqueKeysWithValues: friendIds.compactMap { friendId -> (String, [CourseSection])? in
+        let visibleFriendIds = Set(friendIds.filter { friendId in
+            Self.friendSharesOverlap(with: friendId, viewerId: input.me.id, prefs: input.shareFreeTimeWithByStudentId)
+        })
+        let friendSectionsById = Dictionary(uniqueKeysWithValues: visibleFriendIds.compactMap { friendId -> (String, [CourseSection])? in
             let ids = Set(input.enrollments.filter { $0.studentId == friendId }.map(\.sectionId))
             let sections = ids.compactMap { sectionById[$0] }
             return sections.isEmpty ? nil : (friendId, sections)
@@ -92,7 +98,8 @@ enum DashboardBuilder {
         let todayPlan = ScheduleEngine.buildTodayPlan(
             mySections: mySections,
             friendSectionsById: friendSectionsById,
-            friendNamesById: friendNamesById
+            friendNamesById: friendNamesById,
+            visibleFriendIds: visibleFriendIds
         )
 
         let visiblePlans = input.plans
@@ -109,8 +116,19 @@ enum DashboardBuilder {
             suggestedStudents: suggestedStudents,
             plans: visiblePlans,
             todayPlan: todayPlan,
-            syncTimestamp: input.syncTime
+            syncTimestamp: input.syncTime,
+            shareFreeTimeWith: Array(input.myShareFreeTimeWith).sorted()
         )
+    }
+
+    /// Returns whether `friendId` shares overlap visibility with `viewerId`.
+    static func friendSharesOverlap(
+        with friendId: String,
+        viewerId: String,
+        prefs: [String: Set<String>]
+    ) -> Bool {
+        guard let allowed = prefs[friendId] else { return true }
+        return allowed.contains(viewerId)
     }
 
     static func friendIds(for studentId: String, friendships: [Friendship]) -> Set<String> {

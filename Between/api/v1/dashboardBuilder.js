@@ -19,9 +19,27 @@ function friendIds(studentId, friendships) {
   return ids;
 }
 
+function friendSharesOverlap(friendId, viewerId, shareFreeTimeWithByStudentId) {
+  if (!Object.prototype.hasOwnProperty.call(shareFreeTimeWithByStudentId, friendId)) {
+    return true;
+  }
+  return shareFreeTimeWithByStudentId[friendId].includes(viewerId);
+}
+
 function buildDashboard(input) {
-  const { me, students, sections, enrollments, friendships, friendRequests, presenceByStudentId, plans, syncTime } =
-    input;
+  const {
+    me,
+    students,
+    sections,
+    enrollments,
+    friendships,
+    friendRequests,
+    presenceByStudentId,
+    plans,
+    syncTime,
+    shareFreeTimeWithByStudentId = {},
+    myShareFreeTimeWith = [],
+  } = input;
   const fids = friendIds(me.id, friendships);
   const sectionById = Object.fromEntries(sections.map((s) => [s.sectionId, s]));
 
@@ -95,6 +113,7 @@ function buildDashboard(input) {
 
   const friendSectionsById = {};
   for (const fid of fids) {
+    if (!friendSharesOverlap(fid, me.id, shareFreeTimeWithByStudentId)) continue;
     const ids = enrollments.filter((e) => e.studentId === fid).map((e) => e.sectionId);
     const secs = ids.map((id) => sectionById[id]).filter(Boolean);
     if (secs.length) friendSectionsById[fid] = secs;
@@ -117,7 +136,8 @@ function buildDashboard(input) {
     plans: visiblePlans,
     todayPlan,
     syncTimestamp: syncTime,
+    shareFreeTimeWith: myShareFreeTimeWith,
   };
 }
 
-module.exports = { buildDashboard, friendIds };
+module.exports = { buildDashboard, friendIds, friendSharesOverlap };

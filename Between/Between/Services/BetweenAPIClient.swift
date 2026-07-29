@@ -20,6 +20,8 @@ enum APIRoute {
     case plans
     case nudge
     case presenceStream
+    case shareFreeTime
+    case courseHashes
 
     func path(baseURL: URL) -> URL {
         switch self {
@@ -59,6 +61,10 @@ enum APIRoute {
             return baseURL.appending(path: "/v1/nudges")
         case .presenceStream:
             return baseURL.appending(path: "/v1/me/presence/stream")
+        case .shareFreeTime:
+            return baseURL.appending(path: "/v1/me/share-free-time")
+        case .courseHashes:
+            return baseURL.appending(path: "/v1/me/course-hashes")
         }
     }
 }
@@ -180,6 +186,7 @@ struct DashboardDTO: Decodable {
     let plans: [Plan]
     let todayPlan: [TodayPlanItemDTO]
     let syncTimestamp: Date
+    let shareFreeTimeWith: [String]?
 }
 
 struct FriendCardDTO: Decodable {
@@ -264,7 +271,8 @@ extension DashboardDTO {
             suggestedStudents: suggestedStudents,
             plans: plans,
             todayPlan: todayPlan.map { $0.asModel() },
-            syncTimestamp: syncTimestamp
+            syncTimestamp: syncTimestamp,
+            shareFreeTimeWith: shareFreeTimeWith ?? []
         )
     }
 }

@@ -116,6 +116,16 @@ function createRouter(store) {
     res.json(store.events(req.user.sub));
   });
 
+  router.patch('/me/share-free-time', authMiddleware, (req, res) => {
+    const { friendId, allowed } = req.body || {};
+    if (!friendId || typeof allowed !== 'boolean') {
+      return res.status(400).json({ error: 'friendId and allowed (boolean) required' });
+    }
+    store.setShareFreeTime(req.user.sub, friendId, allowed);
+    const fids = require('./dashboardBuilder').friendIds(req.user.sub, store.friendships);
+    res.json({ ok: true, shareFreeTimeWith: store.getShareFreeTimeWith(req.user.sub, fids) });
+  });
+
   router.post('/events/:eventId/interested', authMiddleware, (req, res) => {
     if (!store.markEventInterested(req.user.sub, req.params.eventId)) {
       return res.status(400).json({ error: 'Invalid event' });

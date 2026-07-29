@@ -49,6 +49,10 @@
 		SINGLETLB001 /* SingleDayTimeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = SINGLETLF001 /* SingleDayTimeline.swift */; };
 		HORZTLB001 /* HorizontalOverlapTimeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = HORZTLF001 /* HorizontalOverlapTimeline.swift */; };
 		WEEKLYPVB001 /* WeeklyPatternsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = WEEKLYPVF001 /* WeeklyPatternsView.swift */; };
+		SCHEDTABB001 /* ScheduleTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = SCHEDTABV001 /* ScheduleTabView.swift */; };
+		HOMEBRDCMPB001 /* HomeBoardComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = HOMEBRDCMPF001 /* HomeBoardComponents.swift */; };
+		OVRLPTMLB001 /* OverlapTimelineModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = OVRLPTMLF001 /* OverlapTimelineModel.swift */; };
+		DAYOVRBRDB001 /* DayOverlapBoardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAYOVRBRDF001 /* DayOverlapBoardView.swift */; };
 		SCHEDPATTERNB001 /* SchedulePattern.swift in Sources */ = {isa = PBXBuildFile; fileRef = SCHEDPATTERNF001 /* SchedulePattern.swift */; };
 		INTTESTB001 /* IntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = INTTESTF001 /* IntegrationTests.swift */; };
 		CE64052987978BED734ADDDC /* BetweenApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A2D1926CA26D82F91AE16B6 /* BetweenApp.swift */; };
@@ -101,6 +105,10 @@
 		SINGLETLF001 /* SingleDayTimeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleDayTimeline.swift; sourceTree = "<group>"; };
 		HORZTLF001 /* HorizontalOverlapTimeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HorizontalOverlapTimeline.swift; sourceTree = "<group>"; };
 		WEEKLYPVF001 /* WeeklyPatternsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyPatternsView.swift; sourceTree = "<group>"; };
+		SCHEDTABV001 /* ScheduleTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleTabView.swift; sourceTree = "<group>"; };
+		HOMEBRDCMPF001 /* HomeBoardComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeBoardComponents.swift; sourceTree = "<group>"; };
+		OVRLPTMLF001 /* OverlapTimelineModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlapTimelineModel.swift; sourceTree = "<group>"; };
+		DAYOVRBRDF001 /* DayOverlapBoardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayOverlapBoardView.swift; sourceTree = "<group>"; };
 		INTTESTF001 /* IntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntegrationTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -120,6 +128,7 @@
 				T0DAYPR3S3NT3R0000000002 /* TodayPresenter.swift */,
 				3V3NTSBU1LD3R0000000002 /* EventsBuilder.swift */,
 				C0URSH4SHS3RV1C000000002 /* CourseHashService.swift */,
+				OVRLPTMLF001 /* OverlapTimelineModel.swift */,
 				5E6F708192A3B4C5D6E7F80 /* FriendPreferencesStore.swift */,
 			);
 			path = Services;
@@ -182,6 +191,8 @@
 			children = (
 				C0URSEL00KUP000000000002 /* CourseLookupSheet.swift */,
 				30A315A13B219DC4DC53B71E /* TodayView.swift */,
+				SCHEDTABV001 /* ScheduleTabView.swift */,
+				HOMEBRDCMPF001 /* HomeBoardComponents.swift */,
 				WEEKLYPVF001 /* WeeklyPatternsView.swift */,
 			);
 			path = Schedule;
@@ -192,6 +203,7 @@
 			children = (
 				E6F708192A3B4C5D6E7F8091 /* DayTimelineView.swift */,
 				HORZTLF001 /* HorizontalOverlapTimeline.swift */,
+				DAYOVRBRDF001 /* DayOverlapBoardView.swift */,
 				SINGLETLF001 /* SingleDayTimeline.swift */,
 				VISUALTLF001 /* VisualScheduleTimeline.swift */,
 			);
@@ -425,6 +437,10 @@
 				2A3B4C5D6E7F8091A2B3C4E /* RemoteBackendService.swift in Sources */,
 				SCHEDPATTERNB001 /* SchedulePattern.swift in Sources */,
 				WEEKLYPVB001 /* WeeklyPatternsView.swift in Sources */,
+				SCHEDTABB001 /* ScheduleTabView.swift in Sources */,
+				HOMEBRDCMPB001 /* HomeBoardComponents.swift in Sources */,
+				OVRLPTMLB001 /* OverlapTimelineModel.swift in Sources */,
+				DAYOVRBRDB001 /* DayOverlapBoardView.swift in Sources */,
 				HORZTLB001 /* HorizontalOverlapTimeline.swift in Sources */,
 				SINGLETLB001 /* SingleDayTimeline.swift in Sources */,
 				VISUALTLB001 /* VisualScheduleTimeline.swift in Sources */,

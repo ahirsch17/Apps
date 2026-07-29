@@ -34,6 +34,7 @@ enum ScheduleEngine {
         mySections: [CourseSection],
         friendSectionsById: [String: [CourseSection]],
         friendNamesById: [String: String],
+        visibleFriendIds: Set<String>? = nil,
         now: Date = Date()
     ) -> [TodayPlanItem] {
         let dayIdx = BackendConfiguration.demoWeekdayIndex ?? todayIndex(from: now)
@@ -60,7 +61,8 @@ enum ScheduleEngine {
                 let overlaps = friendOverlaps(
                     start: start, end: end, dayIdx: dayIdx,
                     friendSectionsById: friendSectionsById,
-                    friendNamesById: friendNamesById
+                    friendNamesById: friendNamesById,
+                    visibleFriendIds: visibleFriendIds
                 )
                 if overlaps.isEmpty {
                     let duration = end - start
@@ -274,12 +276,14 @@ enum ScheduleEngine {
         end: Int,
         dayIdx: Int,
         friendSectionsById: [String: [CourseSection]],
-        friendNamesById: [String: String]
+        friendNamesById: [String: String],
+        visibleFriendIds: Set<String>?
     ) -> [FriendOverlap] {
         let userFree = [(start: start, end: end)]
         var overlaps: [FriendOverlap] = []
 
         for (friendId, sections) in friendSectionsById {
+            if let visibleFriendIds, !visibleFriendIds.contains(friendId) { continue }
             let friendFree = freeIntervals(on: dayIdx, sections: sections)
             let intervals = intersectIntervals(userFree, friendFree)
             let qualifying = intervals.filter { $0.end - $0.start >= minOverlapMinutes }

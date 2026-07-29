@@ -47,7 +47,16 @@ final class FriendPreferencesStore: ObservableObject {
             shareFreeTimeWith.remove(friendId)
         }
         save(shareFreeTimeWith, key: shareKey)
+        onSharePreferenceChanged?(friendId, allowed)
     }
+
+    /// Apply server-side share prefs (source of truth after sync).
+    func applyServerSharePrefs(_ friendIds: [String]) {
+        shareFreeTimeWith = Set(friendIds)
+        save(shareFreeTimeWith, key: shareKey)
+    }
+
+    var onSharePreferenceChanged: ((String, Bool) -> Void)?
 
     func suggestStars(from overlaps: [FriendOverlap], limit: Int = 8) {
         guard starredFriendIds.isEmpty else { return }

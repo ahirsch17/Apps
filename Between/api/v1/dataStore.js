@@ -48,6 +48,7 @@ class DataStore {
     this.partnerProfiles = [...(db.partnerProfiles || [])];
     this.activeModeByStudentId = {};
     this.consentByStudentId = {};
+    this.shareFreeTimeWithByStudentId = {};
   }
 
   findStudentByEmail(email) {
@@ -101,6 +102,7 @@ class DataStore {
   dashboard(studentId) {
     const me = this.findStudentById(studentId);
     if (!me) return null;
+    const fids = require('./dashboardBuilder').friendIds(studentId, this.friendships);
     return buildDashboard({
       me,
       students: this.students,
@@ -111,7 +113,24 @@ class DataStore {
       presenceByStudentId: this.presenceByStudentId,
       plans: this.plans,
       syncTime: new Date().toISOString(),
+      shareFreeTimeWithByStudentId: this.shareFreeTimeWithByStudentId,
+      myShareFreeTimeWith: this.getShareFreeTimeWith(studentId, fids),
     });
+  }
+
+  getShareFreeTimeWith(studentId, friendIds) {
+    if (Object.prototype.hasOwnProperty.call(this.shareFreeTimeWithByStudentId, studentId)) {
+      return this.shareFreeTimeWithByStudentId[studentId];
+    }
+    return [...friendIds];
+  }
+
+  setShareFreeTime(studentId, friendId, allowed) {
+    const fids = require('./dashboardBuilder').friendIds(studentId, this.friendships);
+    const current = new Set(this.getShareFreeTimeWith(studentId, fids));
+    if (allowed) current.add(friendId);
+    else current.delete(friendId);
+    this.shareFreeTimeWithByStudentId[studentId] = [...current];
   }
 
   events(studentId) {
@@ -261,25 +280,63 @@ class DataStore {
     const schoolId = me.schoolId;
     const sectionById = Object.fromEntries(this.sections.map((s) => [s.sectionId, s]));
     const crypto = require('crypto');
+    const { friendIds } = require('./dashboardBuilder');
 
     const hashFor = (canonicalCourseId) =>
       crypto.createHash('sha256').update(`${schoolId}:${canonicalCourseId}`).digest('hex');
 
-    const myHashes = new Set(hashedCourseIds);
-    const counts = {};
-
-    for (const enrollment of this.enrollments) {
-      if (enrollment.studentId === studentId) continue;
-      const peer = this.findStudentById(enrollment.studentId);
-      if (!peer || peer.schoolId !== schoolId) continue;
-      const section = sectionById[enrollment.sectionId];
-      if (!section) continue;
-      const h = hashFor(section.canonicalCourseId);
-      if (!myHashes.has(h)) continue;
-      counts[h] = (counts[h] || 0) + 1;
+    const fids = friendIds(studentId, this.friendships);
+    const mySectionIds = new Set(this.enrollments.filter((e) => e.studentId === studentId).map((e) => e.sectionId));
+    const mySections = [...mySectionIds].map((id) => sectionById[id]).filter(Boolean);
+    const myByCanonical = {};
+    for (const s of mySections) {
+      (myByCanonical[s.canonicalCourseId] ||= []).push(s);
     }
 
-    return Object.entries(counts).map(([hash, classmateCount]) => ({ hash, classmateCount }));
+    const hashSet = new Set(hashedCourseIds);
+    const results = [];
+
+    for (const section of mySections) {
+      const hash = hashFor(section.canonicalCourseId);
+      if (!hashSet.has(hash)) continue;
+
+      let classmateCount = 0;
+      const friendConnections = [];
+      const seenFriends = new Set();
+
+      for (const enrollment of this.enrollments) {
+        if (enrollment.studentId === studentId) continue;
+        const peerSection = sectionById[enrollment.sectionId];
+        if (!peerSection || peerSection.canonicalCourseId !== section.canonicalCourseId) continue;
+        const peer = this.findStudentById(enrollment.studentId);
+        if (!peer || peer.schoolId !== schoolId) continue;
+
+        classmateCount += 1;
+
+        if (!fids.has(enrollment.studentId) || seenFriends.has(enrollment.studentId)) continue;
+        seenFriends.add(enrollment.studentId);
+
+        const myMatch = myByCanonical[section.canonicalCourseId]?.[0];
+        const same = myMatch?.sectionId === peerSection.sectionId;
+        friendConnections.push({
+          id: `${enrollment.studentId}-${section.canonicalCourseId}`,
+          courseCode: peerSection.courseCode,
+          courseName: peerSection.courseName,
+          friendName: peer.name,
+          kind: same ? 'sameSection' : 'differentSection',
+          sectionLabel: same
+            ? `Section ${peerSection.sectionLabel}`
+            : `Sec ${myMatch?.sectionLabel ?? '--'} vs ${peerSection.sectionLabel}`,
+          meetingDays: peerSection.meetingDays,
+        });
+      }
+
+      if (classmateCount > 0) {
+        results.push({ hash, classmateCount, friendConnections });
+      }
+    }
+
+    return results;
   }
 }
 

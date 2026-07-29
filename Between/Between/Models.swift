@@ -206,8 +206,8 @@ struct FriendCard: Identifiable, Hashable {
     let distanceLabel: String
 }
 
-struct ClassConnection: Identifiable, Hashable {
-    enum Kind: String, Hashable {
+struct ClassConnection: Identifiable, Hashable, Codable {
+    enum Kind: String, Hashable, Codable {
         case sameSection
         case differentSection
 
@@ -321,6 +321,18 @@ struct DashboardData {
     let plans: [Plan]
     let todayPlan: [TodayPlanItem]
     let syncTimestamp: Date
+    /// Friend IDs this user shares overlap visibility with (server source of truth).
+    let shareFreeTimeWith: [String]
+}
+
+struct CourseHashMatch: Codable, Hashable, Sendable {
+    let hash: String
+    let classmateCount: Int
+    let friendConnections: [ClassConnection]
+}
+
+struct CourseHashSyncResult: Codable, Hashable, Sendable {
+    let matches: [CourseHashMatch]
 }
 
 struct SpontaneousPlan: Identifiable {

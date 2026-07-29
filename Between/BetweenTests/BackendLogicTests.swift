@@ -63,4 +63,103 @@ final class BackendLogicTests: XCTestCase {
         let vbBefore = before.events.first(where: { $0.id == "evt-vb-im" })
         XCTAssertFalse(vbBefore?.canViewPartners ?? true)
     }
+
+    func testShareFreeTimeHidesFriendOverlapFromViewer() throws {
+        let db = try TestFixtures.seedDatabase()
+        guard let me = db.students.first(where: { $0.id == "stu-alex" }) else {
+            return XCTFail("missing alex")
+        }
+        let friendIds = DashboardBuilder.friendIds(for: me.id, friendships: db.friendships)
+        guard let blockedFriend = friendIds.first else {
+            return XCTFail("expected at least one friend")
+        }
+
+        var sharePrefs: [String: Set<String>] = [blockedFriend: []]
+
+        let withoutBlock = DashboardBuilder.build(
+            DashboardBuilder.Input(
+                me: me,
+                students: db.students,
+                sections: db.sections,
+                enrollments: db.enrollments,
+                friendships: db.friendships,
+                friendRequests: db.friendRequests,
+                presenceByStudentId: Dictionary(uniqueKeysWithValues: db.presence.map { ($0.studentId, $0) }),
+                plans: db.plans,
+                syncTime: Date(),
+                shareFreeTimeWithByStudentId: [:],
+                myShareFreeTimeWith: friendIds
+            )
+        )
+        let blockedOverlapIds = Set(
+            withoutBlock.todayPlan.flatMap(\.friendOverlaps).map(\.friendId)
+        )
+        XCTAssertTrue(blockedOverlapIds.contains(blockedFriend))
+
+        sharePrefs = [blockedFriend: []]
+        let withBlock = DashboardBuilder.build(
+            DashboardBuilder.Input(
+                me: me,
+                students: db.students,
+                sections: db.sections,
+                enrollments: db.enrollments,
+                friendships: db.friendships,
+                friendRequests: db.friendRequests,
+                presenceByStudentId: Dictionary(uniqueKeysWithValues: db.presence.map { ($0.studentId, $0) }),
+                plans: db.plans,
+                syncTime: Date(),
+                shareFreeTimeWithByStudentId: sharePrefs,
+                myShareFreeTimeWith: friendIds
+            )
+        )
+        let filteredIds = Set(withBlock.todayPlan.flatMap(\.friendOverlaps).map(\.friendId))
+        XCTAssertFalse(filteredIds.contains(blockedFriend))
+    }
+
+    func testOverlapTimelinePicksTopStarredFriends() throws {
+        let db = try TestFixtures.seedDatabase()
+        guard let me = db.students.first(where: { $0.id == "stu-alex" }) else {
+            return XCTFail("missing alex")
+        }
+        let friendIds = DashboardBuilder.friendIds(for: me.id, friendships: db.friendships)
+        let dashboard = DashboardBuilder.build(
+            DashboardBuilder.Input(
+                me: me,
+                students: db.students,
+                sections: db.sections,
+                enrollments: db.enrollments,
+                friendships: db.friendships,
+                friendRequests: db.friendRequests,
+                presenceByStudentId: Dictionary(uniqueKeysWithValues: db.presence.map { ($0.studentId, $0) }),
+                plans: db.plans,
+                syncTime: Date(),
+                shareFreeTimeWithByStudentId: [:],
+                myShareFreeTimeWith: friendIds
+            )
+        )
+        let starred = Set(friendIds.prefix(4))
+        let board = OverlapTimelineModel.build(from: dashboard.todayPlan, starredIds: starred)
+        XCTAssertLessThanOrEqual(board.friendRows.count, OverlapTimelineModel.maxFriendRows)
+        XCTAssertFalse(board.classBlocks.isEmpty)
+        for row in board.friendRows {
+            XCTAssertFalse(row.overlapBlocks.isEmpty)
+        }
+    }
+
+    func testUploadCourseHashesReturnsFriendConnections() async throws {
+        let db = try TestFixtures.seedDatabase()
+        let service = LocalBackendService(database: db)
+        let session = AuthSession(userId: "stu-alex", email: "alex.hirsch@vt.edu", token: "test")
+        guard let me = db.students.first(where: { $0.id == session.userId }) else {
+            return XCTFail("missing alex")
+        }
+        let dashboard = try await service.refreshDashboard(session: session)
+        let hashes = CourseHashService.hashSections(dashboard.mySections, schoolId: me.schoolId)
+        XCTAssertFalse(hashes.isEmpty)
+
+        let result = try await service.uploadCourseHashes(session: session, hashes: hashes)
+        XCTAssertFalse(result.matches.isEmpty)
+        let totalFriends = result.matches.reduce(0) { $0 + $1.friendConnections.count }
+        XCTAssertGreaterThan(totalFriends, 0)
+    }
 }

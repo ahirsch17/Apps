@@ -160,6 +160,20 @@ describe('DataStore auth & dashboard', () => {
     const matches = store.courseHashMatches('stu-alex', [hash]);
     assert.ok(matches.length >= 1);
     assert.ok(matches[0].classmateCount >= 5);
+    assert.ok(Array.isArray(matches[0].friendConnections));
+  });
+
+  it('setShareFreeTime removes friend overlap from viewer dashboard', () => {
+    const { friendIds } = require('./dashboardBuilder');
+    const fids = friendIds('stu-alex', store.friendships);
+    const blocked = [...fids][0];
+    store.setShareFreeTime(blocked, 'stu-alex', false);
+
+    const dashboard = store.dashboard('stu-alex');
+    const overlapIds = new Set(
+      dashboard.todayPlan.flatMap((item) => (item.friendOverlaps || []).map((o) => o.friendId))
+    );
+    assert.ok(!overlapIds.has(blocked));
   });
 });
 

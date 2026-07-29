@@ -18,6 +18,8 @@ protocol BetweenBackendServicing: Sendable {
     func markEventInterested(session: AuthSession, eventId: String) async throws
     func markLookingForPartner(session: AuthSession, eventId: String, note: String, experience: String) async throws
     func updateInterests(session: AuthSession, interestIds: [String]) async throws
+    func updateShareFreeTime(session: AuthSession, friendId: String, allowed: Bool) async throws
+    func uploadCourseHashes(session: AuthSession, hashes: [String]) async throws -> CourseHashSyncResult
     func createPlan(session: AuthSession, type: String, title: String, location: String) async throws -> Plan
     func sendNudge(session: AuthSession, to friendId: String, message: String) async throws
     func connectPresenceStream(session: AuthSession) async -> AsyncStream<PresenceRecord>

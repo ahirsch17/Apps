@@ -25,6 +25,7 @@ final class AppViewModel: ObservableObject {
     @Published var eventsData: EventsData?
     @Published var showOnboarding = false
     @Published var needsConsent = false
+    @Published private(set) var hashBasedClassConnections: [ClassConnection] = []
 
     let preferences = FriendPreferencesStore()
 
@@ -43,6 +44,9 @@ final class AppViewModel: ObservableObject {
             .sink { [weak self] _ in
             self?.objectWillChange.send()
         }
+        preferences.onSharePreferenceChanged = { [weak self] friendId, allowed in
+            Task { await self?.syncShareFreeTime(friendId: friendId, allowed: allowed) }
+        }
     }
 
     static func make() -> AppViewModel {
@@ -55,7 +59,11 @@ final class AppViewModel: ObservableObject {
 
     var me: Student? { dashboard?.me }
     var nearbyFriends: [FriendCard] { dashboard?.nearbyFriends ?? [] }
-    var classConnections: [ClassConnection] { dashboard?.classConnections ?? [] }
+    var classConnections: [ClassConnection] {
+        hashBasedClassConnections.isEmpty
+            ? (dashboard?.classConnections ?? [])
+            : hashBasedClassConnections
+    }
     var mySections: [CourseSection] { dashboard?.mySections ?? [] }
     var pendingIncoming: [IncomingFriendRequest] { dashboard?.pendingIncoming ?? [] }
     var pendingOutgoing: [Student] { dashboard?.pendingOutgoing ?? [] }
@@ -153,7 +161,9 @@ final class AppViewModel: ObservableObject {
         do {
             let data = try await service.refreshDashboard(session: session)
             applyDashboard(data)
-            preferences.bind(userId: data.me.id, friendIds: data.nearbyFriends.map(\.id))
+        preferences.bind(userId: data.me.id, friendIds: data.nearbyFriends.map(\.id))
+        preferences.applyServerSharePrefs(data.shareFreeTimeWith)
+        await syncCourseHashes()
         } catch {
             errorMessage = error.localizedDescription
         }
@@ -305,6 +315,7 @@ final class AppViewModel: ObservableObject {
     func signOut() {
         session = nil
         dashboard = nil
+        hashBasedClassConnections = []
         needsConsent = false
         streamTask?.cancel()
         authStep = .welcome
@@ -317,7 +328,9 @@ final class AppViewModel: ObservableObject {
         let data = try await service.refreshDashboard(session: auth)
         applyDashboard(data)
         preferences.bind(userId: data.me.id, friendIds: data.nearbyFriends.map(\.id))
+        preferences.applyServerSharePrefs(data.shareFreeTimeWith)
         autoSuggestStars(from: data)
+        await syncCourseHashes()
         listenForPresence()
         await loadEvents()
         let consentKey = "\(Self.consentKey).\(data.me.id)"
@@ -339,6 +352,30 @@ final class AppViewModel: ObservableObject {
         let formatter = RelativeDateTimeFormatter()
         formatter.unitsStyle = .short
         lastSyncText = "Updated \(formatter.localizedString(for: data.syncTimestamp, relativeTo: Date()))"
+    }
+
+    private func syncShareFreeTime(friendId: String, allowed: Bool) async {
+        guard let session else { return }
+        do {
+            try await service.updateShareFreeTime(session: session, friendId: friendId, allowed: allowed)
+            let name = nearbyFriends.first(where: { $0.id == friendId })?.name
+                .components(separatedBy: " ").first ?? "Friend"
+            showToast(allowed ? "Sharing overlap with \(name)" : "Overlap hidden from \(name)")
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
+
+    private func syncCourseHashes() async {
+        guard let session, let me = dashboard?.me else { return }
+        let hashes = CourseHashService.hashSections(mySections, schoolId: me.schoolId)
+        guard !hashes.isEmpty else { return }
+        do {
+            let result = try await service.uploadCourseHashes(session: session, hashes: hashes)
+            hashBasedClassConnections = result.matches.flatMap(\.friendConnections)
+        } catch {
+            // Non-fatal: fall back to dashboard.classConnections
+        }
     }
 
     func showToast(_ message: String) {

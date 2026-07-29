@@ -132,6 +132,30 @@ actor RemoteBackendService: BetweenBackendServicing {
         cachedEvents = dto.asEventsData()
     }
 
+    func updateShareFreeTime(session: AuthSession, friendId: String, allowed: Bool) async throws {
+        struct Body: Encodable { let friendId: String; let allowed: Bool }
+        struct Response: Decodable { let ok: Bool; let shareFreeTimeWith: [String] }
+        let _: Response = try await client.patch(
+            .shareFreeTime,
+            body: Body(friendId: friendId, allowed: allowed),
+            token: session.token
+        )
+    }
+
+    func uploadCourseHashes(session: AuthSession, hashes: [String]) async throws -> CourseHashSyncResult {
+        struct Body: Encodable { let hashedCourseIds: [String] }
+        struct Response: Decodable {
+            let matches: [CourseHashMatch]
+            let note: String?
+        }
+        let response: Response = try await client.post(
+            .courseHashes,
+            body: Body(hashedCourseIds: hashes),
+            token: session.token
+        )
+        return CourseHashSyncResult(matches: response.matches)
+    }
+
     func createPlan(session: AuthSession, type: String, title: String, location: String) async throws -> Plan {
         struct Body: Encodable { let type: String; let title: String; let location: String }
         return try await client.post(.plans, body: Body(type: type, title: title, location: location), token: session.token)
