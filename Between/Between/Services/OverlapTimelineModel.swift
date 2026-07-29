@@ -61,7 +61,7 @@ enum OverlapTimelineModel {
                 ).clamped(to: dayRange)
             }
 
-        var minutesByFriend: [String: (name: String, minutes: Int, intervals: [(Int, Int)])] = [:]
+        var minutesByFriend: [String: (name: String, minutes: Int, intervals: [(start: Int, end: Int)])] = [:]
 
         for item in todayPlan where item.kind == .freeBlock {
             let overlaps = starredIds.isEmpty
@@ -128,14 +128,14 @@ enum OverlapTimelineModel {
         stride(from: dayStartMinutes, through: dayEndMinutes, by: 120).map { $0 }
     }
 
-    private static func mergeIntervals(_ intervals: [(Int, Int)]) -> [(Int, Int)] {
+    private static func mergeIntervals(_ intervals: [(start: Int, end: Int)]) -> [(start: Int, end: Int)] {
         guard !intervals.isEmpty else { return [] }
-        let sorted = intervals.sorted { $0.0 < $1.0 }
-        var merged: [(Int, Int)] = [sorted[0]]
+        let sorted = intervals.sorted { $0.start < $1.start }
+        var merged: [(start: Int, end: Int)] = [sorted[0]]
         for interval in sorted.dropFirst() {
             var last = merged.removeLast()
-            if interval.0 <= last.1 {
-                last.1 = max(last.1, interval.1)
+            if interval.start <= last.end {
+                last.end = max(last.end, interval.end)
                 merged.append(last)
             } else {
                 merged.append(last)
