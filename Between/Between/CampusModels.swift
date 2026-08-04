@@ -101,7 +101,7 @@ enum EventMatchingKind: String, Codable, CaseIterable {
     var optInButton: String {
         switch self {
         case .partner: return "I'm looking for a partner"
-        case .newcomer: return "I'm new — want to meet people"
+        case .newcomer: return "I'm new and want to meet people"
         case .none: return ""
         }
     }

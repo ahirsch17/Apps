@@ -243,7 +243,7 @@ final class AppViewModel: ObservableObject {
             try await service.updateInterests(session: session, interestIds: interestIds)
             showOnboarding = false
             await loadEvents()
-            showToast("You're set — we'll show matching events")
+            showToast("You're set. We'll show matching events")
         } catch {
             errorMessage = error.localizedDescription
         }
@@ -280,11 +280,16 @@ final class AppViewModel: ObservableObject {
     }
 
     func featuredEvent() -> CampusEventCard? {
-        guard let data = eventsData else { return nil }
-        return data.events.first { event in
-            data.interests.first(where: { $0.name == event.interestName })
-                .map { data.myInterestIds.contains($0.id) } ?? false
-        } ?? data.events.first
+        featuredEvents(limit: 1).first
+    }
+
+    /// Events surfaced on the home screen: prioritize the ones matching my
+    /// interests, then fall back to any events so the section isn't empty.
+    func featuredEvents(limit: Int = 3) -> [CampusEventCard] {
+        guard let data = eventsData else { return [] }
+        let forMe = data.events.filter { isEventForMyInterests($0) }
+        let base = forMe.isEmpty ? data.events : forMe
+        return Array(base.prefix(limit))
     }
     
     func spontaneousPlanSuggestion() -> SpontaneousPlan? {

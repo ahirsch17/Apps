@@ -12,23 +12,9 @@ struct EventDetailSheet: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text(event.title)
-                            .font(BetweenFont.screenTitle())
-                        Text(event.description)
-                            .font(BetweenFont.secondary())
-                            .foregroundStyle(.secondary)
-                        HStack(spacing: 6) {
-                            Text("\(event.timeLabel) · \(event.location)")
-                            if let recurrence = event.recurrenceLabel {
-                                Text("·")
-                                Text(recurrence)
-                            }
-                        }
-                        .font(BetweenFont.caption())
-                        .foregroundStyle(.secondary)
-                    }
+                VStack(alignment: .leading, spacing: 18) {
+                    hero
+                    metaCard
 
                     socialProofCard
 
@@ -36,9 +22,11 @@ struct EventDetailSheet: View {
                         Button {
                             Task { await viewModel.markInterested(event) }
                         } label: {
-                            Text("I'm interested")
+                            Label("I'm interested", systemImage: "hand.thumbsup.fill")
                         }
                         .buttonStyle(BetweenPrimaryButtonStyle())
+                    } else {
+                        interestedConfirmation
                     }
 
                     if event.matchingKind != .none {
@@ -47,24 +35,85 @@ struct EventDetailSheet: View {
                 }
                 .padding(20)
             }
+            .background(BetweenTheme.screenBackground(colorScheme).ignoresSafeArea())
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Done") { dismiss() }
+                        .fontWeight(.semibold)
                 }
             }
         }
         .onAppear {
             if event.matchingKind == .newcomer {
-                partnerNote = "First time — would love to meet people"
+                partnerNote = "First time, would love to meet people"
                 experience = "Never played pickup here before"
             }
         }
     }
 
-    private var socialProofCard: some View {
+    private var hero: some View {
         VStack(alignment: .leading, spacing: 12) {
-            HStack(spacing: 20) {
+            HStack(spacing: 10) {
+                Image(systemName: event.interestIcon)
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundStyle(BetweenTheme.accent)
+                    .frame(width: 36, height: 36)
+                    .background(BetweenTheme.accentSoft)
+                    .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                Text(event.interestName)
+                    .font(BetweenFont.captionMedium())
+                    .foregroundStyle(BetweenTheme.accent)
+            }
+
+            Text(event.title)
+                .font(BetweenFont.screenTitle())
+                .foregroundStyle(.primary)
+
+            if !event.description.isEmpty {
+                Text(event.description)
+                    .font(BetweenFont.secondary())
+                    .foregroundStyle(.secondary)
+            }
+        }
+    }
+
+    private var metaCard: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            metaRow(icon: "clock", text: event.timeLabel)
+            metaRow(icon: "mappin.and.ellipse", text: event.location)
+            if let recurrence = event.recurrenceLabel {
+                metaRow(icon: "repeat", text: recurrence)
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .surfaceCard()
+    }
+
+    private func metaRow(icon: String, text: String) -> some View {
+        HStack(spacing: 10) {
+            Image(systemName: icon)
+                .font(.caption)
+                .foregroundStyle(BetweenTheme.accentAction)
+                .frame(width: 18)
+            Text(text)
+                .font(BetweenFont.secondary())
+                .foregroundStyle(.primary)
+        }
+    }
+
+    private var interestedConfirmation: some View {
+        Label("You're interested", systemImage: "checkmark.circle.fill")
+            .font(.body.weight(.semibold))
+            .foregroundStyle(BetweenTheme.free)
+            .frame(maxWidth: .infinity, minHeight: 50)
+            .background(BetweenTheme.free.opacity(0.12))
+            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+    }
+
+    private var socialProofCard: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            HStack(spacing: 28) {
                 statBlock(value: "\(event.interestedCount)", label: "interested")
                 if event.showsMatching {
                     statBlock(
@@ -84,11 +133,11 @@ struct EventDetailSheet: View {
     private var socialProofCopy: String {
         switch event.matchingKind {
         case .partner:
-            return "You're not alone — others on campus want a partner too."
+            return "You're not alone. Others on campus want a partner too."
         case .newcomer:
-            return "Plenty of Hokies are interested. Some don't know anyone either — opt in to connect."
+            return "Plenty of Hokies are interested, and some don't know anyone either. Opt in to connect."
         case .none:
-            return "Others are going — show up and work together."
+            return "Others are going, so show up and work together."
         }
     }
 
@@ -146,6 +195,7 @@ struct EventDetailSheet: View {
                 }
             }
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
         .surfaceCard()
     }
 
@@ -161,6 +211,7 @@ struct EventDetailSheet: View {
                     .font(BetweenFont.caption())
                     .foregroundStyle(.secondary)
             }
+            Spacer(minLength: 0)
         }
     }
 }

@@ -15,7 +15,7 @@ struct InterestsOnboardingView: View {
             VStack(spacing: 12) {
                 Text("What are you into?")
                     .font(BetweenFont.greeting())
-                Text("Pick a few — we'll surface events and people who match.")
+                Text("Pick a few and we'll surface events and people who match.")
                     .font(BetweenFont.secondary())
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)

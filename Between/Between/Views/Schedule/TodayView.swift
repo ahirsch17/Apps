@@ -9,6 +9,7 @@ struct TodayView: View {
     @State private var showEvents = false
     @State private var showFreeNow = false
     @State private var showLaterToday = false
+    @State private var selectedEvent: CampusEventCard?
 
     private var snapshot: TodayPresenter.Snapshot { viewModel.today }
 
@@ -35,8 +36,9 @@ struct TodayView: View {
                         laterTodayStrip
                     }
 
-                    if let event = viewModel.featuredEvent() {
-                        campusPill(event)
+                    let campusEvents = viewModel.featuredEvents()
+                    if !campusEvents.isEmpty {
+                        campusStrip(campusEvents)
                     }
                 }
                 .padding(.horizontal, 16)
@@ -56,6 +58,7 @@ struct TodayView: View {
         .sheet(isPresented: $showNetwork) { NetworkSheet() }
         .sheet(isPresented: $showFreeNow) { FreeNowSheet(friends: snapshot.friendsFreeNow) }
         .sheet(isPresented: $showLaterToday) { LaterTodaySheet(meetups: laterMeetups) }
+        .sheet(item: $selectedEvent) { event in EventDetailSheet(event: event) }
     }
 
     // MARK: - Header
@@ -135,67 +138,101 @@ struct TodayView: View {
 
     private var laterTodayStrip: some View {
         VStack(alignment: .leading, spacing: 10) {
-            HStack {
-                Text("Later today")
-                    .font(.caption.weight(.semibold))
-                    .foregroundStyle(.secondary)
-                    .textCase(.uppercase)
-                    .tracking(0.5)
-                Spacer()
-                Button("See all") { showLaterToday = true }
-                    .font(.caption.weight(.semibold))
-            }
+            sectionHeader(title: "Later today", action: laterMeetups.count > 2 ? { showLaterToday = true } : nil)
 
             VStack(spacing: 8) {
                 ForEach(laterMeetups.prefix(2)) { meetup in
-                    HStack(spacing: 12) {
-                        Text(meetup.timeLabel)
-                            .font(.caption.weight(.semibold))
-                            .monospacedDigit()
-                            .foregroundStyle(BetweenTheme.accent)
-                            .frame(width: 96, alignment: .leading)
-                        Text(meetup.namesLine)
-                            .font(.subheadline)
-                            .lineLimit(1)
-                        Spacer(minLength: 0)
+                    Button { showLaterToday = true } label: {
+                        meetupRow(meetup)
                     }
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 10)
-                    .background(BetweenTheme.surface(colorScheme))
-                    .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                    .buttonStyle(.plain)
                 }
             }
         }
     }
 
-    private func campusPill(_ event: CampusEventCard) -> some View {
-        Button { showEvents = true } label: {
-            HStack(spacing: 12) {
-                Image(systemName: event.interestIcon)
-                    .font(.body)
-                    .foregroundStyle(BetweenTheme.accentAction)
-                    .frame(width: 36, height: 36)
-                    .background(BetweenTheme.accentActionSoft)
-                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(event.title)
-                        .font(.subheadline.weight(.semibold))
-                        .foregroundStyle(.primary)
-                        .lineLimit(1)
-                    Text("\(event.timeLabel) · \(event.interestedCount) interested")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
-                Spacer(minLength: 0)
-                Image(systemName: "chevron.right")
-                    .font(.caption2.weight(.bold))
-                    .foregroundStyle(.tertiary)
+    private func meetupRow(_ meetup: TodayPresenter.MeetupWindow) -> some View {
+        HStack(spacing: 12) {
+            Image(systemName: meetup.icon)
+                .font(.system(size: 15, weight: .semibold))
+                .foregroundStyle(BetweenTheme.accent)
+                .frame(width: 36, height: 36)
+                .background(BetweenTheme.accentSoft)
+                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+            VStack(alignment: .leading, spacing: 2) {
+                Text(meetup.namesLine)
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(.primary)
+                    .lineLimit(1)
+                Text("\(meetup.contextLabel) · \(meetup.timeLabel)")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
             }
-            .padding(12)
-            .background(BetweenTheme.surface(colorScheme))
-            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+            Spacer(minLength: 0)
         }
-        .buttonStyle(.plain)
+        .padding(.horizontal, 12)
+        .padding(.vertical, 10)
+        .background(BetweenTheme.surface(colorScheme))
+        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+    }
+
+    private func campusStrip(_ events: [CampusEventCard]) -> some View {
+        VStack(alignment: .leading, spacing: 10) {
+            sectionHeader(title: "For you on campus", action: { showEvents = true })
+
+            VStack(spacing: 8) {
+                ForEach(events) { event in
+                    Button { selectedEvent = event } label: {
+                        campusRow(event)
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+        }
+    }
+
+    private func campusRow(_ event: CampusEventCard) -> some View {
+        HStack(spacing: 12) {
+            Image(systemName: event.interestIcon)
+                .font(.system(size: 15, weight: .semibold))
+                .foregroundStyle(BetweenTheme.accentAction)
+                .frame(width: 36, height: 36)
+                .background(BetweenTheme.accentActionSoft)
+                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+            VStack(alignment: .leading, spacing: 2) {
+                Text(event.title)
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(.primary)
+                    .lineLimit(1)
+                Text("\(event.timeLabel) · \(event.interestedCount) interested")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+            }
+            Spacer(minLength: 0)
+            Image(systemName: "chevron.right")
+                .font(.caption2.weight(.bold))
+                .foregroundStyle(.tertiary)
+        }
+        .padding(12)
+        .background(BetweenTheme.surface(colorScheme))
+        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+    }
+
+    private func sectionHeader(title: String, action: (() -> Void)?) -> some View {
+        HStack {
+            Text(title)
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(.secondary)
+                .textCase(.uppercase)
+                .tracking(0.5)
+            Spacer()
+            if let action {
+                Button("See all", action: action)
+                    .font(.caption.weight(.semibold))
+            }
+        }
     }
 
     private var statusDock: some View {
