@@ -165,5 +165,12 @@ if __name__ == "__main__":
 
     if "--login-watch" in sys.argv:
         run_login_watch(windows_user=user, windows_pin=pin, log=log)
+    elif "--resume-watch" in sys.argv:
+        run_login_watch(
+            windows_user=user,
+            windows_pin=pin,
+            log=log,
+            timeout_seconds=120,
+        )
     else:
         run_wake_routine(windows_user=user, windows_pin=pin, log=log)

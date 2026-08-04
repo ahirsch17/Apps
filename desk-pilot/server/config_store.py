@@ -10,17 +10,15 @@ from pathlib import Path
 CONFIG_DIR = Path.home() / "AppData" / "Local" / "DeskPilot"
 CONFIG_PATH = CONFIG_DIR / "config.json"
 
-# Fixed PIN so every phone can pair without manual setup.
+# Default pairing PIN (override in config.json if you prefer).
 PRESET_PIN = "717077"
-PRESET_MAC = "08:F9:7E:38:6C:F4"
-PRESET_WINDOWS_USER = "Alexis Hirsch"
-PRESET_WINDOWS_PIN = "1702019"
 
 
 def get_mac_address() -> str:
     node = uuid.getnode()
-    detected = ":".join(f"{(node >> shift) & 0xFF:02X}" for shift in range(40, -1, -8))
-    return detected or PRESET_MAC
+    if (node >> 40) & 0xFF == 0xFF:
+        return ""
+    return ":".join(f"{(node >> shift) & 0xFF:02X}" for shift in range(40, -1, -8))
 
 
 def _default_config() -> dict:
@@ -28,8 +26,8 @@ def _default_config() -> dict:
         "pair_pin": PRESET_PIN,
         "session_tokens": {},
         "mac_address": get_mac_address(),
-        "windows_user": PRESET_WINDOWS_USER,
-        "windows_pin": PRESET_WINDOWS_PIN,
+        "windows_user": "",
+        "windows_pin": "",
     }
 
 
@@ -42,8 +40,8 @@ def load_config() -> dict:
                 data.setdefault("pair_pin", PRESET_PIN)
                 data.setdefault("session_tokens", {})
                 data.setdefault("mac_address", get_mac_address())
-                data.setdefault("windows_user", PRESET_WINDOWS_USER)
-                data.setdefault("windows_pin", PRESET_WINDOWS_PIN)
+                data.setdefault("windows_user", "")
+                data.setdefault("windows_pin", "")
                 if "pair_pin" not in data:
                     data["pair_pin"] = PRESET_PIN
                 save_config(data)

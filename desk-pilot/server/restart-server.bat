@@ -1,11 +1,13 @@
 @echo off
-echo Restarting DeskPilot server with latest code...
+setlocal
 cd /d "%~dp0"
+
+echo Restarting DeskPilot server...
 python -m pip install -r requirements.txt -q
-taskkill /IM python.exe /F >nul 2>&1
-taskkill /IM pythonw.exe /F >nul 2>&1
+
+for /f "tokens=2 delims==," %%a in ('wmic process where "CommandLine like '%%desk-pilot%%server.py%%'" get ProcessId /format:list 2^>nul ^| find "ProcessId"') do taskkill /PID %%a /F >nul 2>&1
+for /f "tokens=2 delims==," %%a in ('wmic process where "CommandLine like '%%DeskPilot%%server.py%%'" get ProcessId /format:list 2^>nul ^| find "ProcessId"') do taskkill /PID %%a /F >nul 2>&1
+
 ping 127.0.0.1 -n 2 >nul
-start "" pythonw server.py
-echo.
-echo Server restarted in background. Close this window.
-ping 127.0.0.1 -n 3 >nul
+pythonw "%~dp0ensure_server.py"
+echo Server restarted. Check %%LOCALAPPDATA%%\DeskPilot\server.log for IP and PIN.
