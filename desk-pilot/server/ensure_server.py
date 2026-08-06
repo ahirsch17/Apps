@@ -39,6 +39,14 @@ def main() -> None:
         cwd=str(SERVER_DIR),
         creationflags=creationflags,
     )
+    try:
+        from config_store import CONFIG_DIR
+
+        CONFIG_DIR.mkdir(parents=True, exist_ok=True)
+        with (CONFIG_DIR / "server.log").open("a", encoding="utf-8") as handle:
+            handle.write("ensure_server: started background server\n")
+    except OSError:
+        pass
 
 
 if __name__ == "__main__":
