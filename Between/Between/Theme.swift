@@ -27,12 +27,6 @@ enum BetweenTheme {
     static let studying = Color(red: 0.45, green: 0.38, blue: 0.85)
     static let onTheWay = Color(red: 0.22, green: 0.55, blue: 0.95)
 
-    static let neonBlue = accent
-    static let neonMint = free
-    static let neonGreen = free
-    static let neonViolet = studying
-    static let neonAmber = accentAction
-
     static let cornerRadius: CGFloat = 14
     static let cardPadding: CGFloat = 16
 
@@ -171,7 +165,10 @@ struct SurfaceCard: ViewModifier {
             .padding(BetweenTheme.cardPadding)
             .background(BetweenTheme.surface(colorScheme))
             .clipShape(RoundedRectangle(cornerRadius: BetweenTheme.cornerRadius, style: .continuous))
-            .shadow(color: .black.opacity(colorScheme == .dark ? 0.25 : 0.06), radius: 8, y: 2)
+            .overlay(
+                RoundedRectangle(cornerRadius: BetweenTheme.cornerRadius, style: .continuous)
+                    .strokeBorder(BetweenTheme.surfaceMuted(colorScheme), lineWidth: 1)
+            )
     }
 }
 

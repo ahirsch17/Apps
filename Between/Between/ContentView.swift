@@ -28,7 +28,6 @@ struct ContentView: View {
                         .padding(.vertical, 14)
                         .background(BetweenTheme.accent)
                         .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
-                        .shadow(radius: 8, y: 4)
                         .padding(.horizontal, 24)
                         .padding(.bottom, 28)
                 }

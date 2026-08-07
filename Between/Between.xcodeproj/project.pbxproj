@@ -20,7 +20,6 @@
 		C0URSEL00KUP000000000001 /* CourseLookupSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0URSEL00KUP000000000002 /* CourseLookupSheet.swift */; };
 		CLASFR1END5HEET000000001 /* ClassFriendsSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = CLASFR1END5HEET000000002 /* ClassFriendsSheet.swift */; };
 		2B3C4D5E6F708192A3B4C5D /* FriendSettingsSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C4D5E6F708192A3B4C5D6E /* FriendSettingsSheet.swift */; };
-		D5E6F708192A3B4C5D6E7F80 /* DayTimelineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6F708192A3B4C5D6E7F8091 /* DayTimelineView.swift */; };
 		E7F8091A2B3C4D5E6F70819 /* InfoTipButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8091A2B3C4D5E6F708192A /* InfoTipButton.swift */; };
 		A1B2C3D4E5F60718293A4B5C /* ScheduleEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C3D4E5F60718293A4B5C6D /* ScheduleEngine.swift */; };
 		T0DAYPR3S3NT3R0000000001 /* TodayPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = T0DAYPR3S3NT3R0000000002 /* TodayPresenter.swift */; };
@@ -45,11 +44,6 @@
 		F8091A2B3C4D5E6F708192C /* DashboardBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8091A2B3C4D5E6F708192B /* DashboardBuilder.swift */; };
 		091A2B3C4D5E6F708192A3B /* SeedDataLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A2B3C4D5E6F708192A3B4D /* SeedDataLoader.swift */; };
 		2A3B4C5D6E7F8091A2B3C4E /* RemoteBackendService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B4C5D6E7F8091A2B3C4D5F /* RemoteBackendService.swift */; };
-		VISUALTLB001 /* VisualScheduleTimeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = VISUALTLF001 /* VisualScheduleTimeline.swift */; };
-		SINGLETLB001 /* SingleDayTimeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = SINGLETLF001 /* SingleDayTimeline.swift */; };
-		HORZTLB001 /* HorizontalOverlapTimeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = HORZTLF001 /* HorizontalOverlapTimeline.swift */; };
-		WEEKLYPVB001 /* WeeklyPatternsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = WEEKLYPVF001 /* WeeklyPatternsView.swift */; };
-		SCHEDTABB001 /* ScheduleTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = SCHEDTABV001 /* ScheduleTabView.swift */; };
 		HOMEBRDCMPB001 /* HomeBoardComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = HOMEBRDCMPF001 /* HomeBoardComponents.swift */; };
 		OVRLPTMLB001 /* OverlapTimelineModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = OVRLPTMLF001 /* OverlapTimelineModel.swift */; };
 		DAYOVRBRDB001 /* DayOverlapBoardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAYOVRBRDF001 /* DayOverlapBoardView.swift */; };
@@ -88,7 +82,6 @@
 		B3TW33N735TF003 /* LocalBackendServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalBackendServiceTests.swift; sourceTree = "<group>"; };
 		B3TW33N735TF004 /* TestFixtures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestFixtures.swift; sourceTree = "<group>"; };
 		B3TW33N735TP001 /* BetweenTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BetweenTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		E6F708192A3B4C5D6E7F8091 /* DayTimelineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayTimelineView.swift; sourceTree = "<group>"; };
 		F8091A2B3C4D5E6F708192A /* InfoTipButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfoTipButton.swift; sourceTree = "<group>"; };
 		3C4D5E6F708192A3B4C5D6E /* FriendSettingsSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendSettingsSheet.swift; sourceTree = "<group>"; };
 		5E6F708192A3B4C5D6E7F80 /* FriendPreferencesStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendPreferencesStore.swift; sourceTree = "<group>"; };
@@ -101,11 +94,6 @@
 		3B4C5D6E7F8091A2B3C4D5F /* RemoteBackendService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteBackendService.swift; sourceTree = "<group>"; };
 		FDF199F746A50225E095F90A /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		SCHEDPATTERNF001 /* SchedulePattern.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchedulePattern.swift; sourceTree = "<group>"; };
-		VISUALTLF001 /* VisualScheduleTimeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisualScheduleTimeline.swift; sourceTree = "<group>"; };
-		SINGLETLF001 /* SingleDayTimeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleDayTimeline.swift; sourceTree = "<group>"; };
-		HORZTLF001 /* HorizontalOverlapTimeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HorizontalOverlapTimeline.swift; sourceTree = "<group>"; };
-		WEEKLYPVF001 /* WeeklyPatternsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyPatternsView.swift; sourceTree = "<group>"; };
-		SCHEDTABV001 /* ScheduleTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleTabView.swift; sourceTree = "<group>"; };
 		HOMEBRDCMPF001 /* HomeBoardComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeBoardComponents.swift; sourceTree = "<group>"; };
 		OVRLPTMLF001 /* OverlapTimelineModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlapTimelineModel.swift; sourceTree = "<group>"; };
 		DAYOVRBRDF001 /* DayOverlapBoardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayOverlapBoardView.swift; sourceTree = "<group>"; };
@@ -191,9 +179,7 @@
 			children = (
 				C0URSEL00KUP000000000002 /* CourseLookupSheet.swift */,
 				30A315A13B219DC4DC53B71E /* TodayView.swift */,
-				SCHEDTABV001 /* ScheduleTabView.swift */,
 				HOMEBRDCMPF001 /* HomeBoardComponents.swift */,
-				WEEKLYPVF001 /* WeeklyPatternsView.swift */,
 			);
 			path = Schedule;
 			sourceTree = "<group>";
@@ -201,11 +187,7 @@
 		VIEWSTMLN000000000001 /* Timeline */ = {
 			isa = PBXGroup;
 			children = (
-				E6F708192A3B4C5D6E7F8091 /* DayTimelineView.swift */,
-				HORZTLF001 /* HorizontalOverlapTimeline.swift */,
 				DAYOVRBRDF001 /* DayOverlapBoardView.swift */,
-				SINGLETLF001 /* SingleDayTimeline.swift */,
-				VISUALTLF001 /* VisualScheduleTimeline.swift */,
 			);
 			path = Timeline;
 			sourceTree = "<group>";
@@ -424,7 +406,6 @@
 				1NT3R3ST0NB00000000001 /* InterestsOnboardingView.swift in Sources */,
 				C0NS3NTV13W000000000001 /* ConsentView.swift in Sources */,
 				20210B7736BF59A2B80BC25B /* Theme.swift in Sources */,
-				D5E6F708192A3B4C5D6E7F80 /* DayTimelineView.swift in Sources */,
 				E7F8091A2B3C4D5E6F70819 /* InfoTipButton.swift in Sources */,
 				2B3C4D5E6F708192A3B4C5D /* FriendSettingsSheet.swift in Sources */,
 				4D5E6F708192A3B4C5D6E7F /* FriendPreferencesStore.swift in Sources */,
@@ -436,14 +417,9 @@
 				091A2B3C4D5E6F708192A3B /* SeedDataLoader.swift in Sources */,
 				2A3B4C5D6E7F8091A2B3C4E /* RemoteBackendService.swift in Sources */,
 				SCHEDPATTERNB001 /* SchedulePattern.swift in Sources */,
-				WEEKLYPVB001 /* WeeklyPatternsView.swift in Sources */,
-				SCHEDTABB001 /* ScheduleTabView.swift in Sources */,
 				HOMEBRDCMPB001 /* HomeBoardComponents.swift in Sources */,
 				OVRLPTMLB001 /* OverlapTimelineModel.swift in Sources */,
 				DAYOVRBRDB001 /* DayOverlapBoardView.swift in Sources */,
-				HORZTLB001 /* HorizontalOverlapTimeline.swift in Sources */,
-				SINGLETLB001 /* SingleDayTimeline.swift in Sources */,
-				VISUALTLB001 /* VisualScheduleTimeline.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -1,0 +1,38 @@
+---
+description: Minimal Apple HIG UI — whitespace, system components, atomic structure
+globs: Between/**/*.swift,desk-pilot/ios/**/*.swift,SemesterSchedule/**/*.swift,**/web/**/*.{html,css,js}
+alwaysApply: false
+---
+
+# Minimal HIG UI
+
+Design like Apple HIG: clarity, hierarchy, whitespace. No flashy dashboards.
+
+## Visual
+
+- Prefer system backgrounds and grouped content over floating cards.
+- Avoid custom shadows, gradients, blur glows, and decorative animation.
+- Use `BetweenTheme` / `AppTheme` tokens — one corner radius (`14`), consistent spacing (8/12/16/20).
+- Typography via system scales (`BetweenFont`, `.headline`, `.subheadline`) — no one-off pixel fonts except chart micro-labels.
+
+## SwiftUI structure
+
+- **Navigation:** `NavigationStack`, standard toolbar items (plain SF Symbols, not custom circle chrome).
+- **Data screens:** `List` + `.insetGrouped` or `Form` + `Section` — not `ScrollView` + custom card rows unless the hero needs custom layout (e.g. overlap board).
+- **Sheets:** `presentationDetents`, system buttons (`.borderedProminent` / `.bordered`).
+
+## Architecture
+
+- Atoms → molecules → screens. Keep views under ~150 lines; split when larger.
+- One row component for repeated icon + title + subtitle patterns.
+- No duplicate timeline/design implementations — one live path per feature.
+- Logic in ViewModels/services, not in view bodies.
+
+## Before shipping UI
+
+1. Could this be `List`/`Form` instead of a custom card?
+2. Are shadows off (or at most one hero surface)?
+3. Does it reuse an existing theme component?
+4. Is dead preview-only UI removed from the target?
+
+If any answer fails, rewrite before merge.

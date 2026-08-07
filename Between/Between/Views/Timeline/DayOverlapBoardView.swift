@@ -47,8 +47,11 @@ struct DayOverlapBoardView: View {
         }
         .padding(18)
         .background(BetweenTheme.surface(colorScheme))
-        .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
-        .shadow(color: .black.opacity(colorScheme == .dark ? 0.35 : 0.07), radius: 14, y: 5)
+        .clipShape(RoundedRectangle(cornerRadius: BetweenTheme.cornerRadius, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: BetweenTheme.cornerRadius, style: .continuous)
+                .strokeBorder(BetweenTheme.surfaceMuted(colorScheme), lineWidth: 1)
+        )
     }
 
     private var header: some View {
@@ -227,7 +230,6 @@ struct DayOverlapBoardView: View {
                     Rectangle()
                         .fill(BetweenTheme.accentAction)
                         .frame(width: 2, height: totalHeight + 4)
-                        .shadow(color: BetweenTheme.accentAction.opacity(0.5), radius: 3)
                     Circle()
                         .fill(BetweenTheme.accentAction)
                         .frame(width: 8, height: 8)
