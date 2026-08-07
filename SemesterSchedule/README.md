@@ -1,6 +1,14 @@
 # Schedule (SemesterSchedule)
 
-Paste a school registrar schedule → review meetings → add them as weekly recurring calendar events for the semester.
+Photo, file, or paste a school registrar schedule → review meetings → add them as weekly recurring calendar events for the semester.
+
+## Ways to import
+
+| Action | What it accepts |
+|---|---|
+| **Photo** | Screenshots or photos of Banner / SIS / timetable (on-device OCR) |
+| **File** | `.txt`, `.csv`, `.rtf`, image files, or PDF (text PDF or scanned pages via OCR) |
+| **Paste** | Clipboard text from email / portal |
 
 ## Calendar targets
 

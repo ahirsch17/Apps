@@ -1,6 +1,19 @@
 import EventKit
+import PhotosUI
 import SwiftUI
 import UIKit
+import CoreTransferable
+
+/// Transferable wrapper so PhotosPicker can hand us raw image bytes.
+private struct SchedulePhotoData: Transferable {
+    let data: Data
+
+    static var transferRepresentation: some TransferRepresentation {
+        DataRepresentation(importedContentType: .image) { data in
+            SchedulePhotoData(data: data)
+        }
+    }
+}
 
 struct ContentView: View {
     @State private var pastedText = ""
@@ -9,12 +22,18 @@ struct ContentView: View {
     @State private var useCustomSemesterEnd = false
     @State private var parseOutcome: ParseOutcome = .none
     @State private var isImporting = false
+    @State private var isReadingInput = false
     @State private var importNote: String?
+    @State private var inputNote: String?
+    @State private var inputSource: InputSource = .none
+    @State private var showTextEditor = true
     @State private var destination: CalendarDestination = .apple
     @State private var calendars: [EKCalendar] = []
     @State private var selectedCalendarID: String?
     @State private var shareURL: URL?
     @State private var showShareSheet = false
+    @State private var showFileImporter = false
+    @State private var photoItem: PhotosPickerItem?
     @State private var appeared = false
     @State private var parsePulse = false
 
@@ -40,6 +59,10 @@ struct ContentView: View {
         return calendars.first { $0.calendarIdentifier == id } ?? CalendarImportService.defaultCalendar(eventStore: eventStore)
     }
 
+    private var hasText: Bool {
+        pastedText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty == false
+    }
+
     var body: some View {
         NavigationStack {
             ZStack {
@@ -47,7 +70,7 @@ struct ContentView: View {
                     .ignoresSafeArea()
 
                 ScrollView {
-                    VStack(alignment: .leading, spacing: 22) {
+                    VStack(alignment: .leading, spacing: 20) {
                         header
                             .opacity(appeared ? 1 : 0)
                             .offset(y: appeared ? 0 : 8)
@@ -56,13 +79,19 @@ struct ContentView: View {
                             .opacity(appeared ? 1 : 0)
                             .offset(y: appeared ? 0 : 12)
 
+                        if let inputNote {
+                            Text(inputNote)
+                                .font(.system(size: 13, weight: .medium, design: .rounded))
+                                .foregroundStyle(ScheduleTheme.amber)
+                                .transition(.opacity)
+                        }
+
                         parseBanner
                             .scaleEffect(parsePulse ? 1.02 : 1)
                             .animation(.spring(response: 0.35, dampingFraction: 0.7), value: parsePulse)
 
-                        semesterRow
-
                         if events.isEmpty == false {
+                            semesterRow
                             actionsRow
                             eventCards
                                 .transition(.asymmetric(
@@ -77,6 +106,11 @@ struct ContentView: View {
                     .padding(.top, 8)
                     .padding(.bottom, 40)
                     .animation(.spring(response: 0.45, dampingFraction: 0.86), value: events.count)
+                    .animation(.easeOut(duration: 0.2), value: inputNote)
+                }
+
+                if isReadingInput {
+                    readingOverlay
                 }
             }
             .toolbar(.hidden, for: .navigationBar)
@@ -93,11 +127,29 @@ struct ContentView: View {
                 events = []
                 parseOutcome = .none
                 importNote = nil
+                inputSource = .none
             }
+        }
+        .onChange(of: photoItem) { _, item in
+            guard let item else { return }
+            Task { await loadPhoto(item) }
         }
         .sheet(isPresented: $showShareSheet) {
             if let shareURL {
                 ActivityView(activityItems: [shareURL])
+            }
+        }
+        .fileImporter(
+            isPresented: $showFileImporter,
+            allowedContentTypes: ScheduleFileReader.supportedTypes,
+            allowsMultipleSelection: false
+        ) { result in
+            switch result {
+            case let .success(urls):
+                guard let url = urls.first else { return }
+                Task { await loadFile(url) }
+            case let .failure(error):
+                inputNote = error.localizedDescription
             }
         }
     }
@@ -109,7 +161,7 @@ struct ContentView: View {
                 .foregroundStyle(ScheduleTheme.ink)
                 .tracking(-0.5)
 
-            Text("Paste a semester → review → add to your calendar.")
+            Text("Screenshot, file, or paste → review meetings → add to your calendar.")
                 .font(ScheduleTheme.bodyFont)
                 .foregroundStyle(ScheduleTheme.inkMuted)
                 .fixedSize(horizontal: false, vertical: true)
@@ -119,56 +171,144 @@ struct ContentView: View {
 
     private var inputBlock: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("PASTE")
-                .font(ScheduleTheme.sectionFont)
-                .foregroundStyle(ScheduleTheme.inkMuted)
-                .tracking(1.2)
+            HStack {
+                Text("GET SCHEDULE")
+                    .font(ScheduleTheme.sectionFont)
+                    .foregroundStyle(ScheduleTheme.inkMuted)
+                    .tracking(1.2)
 
-            ZStack(alignment: .topLeading) {
-                if pastedText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                    Text("Banner · VT table · timetable · weekly grid")
-                        .font(ScheduleTheme.monoFont)
-                        .foregroundStyle(ScheduleTheme.inkMuted.opacity(0.55))
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 18)
-                        .allowsHitTesting(false)
+                Spacer()
+
+                if inputSource != .none {
+                    Text(inputSource.label)
+                        .font(.system(size: 11, weight: .semibold, design: .rounded))
+                        .foregroundStyle(ScheduleTheme.teal)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 5)
+                        .background(
+                            Capsule(style: .continuous)
+                                .fill(ScheduleTheme.teal.opacity(0.12))
+                        )
                 }
-
-                TextEditor(text: $pastedText)
-                    .frame(minHeight: 168)
-                    .font(ScheduleTheme.monoFont)
-                    .scrollContentBackground(.hidden)
-                    .padding(12)
-                    .foregroundStyle(ScheduleTheme.ink)
             }
-            .background(
-                RoundedRectangle(cornerRadius: 18, style: .continuous)
-                    .fill(ScheduleTheme.surfaceSolid)
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 18, style: .continuous)
-                    .strokeBorder(ScheduleTheme.hairline, lineWidth: 1)
-            )
 
-            HStack(spacing: 10) {
-                Button(action: pasteAndScan) {
-                    Label("Paste", systemImage: "doc.on.clipboard")
-                        .font(.system(size: 15, weight: .semibold, design: .rounded))
+            HStack(spacing: 8) {
+                PhotosPicker(selection: $photoItem, matching: .images, photoLibrary: .shared()) {
+                    Label("Photo", systemImage: "photo.on.rectangle")
+                        .font(.system(size: 14, weight: .semibold, design: .rounded))
                         .frame(maxWidth: .infinity)
-                        .padding(.vertical, 14)
+                        .padding(.vertical, 13)
                 }
                 .buttonStyle(SoftButtonStyle())
+                .disabled(isReadingInput)
 
-                Button(action: parse) {
-                    Text("Parse")
-                        .font(.system(size: 15, weight: .semibold, design: .rounded))
+                Button {
+                    showFileImporter = true
+                } label: {
+                    Label("File", systemImage: "doc.text")
+                        .font(.system(size: 14, weight: .semibold, design: .rounded))
                         .frame(maxWidth: .infinity)
-                        .padding(.vertical, 14)
+                        .padding(.vertical, 13)
                 }
-                .buttonStyle(PrimaryButtonStyle())
-                .disabled(pastedText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                .buttonStyle(SoftButtonStyle())
+                .disabled(isReadingInput)
+
+                Button(action: pasteAndScan) {
+                    Label("Paste", systemImage: "doc.on.clipboard")
+                        .font(.system(size: 14, weight: .semibold, design: .rounded))
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 13)
+                }
+                .buttonStyle(SoftButtonStyle())
+                .disabled(isReadingInput)
             }
+
+            DisclosureGroup(isExpanded: $showTextEditor) {
+                VStack(alignment: .leading, spacing: 10) {
+                    ZStack(alignment: .topLeading) {
+                        if hasText == false {
+                            Text("Paste Banner / VT / timetable text here, or use Photo / File above.")
+                                .font(ScheduleTheme.monoFont)
+                                .foregroundStyle(ScheduleTheme.inkMuted.opacity(0.55))
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 18)
+                                .allowsHitTesting(false)
+                        }
+
+                        TextEditor(text: $pastedText)
+                            .frame(minHeight: 140)
+                            .font(ScheduleTheme.monoFont)
+                            .scrollContentBackground(.hidden)
+                            .padding(12)
+                            .foregroundStyle(ScheduleTheme.ink)
+                    }
+                    .background(
+                        RoundedRectangle(cornerRadius: 16, style: .continuous)
+                            .fill(ScheduleTheme.surfaceSolid)
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 16, style: .continuous)
+                            .strokeBorder(ScheduleTheme.hairline, lineWidth: 1)
+                    )
+
+                    HStack(spacing: 10) {
+                        if hasText {
+                            Button("Clear") {
+                                withAnimation {
+                                    pastedText = ""
+                                    events = []
+                                    parseOutcome = .none
+                                    importNote = nil
+                                    inputNote = nil
+                                    inputSource = .none
+                                }
+                            }
+                            .font(.system(size: 14, weight: .semibold, design: .rounded))
+                            .foregroundStyle(ScheduleTheme.inkMuted)
+                        }
+
+                        Spacer()
+
+                        Button(action: parse) {
+                            Text(events.isEmpty ? "Parse schedule" : "Re-parse")
+                                .font(.system(size: 15, weight: .semibold, design: .rounded))
+                                .padding(.horizontal, 18)
+                                .padding(.vertical, 12)
+                        }
+                        .buttonStyle(PrimaryButtonStyle())
+                        .disabled(hasText == false || isReadingInput)
+                    }
+                }
+                .padding(.top, 8)
+            } label: {
+                Text(showTextEditor ? "Hide text" : (hasText ? "Edit / fix text" : "Or type / paste text"))
+                    .font(.system(size: 13, weight: .semibold, design: .rounded))
+                    .foregroundStyle(ScheduleTheme.inkMuted)
+            }
+            .tint(ScheduleTheme.teal)
         }
+    }
+
+    private var readingOverlay: some View {
+        ZStack {
+            Color.black.opacity(0.18)
+                .ignoresSafeArea()
+            VStack(spacing: 14) {
+                ProgressView()
+                    .controlSize(.large)
+                    .tint(ScheduleTheme.teal)
+                Text(inputSource == .photo || inputSource == .file ? "Reading schedule…" : "Working…")
+                    .font(.system(size: 15, weight: .semibold, design: .rounded))
+                    .foregroundStyle(ScheduleTheme.ink)
+            }
+            .padding(28)
+            .background(
+                RoundedRectangle(cornerRadius: 20, style: .continuous)
+                    .fill(ScheduleTheme.surfaceSolid)
+                    .shadow(color: ScheduleTheme.ink.opacity(0.12), radius: 20, y: 8)
+            )
+        }
+        .transition(.opacity)
     }
 
     @ViewBuilder
@@ -178,7 +318,7 @@ struct ContentView: View {
             EmptyView()
         case .empty:
             statusChip(
-                text: "No meetings found",
+                text: "No meetings found — check the text or try a clearer photo",
                 tone: .warn
             )
         case let .found(meetings, courses, needs, tba):
@@ -218,6 +358,12 @@ struct ContentView: View {
                     .foregroundStyle(ScheduleTheme.ink)
             }
             .tint(ScheduleTheme.teal)
+            .onChange(of: useCustomSemesterEnd) { _, on in
+                if on, hasText { parse() }
+            }
+            .onChange(of: semesterEnd) { _, _ in
+                if useCustomSemesterEnd, hasText { parse() }
+            }
 
             if useCustomSemesterEnd {
                 DatePicker("", selection: $semesterEnd, displayedComponents: .date)
@@ -392,9 +538,74 @@ struct ContentView: View {
     }
 
     private func pasteAndScan() {
-        if let s = UIPasteboard.general.string {
-            pastedText = s
+        inputNote = nil
+        guard let s = UIPasteboard.general.string?
+            .trimmingCharacters(in: .whitespacesAndNewlines),
+            s.isEmpty == false
+        else {
+            inputNote = "Clipboard is empty — copy your schedule first."
+            return
+        }
+        inputSource = .paste
+        pastedText = s
+        showTextEditor = false
+        parse()
+    }
+
+    @MainActor
+    private func loadPhoto(_ item: PhotosPickerItem) async {
+        inputNote = nil
+        importNote = nil
+        inputSource = .photo
+        isReadingInput = true
+        defer {
+            isReadingInput = false
+            photoItem = nil
+        }
+
+        do {
+            guard let raw = try await item.loadTransferable(type: SchedulePhotoData.self),
+                  let image = UIImage(data: raw.data)
+            else {
+                inputNote = "Couldn’t open that photo."
+                return
+            }
+            let text = try await ScheduleImageOCR.recognizeText(in: image)
+            pastedText = text
             parse()
+            if events.isEmpty == false {
+                showTextEditor = false
+            } else {
+                showTextEditor = true
+                inputNote = "Text was read, but no meetings matched. Edit the text and re-parse."
+            }
+        } catch {
+            inputNote = error.localizedDescription
+            showTextEditor = true
+        }
+    }
+
+    @MainActor
+    private func loadFile(_ url: URL) async {
+        inputNote = nil
+        importNote = nil
+        inputSource = .file
+        isReadingInput = true
+        defer { isReadingInput = false }
+
+        do {
+            let text = try await ScheduleFileReader.readText(from: url)
+            pastedText = text
+            parse()
+            if events.isEmpty == false {
+                showTextEditor = false
+            } else {
+                showTextEditor = true
+                inputNote = "File was read, but no meetings matched. Edit the text and re-parse."
+            }
+        } catch {
+            inputNote = error.localizedDescription
+            showTextEditor = true
         }
     }
 
@@ -473,17 +684,43 @@ struct ContentView: View {
                     importNote = destination.usesICSShare
                         ? "Added \(saved) to \(calName). Share the .ics into Google Calendar."
                         : "Added \(saved) to \(calName)."
-                    withAnimation { events = []; parseOutcome = .none }
+                    withAnimation {
+                        events = []
+                        parseOutcome = .none
+                        pastedText = ""
+                        inputSource = .none
+                    }
                 } else if destination == .apple {
                     importNote = "Select rows with days picked"
                 }
             } else {
                 importNote = "Open the .ics in Google Calendar (or any calendar app)."
-                withAnimation { events = []; parseOutcome = .none }
+                withAnimation {
+                    events = []
+                    parseOutcome = .none
+                    pastedText = ""
+                    inputSource = .none
+                }
             }
         } catch {
             importFeedback.notificationOccurred(.error)
             importNote = error.localizedDescription
+        }
+    }
+}
+
+private enum InputSource: Equatable {
+    case none
+    case paste
+    case photo
+    case file
+
+    var label: String {
+        switch self {
+        case .none: return ""
+        case .paste: return "From paste"
+        case .photo: return "From photo"
+        case .file: return "From file"
         }
     }
 }
@@ -501,7 +738,6 @@ private struct AtmosphereBackground: View {
         ZStack {
             ScheduleTheme.mist
 
-            // Soft teal wash top-trailing
             RadialGradient(
                 colors: [ScheduleTheme.tealBright.opacity(0.18), .clear],
                 center: .topTrailing,
@@ -509,7 +745,6 @@ private struct AtmosphereBackground: View {
                 endRadius: 340
             )
 
-            // Cool depth bottom-leading
             RadialGradient(
                 colors: [ScheduleTheme.mistDeep.opacity(0.9), .clear],
                 center: .bottomLeading,
@@ -517,7 +752,6 @@ private struct AtmosphereBackground: View {
                 endRadius: 380
             )
 
-            // Subtle vertical drift
             LinearGradient(
                 colors: [
                     Color.white.opacity(0.35),

@@ -25,6 +25,8 @@
 		E14DEDE2B056BD00AB8AFD47 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FCF741A19598B3F015C4A37 /* Theme.swift */; };
 		EEA91FF796FFEBFA33EF5D82 /* CalendarEventCreationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33C01435900CAF25BBE8054A /* CalendarEventCreationTests.swift */; };
 		F16691F3891322DA94AE7D54 /* ICSCalendarExport.swift in Sources */ = {isa = PBXBuildFile; fileRef = E55A0A3F8A8DB3CF3F4297BA /* ICSCalendarExport.swift */; };
+		A1B2C3D4E5F60718293A4B5C /* ScheduleImageOCR.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C3D4E5F60718293A4B5C6D /* ScheduleImageOCR.swift */; };
+		C3D4E5F60718293A4B5C6D7E /* ScheduleFileReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4E5F60718293A4B5C6D7E8F /* ScheduleFileReader.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -58,6 +60,8 @@
 		E505D1ADBE9B7D6ACFA783A3 /* VTTabularScheduleParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VTTabularScheduleParser.swift; sourceTree = "<group>"; };
 		E55A0A3F8A8DB3CF3F4297BA /* ICSCalendarExport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ICSCalendarExport.swift; sourceTree = "<group>"; };
 		EC6A78F97616E094E0943C3B /* TableLikePasteGoldenTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableLikePasteGoldenTests.swift; sourceTree = "<group>"; };
+		B2C3D4E5F60718293A4B5C6D /* ScheduleImageOCR.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleImageOCR.swift; sourceTree = "<group>"; };
+		D4E5F60718293A4B5C6D7E8F /* ScheduleFileReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleFileReader.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -121,6 +125,8 @@
 				63EE42578ED974E0C7EB5E1D /* CalendarEventPlanner.swift */,
 				924F985238A062472745D4FF /* CalendarImportService.swift */,
 				E55A0A3F8A8DB3CF3F4297BA /* ICSCalendarExport.swift */,
+				D4E5F60718293A4B5C6D7E8F /* ScheduleFileReader.swift */,
+				B2C3D4E5F60718293A4B5C6D /* ScheduleImageOCR.swift */,
 				3CD3AD31F6C813FC3CAD585D /* ScheduleTextParser.swift */,
 				E505D1ADBE9B7D6ACFA783A3 /* VTTabularScheduleParser.swift */,
 			);
@@ -210,6 +216,8 @@
 				DCB90A4F436220A93F6EA4C7 /* ContentView.swift in Sources */,
 				31DE6DADFD61A4E06DAF23D5 /* EditableScheduleEvent.swift in Sources */,
 				F16691F3891322DA94AE7D54 /* ICSCalendarExport.swift in Sources */,
+				C3D4E5F60718293A4B5C6D7E /* ScheduleFileReader.swift in Sources */,
+				A1B2C3D4E5F60718293A4B5C /* ScheduleImageOCR.swift in Sources */,
 				71E174974DCB6E0CD20F36E8 /* ScheduleTextParser.swift in Sources */,
 				43A3F25A46F090CB2FBF29D8 /* SemesterScheduleApp.swift in Sources */,
 				8926AD446F30E16B36485965 /* StructuredScheduleExport.swift in Sources */,
@@ -331,6 +339,7 @@
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
 				INFOPLIST_KEY_NSCalendarsFullAccessUsageDescription = "Schedule needs calendar access to save the meetings you review. Nothing is saved until you tap Add to Calendar.";
 				INFOPLIST_KEY_NSCalendarsUsageDescription = "Schedule adds class meetings you approve to your calendar.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Schedule can read a screenshot or photo of your class schedule to find meeting times.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -378,6 +387,7 @@
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
 				INFOPLIST_KEY_NSCalendarsFullAccessUsageDescription = "Schedule needs calendar access to save the meetings you review. Nothing is saved until you tap Add to Calendar.";
 				INFOPLIST_KEY_NSCalendarsUsageDescription = "Schedule adds class meetings you approve to your calendar.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Schedule can read a screenshot or photo of your class schedule to find meeting times.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
