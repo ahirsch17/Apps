@@ -88,5 +88,5 @@ New users: **Activate account** → any seed `@vt.edu` email + code `482910`.
 
 ## Related
 
-- Product requirements: [`BetweenPRD`](https://github.com/ahirsch17/BetweenPRD) (private)
+- Product requirements: [`Between/docs/PRD.md`](docs/PRD.md) (canonical; pitch narrative in `Between/Between/docs/PITCH_DECK.md`)
 - Repo: [`Apps`](https://github.com/ahirsch17/Apps) → `Between/`
