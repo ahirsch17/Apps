@@ -5,32 +5,41 @@ import json
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
-# Core cast + extended friend group (all connected to Alex)
+# Core cast — phone numbers are directory/signup data only (not “in contacts” flags).
 CAST = [
     {"id": "stu-alex", "name": "Alex Hirsch", "email": "alex.hirsch@vt.edu", "year": "Senior", "major": "CS",
-     "phone": "+15405551234", "suggestedVia": None},
+     "phone": "+15405551234"},
     {"id": "stu-john", "name": "John Martinez", "email": "john.martinez@vt.edu", "year": "Senior", "major": "CS",
-     "phone": "+15405559876", "suggestedVia": "contacts"},
+     "phone": "+15405559876"},
     {"id": "stu-rachel", "name": "Rachel Chen", "email": "rachel.chen@vt.edu", "year": "Junior", "major": "CS",
-     "phone": "+15405552468", "suggestedVia": "contacts"},
+     "phone": "+15405552468"},
     {"id": "stu-sarah", "name": "Sarah Kim", "email": "sarah.kim@vt.edu", "year": "Sophomore", "major": "BIT",
-     "phone": None, "suggestedVia": None},
+     "phone": None},
     {"id": "stu-mia", "name": "Mia Johnson", "email": "mia.johnson@vt.edu", "year": "Junior", "major": "CMDA",
-     "phone": "+15405553001", "suggestedVia": "contacts"},
+     "phone": "+15405553001"},
     {"id": "stu-chris", "name": "Chris Brown", "email": "chris.brown@vt.edu", "year": "Senior", "major": "CS",
-     "phone": None, "suggestedVia": None},
+     "phone": None},
     {"id": "stu-taylor", "name": "Taylor Davis", "email": "taylor.davis@vt.edu", "year": "Junior", "major": "CS",
-     "phone": None, "suggestedVia": "contacts"},
+     "phone": "+15405554002"},
     {"id": "stu-jordan", "name": "Jordan Wilson", "email": "jordan.wilson@vt.edu", "year": "Sophomore", "major": "CS",
-     "phone": None, "suggestedVia": None},
+     "phone": None},
     {"id": "stu-casey", "name": "Casey Taylor", "email": "casey.taylor@vt.edu", "year": "Junior", "major": "BIT",
-     "phone": None, "suggestedVia": None},
+     "phone": None},
     {"id": "stu-avery", "name": "Avery Thomas", "email": "avery.thomas@vt.edu", "year": "Senior", "major": "CS",
-     "phone": None, "suggestedVia": None},
+     "phone": None},
     {"id": "stu-riley", "name": "Riley Anderson", "email": "riley.anderson@vt.edu", "year": "Sophomore", "major": "CMDA",
-     "phone": None, "suggestedVia": None},
+     "phone": None},
     {"id": "stu-quinn", "name": "Quinn Jackson", "email": "quinn.jackson@vt.edu", "year": "Junior", "major": "MATH",
-     "phone": None, "suggestedVia": None},
+     "phone": None},
+]
+
+# Simulated address book for demo login (stu-alex). Separate from seed student records.
+SIMULATED_DEVICE_CONTACTS = [
+    ("John Martinez", "+15405559876"),
+    ("Rachel Chen", "+15405552468"),
+    ("Mia Johnson", "+15405553001"),
+    ("Taylor Davis", "+15405554002"),
+    ("Parker Lewis", "+15405554101"),
 ]
 
 SUGGESTIONS = [
@@ -109,8 +118,9 @@ def build_students():
             "id": p["id"], "name": p["name"], "email": p["email"], "schoolId": "vt",
             "year": p["year"], "major": p["major"],
             "privacy": {"shareSchedule": "full", "shareClassDetails": True},
-            "phoneNumber": p["phone"], "suggestedVia": p["suggestedVia"],
+            "phoneNumber": p["phone"],
         })
+    suggestion_phones = ["+15405554101", None, "+15405554103", None, "+15405554105", None, "+15405554107", None]
     for i, (first, last, major) in enumerate(SUGGESTIONS):
         students.append({
             "id": f"stu-sug-{i:02d}",
@@ -120,8 +130,7 @@ def build_students():
             "year": ["Sophomore", "Junior", "Senior"][i % 3],
             "major": major,
             "privacy": {"shareSchedule": "freeBusy", "shareClassDetails": True},
-            "phoneNumber": None,
-            "suggestedVia": "contacts" if i % 2 == 0 else None,
+            "phoneNumber": suggestion_phones[i] if i < len(suggestion_phones) else None,
         })
     return students
 
@@ -396,14 +405,27 @@ def generate_data():
     }
 
 
+def build_simulated_device_contacts():
+    return {
+        "ownerStudentId": "stu-alex",
+        "contacts": [
+            {"displayName": name, "phoneNumber": phone}
+            for name, phone in SIMULATED_DEVICE_CONTACTS
+        ],
+    }
+
+
 def main():
     output = Path(__file__).resolve().parents[1] / "Between" / "Resources" / "seed_data.json"
+    contacts_output = output.parent / "simulated_device_contacts.json"
     output.parent.mkdir(parents=True, exist_ok=True)
     payload = generate_data()
     validate_seed(payload)
     output.write_text(json.dumps(payload, indent=2))
+    contacts_output.write_text(json.dumps(build_simulated_device_contacts(), indent=2))
     vb_real = len({p["studentId"] for p in payload["eventParticipations"] if p["eventId"] == "evt-vb-im"})
     print(f"Wrote {output}")
+    print(f"Wrote {contacts_output}")
     print(f"students={len(payload['students'])}, sections={len(payload['sections'])}, "
           f"event_participations={len(payload['eventParticipations'])}, vb_real={vb_real}")
 

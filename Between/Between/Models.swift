@@ -131,6 +131,21 @@ struct Student: Codable, Identifiable, Hashable {
         self.phoneNumber = phoneNumber
         self.suggestedVia = suggestedVia
     }
+
+    /// Dashboard/API layer only — never persisted on student rows in seed data.
+    func withSuggestedVia(_ suggestedVia: String?) -> Student {
+        Student(
+            id: id,
+            name: name,
+            email: email,
+            schoolId: schoolId,
+            year: year,
+            major: major,
+            privacy: privacy,
+            phoneNumber: phoneNumber,
+            suggestedVia: suggestedVia
+        )
+    }
 }
 
 struct IncomingFriendRequest: Identifiable, Hashable {

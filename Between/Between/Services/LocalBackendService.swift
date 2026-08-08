@@ -12,8 +12,10 @@ actor LocalBackendService: BetweenBackendServicing {
     private var partnerProfiles: [PartnerSeekingProfile]
     private var shareFreeTimeWithByStudentId: [String: Set<String>] = [:]
     private var activeModeByStudentId: [String: (mode: ActivityMode, expiresAt: Date)] = [:]
+    private let deviceContactsProvider: any DeviceContactsProviding
 
-    init(database: SeedDatabase) {
+    init(database: SeedDatabase, deviceContactsProvider: any DeviceContactsProviding = SimulatedDeviceContactsProvider()) {
+        self.deviceContactsProvider = deviceContactsProvider
         self.database = database
         self.friendRequests = database.friendRequests
         self.friendships = database.friendships
@@ -29,15 +31,15 @@ actor LocalBackendService: BetweenBackendServicing {
     }
 
     func fetchLoginCandidates() async -> [Student] {
-        Array(database.students.prefix(12))
+        Array(database.students.prefix(LocalDemoConfiguration.loginCandidateLimit))
     }
 
     func login(email: String, password: String?) async throws -> AuthSession {
         guard let me = database.students.first(where: { $0.email.lowercased() == email.lowercased() }) else {
             throw BackendError.userNotFound
         }
-        if let password, !password.isEmpty, password != "demo123" {
-            throw BackendError.server(message: "Incorrect password. Demo password is demo123.")
+        if let password, !password.isEmpty, password != LocalDemoConfiguration.demoPassword {
+            throw BackendError.server(message: "Incorrect password.")
         }
         return AuthSession(userId: me.id, email: me.email, token: "local-\(me.id)")
     }
@@ -54,8 +56,8 @@ actor LocalBackendService: BetweenBackendServicing {
     }
 
     func activateNewUser(email: String, code: String) async throws -> AuthSession {
-        guard code == "482910" else {
-            throw BackendError.server(message: "Invalid activation code. Demo code is 482910.")
+        guard code == LocalDemoConfiguration.activationCode else {
+            throw BackendError.server(message: "Invalid activation code.")
         }
         guard let me = database.students.first(where: { $0.email.lowercased() == email.lowercased() }) else {
             throw BackendError.userNotFound
@@ -76,7 +78,7 @@ actor LocalBackendService: BetweenBackendServicing {
     }
 
     func refreshDashboard(session: AuthSession) async throws -> DashboardData {
-        try dashboard(for: session.userId)
+        try await dashboard(for: session.userId)
     }
 
     func sendFriendRequest(session: AuthSession, to studentId: String) async throws {
@@ -263,11 +265,16 @@ actor LocalBackendService: BetweenBackendServicing {
         database.students.first(where: { $0.id == studentId })?.schoolId ?? "vt"
     }
 
-    private func dashboard(for studentId: String) throws -> DashboardData {
+    private func dashboard(for studentId: String) async throws -> DashboardData {
         guard let me = database.students.first(where: { $0.id == studentId }) else {
             throw BackendError.userNotFound
         }
         let friendIds = DashboardBuilder.friendIds(for: studentId, friendships: friendships)
+        let deviceContacts = (try? await deviceContactsProvider.fetchContacts(forOwnerStudentId: studentId)) ?? []
+        let contactMatchedStudentIds = ContactSuggestionMatcher.matchedStudentIds(
+            students: database.students,
+            deviceContacts: deviceContacts
+        )
         return DashboardBuilder.build(
             DashboardBuilder.Input(
                 me: me,
@@ -280,7 +287,9 @@ actor LocalBackendService: BetweenBackendServicing {
                 plans: plans,
                 syncTime: Date(),
                 shareFreeTimeWithByStudentId: shareFreeTimeWithByStudentId,
-                myShareFreeTimeWith: shareFreeTimeWith(for: studentId, friendIds: friendIds)
+                myShareFreeTimeWith: shareFreeTimeWith(for: studentId, friendIds: friendIds),
+                contactMatchedStudentIds: contactMatchedStudentIds,
+                walkDistanceLabels: LocalDemoConfiguration.walkDistanceLabels
             )
         )
     }
@@ -359,10 +368,11 @@ actor LocalBackendService: BetweenBackendServicing {
     }
 
     private func randomPresenceUpdate() -> PresenceRecord? {
+        let sim = LocalDemoConfiguration.presenceSimulation
         guard let key = presenceByStudentId.keys.randomElement(), var presence = presenceByStudentId[key] else { return nil }
         presence.status = PresenceStatus.allCases.randomElement() ?? .freeNow
-        presence.activity = ["Coffee", "On the way", "Study", "Gym", "In class"].randomElement() ?? "Free"
-        presence.location = ["Newman Library", "Squires", "McBryde", "Drillfield"].randomElement() ?? "Campus"
+        presence.activity = sim.activities.randomElement() ?? "Free"
+        presence.location = sim.locations.randomElement() ?? "Campus"
         presence.lastUpdated = Date()
         presenceByStudentId[key] = presence
         return presence

@@ -18,7 +18,7 @@ struct ConsentView: View {
             VStack(spacing: 8) {
                 Text("Your schedule, your rules")
                     .font(BetweenFont.screenTitle())
-                Text("Between keeps your schedule encrypted end-to-end. Only you and VT can see what it means.")
+                Text("Between keeps your schedule private on our servers. Friends only see overlap windows you allow—not your full class list.")
                     .font(BetweenFont.secondary())
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
@@ -28,8 +28,8 @@ struct ConsentView: View {
             VStack(alignment: .leading, spacing: 16) {
                 consentRow(
                     icon: "lock.shield.fill",
-                    title: "End-to-end encrypted",
-                    detail: "Your schedule is encrypted on your device. Only VT and you know what your courses are. Between never sees your actual schedule."
+                    title: "Encrypted in transit",
+                    detail: "Your data is protected between your phone and campus systems. Course discovery can use one-way hashes so we don't expose raw catalog details unnecessarily."
                 )
                 consentRow(
                     icon: "calendar.badge.checkmark",

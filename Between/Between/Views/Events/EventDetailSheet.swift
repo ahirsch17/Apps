@@ -30,7 +30,13 @@ struct EventDetailSheet: View {
                     }
 
                     if event.matchingKind != .none {
-                        matchingSection
+                        if event.isInterested {
+                            matchingSection
+                        } else {
+                            Text("After you're interested, you can opt in to find a partner for this event.")
+                                .font(BetweenFont.caption())
+                                .foregroundStyle(.secondary)
+                        }
                     }
                 }
                 .padding(20)

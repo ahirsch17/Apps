@@ -8,6 +8,7 @@ struct NetworkSheet: View {
     @State private var searchText = ""
     @State private var showCourseLookup = false
     @State private var showNotifications = false
+    @State private var showSignOutConfirm = false
 
     private var filteredFriends: [FriendCard] {
         guard !searchText.isEmpty else { return viewModel.nearbyFriends }
@@ -19,6 +20,23 @@ struct NetworkSheet: View {
     var body: some View {
         NavigationStack {
             List {
+                if viewModel.notificationCount > 0 {
+                    Section {
+                        Button {
+                            showNotifications = true
+                        } label: {
+                            HStack {
+                                Label("\(viewModel.notificationCount) friend request\(viewModel.notificationCount == 1 ? "" : "s")", systemImage: "bell.badge.fill")
+                                    .foregroundStyle(.primary)
+                                Spacer()
+                                Text("Review")
+                                    .font(.caption.weight(.semibold))
+                                    .foregroundStyle(BetweenTheme.accent)
+                            }
+                        }
+                    }
+                }
+
                 if !viewModel.nearbyFriends.isEmpty {
                     Section {
                         ForEach(filteredFriends) { friend in
@@ -36,6 +54,25 @@ struct NetworkSheet: View {
                         }
                     }
                 }
+
+                Section {
+                    Button {
+                        showCourseLookup = true
+                    } label: {
+                        Label("Classes & friend matches", systemImage: "books.vertical")
+                    }
+                } footer: {
+                    Text("See your schedule and which friends share each class.")
+                        .font(.caption)
+                }
+
+                Section {
+                    Button(role: .destructive) {
+                        showSignOutConfirm = true
+                    } label: {
+                        Label("Sign out", systemImage: "rectangle.portrait.and.arrow.right")
+                    }
+                }
             }
             .listStyle(.insetGrouped)
             .searchable(text: $searchText, prompt: "Search friends")
@@ -46,8 +83,9 @@ struct NetworkSheet: View {
                     Button {
                         showCourseLookup = true
                     } label: {
-                        Image(systemName: "magnifyingglass")
+                        Image(systemName: "books.vertical")
                     }
+                    .accessibilityLabel("Classes and matches")
                 }
                 ToolbarItem(placement: .topBarLeading) {
                     Button {
@@ -56,12 +94,21 @@ struct NetworkSheet: View {
                         Image(systemName: "bell.fill")
                     }
                     .badge(viewModel.notificationCount)
+                    .accessibilityLabel("Notifications")
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Done") { dismiss() }
                         .fontWeight(.semibold)
                 }
             }
+            .task { await viewModel.refresh() }
+        }
+        .confirmationDialog("Sign out of Between?", isPresented: $showSignOutConfirm, titleVisibility: .visible) {
+            Button("Sign out", role: .destructive) {
+                viewModel.signOut()
+                dismiss()
+            }
+            Button("Cancel", role: .cancel) {}
         }
         .sheet(isPresented: $showCourseLookup) {
             CourseLookupSheet()
@@ -110,7 +157,7 @@ struct NetworkSheet: View {
                     .foregroundStyle(viewModel.preferences.isStarred(friend.id) ? BetweenTheme.accentSecondary : .secondary)
             }
             .buttonStyle(.plain)
-            
+
             Button {
                 settingsFriend = friend
             } label: {
@@ -123,7 +170,8 @@ struct NetworkSheet: View {
     }
 
     private func suggestionRow(_ student: Student) -> some View {
-        HStack(spacing: 12) {
+        let pending = viewModel.hasPendingRequest(to: student.id)
+        return HStack(spacing: 12) {
             FriendAvatarView(name: student.name, friendId: student.id, size: 40)
             VStack(alignment: .leading, spacing: 2) {
                 Text(student.name)
@@ -138,12 +186,18 @@ struct NetworkSheet: View {
                 }
             }
             Spacer()
-            Button("Add") {
-                Task { await viewModel.sendFriendRequest(to: student) }
+            if pending {
+                Text("Pending")
+                    .font(BetweenFont.caption())
+                    .foregroundStyle(.secondary)
+            } else {
+                Button("Add") {
+                    Task { await viewModel.sendFriendRequest(to: student) }
+                }
+                .font(BetweenFont.captionMedium())
+                .buttonStyle(.borderedProminent)
+                .tint(BetweenTheme.accent)
             }
-            .font(BetweenFont.captionMedium())
-            .buttonStyle(.borderedProminent)
-            .tint(BetweenTheme.accent)
         }
     }
 

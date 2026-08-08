@@ -1,7 +1,7 @@
 const { buildTodayPlan, serializeTodayPlan } = require('./scheduleEngine');
+const { applyContactSuggestions } = require('./contactMatcher');
 
 const AVATARS = ['🙂', '😎', '🤓', '🧠', '🏃', '☕', '📚', '🎧', '✨', '🌟', '🦉', '🔥'];
-const WALKS = ['2 min walk', '5 min walk', '8 min walk', '12 min walk'];
 
 function hash(s) {
   let h = 0;
@@ -39,6 +39,8 @@ function buildDashboard(input) {
     syncTime,
     shareFreeTimeWithByStudentId = {},
     myShareFreeTimeWith = [],
+    contactMatchedStudentIds = new Set(),
+    walkDistanceLabels = ['Nearby'],
   } = input;
   const fids = friendIds(me.id, friendships);
   const sectionById = Object.fromEntries(sections.map((s) => [s.sectionId, s]));
@@ -47,6 +49,8 @@ function buildDashboard(input) {
     .filter((s) => fids.has(s.id) && presenceByStudentId[s.id])
     .map((student) => {
       const p = presenceByStudentId[student.id];
+      const walkLabels = walkDistanceLabels.length ? walkDistanceLabels : ['Nearby'];
+      const walkIndex = Math.abs(hash(student.id)) % walkLabels.length;
       return {
         id: student.id,
         name: student.name,
@@ -55,7 +59,7 @@ function buildDashboard(input) {
         status: p.status,
         activity: p.activity,
         location: p.location,
-        distanceLabel: WALKS[hash(student.id) % WALKS.length],
+        distanceLabel: walkLabels[walkIndex],
       };
     })
     .sort((a, b) => a.name.localeCompare(b.name));
@@ -102,7 +106,8 @@ function buildDashboard(input) {
   const pendingOutgoing = outgoing.map((r) => students.find((s) => s.id === r.toStudentId)).filter(Boolean);
 
   const blocked = new Set([...fids, me.id, ...pendingOutgoing.map((s) => s.id), ...pendingIncoming.map((r) => r.from.id)]);
-  const suggestedStudents = students
+  const studentsWithSuggestions = applyContactSuggestions(students, contactMatchedStudentIds);
+  const suggestedStudents = studentsWithSuggestions
     .filter((s) => !blocked.has(s.id))
     .sort((a, b) => {
       const ac = a.suggestedVia === 'contacts';

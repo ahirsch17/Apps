@@ -5,6 +5,9 @@ const { buildEvents } = require('./eventsBuilder');
 const { assertValidSeed } = require('./seedValidator');
 
 const SEED_PATH = path.join(__dirname, '../../Between/Resources/seed_data.json');
+const SIMULATED_CONTACTS_PATH = path.join(__dirname, '../../Between/Resources/simulated_device_contacts.json');
+const { matchedStudentIds } = require('./contactMatcher');
+const { loadDemoConfig } = require('./localDemoConfig');
 const MODE_MAP = {
   quiet: { status: 'busy', label: 'Quiet time' },
   hungry: { status: 'freeNow', label: 'Hungry' },
@@ -49,6 +52,8 @@ class DataStore {
     this.activeModeByStudentId = {};
     this.consentByStudentId = {};
     this.shareFreeTimeWithByStudentId = {};
+    this.simulatedDeviceContacts = JSON.parse(fs.readFileSync(SIMULATED_CONTACTS_PATH, 'utf8'));
+    this.demoConfig = loadDemoConfig();
   }
 
   findStudentByEmail(email) {
@@ -68,18 +73,19 @@ class DataStore {
   }
 
   loginCandidates() {
-    return this.students.slice(0, 12);
+    const limit = this.demoConfig.loginCandidateLimit ?? 12;
+    return this.students.slice(0, limit);
   }
 
   login(email, password) {
     const me = this.findStudentByEmail(email);
     if (!me) return { error: 'userNotFound' };
-    if (password && password !== 'demo123') return { error: 'badPassword' };
+    if (password && password !== this.demoConfig.demoPassword) return { error: 'badPassword' };
     return { userId: me.id, email: me.email };
   }
 
   activate(email, code) {
-    if (code !== '482910') return { error: 'badCode' };
+    if (code !== this.demoConfig.activationCode) return { error: 'badCode' };
     const me = this.findStudentByEmail(email);
     if (!me) return { error: 'userNotFound' };
     return { userId: me.id, email: me.email };
@@ -103,6 +109,11 @@ class DataStore {
     const me = this.findStudentById(studentId);
     if (!me) return null;
     const fids = require('./dashboardBuilder').friendIds(studentId, this.friendships);
+    const deviceContacts =
+      this.simulatedDeviceContacts.ownerStudentId === studentId
+        ? this.simulatedDeviceContacts.contacts
+        : [];
+    const contactMatchedStudentIds = matchedStudentIds(this.students, deviceContacts);
     return buildDashboard({
       me,
       students: this.students,
@@ -115,6 +126,8 @@ class DataStore {
       syncTime: new Date().toISOString(),
       shareFreeTimeWithByStudentId: this.shareFreeTimeWithByStudentId,
       myShareFreeTimeWith: this.getShareFreeTimeWith(studentId, fids),
+      contactMatchedStudentIds,
+      walkDistanceLabels: this.demoConfig.walkDistanceLabels || ['Nearby'],
     });
   }
 

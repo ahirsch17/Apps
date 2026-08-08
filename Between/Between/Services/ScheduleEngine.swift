@@ -37,10 +37,8 @@ enum ScheduleEngine {
         visibleFriendIds: Set<String>? = nil,
         now: Date = Date()
     ) -> [TodayPlanItem] {
-        let dayIdx = BackendConfiguration.demoWeekdayIndex ?? todayIndex(from: now)
-        let nowMinutes = BackendConfiguration.demoNowMinutes
-            ?? (Calendar.current.component(.hour, from: now) * 60
-                + Calendar.current.component(.minute, from: now))
+        let dayIdx = BackendConfiguration.weekdayIndex(from: now)
+        let nowMinutes = BackendConfiguration.nowMinutes(from: now)
 
         let busy = busyIntervals(on: dayIdx, sections: mySections)
         let free = freeIntervals(on: dayIdx, sections: mySections)

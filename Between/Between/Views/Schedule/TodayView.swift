@@ -1,14 +1,16 @@
 import SwiftUI
 
-/// Home screen — overlap board is the centerpiece; everything else is compact context.
+/// Home — center page is the overlap board; swipe for campus events or later today.
 struct TodayView: View {
     @EnvironmentObject private var viewModel: AppViewModel
     @Environment(\.colorScheme) private var colorScheme
 
+    @State private var homePage = 1
     @State private var showNetwork = false
     @State private var showEvents = false
     @State private var showFreeNow = false
     @State private var showLaterToday = false
+    @State private var showStatusSheet = false
     @State private var selectedEvent: CampusEventCard?
 
     private var snapshot: TodayPresenter.Snapshot { viewModel.today }
@@ -19,46 +21,143 @@ struct TodayView: View {
 
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
-                    headerStrip
-
-                    DayOverlapBoardView(
-                        todayPlan: viewModel.todayPlan,
-                        starredIds: viewModel.preferences.starredFriendIds
-                    )
-
-                    if !snapshot.friendsFreeNow.isEmpty {
-                        freeNowStrip
-                    }
-
-                    if !laterMeetups.isEmpty {
-                        laterTodayStrip
-                    }
-
-                    let campusEvents = viewModel.featuredEvents()
-                    if !campusEvents.isEmpty {
-                        campusStrip(campusEvents)
-                    }
+            VStack(spacing: 0) {
+                pageHint
+                TabView(selection: $homePage) {
+                    campusPage.tag(0)
+                    overlapPage.tag(1)
+                    laterPage.tag(2)
                 }
-                .padding(.horizontal, 16)
-                .padding(.top, 4)
-                .padding(.bottom, 100)
+                .tabViewStyle(.page(indexDisplayMode: .always))
             }
             .background(BetweenTheme.screenBackground(colorScheme))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar { toolbarContent }
             .safeAreaInset(edge: .bottom) { statusDock }
-            .refreshable {
-                await viewModel.refresh()
-                await viewModel.loadEvents()
-            }
         }
         .sheet(isPresented: $showEvents) { EventsSheet() }
         .sheet(isPresented: $showNetwork) { NetworkSheet() }
         .sheet(isPresented: $showFreeNow) { FreeNowSheet(friends: snapshot.friendsFreeNow) }
         .sheet(isPresented: $showLaterToday) { LaterTodaySheet(meetups: laterMeetups) }
+        .sheet(isPresented: $showStatusSheet) { StatusSheet() }
         .sheet(item: $selectedEvent) { event in EventDetailSheet(event: event) }
+    }
+
+    // MARK: - Pages
+
+    private var pageHint: some View {
+        Text(pageHintText)
+            .font(.caption2)
+            .foregroundStyle(.tertiary)
+            .frame(maxWidth: .infinity)
+            .padding(.top, 4)
+            .padding(.bottom, 2)
+            .accessibilityHidden(true)
+    }
+
+    private var pageHintText: String {
+        switch homePage {
+        case 0: return "Campus"
+        case 1: return "Today"
+        case 2: return "Later"
+        default: return ""
+        }
+    }
+
+    private var overlapPage: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 16) {
+                headerStrip
+                DayOverlapBoardView(
+                    todayPlan: viewModel.todayPlan,
+                    starredIds: viewModel.preferences.starredFriendIds
+                )
+            }
+            .padding(.horizontal, 16)
+            .padding(.bottom, 24)
+        }
+        .refreshable {
+            await viewModel.refresh()
+            await viewModel.loadEvents()
+        }
+    }
+
+    private var laterPage: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 20) {
+                Text("Later today")
+                    .font(.title2.weight(.bold))
+                Text("People and windows when you're both free.")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+
+                if !snapshot.friendsFreeNow.isEmpty {
+                    freeNowSection
+                }
+
+                if laterMeetups.isEmpty {
+                    ContentUnavailableView(
+                        "Nothing queued yet",
+                        systemImage: "clock",
+                        description: Text("Overlap windows will show up here as your day unfolds.")
+                    )
+                    .padding(.top, 24)
+                } else {
+                    VStack(spacing: 8) {
+                        ForEach(laterMeetups) { meetup in
+                            Button { showLaterToday = true } label: {
+                                meetupRow(meetup)
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    }
+                }
+            }
+            .padding(.horizontal, 16)
+            .padding(.bottom, 24)
+        }
+    }
+
+    private var campusPage: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 20) {
+                Text("On campus")
+                    .font(.title2.weight(.bold))
+                Text("Events matched to your interests.")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+
+                let campusEvents = viewModel.featuredEvents()
+                if campusEvents.isEmpty {
+                    ContentUnavailableView(
+                        "No events right now",
+                        systemImage: "calendar",
+                        description: Text("Pull to refresh or check the full calendar.")
+                    )
+                    .padding(.top, 24)
+                } else {
+                    VStack(spacing: 8) {
+                        ForEach(campusEvents) { event in
+                            Button { selectedEvent = event } label: {
+                                campusRow(event)
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    }
+                }
+
+                Button { showEvents = true } label: {
+                    Label("Full calendar", systemImage: "calendar")
+                        .font(.subheadline.weight(.semibold))
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 12)
+                }
+                .buttonStyle(.bordered)
+                .padding(.top, 8)
+            }
+            .padding(.horizontal, 16)
+            .padding(.bottom, 24)
+        }
     }
 
     // MARK: - Header
@@ -68,7 +167,7 @@ struct TodayView: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text(greeting)
                     .font(.title2.weight(.bold))
-                Text(BackendConfiguration.demoWeekdayName())
+                Text(BackendConfiguration.formattedToday())
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             }
@@ -92,11 +191,9 @@ struct TodayView: View {
         }
     }
 
-    // MARK: - Secondary strips
-
-    private var freeNowStrip: some View {
+    private var freeNowSection: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("On campus now")
+            Text("Free now")
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(.secondary)
                 .textCase(.uppercase)
@@ -104,7 +201,7 @@ struct TodayView: View {
 
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 10) {
-                    ForEach(snapshot.friendsFreeNow.prefix(6)) { friend in
+                    ForEach(snapshot.friendsFreeNow.prefix(8)) { friend in
                         freeNowChip(friend)
                     }
                 }
@@ -136,21 +233,6 @@ struct TodayView: View {
         .buttonStyle(.plain)
     }
 
-    private var laterTodayStrip: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            sectionHeader(title: "Later today", action: laterMeetups.count > 2 ? { showLaterToday = true } : nil)
-
-            VStack(spacing: 8) {
-                ForEach(laterMeetups.prefix(2)) { meetup in
-                    Button { showLaterToday = true } label: {
-                        meetupRow(meetup)
-                    }
-                    .buttonStyle(.plain)
-                }
-            }
-        }
-    }
-
     private func meetupRow(_ meetup: TodayPresenter.MeetupWindow) -> some View {
         HStack(spacing: 12) {
             Image(systemName: meetup.icon)
@@ -175,21 +257,6 @@ struct TodayView: View {
         .padding(.vertical, 10)
         .background(BetweenTheme.surface(colorScheme))
         .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
-    }
-
-    private func campusStrip(_ events: [CampusEventCard]) -> some View {
-        VStack(alignment: .leading, spacing: 10) {
-            sectionHeader(title: "For you on campus", action: { showEvents = true })
-
-            VStack(spacing: 8) {
-                ForEach(events) { event in
-                    Button { selectedEvent = event } label: {
-                        campusRow(event)
-                    }
-                    .buttonStyle(.plain)
-                }
-            }
-        }
     }
 
     private func campusRow(_ event: CampusEventCard) -> some View {
@@ -220,52 +287,57 @@ struct TodayView: View {
         .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
     }
 
-    private func sectionHeader(title: String, action: (() -> Void)?) -> some View {
-        HStack {
-            Text(title)
-                .font(.caption.weight(.semibold))
-                .foregroundStyle(.secondary)
-                .textCase(.uppercase)
-                .tracking(0.5)
-            Spacer()
-            if let action {
-                Button("See all", action: action)
-                    .font(.caption.weight(.semibold))
-            }
-        }
-    }
-
     private var statusDock: some View {
         BoardStatusDock {
-            VStack(alignment: .leading, spacing: 12) {
-                ActivityModeBar(showsHeader: false)
-                Button {
-                    Task { await viewModel.setActivityMode(.social) }
-                } label: {
-                    Label("Available to hang", systemImage: "hand.wave.fill")
-                        .font(.subheadline.weight(.semibold))
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 12)
+            Button { showStatusSheet = true } label: {
+                HStack(spacing: 10) {
+                    Image(systemName: "figure.wave")
+                        .font(.body.weight(.semibold))
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Your status")
+                            .font(.subheadline.weight(.semibold))
+                        Text("Tap to set activity or “available to hang”")
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                    }
+                    Spacer()
+                    Image(systemName: "chevron.up")
+                        .font(.caption.weight(.bold))
+                        .foregroundStyle(.tertiary)
                 }
-                .buttonStyle(.borderedProminent)
-                .tint(BetweenTheme.accentAction)
+                .foregroundStyle(.primary)
             }
+            .buttonStyle(.plain)
         }
     }
 
     @ToolbarContentBuilder
     private var toolbarContent: some ToolbarContent {
         ToolbarItem(placement: .topBarLeading) {
-            BetweenBrandLockup(style: .toolbar)
+            BetweenMark(size: .compact)
+                .accessibilityLabel("Between")
         }
         ToolbarItem(placement: .topBarTrailing) {
-            HStack(spacing: 8) {
-                ToolbarIconButton(systemName: "calendar", onTap: { showEvents = true })
-                ToolbarIconButton(
-                    systemName: "person.2.fill",
-                    badge: viewModel.notificationCount,
-                    onTap: { showNetwork = true }
-                )
+            HStack(spacing: 16) {
+                Button { showEvents = true } label: {
+                    Image(systemName: "calendar")
+                }
+                .accessibilityLabel("Campus events")
+
+                Button { showNetwork = true } label: {
+                    ZStack(alignment: .topTrailing) {
+                        Image(systemName: "person.2.fill")
+                        if viewModel.notificationCount > 0 {
+                            Text("\(min(viewModel.notificationCount, 9))")
+                                .font(.system(size: 9, weight: .bold))
+                                .foregroundStyle(.white)
+                                .padding(4)
+                                .background(Circle().fill(BetweenTheme.accentAction))
+                                .offset(x: 6, y: -6)
+                        }
+                    }
+                }
+                .accessibilityLabel("Friends")
             }
         }
     }
@@ -279,6 +351,42 @@ struct TodayView: View {
 }
 
 // MARK: - Sheets
+
+private struct StatusSheet: View {
+    @EnvironmentObject private var viewModel: AppViewModel
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            VStack(alignment: .leading, spacing: 20) {
+                ActivityModeBar(showsHeader: true)
+                Button {
+                    Task {
+                        await viewModel.setActivityMode(.social)
+                        dismiss()
+                    }
+                } label: {
+                    Label("Available to hang", systemImage: "hand.wave.fill")
+                        .font(.subheadline.weight(.semibold))
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 12)
+                }
+                .buttonStyle(.borderedProminent)
+                .tint(BetweenTheme.accentAction)
+                Spacer()
+            }
+            .padding(20)
+            .navigationTitle("Status")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Done") { dismiss() }
+                }
+            }
+        }
+        .presentationDetents([.medium])
+    }
+}
 
 private struct FreeNowSheet: View {
     @Environment(\.dismiss) private var dismiss

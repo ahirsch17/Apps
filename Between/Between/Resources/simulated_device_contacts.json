@@ -1,0 +1,25 @@
+{
+  "ownerStudentId": "stu-alex",
+  "contacts": [
+    {
+      "displayName": "John Martinez",
+      "phoneNumber": "+15405559876"
+    },
+    {
+      "displayName": "Rachel Chen",
+      "phoneNumber": "+15405552468"
+    },
+    {
+      "displayName": "Mia Johnson",
+      "phoneNumber": "+15405553001"
+    },
+    {
+      "displayName": "Taylor Davis",
+      "phoneNumber": "+15405554002"
+    },
+    {
+      "displayName": "Parker Lewis",
+      "phoneNumber": "+15405554101"
+    }
+  ]
+}

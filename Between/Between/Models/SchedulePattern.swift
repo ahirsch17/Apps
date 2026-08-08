@@ -138,7 +138,7 @@ struct SchedulePatternDetector {
     }
     
     private static func detectPattern(from item: TodayPlanItem) -> SchedulePattern {
-        let demoDay = BackendConfiguration.demoWeekdayName()
+        let demoDay = BackendConfiguration.weekdayName()
         
         if demoDay.contains("Monday") || demoDay.contains("Wednesday") || demoDay.contains("Friday") {
             return .mwf

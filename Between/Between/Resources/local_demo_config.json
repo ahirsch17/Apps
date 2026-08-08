@@ -1,0 +1,10 @@
+{
+  "demoPassword": "demo123",
+  "activationCode": "482910",
+  "loginCandidateLimit": 12,
+  "walkDistanceLabels": ["2 min walk", "5 min walk", "8 min walk", "12 min walk"],
+  "presenceSimulation": {
+    "activities": ["Coffee", "On the way", "Study", "Gym", "In class"],
+    "locations": ["Newman Library", "Squires", "McBryde", "Drillfield"]
+  }
+}

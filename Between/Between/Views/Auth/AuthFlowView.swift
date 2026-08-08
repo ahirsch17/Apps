@@ -133,7 +133,7 @@ struct AuthFlowView: View {
     private var newUserScreen: some View {
         authForm(
             title: "Activate your account",
-            subtitle: "Enter the code from your welcome email, then sign in with VT SSO."
+            subtitle: "Use the email from your welcome message. Pilot accounts must already exist on the VT roster in Between."
         ) {
             TextField("you@vt.edu", text: $viewModel.loginEmail)
                 .textContentType(.emailAddress)

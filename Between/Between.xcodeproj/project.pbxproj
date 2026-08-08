@@ -8,6 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		0B58D26883F30B10D4352217 /* seed_data.json in Resources */ = {isa = PBXBuildFile; fileRef = A286433737770F501590882F /* seed_data.json */; };
+		C0NTACTF1X00000000000001 /* simulated_device_contacts.json in Resources */ = {isa = PBXBuildFile; fileRef = C0NTACTF1X00000000000002 /* simulated_device_contacts.json */; };
+		L0C4LD3M0C0NF1G000000001 /* local_demo_config.json in Resources */ = {isa = PBXBuildFile; fileRef = L0C4LD3M0C0NF1G000000002 /* local_demo_config.json */; };
+		L0C4LD3M0C0NF1G000000003 /* LocalDemoConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = L0C4LD3M0C0NF1G000000004 /* LocalDemoConfiguration.swift */; };
+		C0NTACTM4TCH000000000001 /* ContactSuggestionMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0NTACTM4TCH000000000002 /* ContactSuggestionMatcher.swift */; };
+		D3V1C3C0NT00000000000001 /* DeviceContactsProviding.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3V1C3C0NT00000000000002 /* DeviceContactsProviding.swift */; };
 		A1C2D3E4F5061728394A5B6C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B2D3E4F5061728394A5B6C7D /* Assets.xcassets */; };
 		1B900367E8F16631978B210B /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDF199F746A50225E095F90A /* ContentView.swift */; };
 		20210B7736BF59A2B80BC25B /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFE6A3F160FDFB0A4D9A1C9C /* Theme.swift */; };
@@ -62,6 +67,11 @@
 		5A2D1926CA26D82F91AE16B6 /* BetweenApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BetweenApp.swift; sourceTree = "<group>"; };
 		5D949A1803F9BC9CC8CD7859 /* Between.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Between.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A286433737770F501590882F /* seed_data.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = seed_data.json; sourceTree = "<group>"; };
+		C0NTACTF1X00000000000002 /* simulated_device_contacts.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = simulated_device_contacts.json; sourceTree = "<group>"; };
+		L0C4LD3M0C0NF1G000000002 /* local_demo_config.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = local_demo_config.json; sourceTree = "<group>"; };
+		L0C4LD3M0C0NF1G000000004 /* LocalDemoConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalDemoConfiguration.swift; sourceTree = "<group>"; };
+		C0NTACTM4TCH000000000002 /* ContactSuggestionMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactSuggestionMatcher.swift; sourceTree = "<group>"; };
+		D3V1C3C0NT00000000000002 /* DeviceContactsProviding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceContactsProviding.swift; sourceTree = "<group>"; };
 		B2D3E4F5061728394A5B6C7D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A7EEC126A5992F85498AC572 /* AppViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppViewModel.swift; sourceTree = "<group>"; };
 		BFE6A3F160FDFB0A4D9A1C9C /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
@@ -106,6 +116,9 @@
 			children = (
 				708192A3B4C5D6E7F8091A2 /* BetweenBackendServicing.swift */,
 				92A3B4C5D6E7F8091A2B3C4 /* BackendConfiguration.swift */,
+				L0C4LD3M0C0NF1G000000004 /* LocalDemoConfiguration.swift */,
+				C0NTACTM4TCH000000000002 /* ContactSuggestionMatcher.swift */,
+				D3V1C3C0NT00000000000002 /* DeviceContactsProviding.swift */,
 				B4C5D6E7F8091A2B3C4D5E6 /* BackendServiceFactory.swift */,
 				D6E7F8091A2B3C4D5E6F7081 /* BetweenAPIClient.swift */,
 				F8091A2B3C4D5E6F708192B /* DashboardBuilder.swift */,
@@ -251,6 +264,8 @@
 			isa = PBXGroup;
 			children = (
 				A286433737770F501590882F /* seed_data.json */,
+				C0NTACTF1X00000000000002 /* simulated_device_contacts.json */,
+				L0C4LD3M0C0NF1G000000002 /* local_demo_config.json */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -363,6 +378,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				0B58D26883F30B10D4352217 /* seed_data.json in Resources */,
+				C0NTACTF1X00000000000001 /* simulated_device_contacts.json in Resources */,
+				L0C4LD3M0C0NF1G000000001 /* local_demo_config.json in Resources */,
 				A1C2D3E4F5061728394A5B6C /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -394,6 +411,9 @@
 				C0URSEL00KUP000000000001 /* CourseLookupSheet.swift in Sources */,
 				CLASFR1END5HEET000000001 /* ClassFriendsSheet.swift in Sources */,
 				36213467843795F1B9D3C50E /* LocalBackendService.swift in Sources */,
+				C0NTACTM4TCH000000000001 /* ContactSuggestionMatcher.swift in Sources */,
+				D3V1C3C0NT00000000000001 /* DeviceContactsProviding.swift in Sources */,
+				L0C4LD3M0C0NF1G000000003 /* LocalDemoConfiguration.swift in Sources */,
 				B9127AFB0729CFFBFADF82E2 /* Models.swift in Sources */,
 				A1B2C3D4E5F60718293A4B5C /* ScheduleEngine.swift in Sources */,
 				T0DAYPR3S3NT3R0000000001 /* TodayPresenter.swift in Sources */,

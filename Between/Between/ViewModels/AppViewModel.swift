@@ -132,6 +132,7 @@ final class AppViewModel: ObservableObject {
             let consentKey = "\(Self.consentKey).\(me.id)"
             UserDefaults.standard.set(true, forKey: consentKey)
             needsConsent = false
+            await loadEvents()
         } catch {
             errorMessage = error.localizedDescription
         }
@@ -161,12 +162,16 @@ final class AppViewModel: ObservableObject {
         do {
             let data = try await service.refreshDashboard(session: session)
             applyDashboard(data)
-        preferences.bind(userId: data.me.id, friendIds: data.nearbyFriends.map(\.id))
-        preferences.applyServerSharePrefs(data.shareFreeTimeWith)
-        await syncCourseHashes()
+            preferences.bind(userId: data.me.id, friendIds: data.nearbyFriends.map(\.id))
+            preferences.applyServerSharePrefs(data.shareFreeTimeWith)
+            await syncCourseHashes()
         } catch {
             errorMessage = error.localizedDescription
         }
+    }
+
+    func hasPendingRequest(to studentId: String) -> Bool {
+        pendingOutgoing.contains { $0.id == studentId }
     }
 
     func searchCourses() {
@@ -346,7 +351,7 @@ final class AppViewModel: ObservableObject {
     private func autoSuggestStars(from data: DashboardData) {
         let overlapIds = Set(data.todayPlan.flatMap(\.friendOverlaps).map(\.friendId))
         guard preferences.starredFriendIds.isEmpty else { return }
-        preferences.ensureDemoStars(
+        preferences.applyInitialStarSuggestions(
             friendIds: data.nearbyFriends.map(\.id),
             overlapFriendIds: overlapIds
         )

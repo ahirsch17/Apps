@@ -18,16 +18,22 @@ enum DashboardBuilder {
         /// friendId -> friendIds that friend shares overlap visibility with. Missing key = shares with all friends.
         let shareFreeTimeWithByStudentId: [String: Set<String>]
         let myShareFreeTimeWith: Set<String>
+        /// From contact ↔ directory phone matching, not from student records in the database.
+        let contactMatchedStudentIds: Set<String>
+        let walkDistanceLabels: [String]
     }
 
     static func build(_ input: Input) -> DashboardData {
         let friendIds = friendIds(for: input.me.id, friendships: input.friendships)
+        let walkLabels = input.walkDistanceLabels
         let sectionById = Dictionary(uniqueKeysWithValues: input.sections.map { ($0.sectionId, $0) })
 
         let nearbyFriends: [FriendCard] = input.students
             .filter { friendIds.contains($0.id) }
             .compactMap { student in
                 guard let presence = input.presenceByStudentId[student.id] else { return nil }
+                let walkIndex = abs(student.id.hashValue) % max(walkLabels.count, 1)
+                let distance = walkLabels.isEmpty ? "Nearby" : walkLabels[walkIndex]
                 return FriendCard(
                     id: student.id,
                     name: student.name,
@@ -36,7 +42,7 @@ enum DashboardBuilder {
                     status: presence.status,
                     activity: presence.activity,
                     location: presence.location,
-                    distanceLabel: ["2 min walk", "5 min walk", "8 min walk", "12 min walk"].randomElement()!
+                    distanceLabel: distance
                 )
             }
             .sorted { $0.name < $1.name }
@@ -77,7 +83,11 @@ enum DashboardBuilder {
             .union(Set(pendingOutgoing.map(\.id)))
             .union(Set(pendingIncoming.map(\.from.id)))
 
-        let suggestedStudents = input.students
+        let studentsWithSuggestions = ContactSuggestionMatcher.applyingContactSuggestions(
+            to: input.students,
+            contactMatchedIds: input.contactMatchedStudentIds
+        )
+        let suggestedStudents = studentsWithSuggestions
             .filter { !blockedIds.contains($0.id) }
             .sorted { lhs, rhs in
                 let lhsContact = lhs.suggestedVia == "contacts"

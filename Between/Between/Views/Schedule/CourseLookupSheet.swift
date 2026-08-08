@@ -5,25 +5,45 @@ struct CourseLookupSheet: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.colorScheme) private var colorScheme
 
+    @State private var classDetailSection: CourseSection?
+
     var body: some View {
         NavigationStack {
-            VStack(spacing: 0) {
-                List {
+            List {
+                if !viewModel.mySections.isEmpty {
+                    Section("Your classes") {
+                        ForEach(viewModel.mySections) { section in
+                            Button {
+                                classDetailSection = section
+                            } label: {
+                                courseRow(section, highlight: true)
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    }
+                }
+
+                Section(viewModel.mySections.isEmpty ? "Search catalog" : "Search all sections") {
                     if viewModel.courseSearchResults.isEmpty {
                         ContentUnavailableView(
                             "Search classes",
                             systemImage: "magnifyingglass",
-                            description: Text("Try CS 2114, MATH, or a CRN")
+                            description: Text("Try a course code or name from your schedule")
                         )
                     } else {
                         ForEach(viewModel.courseSearchResults) { section in
-                            courseRow(section)
+                            Button {
+                                classDetailSection = section
+                            } label: {
+                                courseRow(section, highlight: false)
+                            }
+                            .buttonStyle(.plain)
                         }
                     }
                 }
-                .listStyle(.insetGrouped)
             }
-            .navigationTitle("Find a class")
+            .listStyle(.insetGrouped)
+            .navigationTitle("Classes & matches")
             .navigationBarTitleDisplayMode(.large)
             .searchable(text: $viewModel.courseSearchQuery, prompt: "Course code or name")
             .onChange(of: viewModel.courseSearchQuery) { _, _ in
@@ -41,10 +61,13 @@ struct CourseLookupSheet: View {
                     viewModel.searchCourses()
                 }
             }
+            .sheet(item: $classDetailSection) { section in
+                ClassFriendsSheet(section: section)
+            }
         }
     }
 
-    private func courseRow(_ section: CourseSection) -> some View {
+    private func courseRow(_ section: CourseSection, highlight: Bool) -> some View {
         let friendCount = viewModel.connections(for: section).count
         return VStack(alignment: .leading, spacing: 6) {
             HStack {
@@ -55,10 +78,17 @@ struct CourseLookupSheet: View {
                     .foregroundStyle(.secondary)
                 Spacer()
                 if friendCount > 0 {
-                    Label("\(friendCount)", systemImage: "person.2.fill")
+                    Label("\(friendCount) friends", systemImage: "person.2.fill")
                         .font(BetweenFont.captionMedium())
                         .foregroundStyle(BetweenTheme.accent)
+                } else {
+                    Text("No friend matches")
+                        .font(.caption2)
+                        .foregroundStyle(.tertiary)
                 }
+                Image(systemName: "chevron.right")
+                    .font(.caption2.weight(.bold))
+                    .foregroundStyle(.tertiary)
             }
             Text(section.courseName)
                 .font(BetweenFont.caption())
@@ -67,9 +97,11 @@ struct CourseLookupSheet: View {
             Text("\(BetweenFormat.displayDays(section.meetingDays)) · \(BetweenFormat.displayTime(section.startTime)) – \(BetweenFormat.displayTime(section.endTime))")
                 .font(BetweenFont.caption())
                 .foregroundStyle(.secondary)
-            Text(section.location)
-                .font(.caption2)
-                .foregroundStyle(.tertiary)
+            if highlight {
+                Text("Tap to see friends in this class")
+                    .font(.caption2)
+                    .foregroundStyle(BetweenTheme.accent)
+            }
         }
         .padding(.vertical, 4)
     }

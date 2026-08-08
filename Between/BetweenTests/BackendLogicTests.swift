@@ -88,7 +88,9 @@ final class BackendLogicTests: XCTestCase {
                 plans: db.plans,
                 syncTime: Date(),
                 shareFreeTimeWithByStudentId: [:],
-                myShareFreeTimeWith: friendIds
+                myShareFreeTimeWith: friendIds,
+                contactMatchedStudentIds: [],
+                walkDistanceLabels: ["5 min walk"]
             )
         )
         let blockedOverlapIds = Set(
@@ -109,11 +111,50 @@ final class BackendLogicTests: XCTestCase {
                 plans: db.plans,
                 syncTime: Date(),
                 shareFreeTimeWithByStudentId: sharePrefs,
-                myShareFreeTimeWith: friendIds
+                myShareFreeTimeWith: friendIds,
+                contactMatchedStudentIds: [],
+                walkDistanceLabels: ["5 min walk"]
             )
         )
         let filteredIds = Set(withBlock.todayPlan.flatMap(\.friendOverlaps).map(\.friendId))
         XCTAssertFalse(filteredIds.contains(blockedFriend))
+    }
+
+    func testContactMatcherUsesDeviceContactsNotSeedFlags() throws {
+        let db = try TestFixtures.seedDatabase()
+        let contacts = [
+            DeviceContactEntry(displayName: "John Martinez", phoneNumber: "+15405559876"),
+            DeviceContactEntry(displayName: "Parker Lewis", phoneNumber: "+15405554101"),
+        ]
+        let matched = ContactSuggestionMatcher.matchedStudentIds(students: db.students, deviceContacts: contacts)
+        XCTAssertTrue(matched.contains("stu-john"))
+        XCTAssertTrue(matched.contains("stu-sug-01"))
+        XCTAssertFalse(matched.contains("stu-rachel"))
+
+        guard let me = db.students.first(where: { $0.id == "stu-alex" }) else {
+            return XCTFail("missing alex")
+        }
+        let friendIds = DashboardBuilder.friendIds(for: me.id, friendships: db.friendships)
+        let dashboard = DashboardBuilder.build(
+            DashboardBuilder.Input(
+                me: me,
+                students: db.students,
+                sections: db.sections,
+                enrollments: db.enrollments,
+                friendships: db.friendships,
+                friendRequests: db.friendRequests,
+                presenceByStudentId: Dictionary(uniqueKeysWithValues: db.presence.map { ($0.studentId, $0) }),
+                plans: db.plans,
+                syncTime: Date(),
+                shareFreeTimeWithByStudentId: [:],
+                myShareFreeTimeWith: friendIds,
+                contactMatchedStudentIds: matched,
+                walkDistanceLabels: ["5 min walk"]
+            )
+        )
+        let contactSuggestions = dashboard.suggestedStudents.filter { $0.suggestedVia == "contacts" }
+        XCTAssertTrue(contactSuggestions.contains { $0.id == "stu-john" })
+        XCTAssertTrue(contactSuggestions.contains { $0.id == "stu-sug-01" })
     }
 
     func testOverlapTimelinePicksTopStarredFriends() throws {
@@ -134,7 +175,9 @@ final class BackendLogicTests: XCTestCase {
                 plans: db.plans,
                 syncTime: Date(),
                 shareFreeTimeWithByStudentId: [:],
-                myShareFreeTimeWith: friendIds
+                myShareFreeTimeWith: friendIds,
+                contactMatchedStudentIds: [],
+                walkDistanceLabels: ["5 min walk"]
             )
         )
         let starred = Set(friendIds.prefix(4))

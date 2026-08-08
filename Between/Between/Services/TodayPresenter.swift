@@ -81,9 +81,7 @@ enum TodayPresenter {
         plan: [TodayPlanItem],
         friends: [FriendCard],
         starredIds: Set<String>,
-        nowMinutes: Int = BackendConfiguration.demoNowMinutes
-            ?? (Calendar.current.component(.hour, from: Date()) * 60
-                + Calendar.current.component(.minute, from: Date()))
+        nowMinutes: Int = BackendConfiguration.nowMinutes()
     ) -> Snapshot {
         let freeNow = friends
             .filter { friend in

@@ -65,6 +65,7 @@ struct NotificationsSheet: View {
                         .fontWeight(.semibold)
                 }
             }
+            .task { await viewModel.refresh() }
         }
     }
 }

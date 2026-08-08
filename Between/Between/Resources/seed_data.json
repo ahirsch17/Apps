@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-29T03:50:07.233277+00:00",
+  "generatedAt": "2026-08-07T23:38:30.076001+00:00",
   "universities": [
     {
       "id": "vt",
@@ -249,8 +249,7 @@
         "shareSchedule": "full",
         "shareClassDetails": true
       },
-      "phoneNumber": "+15405551234",
-      "suggestedVia": null
+      "phoneNumber": "+15405551234"
     },
     {
       "id": "stu-john",
@@ -263,8 +262,7 @@
         "shareSchedule": "full",
         "shareClassDetails": true
       },
-      "phoneNumber": "+15405559876",
-      "suggestedVia": "contacts"
+      "phoneNumber": "+15405559876"
     },
     {
       "id": "stu-rachel",
@@ -277,8 +275,7 @@
         "shareSchedule": "full",
         "shareClassDetails": true
       },
-      "phoneNumber": "+15405552468",
-      "suggestedVia": "contacts"
+      "phoneNumber": "+15405552468"
     },
     {
       "id": "stu-sarah",
@@ -291,8 +288,7 @@
         "shareSchedule": "full",
         "shareClassDetails": true
       },
-      "phoneNumber": null,
-      "suggestedVia": null
+      "phoneNumber": null
     },
     {
       "id": "stu-mia",
@@ -305,8 +301,7 @@
         "shareSchedule": "full",
         "shareClassDetails": true
       },
-      "phoneNumber": "+15405553001",
-      "suggestedVia": "contacts"
+      "phoneNumber": "+15405553001"
     },
     {
       "id": "stu-chris",
@@ -319,8 +314,7 @@
         "shareSchedule": "full",
         "shareClassDetails": true
       },
-      "phoneNumber": null,
-      "suggestedVia": null
+      "phoneNumber": null
     },
     {
       "id": "stu-taylor",
@@ -333,8 +327,7 @@
         "shareSchedule": "full",
         "shareClassDetails": true
       },
-      "phoneNumber": null,
-      "suggestedVia": "contacts"
+      "phoneNumber": "+15405554002"
     },
     {
       "id": "stu-jordan",
@@ -347,8 +340,7 @@
         "shareSchedule": "full",
         "shareClassDetails": true
       },
-      "phoneNumber": null,
-      "suggestedVia": null
+      "phoneNumber": null
     },
     {
       "id": "stu-casey",
@@ -361,8 +353,7 @@
         "shareSchedule": "full",
         "shareClassDetails": true
       },
-      "phoneNumber": null,
-      "suggestedVia": null
+      "phoneNumber": null
     },
     {
       "id": "stu-avery",
@@ -375,8 +366,7 @@
         "shareSchedule": "full",
         "shareClassDetails": true
       },
-      "phoneNumber": null,
-      "suggestedVia": null
+      "phoneNumber": null
     },
     {
       "id": "stu-riley",
@@ -389,8 +379,7 @@
         "shareSchedule": "full",
         "shareClassDetails": true
       },
-      "phoneNumber": null,
-      "suggestedVia": null
+      "phoneNumber": null
     },
     {
       "id": "stu-quinn",
@@ -403,8 +392,7 @@
         "shareSchedule": "full",
         "shareClassDetails": true
       },
-      "phoneNumber": null,
-      "suggestedVia": null
+      "phoneNumber": null
     },
     {
       "id": "stu-sug-00",
@@ -417,8 +405,7 @@
         "shareSchedule": "freeBusy",
         "shareClassDetails": true
       },
-      "phoneNumber": null,
-      "suggestedVia": "contacts"
+      "phoneNumber": "+15405554101"
     },
     {
       "id": "stu-sug-01",
@@ -431,8 +418,7 @@
         "shareSchedule": "freeBusy",
         "shareClassDetails": true
       },
-      "phoneNumber": null,
-      "suggestedVia": null
+      "phoneNumber": null
     },
     {
       "id": "stu-sug-02",
@@ -445,8 +431,7 @@
         "shareSchedule": "freeBusy",
         "shareClassDetails": true
       },
-      "phoneNumber": null,
-      "suggestedVia": "contacts"
+      "phoneNumber": "+15405554103"
     },
     {
       "id": "stu-sug-03",
@@ -459,8 +444,7 @@
         "shareSchedule": "freeBusy",
         "shareClassDetails": true
       },
-      "phoneNumber": null,
-      "suggestedVia": null
+      "phoneNumber": null
     },
     {
       "id": "stu-sug-04",
@@ -473,8 +457,7 @@
         "shareSchedule": "freeBusy",
         "shareClassDetails": true
       },
-      "phoneNumber": null,
-      "suggestedVia": "contacts"
+      "phoneNumber": "+15405554105"
     },
     {
       "id": "stu-sug-05",
@@ -487,8 +470,7 @@
         "shareSchedule": "freeBusy",
         "shareClassDetails": true
       },
-      "phoneNumber": null,
-      "suggestedVia": null
+      "phoneNumber": null
     },
     {
       "id": "stu-sug-06",
@@ -501,8 +483,7 @@
         "shareSchedule": "freeBusy",
         "shareClassDetails": true
       },
-      "phoneNumber": null,
-      "suggestedVia": "contacts"
+      "phoneNumber": "+15405554107"
     },
     {
       "id": "stu-sug-07",
@@ -515,8 +496,7 @@
         "shareSchedule": "freeBusy",
         "shareClassDetails": true
       },
-      "phoneNumber": null,
-      "suggestedVia": null
+      "phoneNumber": null
     }
   ],
   "enrollments": [
@@ -724,21 +704,21 @@
       "fromStudentId": "stu-sug-00",
       "toStudentId": "stu-alex",
       "status": "pending",
-      "createdAt": "2026-07-28T22:50:07.233277+00:00"
+      "createdAt": "2026-08-07T18:38:30.076001+00:00"
     },
     {
       "id": "req-0002",
       "fromStudentId": "stu-sug-01",
       "toStudentId": "stu-alex",
       "status": "pending",
-      "createdAt": "2026-07-28T03:50:07.233277+00:00"
+      "createdAt": "2026-08-06T23:38:30.076001+00:00"
     },
     {
       "id": "req-0003",
       "fromStudentId": "stu-sug-02",
       "toStudentId": "stu-alex",
       "status": "pending",
-      "createdAt": "2026-07-27T03:50:07.233277+00:00"
+      "createdAt": "2026-08-05T23:38:30.076001+00:00"
     }
   ],
   "presence": [
@@ -747,140 +727,140 @@
       "status": "busy",
       "activity": "In class",
       "location": "McBryde Hall",
-      "lastUpdated": "2026-07-29T03:50:07.233277+00:00"
+      "lastUpdated": "2026-08-07T23:38:30.076001+00:00"
     },
     {
       "studentId": "stu-john",
       "status": "freeNow",
       "activity": "Free",
       "location": "Turner Place",
-      "lastUpdated": "2026-07-29T03:47:07.233277+00:00"
+      "lastUpdated": "2026-08-07T23:35:30.076001+00:00"
     },
     {
       "studentId": "stu-rachel",
       "status": "freeNow",
       "activity": "Coffee",
       "location": "Newman Library",
-      "lastUpdated": "2026-07-29T03:44:07.233277+00:00"
+      "lastUpdated": "2026-08-07T23:32:30.076001+00:00"
     },
     {
       "studentId": "stu-sarah",
       "status": "studying",
       "activity": "Library",
       "location": "Newman Library",
-      "lastUpdated": "2026-07-29T03:41:07.233277+00:00"
+      "lastUpdated": "2026-08-07T23:29:30.076001+00:00"
     },
     {
       "studentId": "stu-mia",
       "status": "onTheWay",
       "activity": "Headed to McBryde",
       "location": "Drillfield",
-      "lastUpdated": "2026-07-29T03:38:07.233277+00:00"
+      "lastUpdated": "2026-08-07T23:26:30.076001+00:00"
     },
     {
       "studentId": "stu-chris",
       "status": "freeNow",
       "activity": "Free",
       "location": "Squires",
-      "lastUpdated": "2026-07-29T03:35:07.233277+00:00"
+      "lastUpdated": "2026-08-07T23:23:30.076001+00:00"
     },
     {
       "studentId": "stu-taylor",
       "status": "busy",
       "activity": "In class",
       "location": "Pamplin Hall",
-      "lastUpdated": "2026-07-29T03:32:07.233277+00:00"
+      "lastUpdated": "2026-08-07T23:20:30.076001+00:00"
     },
     {
       "studentId": "stu-jordan",
       "status": "busy",
       "activity": "In class",
       "location": "Turner Place",
-      "lastUpdated": "2026-07-29T03:29:07.233277+00:00"
+      "lastUpdated": "2026-08-07T23:17:30.076001+00:00"
     },
     {
       "studentId": "stu-casey",
       "status": "busy",
       "activity": "In class",
       "location": "McBryde Hall",
-      "lastUpdated": "2026-07-29T03:26:07.233277+00:00"
+      "lastUpdated": "2026-08-07T23:14:30.076001+00:00"
     },
     {
       "studentId": "stu-avery",
       "status": "busy",
       "activity": "In class",
       "location": "Newman Library",
-      "lastUpdated": "2026-07-29T03:48:07.233277+00:00"
+      "lastUpdated": "2026-08-07T23:36:30.076001+00:00"
     },
     {
       "studentId": "stu-riley",
       "status": "busy",
       "activity": "In class",
       "location": "Torgersen Hall",
-      "lastUpdated": "2026-07-29T03:45:07.233277+00:00"
+      "lastUpdated": "2026-08-07T23:33:30.076001+00:00"
     },
     {
       "studentId": "stu-quinn",
       "status": "busy",
       "activity": "In class",
       "location": "Goodwin Hall",
-      "lastUpdated": "2026-07-29T03:42:07.233277+00:00"
+      "lastUpdated": "2026-08-07T23:30:30.076001+00:00"
     },
     {
       "studentId": "stu-sug-00",
       "status": "busy",
       "activity": "In class",
       "location": "Burruss Hall",
-      "lastUpdated": "2026-07-29T03:39:07.233277+00:00"
+      "lastUpdated": "2026-08-07T23:27:30.076001+00:00"
     },
     {
       "studentId": "stu-sug-01",
       "status": "busy",
       "activity": "In class",
       "location": "Derring Hall",
-      "lastUpdated": "2026-07-29T03:36:07.233277+00:00"
+      "lastUpdated": "2026-08-07T23:24:30.076001+00:00"
     },
     {
       "studentId": "stu-sug-02",
       "status": "busy",
       "activity": "In class",
       "location": "Pamplin Hall",
-      "lastUpdated": "2026-07-29T03:33:07.233277+00:00"
+      "lastUpdated": "2026-08-07T23:21:30.076001+00:00"
     },
     {
       "studentId": "stu-sug-03",
       "status": "busy",
       "activity": "In class",
       "location": "Turner Place",
-      "lastUpdated": "2026-07-29T03:30:07.233277+00:00"
+      "lastUpdated": "2026-08-07T23:18:30.076001+00:00"
     },
     {
       "studentId": "stu-sug-04",
       "status": "busy",
       "activity": "In class",
       "location": "McBryde Hall",
-      "lastUpdated": "2026-07-29T03:27:07.233277+00:00"
+      "lastUpdated": "2026-08-07T23:15:30.076001+00:00"
     },
     {
       "studentId": "stu-sug-05",
       "status": "busy",
       "activity": "In class",
       "location": "Newman Library",
-      "lastUpdated": "2026-07-29T03:49:07.233277+00:00"
+      "lastUpdated": "2026-08-07T23:37:30.076001+00:00"
     },
     {
       "studentId": "stu-sug-06",
       "status": "busy",
       "activity": "In class",
       "location": "Torgersen Hall",
-      "lastUpdated": "2026-07-29T03:46:07.233277+00:00"
+      "lastUpdated": "2026-08-07T23:34:30.076001+00:00"
     },
     {
       "studentId": "stu-sug-07",
       "status": "busy",
       "activity": "In class",
       "location": "Goodwin Hall",
-      "lastUpdated": "2026-07-29T03:43:07.233277+00:00"
+      "lastUpdated": "2026-08-07T23:31:30.076001+00:00"
     }
   ],
   "plans": [
@@ -890,7 +870,7 @@
       "type": "food",
       "title": "Lunch at Turner",
       "location": "Turner Place",
-      "startTime": "2026-07-29T05:20:07.233277+00:00",
+      "startTime": "2026-08-08T01:08:30.076001+00:00",
       "visibility": "friends"
     }
   ],
@@ -1045,8 +1025,8 @@
       "title": "IM Volleyball \u2014 Open Gym",
       "description": "Drop-in at War Memorial. All skill levels. Bring a friend or find a partner here.",
       "location": "War Memorial Gym",
-      "startTime": "2026-07-30T18:00:00+00:00",
-      "endTime": "2026-07-30T20:00:00+00:00",
+      "startTime": "2026-08-08T18:00:00+00:00",
+      "endTime": "2026-08-08T20:00:00+00:00",
       "matchingKind": "partner",
       "isRecurring": true,
       "recurrenceLabel": "Every Wednesday"
@@ -1058,8 +1038,8 @@
       "title": "Saturday Night Pickup Soccer",
       "description": "Casual game on the Drillfield. New? Opt in to meet others who don't know anyone either.",
       "location": "Drillfield",
-      "startTime": "2026-07-31T20:50:07.233277+00:00",
-      "endTime": "2026-07-31T22:50:07.233277+00:00",
+      "startTime": "2026-08-10T16:38:30.076001+00:00",
+      "endTime": "2026-08-10T18:38:30.076001+00:00",
       "matchingKind": "newcomer",
       "isRecurring": true,
       "recurrenceLabel": "Every Saturday night"
@@ -1071,8 +1051,8 @@
       "title": "CS 2114 Study Session",
       "description": "Newman Library 2nd floor. Work problems together.",
       "location": "Newman Library",
-      "startTime": "2026-07-30T17:50:07.233277+00:00",
-      "endTime": "2026-07-30T19:50:07.233277+00:00",
+      "startTime": "2026-08-09T13:38:30.076001+00:00",
+      "endTime": "2026-08-09T15:38:30.076001+00:00",
       "matchingKind": "none",
       "isRecurring": false,
       "recurrenceLabel": null

@@ -9,8 +9,10 @@ struct DayOverlapBoardView: View {
     @Environment(\.colorScheme) private var colorScheme
 
     private let labelWidth: CGFloat = 42
-    private let rowHeight: CGFloat = 34
+    private let rowHeight: CGFloat = 40
     private let rowSpacing: CGFloat = 8
+    /// Wider timeline so a few hours fill the screen; scroll for the rest of the day.
+    private let pointsPerMinute: CGFloat = 3.4
 
     private static let rowColors: [Color] = [
         Color(red: 0.35, green: 0.78, blue: 0.55),
@@ -24,9 +26,11 @@ struct DayOverlapBoardView: View {
     }
 
     private var nowMinutes: Int {
-        BackendConfiguration.demoNowMinutes
-            ?? (Calendar.current.component(.hour, from: Date()) * 60
-                + Calendar.current.component(.minute, from: Date()))
+        BackendConfiguration.nowMinutes()
+    }
+
+    private var trackContentWidth: CGFloat {
+        CGFloat(board.dayRange.upperBound - board.dayRange.lowerBound) * pointsPerMinute
     }
 
     var body: some View {
@@ -59,20 +63,25 @@ struct DayOverlapBoardView: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text("Today's overlap")
                     .font(.headline.weight(.semibold))
-                Text("8am – 7pm · shared free time")
+                Text("Swipe for your full day · 8am – 7pm")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
             Spacer()
             if nowMinutes >= board.dayRange.lowerBound, nowMinutes <= board.dayRange.upperBound {
-                Text(ScheduleEngine.formatTime12Hour(nowMinutes))
-                    .font(.caption.weight(.semibold))
-                    .monospacedDigit()
-                    .foregroundStyle(BetweenTheme.accentAction)
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 5)
-                    .background(BetweenTheme.accentActionSoft)
-                    .clipShape(Capsule())
+                VStack(alignment: .trailing, spacing: 2) {
+                    Text("Now")
+                        .font(.caption2.weight(.semibold))
+                        .foregroundStyle(.secondary)
+                    Text(ScheduleEngine.formatTime12Hour(nowMinutes))
+                        .font(.caption.weight(.semibold))
+                        .monospacedDigit()
+                        .foregroundStyle(BetweenTheme.accentAction)
+                }
+                .padding(.horizontal, 10)
+                .padding(.vertical, 5)
+                .background(BetweenTheme.accentActionSoft)
+                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
             }
         }
     }
@@ -81,82 +90,105 @@ struct DayOverlapBoardView: View {
         let gridHeight = CGFloat(board.friendRows.count) * rowHeight
             + CGFloat(max(0, board.friendRows.count - 1)) * rowSpacing
 
-        return VStack(spacing: 0) {
-            timeAxis
-                .padding(.leading, labelWidth + 8)
-                .padding(.bottom, 6)
+        return HStack(alignment: .top, spacing: 8) {
+            VStack(spacing: rowSpacing) {
+                Color.clear.frame(height: 28)
+                ForEach(board.friendRows) { row in
+                    Text(row.firstName)
+                        .font(.system(size: 11, weight: .semibold))
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.8)
+                        .frame(width: labelWidth, height: rowHeight, alignment: .trailing)
+                        .foregroundStyle(rowColor(for: row))
+                }
+            }
 
-            ZStack(alignment: .topLeading) {
-                VStack(spacing: rowSpacing) {
-                    ForEach(board.friendRows) { row in
-                        friendRow(row)
+            ScrollViewReader { proxy in
+                ScrollView(.horizontal, showsIndicators: true) {
+                    VStack(spacing: 0) {
+                        scrollTimeAxis
+                            .padding(.bottom, 6)
+
+                        ZStack(alignment: .topLeading) {
+                            VStack(spacing: rowSpacing) {
+                                ForEach(board.friendRows) { row in
+                                    timelineTrack(row: row, color: rowColor(for: row), width: trackContentWidth)
+                                        .frame(height: rowHeight)
+                                }
+                            }
+
+                            nowIndicator(totalHeight: gridHeight, width: trackContentWidth)
+
+                            Color.clear
+                                .frame(width: 1, height: 1)
+                                .id("nowScrollAnchor")
+                                .offset(
+                                    x: OverlapTimelineModel.xOffset(
+                                        for: nowMinutes,
+                                        totalWidth: trackContentWidth,
+                                        range: board.dayRange
+                                    )
+                                )
+                        }
+                        .frame(width: trackContentWidth, height: gridHeight)
                     }
                 }
-
-                nowIndicator(totalHeight: gridHeight)
-                    .padding(.leading, labelWidth + 8)
+                .onAppear {
+                    scrollToNow(proxy, animated: false)
+                }
             }
         }
     }
 
-    private var timeAxis: some View {
-        GeometryReader { geo in
-            let width = geo.size.width
-            ZStack(alignment: .topLeading) {
-                ForEach(OverlapTimelineModel.hourMarkers, id: \.self) { minutes in
-                    let x = OverlapTimelineModel.xOffset(
-                        for: minutes,
-                        totalWidth: width,
-                        range: board.dayRange
-                    )
-                    VStack(spacing: 2) {
-                        Rectangle()
-                            .fill(Color.primary.opacity(0.08))
-                            .frame(width: 1, height: 4)
-                        Text(shortHour(minutes / 60))
-                            .font(.system(size: 10, weight: .medium, design: .rounded))
-                            .monospacedDigit()
-                            .foregroundStyle(.secondary)
-                    }
-                    .position(x: x, y: 10)
-                }
+    private func scrollToNow(_ proxy: ScrollViewProxy, animated: Bool) {
+        guard nowMinutes >= board.dayRange.lowerBound, nowMinutes <= board.dayRange.upperBound else { return }
+        if animated {
+            withAnimation(.easeInOut(duration: 0.35)) {
+                proxy.scrollTo("nowScrollAnchor", anchor: .center)
             }
-        }
-        .frame(height: 22)
-    }
-
-    private func friendRow(_ row: OverlapTimelineModel.FriendRow) -> some View {
-        let color = rowColor(for: row)
-        return HStack(spacing: 8) {
-            Text(row.firstName)
-                .font(.system(size: 11, weight: .semibold))
-                .lineLimit(1)
-                .minimumScaleFactor(0.8)
-                .frame(width: labelWidth, alignment: .trailing)
-                .foregroundStyle(color)
-
-            timelineTrack(row: row, color: color)
+        } else {
+            proxy.scrollTo("nowScrollAnchor", anchor: .center)
         }
     }
 
-    private func timelineTrack(row: OverlapTimelineModel.FriendRow, color: Color) -> some View {
-        GeometryReader { geo in
-            let width = geo.size.width
-            ZStack(alignment: .leading) {
-                RoundedRectangle(cornerRadius: 8, style: .continuous)
-                    .fill(BetweenTheme.surfaceMuted(colorScheme).opacity(0.55))
-
-                ForEach(board.classBlocks) { block in
-                    classBlockView(block, width: width)
+    private var scrollTimeAxis: some View {
+        ZStack(alignment: .topLeading) {
+            ForEach(OverlapTimelineModel.hourMarkers, id: \.self) { minutes in
+                let x = OverlapTimelineModel.xOffset(
+                    for: minutes,
+                    totalWidth: trackContentWidth,
+                    range: board.dayRange
+                )
+                VStack(spacing: 2) {
+                    Rectangle()
+                        .fill(Color.primary.opacity(0.08))
+                        .frame(width: 1, height: 4)
+                    Text(shortHour(minutes / 60))
+                        .font(.system(size: 10, weight: .medium, design: .rounded))
+                        .monospacedDigit()
+                        .foregroundStyle(.secondary)
                 }
-
-                ForEach(row.overlapBlocks) { block in
-                    overlapBlockView(block, color: color, width: width)
-                }
+                .offset(x: x - 12, y: 0)
             }
-            .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
         }
-        .frame(height: rowHeight)
+        .frame(width: trackContentWidth, height: 22, alignment: .topLeading)
+    }
+
+    private func timelineTrack(row: OverlapTimelineModel.FriendRow, color: Color, width: CGFloat) -> some View {
+        ZStack(alignment: .leading) {
+            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                .fill(BetweenTheme.surfaceMuted(colorScheme).opacity(0.55))
+
+            ForEach(board.classBlocks) { block in
+                classBlockView(block, width: width)
+            }
+
+            ForEach(row.overlapBlocks) { block in
+                overlapBlockView(block, color: color, width: width)
+            }
+        }
+        .frame(width: width, height: rowHeight)
+        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
     }
 
     private func classBlockView(_ block: OverlapTimelineModel.TimeBlock, width: CGFloat) -> some View {
@@ -221,9 +253,8 @@ struct DayOverlapBoardView: View {
         .offset(x: x + 1)
     }
 
-    private func nowIndicator(totalHeight: CGFloat) -> some View {
-        GeometryReader { geo in
-            let width = geo.size.width
+    private func nowIndicator(totalHeight: CGFloat, width: CGFloat) -> some View {
+        Group {
             if nowMinutes >= board.dayRange.lowerBound, nowMinutes <= board.dayRange.upperBound {
                 let x = OverlapTimelineModel.xOffset(for: nowMinutes, totalWidth: width, range: board.dayRange)
                 ZStack(alignment: .top) {
@@ -238,18 +269,13 @@ struct DayOverlapBoardView: View {
                 .offset(x: x - 1)
             }
         }
-        .frame(height: totalHeight)
         .allowsHitTesting(false)
     }
 
     private var overlapSummaryChart: some View {
         let maxMinutes = board.friendRows.map(\.totalOverlapMinutes).max() ?? 1
 
-        return VStack(alignment: .leading, spacing: 8) {
-            Text("Overlap minutes")
-                .font(.caption.weight(.semibold))
-                .foregroundStyle(.secondary)
-
+        return DisclosureGroup {
             VStack(spacing: 6) {
                 ForEach(board.friendRows) { row in
                     HStack(spacing: 8) {
@@ -267,8 +293,12 @@ struct DayOverlapBoardView: View {
                     }
                 }
             }
+            .padding(.top, 4)
+        } label: {
+            Text("Overlap minutes")
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(.secondary)
         }
-        .padding(.top, 4)
     }
 
     private func rowColor(for row: OverlapTimelineModel.FriendRow) -> Color {

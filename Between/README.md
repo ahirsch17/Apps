@@ -64,7 +64,7 @@ python Scripts/generate_seed_data.py
 | Rachel Chen | Close friend, different section CS 3214, partial overlap |
 | Others | Suggestions, classmates, pending requests |
 
-Contact-style suggestions show **“In your contacts”** (simulated via `suggestedVia: "contacts"` until Contacts API is wired).
+Contact-style suggestions show **“From your contacts”** when `ContactSuggestionMatcher` finds a phone match between `simulated_device_contacts.json` (demo address book) and student directory phones in `seed_data.json`. Production swaps in `SystemDeviceContactsProvider` (Contacts.framework) and the same matcher on the server.
 
 ## Demo flow (Sunday)
 
