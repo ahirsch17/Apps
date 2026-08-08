@@ -19,16 +19,12 @@ enum SimulatedDeviceContactsProvider: DeviceContactsProviding {
         let contacts: [DeviceContactEntry]
     }
 
-    static func loadFixtureFromBundle() throws -> Fixture {
+    func fetchContacts(forOwnerStudentId ownerId: String) async throws -> [DeviceContactEntry] {
         guard let url = Bundle.main.url(forResource: "simulated_device_contacts", withExtension: "json") else {
             throw ContactsProviderError.missingFixture
         }
         let data = try Data(contentsOf: url)
-        return try JSONDecoder().decode(Fixture.self, from: data)
-    }
-
-    func fetchContacts(forOwnerStudentId ownerId: String) async throws -> [DeviceContactEntry] {
-        let fixture = try Self.loadFixtureFromBundle()
+        let fixture = try JSONDecoder().decode(Fixture.self, from: data)
         guard fixture.ownerStudentId == ownerId else { return [] }
         return fixture.contacts
     }

@@ -80,7 +80,7 @@ struct University: Codable, Identifiable {
     let timezone: String
 }
 
-struct CourseSection: Codable, Identifiable {
+struct CourseSection: Codable, Identifiable, Hashable {
     let sectionId: String
     let canonicalCourseId: String
     let courseCode: String

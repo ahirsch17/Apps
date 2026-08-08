@@ -8,7 +8,7 @@ enum LocalDemoConfiguration {
         let locations: [String]
     }
 
-    struct File: Codable, Sendable {
+    private struct ConfigFile: Codable, Sendable {
         let demoPassword: String
         let activationCode: String
         let loginCandidateLimit: Int
@@ -16,13 +16,13 @@ enum LocalDemoConfiguration {
         let presenceSimulation: PresenceSimulation
     }
 
-    private static let loaded: File = {
+    private static let loaded: ConfigFile = {
         guard let url = Bundle.main.url(forResource: "local_demo_config", withExtension: "json"),
               let data = try? Data(contentsOf: url),
-              let file = try? JSONDecoder().decode(File.self, from: data)
+              let file = try? JSONDecoder().decode(ConfigFile.self, from: data)
         else {
             assertionFailure("local_demo_config.json missing from bundle")
-            return File(
+            return ConfigFile(
                 demoPassword: "",
                 activationCode: "",
                 loginCandidateLimit: 12,
@@ -39,12 +39,3 @@ enum LocalDemoConfiguration {
     static var walkDistanceLabels: [String] { loaded.walkDistanceLabels }
     static var presenceSimulation: PresenceSimulation { loaded.presenceSimulation }
 }
-
-#if DEBUG
-extension LocalDemoConfiguration {
-    /// For unit tests without the app bundle.
-    static func decode(from data: Data) throws -> File {
-        try JSONDecoder().decode(File.self, from: data)
-    }
-}
-#endif
