@@ -1,0 +1,444 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0A11ECD114DDF7538613B9F0 /* MainMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB85FBD19DC529BC5BBA1F96 /* MainMenuView.swift */; };
+		0F1EA1D98C3900FA830640D1 /* BluffLocationApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFB9E1C43C5884CCD655202A /* BluffLocationApp.swift */; };
+		18DAEEC7EBB5D000C9EBE78F /* SocketIO in Frameworks */ = {isa = PBXBuildFile; productRef = AB5FD2A7641A195690ED78AD /* SocketIO */; };
+		52CC4BF0361B3BA99DA7455A /* JSONValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6CD32C6C407C1BD2931CD5F /* JSONValue.swift */; };
+		600581922E1E3177A1BDB324 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 446318BD710377FF241CCA2C /* Assets.xcassets */; };
+		6FF3F55283CEC346ABC0B032 /* BluffLocationSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A4135428AE7A33A36CCA7FE /* BluffLocationSocket.swift */; };
+		79543DFA1F6C674363F492B9 /* JoinGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59219D9CC2BBD4457620D2CC /* JoinGameView.swift */; };
+		93E634532EC1BE56506B9D5A /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = B022E0057C9FA2916BF98684 /* PrivacyInfo.xcprivacy */; };
+		95FFA58E9022023723514785 /* BackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B72A389171AF510BDE842DD2 /* BackgroundView.swift */; };
+		9ADA43B2D13BC50E0753E362 /* BluffLocationStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE57224DBAD9066AC669B7BF /* BluffLocationStore.swift */; };
+		B1DEFED442DFE28E0D469C35 /* PrimaryButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1057A88EAAD30282D11BC22A /* PrimaryButton.swift */; };
+		B546BE9CC145BD710A8048E1 /* CreateGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC2C265D386A4897EB7C45AE /* CreateGameView.swift */; };
+		BAC907E4158DB743782A98A8 /* BluffModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2725A10B9AADCDF48DFB27EF /* BluffModels.swift */; };
+		C41860FBCADABC6F00AE9F87 /* GameRoomView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FAB0E4A1F621B5599D0EE8C /* GameRoomView.swift */; };
+		FB9828AE3A0CE17C2EE315DE /* RulesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E620D9B1DBCA34C8E61CFF0 /* RulesView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		1057A88EAAD30282D11BC22A /* PrimaryButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrimaryButton.swift; sourceTree = "<group>"; };
+		1FAB0E4A1F621B5599D0EE8C /* GameRoomView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameRoomView.swift; sourceTree = "<group>"; };
+		2725A10B9AADCDF48DFB27EF /* BluffModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluffModels.swift; sourceTree = "<group>"; };
+		343EB4B1F3E38C875E697EBB /* BluffLocation.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = BluffLocation.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		446318BD710377FF241CCA2C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		4E620D9B1DBCA34C8E61CFF0 /* RulesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RulesView.swift; sourceTree = "<group>"; };
+		59219D9CC2BBD4457620D2CC /* JoinGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JoinGameView.swift; sourceTree = "<group>"; };
+		8A4135428AE7A33A36CCA7FE /* BluffLocationSocket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluffLocationSocket.swift; sourceTree = "<group>"; };
+		B022E0057C9FA2916BF98684 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		B72A389171AF510BDE842DD2 /* BackgroundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundView.swift; sourceTree = "<group>"; };
+		BE57224DBAD9066AC669B7BF /* BluffLocationStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluffLocationStore.swift; sourceTree = "<group>"; };
+		BFB9E1C43C5884CCD655202A /* BluffLocationApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluffLocationApp.swift; sourceTree = "<group>"; };
+		CC2C265D386A4897EB7C45AE /* CreateGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateGameView.swift; sourceTree = "<group>"; };
+		DB85FBD19DC529BC5BBA1F96 /* MainMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainMenuView.swift; sourceTree = "<group>"; };
+		F6CD32C6C407C1BD2931CD5F /* JSONValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONValue.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		789A4567A27B4B038692F5DF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				18DAEEC7EBB5D000C9EBE78F /* SocketIO in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		155E7E05C7004F315F44AE1D /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				343EB4B1F3E38C875E697EBB /* BluffLocation.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		1980619B901E63897C3B636A /* BluffLocation */ = {
+			isa = PBXGroup;
+			children = (
+				446318BD710377FF241CCA2C /* Assets.xcassets */,
+				BFB9E1C43C5884CCD655202A /* BluffLocationApp.swift */,
+				B022E0057C9FA2916BF98684 /* PrivacyInfo.xcprivacy */,
+				3AB328EC4CD73FFCB7DBA5ED /* Models */,
+				F04E8792C1BD46A854A7B5FE /* Networking */,
+				6AE6AC56D0C05B433EA0C833 /* State */,
+				F6C3457A4AD76436F2AD294D /* Views */,
+			);
+			path = BluffLocation;
+			sourceTree = "<group>";
+		};
+		19DB7F6F8535620BE00CDDFF /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				B72A389171AF510BDE842DD2 /* BackgroundView.swift */,
+				1057A88EAAD30282D11BC22A /* PrimaryButton.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		3AB328EC4CD73FFCB7DBA5ED /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				2725A10B9AADCDF48DFB27EF /* BluffModels.swift */,
+				F6CD32C6C407C1BD2931CD5F /* JSONValue.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		6AE6AC56D0C05B433EA0C833 /* State */ = {
+			isa = PBXGroup;
+			children = (
+				BE57224DBAD9066AC669B7BF /* BluffLocationStore.swift */,
+			);
+			path = State;
+			sourceTree = "<group>";
+		};
+		EFC96C068E9B2E461850D9BC = {
+			isa = PBXGroup;
+			children = (
+				1980619B901E63897C3B636A /* BluffLocation */,
+				155E7E05C7004F315F44AE1D /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		F04E8792C1BD46A854A7B5FE /* Networking */ = {
+			isa = PBXGroup;
+			children = (
+				8A4135428AE7A33A36CCA7FE /* BluffLocationSocket.swift */,
+			);
+			path = Networking;
+			sourceTree = "<group>";
+		};
+		F6C3457A4AD76436F2AD294D /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				CC2C265D386A4897EB7C45AE /* CreateGameView.swift */,
+				1FAB0E4A1F621B5599D0EE8C /* GameRoomView.swift */,
+				59219D9CC2BBD4457620D2CC /* JoinGameView.swift */,
+				DB85FBD19DC529BC5BBA1F96 /* MainMenuView.swift */,
+				4E620D9B1DBCA34C8E61CFF0 /* RulesView.swift */,
+				19DB7F6F8535620BE00CDDFF /* Components */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		ED740DB7B9A923FA14CA525D /* BluffLocation */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E7CBB5D01ECEC34D5EFC9301 /* Build configuration list for PBXNativeTarget "BluffLocation" */;
+			buildPhases = (
+				49A5EB7C56792FEA2A95EA43 /* Sources */,
+				B908B8F7F402C3AB22EAD4BD /* Resources */,
+				789A4567A27B4B038692F5DF /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = BluffLocation;
+			packageProductDependencies = (
+				AB5FD2A7641A195690ED78AD /* SocketIO */,
+			);
+			productName = BluffLocation;
+			productReference = 343EB4B1F3E38C875E697EBB /* BluffLocation.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		AD8DCE69E60F0519F4C094EA /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					ED740DB7B9A923FA14CA525D = {
+						DevelopmentTeam = SPDTT4AL46;
+					};
+				};
+			};
+			buildConfigurationList = 7F7A646253771D909DCE6C46 /* Build configuration list for PBXProject "BluffLocation" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = EFC96C068E9B2E461850D9BC;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				CBD0DCE47CC2E8BAA13D0E84 /* XCRemoteSwiftPackageReference "socket.io-client-swift" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 155E7E05C7004F315F44AE1D /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				ED740DB7B9A923FA14CA525D /* BluffLocation */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		B908B8F7F402C3AB22EAD4BD /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				600581922E1E3177A1BDB324 /* Assets.xcassets in Resources */,
+				93E634532EC1BE56506B9D5A /* PrivacyInfo.xcprivacy in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		49A5EB7C56792FEA2A95EA43 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				95FFA58E9022023723514785 /* BackgroundView.swift in Sources */,
+				0F1EA1D98C3900FA830640D1 /* BluffLocationApp.swift in Sources */,
+				6FF3F55283CEC346ABC0B032 /* BluffLocationSocket.swift in Sources */,
+				9ADA43B2D13BC50E0753E362 /* BluffLocationStore.swift in Sources */,
+				BAC907E4158DB743782A98A8 /* BluffModels.swift in Sources */,
+				B546BE9CC145BD710A8048E1 /* CreateGameView.swift in Sources */,
+				C41860FBCADABC6F00AE9F87 /* GameRoomView.swift in Sources */,
+				52CC4BF0361B3BA99DA7455A /* JSONValue.swift in Sources */,
+				79543DFA1F6C674363F492B9 /* JoinGameView.swift in Sources */,
+				0A11ECD114DDF7538613B9F0 /* MainMenuView.swift in Sources */,
+				B1DEFED442DFE28E0D469C35 /* PrimaryButton.swift in Sources */,
+				FB9828AE3A0CE17C2EE315DE /* RulesView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		2076202569FB17ADCE1D89DC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		B920A53877AB1A42F8326F2E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = SPDTT4AL46;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = BluffLocation;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.hirschengineering.blufflocation;
+				PRODUCT_NAME = BluffLocation;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		D3E281C2B7A17D2768B05D14 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = SPDTT4AL46;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = BluffLocation;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.hirschengineering.blufflocation;
+				PRODUCT_NAME = BluffLocation;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		EDA358B3B6186AD6D67F8B3E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		7F7A646253771D909DCE6C46 /* Build configuration list for PBXProject "BluffLocation" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2076202569FB17ADCE1D89DC /* Debug */,
+				EDA358B3B6186AD6D67F8B3E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		E7CBB5D01ECEC34D5EFC9301 /* Build configuration list for PBXNativeTarget "BluffLocation" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D3E281C2B7A17D2768B05D14 /* Debug */,
+				B920A53877AB1A42F8326F2E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		CBD0DCE47CC2E8BAA13D0E84 /* XCRemoteSwiftPackageReference "socket.io-client-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/socketio/socket.io-client-swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 16.1.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		AB5FD2A7641A195690ED78AD /* SocketIO */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CBD0DCE47CC2E8BAA13D0E84 /* XCRemoteSwiftPackageReference "socket.io-client-swift" */;
+			productName = SocketIO;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = AD8DCE69E60F0519F4C094EA /* Project object */;
+}
