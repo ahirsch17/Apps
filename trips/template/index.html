@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Trip title · dates</title>
+<link rel="stylesheet" href="../shared/trip.css" />
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <div class="eyebrow">Who</div>
+  <h1>Place A to Place B</h1>
+  <p class="lede">Dates · route in one line</p>
+  <div class="meta">
+    <span class="chip">N nights</span>
+    <span class="chip">~$X / person</span>
+  </div>
+</header>
+
+<div class="view-tabs" role="tablist" aria-label="Trip views">
+  <button type="button" role="tab" id="tab-trip" aria-controls="view-trip" aria-selected="true" data-view="trip">The trip</button>
+  <button type="button" role="tab" id="tab-plan" aria-controls="view-plan" aria-selected="false" data-view="plan">Planning notes</button>
+</div>
+
+<div id="view-trip" class="view-panel" role="tabpanel" aria-labelledby="tab-trip">
+
+<nav class="route-flow" aria-label="Trip route">
+  <p class="rf-label">Route · hover a stop</p>
+  <ol class="rf-track">
+    <li class="rf-stop rio">
+      <button type="button" class="rf-btn" data-day-jump="d1">
+        <span class="rf-dot" aria-hidden="true"></span>
+        <span class="rf-name">City</span>
+        <span class="rf-dates">dates</span>
+        <span class="rf-tip" role="tooltip"><b>City · N nights</b><span>Neighborhood · hotel · one-line why</span></span>
+      </button>
+    </li>
+  </ol>
+</nav>
+
+<h2>Day by day</h2>
+<p class="muted" style="margin-top:-4px;font-size:14px">Tap a day. One big thing. Food and rest at normal hours.</p>
+
+<div class="day-rail">
+<details class="day rio" id="day-d1" data-day="d1" open>
+  <summary>
+    <div class="day-head"><h3>Day 1 · Arrive</h3><span class="pill rio">City</span></div>
+    <p class="blurb">Land, bags, neighborhood walk. Easy.</p>
+    <p class="agenda"><b>Today</b> Land · check in · easy food</p>
+    <p class="hint">Neighborhood</p>
+  </summary>
+  <div class="panel">
+    <div class="bits">
+      <div class="bit"><b>Stay</b> Hotel next to the station you leave from with bags · or taxi with bags, never a cross-town drag</div>
+      <div class="bit"><b>Travel</b> Pad immigration + Uber</div>
+      <div class="bit"><b>Sun</b> Iconic sunset only if this day has slack · time + place</div>
+      <div class="bit"><b>Eat</b> TripAdvisor 4.7+ / 200+</div>
+    </div>
+  </div>
+</details>
+</div>
+
+<h2><span class="dot"></span> Cost snapshot (per person)</h2>
+<div class="card">
+<table>
+  <tr><th>Category</th><th>Per person</th><th>Basis</th></tr>
+  <tr><td>Flights</td><td class="money">$0</td><td>Half of group air if splitting</td></tr>
+  <tr><td>Hotels</td><td class="money">$0</td><td>Half of room totals</td></tr>
+  <tr><td>Tours</td><td class="money">$0</td><td>GYG 4.7+ / 150+</td></tr>
+  <tr><td>Food</td><td class="money">$0</td><td></td></tr>
+  <tr><td><strong>Total</strong></td><td class="money"><strong>$0</strong></td><td>Must add up</td></tr>
+</table>
+</div>
+</div>
+
+<div id="view-plan" class="view-panel" role="tabpanel" aria-labelledby="tab-plan" hidden>
+<p class="plan-lede">GYG 4.7+ / 150+, active or food, not museum lectures. Food tour once per country on a full day, if a listing at a stop we sleep in clears the bar. Food TripAdvisor 4.7+ / 200+. Label Eat as Reserve or Walk-in. One street / kiosk / dessert per city. Sleep in relatively safe neighborhoods. Carry-on. Laundry. Hotels by the train/bus you board with bags. Pad travel. Sunrise/sunset on slack days.</p>
+
+<div class="logistics">
+  <h3>Sun + neighborhoods</h3>
+  <p>Table of sunrise/sunset per city for these dates, plus the one iconic view per stop.</p>
+</div>
+<div class="logistics">
+  <h3>Laundry</h3>
+  <p>When you drop, when you pick up, which hotel desk.</p>
+</div>
+<div class="logistics">
+  <h3>Bags</h3>
+  <p>Every move with luggage: taxi vs walk, check-in time, airport buffer.</p>
+</div>
+</div>
+
+<footer>Copy this file · follow trips/RULES.md</footer>
+</div>
+<script>
+(function () {
+  document.querySelectorAll(".view-tabs [data-view]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var id = btn.getAttribute("data-view");
+      document.querySelectorAll(".view-tabs [data-view]").forEach(function (b) {
+        b.setAttribute("aria-selected", b === btn ? "true" : "false");
+      });
+      document.querySelectorAll(".view-panel").forEach(function (p) {
+        p.hidden = p.id !== "view-" + id;
+      });
+    });
+  });
+})();
+</script>
+</body>
+</html>

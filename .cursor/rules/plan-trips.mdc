@@ -1,0 +1,7 @@
+---
+description: Trip pages keep Teralinks, budget, and photos in sync and do not skip nearby icons for weak walking tours.
+globs: trips/**/*.{html,md},brazil-argentina-sister-trip.html
+alwaysApply: false
+---
+
+Follow `trips/RULES.md`. When flights or tours change, update Teralink URLs and the budget in the same edit. Photos must match the day. Audit each city for must-see icons within a short Uber; do not fill the day with a lesser walking tour instead. Keep reservation restaurants and also note walk-in / street / a must-try dessert or delicacy. Sleep in relatively safe neighborhoods; mark mixed spots as day-only. No em dashes on trip pages. Every bookable experience gets a clock time or pickup window, not just “morning.” Food tour is once per country if a listing at a stop we sleep in clears 4.7 / 150, not once per city.

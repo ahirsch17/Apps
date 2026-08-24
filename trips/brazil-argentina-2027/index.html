@@ -1,0 +1,2418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Alex + Jes · Brazil &amp; Argentina · Apr 2027</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+<style>
+  :root {
+    --ink: #1a1f2e;
+    --muted: #5c6578;
+    --line: #e6e2da;
+    --bg: #f3efe8;
+    --card: #fffcf7;
+    --rio: #0d6e6e;
+    --paraty: #b45309;
+    --iguazu: #1d4ed8;
+    --ba: #9f1239;
+    --accent: #0f766e;
+    --soft: #e7f6f2;
+    --rio-soft: #d9f3ef;
+    --paraty-soft: #fce8d4;
+    --iguazu-soft: #dde7ff;
+    --ba-soft: #ffe0e7;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+    background:
+      radial-gradient(1200px 500px at 10% -10%, #d9f3ef 0%, transparent 55%),
+      radial-gradient(900px 420px at 100% 0%, #ffe0e7 0%, transparent 50%),
+      var(--bg);
+    color: var(--ink);
+    line-height: 1.5;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 36px 18px 80px; }
+  .hero {
+    background: linear-gradient(135deg, #0f766e 0%, #115e59 42%, #1e3a5f 100%);
+    color: #f8fffc;
+    border-radius: 18px;
+    padding: 28px 24px 22px;
+    margin-bottom: 22px;
+    box-shadow: 0 18px 40px rgba(15, 118, 110, 0.22);
+  }
+  .hero .eyebrow {
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    opacity: 0.85;
+    margin-bottom: 10px;
+  }
+  .hero h1 {
+    font-size: clamp(28px, 5vw, 40px);
+    font-weight: 600;
+    line-height: 1.12;
+    margin: 0 0 10px;
+  }
+  .hero .lede { margin: 0 0 16px; max-width: 34em; opacity: 0.92; font-size: 15.5px; }
+  .hero .meta {
+    display: flex; flex-wrap: wrap; gap: 10px;
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: 11px;
+  }
+  .hero .chip {
+    background: rgba(255,255,255,0.14);
+    border: 1px solid rgba(255,255,255,0.2);
+    padding: 5px 10px;
+    border-radius: 999px;
+  }
+  .route-flow {
+    position: relative;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 18px 16px 88px;
+    margin: 18px 0 10px;
+    box-shadow: 0 8px 24px rgba(26,31,46,0.06);
+    overflow: visible;
+  }
+  .route-flow .rf-label {
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0 0 14px;
+  }
+  .route-flow .rf-track {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .route-flow .rf-stop {
+    flex: 1;
+    position: relative;
+    text-align: center;
+    padding: 0 6px;
+  }
+  .route-flow .rf-stop:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    top: 18px;
+    left: calc(50% + 22px);
+    width: calc(100% - 44px);
+    height: 3px;
+    background: linear-gradient(90deg, currentColor, #c5d0e0);
+    opacity: 0.45;
+    border-radius: 2px;
+    pointer-events: none;
+  }
+  .route-flow .rf-stop.rio { color: var(--rio); }
+  .route-flow .rf-stop.paraty { color: var(--paraty); }
+  .route-flow .rf-stop.iguazu { color: var(--iguazu); }
+  .route-flow .rf-stop.ba { color: var(--ba); }
+  .route-flow .rf-btn {
+    appearance: none;
+    border: 0;
+    background: transparent;
+    padding: 0;
+    width: 100%;
+    cursor: pointer;
+    font: inherit;
+    color: inherit;
+    text-align: center;
+  }
+  .route-flow .rf-dot {
+    width: 36px;
+    height: 36px;
+    margin: 0 auto 8px;
+    border-radius: 50%;
+    background: currentColor;
+    box-shadow: 0 0 0 5px color-mix(in srgb, currentColor 18%, transparent);
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+    position: relative;
+    z-index: 1;
+  }
+  .route-flow .rf-btn:hover .rf-dot,
+  .route-flow .rf-btn:focus-visible .rf-dot,
+  .route-flow .rf-stop.is-on .rf-dot {
+    transform: scale(1.12);
+    box-shadow: 0 0 0 7px color-mix(in srgb, currentColor 28%, transparent);
+  }
+  .route-flow .rf-btn:focus-visible { outline: none; }
+  .route-flow .rf-name {
+    display: block;
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--ink);
+    margin-bottom: 2px;
+  }
+  .route-flow .rf-dates {
+    display: block;
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .route-flow .rf-tip {
+    position: absolute;
+    left: 50%;
+    top: calc(100% + 10px);
+    transform: translateX(-50%) translateY(4px);
+    width: min(240px, 72vw);
+    background: #162033;
+    color: #f4f7fb;
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 12.5px;
+    line-height: 1.4;
+    text-align: left;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s ease, transform 0.15s ease;
+    z-index: 5;
+    box-shadow: 0 12px 28px rgba(22,32,51,0.28);
+  }
+  .route-flow .rf-tip::before {
+    content: "";
+    position: absolute;
+    top: -5px;
+    left: 50%;
+    transform: translateX(-50%) rotate(45deg);
+    width: 10px;
+    height: 10px;
+    background: #162033;
+  }
+  .route-flow .rf-tip b { display: block; margin-bottom: 3px; font-size: 13px; }
+  .route-flow .rf-tip span { color: #b8c3d6; }
+  .route-flow .rf-btn:hover .rf-tip,
+  .route-flow .rf-btn:focus-visible .rf-tip,
+  .route-flow .rf-stop.is-on .rf-tip {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  @media (max-width: 640px) {
+    .route-flow .rf-track { flex-wrap: wrap; row-gap: 18px; }
+    .route-flow .rf-stop { flex: 1 1 42%; }
+    .route-flow .rf-stop:not(:last-child)::after { display: none; }
+    .route-flow .rf-tip { position: static; transform: none; width: auto; margin-top: 8px; opacity: 0; max-height: 0; overflow: hidden; padding: 0 12px; }
+    .route-flow .rf-btn:hover .rf-tip,
+    .route-flow .rf-btn:focus-visible .rf-tip,
+    .route-flow .rf-stop.is-on .rf-tip {
+      opacity: 1;
+      max-height: 120px;
+      padding: 10px 12px;
+      transform: none;
+    }
+    .route-flow .rf-tip::before { display: none; }
+  }
+  h2 {
+    font-size: 21px;
+    margin: 34px 0 12px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  h2 .dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--accent);
+    flex: 0 0 auto;
+  }
+  h2.rio .dot { background: var(--rio); }
+  h2.paraty .dot { background: var(--paraty); }
+  h2.iguazu .dot { background: var(--iguazu); }
+  h2.ba .dot { background: var(--ba); }
+  h3 { font-size: 16.5px; margin: 0; font-weight: 600; }
+  p, li { font-size: 15px; }
+  .muted { color: var(--muted); }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 16px 16px 14px;
+    margin-bottom: 12px;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.7) inset;
+  }
+  .card.accent-rio { border-top: 4px solid var(--rio); }
+  .card.accent-paraty { border-top: 4px solid var(--paraty); }
+  .card.accent-iguazu { border-top: 4px solid var(--iguazu); }
+  .card.accent-ba { border-top: 4px solid var(--ba); }
+  .card.accent-money { border-top: 4px solid var(--accent); }
+  .route {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin: 0 0 8px;
+  }
+  @media (max-width: 700px) { .route { grid-template-columns: 1fr 1fr; } }
+  .route .card { margin: 0; padding: 14px 12px; }
+  .route strong { display: block; font-size: 15px; margin: 6px 0 2px; }
+  .route .when { font-family: ui-monospace, Menlo, monospace; font-size: 11px; color: var(--muted); }
+  .route .card.rio { background: linear-gradient(180deg, var(--rio-soft), var(--card)); }
+  .route .card.paraty { background: linear-gradient(180deg, var(--paraty-soft), var(--card)); }
+  .route .card.iguazu { background: linear-gradient(180deg, var(--iguazu-soft), var(--card)); }
+  .route .card.ba { background: linear-gradient(180deg, var(--ba-soft), var(--card)); }
+  .pill {
+    display: inline-block;
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 999px;
+  }
+  .pill.rio { background: var(--rio-soft); color: var(--rio); }
+  .pill.paraty { background: var(--paraty-soft); color: var(--paraty); }
+  .pill.iguazu { background: var(--iguazu-soft); color: var(--iguazu); }
+  .pill.ba { background: var(--ba-soft); color: var(--ba); }
+  .pill.flight { background: #eef2ff; color: #3730a3; }
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin: 14px 0;
+  }
+  @media (max-width: 640px) { .stats { grid-template-columns: 1fr; } }
+  .stat {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 14px;
+  }
+  .stat span {
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: 10px;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .stat b { display: block; font-size: 24px; margin-top: 4px; color: var(--ink); }
+  .stat.rio { border-left: 4px solid var(--rio); }
+  .stat.money { border-left: 4px solid var(--accent); }
+  .stat.ba { border-left: 4px solid var(--ba); }
+  .charts {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  .chart-panel {
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: #fbf8f3;
+    padding: 14px 14px 12px;
+  }
+  .chart-panel h4 {
+    margin: 0 0 4px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .chart-panel .chart-hint {
+    margin: 0 0 12px;
+    font-size: 12px;
+    color: var(--muted);
+    font-family: ui-monospace, Menlo, monospace;
+  }
+  .chart-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  @media (max-width: 740px) { .chart-grid { grid-template-columns: 1fr; } }
+
+  .donut-wrap {
+    display: grid;
+    grid-template-columns: minmax(180px, 240px) 1fr;
+    gap: 18px;
+    align-items: center;
+  }
+  @media (max-width: 640px) {
+    .donut-wrap { grid-template-columns: 1fr; justify-items: center; }
+  }
+  .donut-svg { width: 100%; max-width: 240px; height: auto; }
+  .donut-svg .seg {
+    cursor: pointer;
+    transition: opacity 0.15s ease, stroke-width 0.15s ease;
+    stroke: #fbf8f3;
+    stroke-width: 2;
+  }
+  .donut-svg .seg:hover,
+  .donut-svg .seg:focus,
+  .donut-svg .seg.is-on {
+    opacity: 1;
+    filter: brightness(1.06);
+  }
+  .donut-svg.is-filtering .seg { opacity: 0.35; }
+  .donut-svg.is-filtering .seg.is-on,
+  .donut-svg.is-filtering .seg:hover { opacity: 1; }
+  .donut-center-text {
+    font-size: 13px;
+    fill: var(--muted);
+    text-anchor: middle;
+  }
+  .donut-center-val {
+    font-size: 22px;
+    font-weight: 700;
+    fill: var(--ink);
+    text-anchor: middle;
+  }
+  .donut-legend {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    display: grid;
+    gap: 6px;
+  }
+  .donut-legend button {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 12px 1fr auto;
+    gap: 10px;
+    align-items: center;
+    appearance: none;
+    border: 1px solid transparent;
+    background: transparent;
+    border-radius: 8px;
+    padding: 7px 8px;
+    cursor: pointer;
+    font: inherit;
+    color: var(--ink);
+    text-align: left;
+    transition: background 0.12s ease, border-color 0.12s ease;
+  }
+  .donut-legend button:hover,
+  .donut-legend button:focus-visible,
+  .donut-legend button.is-on {
+    background: #fff;
+    border-color: var(--line);
+    outline: none;
+  }
+  .donut-legend i {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    display: block;
+  }
+  .donut-legend .amt {
+    font-variant-numeric: tabular-nums;
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .chart-live {
+    margin-top: 10px;
+    min-height: 42px;
+    padding: 9px 11px;
+    border-radius: 8px;
+    background: #162033;
+    color: #f4f7fb;
+    font-size: 13px;
+    line-height: 1.35;
+  }
+  .chart-live b { display: block; margin-bottom: 2px; }
+  .chart-live span { color: #b8c3d6; font-size: 12px; }
+
+  .bar-chart { display: grid; gap: 10px; }
+  .bar-row {
+    display: grid;
+    grid-template-columns: 110px 1fr 52px;
+    gap: 8px;
+    align-items: center;
+  }
+  @media (max-width: 480px) {
+    .bar-row { grid-template-columns: 84px 1fr 44px; }
+  }
+  .bar-row .label {
+    font-size: 12.5px;
+    line-height: 1.25;
+    color: var(--ink);
+  }
+  .bar-row .track {
+    height: 18px;
+    background: #ebe6dd;
+    border-radius: 999px;
+    overflow: hidden;
+    cursor: pointer;
+  }
+  .bar-row .fill {
+    height: 100%;
+    border-radius: 999px;
+    width: 0;
+    transition: width 0.45s ease;
+  }
+  .bar-row .val {
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: 12px;
+    color: var(--muted);
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+  .bar-row.is-on .track,
+  .bar-row:hover .track {
+    box-shadow: inset 0 0 0 1px rgba(26,31,46,0.18);
+  }
+  .hotel-bars .bar-row {
+    grid-template-columns: 1fr;
+    gap: 4px;
+    cursor: pointer;
+    padding: 6px 4px;
+    border-radius: 8px;
+  }
+  .hotel-bars .bar-row:hover,
+  .hotel-bars .bar-row.is-on {
+    background: rgba(255,255,255,0.7);
+  }
+  .hotel-bars .hotel-top {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    font-size: 12.5px;
+  }
+  .hotel-bars .hotel-top .val {
+    white-space: nowrap;
+  }
+  .hotel-bars .track { height: 14px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  th, td { text-align: left; padding: 9px 6px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th {
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    font-weight: 500;
+  }
+  .money { font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .legs {
+    margin-top: 5px;
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.45;
+  }
+  .legs .lay { color: var(--accent); font-weight: 600; }
+  a { color: var(--accent); }
+  .gyg {
+    display: inline-block;
+    margin: 3px 6px 3px 0;
+    padding: 5px 9px;
+    border-radius: 8px;
+    background: var(--soft);
+    color: var(--accent);
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: 11px;
+    text-decoration: none;
+    border: 1px solid #a7f3d0;
+  }
+  .gyg:hover { background: #d1fae5; }
+  .terralink {
+    display: inline-block;
+    margin-top: 5px;
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: #0f172a;
+    color: #fff !important;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-decoration: none;
+    line-height: 1.2;
+  }
+  .terralink:hover { background: #334155; color: #fff !important; }
+  .money .terralink { display: block; width: fit-content; }
+  .day-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    align-items: baseline;
+    margin-bottom: 6px;
+  }
+  details.day {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 13px 15px 11px;
+    margin-bottom: 10px;
+    border-left: 4px solid var(--line);
+    scroll-margin-top: 18px;
+  }
+  details.day.rio { border-left-color: var(--rio); }
+  details.day.paraty { border-left-color: var(--paraty); }
+  details.day.iguazu { border-left-color: var(--iguazu); }
+  details.day.ba { border-left-color: var(--ba); }
+  details.day.flight { border-left-color: #6366f1; }
+  details.day[open] { box-shadow: 0 10px 28px rgba(26,31,46,0.06); }
+  details.day summary { list-style: none; cursor: pointer; }
+  details.day summary::-webkit-details-marker { display: none; }
+  details.day .blurb { margin: 0; }
+  details.day .hint {
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 8px 0 0;
+  }
+  .panel { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); }
+  .pics {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  @media (max-width: 560px) { .pics { grid-template-columns: 1fr; } }
+  .pics.one { grid-template-columns: 1fr; }
+  .pics.wide { grid-template-columns: 1.2fr 0.8fr; }
+  .pics figure { margin: 0; }
+  .pics img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    height: auto;
+    min-height: 190px;
+    object-fit: cover;
+    object-position: center 40%;
+    border-radius: 10px;
+    display: block;
+    background: #e8e6e1;
+  }
+  .pics.one img {
+    aspect-ratio: 16 / 9;
+    min-height: 240px;
+    object-position: center;
+  }
+  .pics img.fit-contain {
+    object-fit: contain;
+    background: #0f172a;
+    object-position: center;
+  }
+  .pics figcaption {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 5px;
+    font-family: ui-monospace, Menlo, monospace;
+  }
+  .sites-strip {
+    margin: 6px 0 22px;
+  }
+  .sites-strip .ss-label {
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0 0 10px;
+  }
+  .sites-row {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+  }
+  @media (max-width: 900px) {
+    .sites-row { grid-template-columns: repeat(3, 1fr); }
+  }
+  @media (max-width: 560px) {
+    .sites-row { grid-template-columns: repeat(2, 1fr); }
+  }
+  .site-card {
+    margin: 0;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 6px 16px rgba(26,31,46,0.05);
+  }
+  .site-card img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    display: block;
+    background: #e8e6e1;
+  }
+  .site-card figcaption {
+    padding: 8px 10px 10px;
+  }
+  .site-card .where {
+    display: block;
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 2px;
+  }
+  .site-card .what {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+    line-height: 1.25;
+  }
+  .agenda {
+    margin: 8px 0 0;
+    padding: 8px 10px;
+    background: rgba(15,118,110,0.08);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 8px 8px 0;
+    font-size: 13.5px;
+    color: var(--ink);
+  }
+  details.day.rio .agenda { border-left-color: var(--rio); background: var(--rio-soft); }
+  details.day.paraty .agenda { border-left-color: var(--paraty); background: var(--paraty-soft); }
+  details.day.iguazu .agenda { border-left-color: var(--iguazu); background: var(--iguazu-soft); }
+  details.day.ba .agenda { border-left-color: var(--ba); background: var(--ba-soft); }
+  details.day.flight .agenda { border-left-color: #6366f1; background: #eef0ff; }
+  .agenda b {
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-right: 6px;
+  }
+  .itinerary-stage {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin: 10px 0 8px;
+    align-items: start;
+  }
+  .map-dock {
+    position: relative;
+    z-index: 5;
+  }
+  .map-card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 10px 28px rgba(26,31,46,0.06);
+  }
+  .map-card .map-intro {
+    padding: 14px 16px 10px;
+  }
+  .map-card .map-intro p {
+    margin: 4px 0 0;
+    font-size: 13.5px;
+    color: var(--muted);
+  }
+  .map-now {
+    margin-top: 10px;
+    padding: 8px 10px;
+    border-radius: 10px;
+    background: var(--soft);
+    border: 1px solid #b7e4d8;
+    font-size: 13.5px;
+    line-height: 1.35;
+  }
+  .map-now b {
+    display: block;
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 2px;
+    font-weight: 500;
+  }
+  #trip-map {
+    height: 300px;
+    width: 100%;
+    background: #dbe4ea;
+  }
+  .hotel-pin { background: none !important; border: 0 !important; }
+  .hotel-pin span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 6px;
+    color: #fff;
+    font: 700 11px ui-monospace, Menlo, monospace;
+    letter-spacing: 0.02em;
+    box-shadow: 0 2px 8px rgba(22, 32, 51, 0.28);
+    border: 2px solid #fff;
+  }
+  .map-legend {
+    margin: 8px 16px 0;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .map-legend b { color: var(--ink); font-weight: 600; }
+  .map-days {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 6px;
+    padding: 12px 14px 14px;
+    border-top: 1px solid var(--line);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+  }
+  .map-days button {
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: 11px;
+    border: 1px solid var(--line);
+    background: #fff;
+    color: var(--ink);
+    border-radius: 999px;
+    padding: 6px 10px;
+    cursor: pointer;
+    white-space: nowrap;
+    flex: 0 0 auto;
+  }
+  .map-days button:hover { border-color: var(--accent); }
+  .map-days button.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+  .map-days button.rio.active { background: var(--rio); border-color: var(--rio); }
+  .map-days button.paraty.active { background: var(--paraty); border-color: var(--paraty); }
+  .map-days button.iguazu.active { background: var(--iguazu); border-color: var(--iguazu); }
+  .map-days button.ba.active { background: var(--ba); border-color: var(--ba); }
+  .map-days button.flight.active { background: #6366f1; border-color: #6366f1; }
+  .leaflet-popup-content { font-family: Georgia, serif; font-size: 13.5px; line-height: 1.4; margin: 10px 12px; }
+  .leaflet-popup-content strong { display: block; margin-bottom: 4px; font-size: 14px; }
+  details.day.on-map {
+    outline: 2px solid rgba(15, 118, 110, 0.35);
+    outline-offset: 1px;
+  }
+  details.day.rio.on-map { outline-color: rgba(13, 110, 110, 0.4); }
+  details.day.paraty.on-map { outline-color: rgba(180, 83, 9, 0.4); }
+  details.day.iguazu.on-map { outline-color: rgba(29, 78, 216, 0.4); }
+  details.day.ba.on-map { outline-color: rgba(159, 18, 57, 0.4); }
+  details.day.flight.on-map { outline-color: rgba(99, 102, 241, 0.45); }
+  details.day.flash {
+    animation: dayflash 1.1s ease;
+  }
+  @keyframes dayflash {
+    0% { transform: translateY(0); box-shadow: 0 0 0 0 rgba(15,118,110,0.0); }
+    30% { box-shadow: 0 0 0 6px rgba(15,118,110,0.16); }
+    100% { box-shadow: 0 10px 28px rgba(26,31,46,0.06); }
+  }
+  @media (min-width: 980px) {
+    .itinerary-stage {
+      grid-template-columns: minmax(0, 1fr) 360px;
+      gap: 20px;
+    }
+    .map-dock {
+      position: sticky;
+      top: 14px;
+      align-self: start;
+    }
+    #trip-map { height: 380px; }
+    .map-days {
+      flex-wrap: wrap;
+      overflow-x: visible;
+    }
+  }
+  @media (max-width: 979px) {
+    .map-dock {
+      position: sticky;
+      top: 0;
+      padding-bottom: 2px;
+      background: linear-gradient(180deg, var(--bg) 70%, transparent);
+    }
+    #trip-map { height: 240px; }
+    details.day { scroll-margin-top: 290px; }
+  }
+  .bits { display: grid; gap: 8px; margin: 0 0 10px; }
+  .bit {
+    background: #f7f4ee;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 14px;
+  }
+  .bit b {
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+    display: block;
+    margin-bottom: 3px;
+    font-weight: 500;
+  }
+  .note { font-size: 13px; color: var(--muted); margin: 8px 0 0; }
+  .note em { font-style: normal; color: var(--ink); }
+  .call {
+    background: linear-gradient(90deg, var(--soft), #fff);
+    border: 1px solid #b7e4d8;
+    border-radius: 12px;
+    padding: 12px 14px;
+    font-size: 14px;
+    margin-top: 10px;
+  }
+  .view-tabs {
+    display: flex;
+    gap: 6px;
+    margin: 0 0 18px;
+    padding: 5px;
+    background: rgba(255,252,247,0.92);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    width: fit-content;
+    max-width: 100%;
+    position: sticky;
+    top: 10px;
+    z-index: 40;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 8px 24px rgba(26,31,46,0.08);
+  }
+  .view-tabs button {
+    appearance: none;
+    border: 0;
+    background: transparent;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--muted);
+    padding: 8px 16px;
+    border-radius: 999px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .view-tabs button[aria-selected="true"] {
+    background: var(--ink);
+    color: #f8fffc;
+  }
+  .view-tabs button:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  .view-panel[hidden] { display: none !important; }
+  .plan-lede {
+    margin: -2px 0 16px;
+    max-width: 42em;
+    font-size: 14.5px;
+    color: var(--muted);
+  }
+  .plan-lede strong { color: var(--ink); font-weight: 600; }
+  .logistics {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 16px 18px;
+    margin: 18px 0 8px;
+  }
+  .logistics h3 {
+    font-size: 17px;
+    margin: 0 0 10px;
+    font-weight: 600;
+  }
+  .logistics + .logistics { margin-top: 12px; }
+  .logistics ul {
+    margin: 0;
+    padding-left: 18px;
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--ink);
+  }
+  .logistics li { margin-bottom: 8px; }
+  .logistics li strong { font-weight: 600; }
+  .logistics p {
+    margin: 0 0 10px;
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .wx-table td:nth-child(2),
+  .wx-table td:nth-child(3),
+  .wx-table td:nth-child(4) {
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: 12px;
+  }
+  footer {
+    margin-top: 40px;
+    font-size: 12px;
+    color: var(--muted);
+    font-family: ui-monospace, Menlo, monospace;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <div class="eyebrow">Alex + Jes</div>
+  <h1>Rio to Paraty to Iguazu to Buenos Aires</h1>
+  <p class="lede">Apr 8–25, 2027 · Rio → Paraty → Iguazu (Foz) → Buenos Aires</p>
+  <div class="meta">
+    <span class="chip">16 days</span>
+    <span class="chip">~$4,490 / person</span>
+  </div>
+</header>
+
+<div class="view-tabs" role="tablist" aria-label="Trip views">
+  <button type="button" role="tab" id="tab-trip" aria-controls="view-trip" aria-selected="true" data-view="trip">The trip</button>
+  <button type="button" role="tab" id="tab-plan" aria-controls="view-plan" aria-selected="false" data-view="plan">Planning notes</button>
+</div>
+
+<div id="view-trip" class="view-panel" role="tabpanel" aria-labelledby="tab-trip">
+
+<nav class="route-flow" aria-label="Trip route">
+  <p class="rf-label">Route · Apr 2027 · hover a stop</p>
+  <ol class="rf-track">
+    <li class="rf-stop rio">
+      <button type="button" class="rf-btn" data-day-jump="d9" aria-describedby="tip-rio">
+        <span class="rf-dot" aria-hidden="true"></span>
+        <span class="rf-name">Rio</span>
+        <span class="rf-dates">Apr 9–13 + 15</span>
+        <span class="rf-tip" id="tip-rio" role="tooltip"><b>Rio · 5 nights</b><span>Ipanema / Arpoador · Samba Bossa Nova · surf lesson, Christ, Tijuca, hang glide</span></span>
+      </button>
+    </li>
+    <li class="rf-stop paraty">
+      <button type="button" class="rf-btn" data-day-jump="d13" aria-describedby="tip-paraty">
+        <span class="rf-dot" aria-hidden="true"></span>
+        <span class="rf-name">Paraty</span>
+        <span class="rf-dates">Apr 13–15</span>
+        <span class="rf-tip" id="tip-paraty" role="tooltip"><b>Paraty · 2 nights</b><span>Centro Histórico · Pousada do Ouro · jeep / waterfalls</span></span>
+      </button>
+    </li>
+    <li class="rf-stop iguazu">
+      <button type="button" class="rf-btn" data-day-jump="d16" aria-describedby="tip-iguazu">
+        <span class="rf-dot" aria-hidden="true"></span>
+        <span class="rf-name">Iguazu</span>
+        <span class="rf-dates">Apr 16–19</span>
+        <span class="rf-tip" id="tip-iguazu" role="tooltip"><b>Iguazu · 3 nights in Foz</b><span>Águas do Iguaçu · both sides of the falls · Bird Park</span></span>
+      </button>
+    </li>
+    <li class="rf-stop ba">
+      <button type="button" class="rf-btn" data-day-jump="d19" aria-describedby="tip-ba">
+        <span class="rf-dot" aria-hidden="true"></span>
+        <span class="rf-name">Buenos Aires</span>
+        <span class="rf-dates">Apr 19–24</span>
+        <span class="rf-tip" id="tip-ba" role="tooltip"><b>Buenos Aires · 5 nights</b><span>Palermo · Casa Rosada / Colón · food tour · tango · Caminito · Recoleta</span></span>
+      </button>
+    </li>
+  </ol>
+</nav>
+
+<div class="route">
+  <div class="card rio"><span class="pill rio">Rio</span><strong>Apr 9 to 13 + 15</strong><div class="when">Ipanema / Arpoador · 5 nights</div></div>
+  <div class="card paraty"><span class="pill paraty">Paraty</span><strong>Apr 13 to 15</strong><div class="when">Centro Historico · 2 nights</div></div>
+  <div class="card iguazu"><span class="pill iguazu">Iguazu</span><strong>Apr 16 to 19</strong><div class="when">Foz do Iguaçu · 3 nights</div></div>
+  <div class="card ba"><span class="pill ba">BA</span><strong>Apr 19 to 24</strong><div class="when">Palermo Soho · 5 nights</div></div>
+</div>
+
+<div class="sites-strip">
+  <p class="ss-label">Places we actually hit · not just tours</p>
+  <div class="sites-row">
+    <figure class="site-card">
+      <img src="photos/rio-hills.jpg" alt="Sugarloaf and Botafogo Bay" />
+      <figcaption><span class="where">Rio</span><span class="what">Sugarloaf · bay + mountains</span></figcaption>
+    </figure>
+    <figure class="site-card">
+      <img src="photos/tijuca.jpg" alt="Tijuca rainforest waterfall and stone bridge" />
+      <figcaption><span class="where">Rio · hike</span><span class="what">Tijuca rainforest</span></figcaption>
+    </figure>
+    <figure class="site-card">
+      <img src="photos/copacabana-mosaic.jpg" alt="Copacabana wave mosaic sidewalk" />
+      <figcaption><span class="where">Rio</span><span class="what">Copacabana calçadão</span></figcaption>
+    </figure>
+    <figure class="site-card">
+      <img src="photos/paraty-harbour.jpg" alt="Colorful boats and green hills in Paraty harbour" />
+      <figcaption><span class="where">Paraty</span><span class="what">Harbour + Costa Verde hills</span></figcaption>
+    </figure>
+    <figure class="site-card">
+      <img src="photos/iguazu-brazil.jpg" alt="Iguazu Falls panorama" />
+      <figcaption><span class="where">Iguazu</span><span class="what">Both sides of the falls</span></figcaption>
+    </figure>
+    <figure class="site-card">
+      <img src="photos/casa-rosada.jpg" alt="Casa Rosada pink palace in Buenos Aires" />
+      <figcaption><span class="where">Buenos Aires</span><span class="what">Casa Rosada · Plaza de Mayo</span></figcaption>
+    </figure>
+    <figure class="site-card">
+      <img src="photos/ba-caminito-bright.jpg" alt="Sunlit Caminito houses in red yellow and blue" />
+      <figcaption><span class="where">Buenos Aires</span><span class="what">La Boca · Caminito</span></figcaption>
+    </figure>
+    <figure class="site-card">
+      <img src="photos/ba-tango-color.jpg" alt="Colorful Caminito tango shops under a blue sky" />
+      <figcaption><span class="where">Buenos Aires</span><span class="what">Tango streets</span></figcaption>
+    </figure>
+    <figure class="site-card">
+      <img src="photos/gyg-food-milanesa.jpg" alt="Palermo lunch table with milanesa and wine" />
+      <figcaption><span class="where">Buenos Aires</span><span class="what">Palermo food</span></figcaption>
+    </figure>
+    <figure class="site-card">
+      <img src="photos/ba-ateneo-gold.jpg" alt="Gold balconies inside El Ateneo Grand Splendid" />
+      <figcaption><span class="where">Buenos Aires</span><span class="what">El Ateneo bookstore</span></figcaption>
+    </figure>
+  </div>
+</div>
+
+</div>
+
+<h2>Day by day</h2>
+<p class="muted" style="margin-top:-4px;font-size:14px">What we do, see, and eat. Eat lines say Reserve or Walk-in. Tap a day for photos. Map follows as you scroll.</p>
+
+<div class="itinerary-stage">
+<aside class="map-dock">
+  <div class="map-card">
+    <div class="map-intro">
+      <strong>Live route map</strong>
+      <p>Colored pin is that day’s focus: hotel, activity, or airport. <b>H</b> is where we sleep.</p>
+      <div class="map-now" id="map-now"><b>Hotel (sleep tonight)</b><span>Samba Bossa Nova · Arpoador</span></div>
+    </div>
+    <div id="trip-map" role="img" aria-label="Interactive trip route map"></div>
+    <div class="map-days" id="map-day-btns"></div>
+  </div>
+</aside>
+
+<div class="day-rail" id="day-rail">
+
+<details class="day flight" id="day-d8" data-day="d8">
+  <summary>
+    <div class="day-head"><h3>Thu Apr 8 · Meet in DC &amp; fly</h3><span class="pill flight">Flight</span></div>
+    <p class="blurb">Jes lands IAD 3:24p → hang at Alex’s → airport ~7:15p → 10:30p overnight to Brazil.</p>
+    <p class="agenda"><b>Today</b> Jes MSP→IAD · hang at Alex’s · overnight flight to Brazil</p>
+    <p class="hint">Travel day</p>
+  </summary>
+  <div class="panel">
+    <div class="bits">
+      <div class="bit"><b>Travel</b> MSP→IAD (Jes) · then both IAD→GRU→GIG overnight</div>
+      <div class="bit"><b>Stay</b> On the plane</div>
+      <div class="bit"><b>Eat</b> Whatever before the flight · airport snacks</div>
+    </div>
+  </div>
+</details>
+
+<details class="day rio" id="day-d9" data-day="d9" open>
+  <summary>
+    <div class="day-head"><h3>Fri Apr 9 · Arrive Rio</h3><span class="pill rio">Rio</span></div>
+    <p class="blurb">Land GIG 2:05p. Check into Samba Bossa Nova. Beach walk, coconut water, early dinner. Easy day.</p>
+    <p class="agenda"><b>Today</b> Land · check in Ipanema · beach walk · early night (jet lag)</p>
+    <p class="hint">Ipanema / Arpoador</p>
+  </summary>
+  <div class="panel">
+        <div class="pics">
+      <figure>
+        <img src="photos/ipanema-dois-irmaos.jpg" alt="Sunny Ipanema Beach with Dois Irmãos" loading="lazy" />
+        <figcaption>Ipanema · Dois Irmãos + calçadão</figcaption>
+      </figure>
+      <figure>
+        <img src="photos/ipanema-sunset-mountains.jpg" alt="Arpoador sunset toward Dois Irmãos mountains" loading="lazy" />
+        <figcaption>Arpoador sunset · Dois Irmãos from the rocks</figcaption>
+      </figure>
+    </div>
+    <div class="bits">
+      <div class="bit"><b>Stay</b> Samba Bossa Nova · hotel ~4–5p</div>
+      <div class="bit"><b>Do</b> Beach walk · coconut water · early night</div>
+      <div class="bit"><b>Sun</b> Optional · Arpoador rocks ~5:46p · 8 min walk from Samba · skip if jet-lagged</div>
+      <div class="bit"><b>Eat</b> Walk-in · coconut water on the orla (kiosk) · early sit-down at <a href="https://www.tripadvisor.com/Restaurant_Review-g303506-d23808870-Reviews-Classico_Beach_Club_Ipanema-Rio_de_Janeiro_State_of_Rio_de_Janeiro.html" target="_blank" rel="noopener">Clássico Beach Club Ipanema</a> · 4.9 · 870+</div>
+    </div>
+  </div>
+</details>
+
+<details class="day rio" id="day-d10" data-day="d10">
+  <summary>
+    <div class="day-head"><h3>Sat Apr 10 · Christ + Sugarloaf (self)</h3><span class="pill rio">Rio</span></div>
+    <p class="blurb">Christ morning · Selarón · Sugarloaf afternoon · Marine for dinner.</p>
+    <p class="agenda"><b>Today</b> Christ · Selarón · Sugarloaf · Marine dinner</p>
+    <p class="hint">Christ · Selarón · Sugarloaf</p>
+  </summary>
+  <div class="panel">
+        <div class="pics">
+      <figure>
+        <img src="photos/christ-day.jpg" alt="Christ the Redeemer" loading="lazy" />
+        <figcaption>Christ the Redeemer</figcaption>
+      </figure>
+      <figure>
+        <img src="photos/rio-hills.jpg" alt="Sugarloaf Mountain over Botafogo Bay" loading="lazy" />
+        <figcaption>Sugarloaf · Botafogo boats + city</figcaption>
+      </figure>
+      <figure>
+        <img src="photos/sugarloaf-cable.jpg" alt="Sugarloaf cable car at sunset with Christ in the distance" loading="lazy" />
+        <figcaption>Bondinho · Christ on the ridge at sunset</figcaption>
+      </figure>
+      <figure>
+        <img src="photos/selaron.jpg" alt="Escadaria Selarón" loading="lazy" />
+        <figcaption>Escadaria Selarón</figcaption>
+      </figure>
+      <figure>
+        <img src="photos/santa-teresa.jpg" alt="Santa Teresa tram" loading="lazy" />
+        <figcaption>Santa Teresa / Lapa near Selarón</figcaption>
+      </figure>
+    </div>
+    <div class="bits">
+      <div class="bit"><b>Stay</b> Samba Bossa Nova</div>
+      <div class="bit"><b>Tickets</b> <a href="https://www.tremdocorcovado.rio/" target="_blank" rel="noopener">Corcovado train 8:30 or 9:00a</a> · <a href="https://www.bondinho.com.br/" target="_blank" rel="noopener">Sugarloaf</a> enter ~3:30–4:00p · Uber between</div>
+      <div class="bit"><b>Do</b> Christ morning · Selarón in daylight after the train · Uber in and out, phones away, no Lapa night wander · Sugarloaf afternoon</div>
+      <div class="bit"><b>Sun</b> Sugarloaf last cars for sunset ~5:45p <em>only if still standing</em> · otherwise down and dinner</div>
+      <div class="bit"><b>Eat</b> Reserve <a href="https://www.tripadvisor.com/Restaurant_Review-g303506-d17760575-Reviews-Marine_Resto-Rio_de_Janeiro_State_of_Rio_de_Janeiro.html" target="_blank" rel="noopener">Marine Restô</a> · Copacabana · 4.9 · 3,000+ · <em>8:00p</em></div>
+    </div>
+    <p class="note">Book those clock times · <em>reserve Marine 8:00p</em> · Uber to Copacabana dinner, do not add a Christ sunrise</p>
+  </div>
+</details>
+
+<details class="day rio" id="day-d11" data-day="d11">
+  <summary>
+    <div class="day-head"><h3>Sun Apr 11 · Tijuca hike</h3><span class="pill rio">Rio</span></div>
+    <p class="blurb">Rainforest day only. Waterfalls, caves, no rushing from a surf lesson. Pickup from Samba. Back for açaí.</p>
+    <p class="agenda"><b>Today</b> Tijuca rainforest hike · açaí after</p>
+    <p class="hint">Tijuca · waterfalls</p>
+  </summary>
+  <div class="panel">
+        <div class="pics">
+      <figure>
+        <img src="photos/tijuca.jpg" alt="Stone bridge and waterfall in Tijuca rainforest" loading="lazy" />
+        <figcaption>Tijuca hike · waterfall + old stone bridge</figcaption>
+      </figure>
+      <figure>
+        <img src="photos/gyg-tijuca-sloth.jpg" alt="Sloth in Tijuca rainforest" loading="lazy" />
+        <figcaption>Wildlife on the trail · GYG hike</figcaption>
+      </figure>
+    </div>
+    <div class="bits">
+      <div class="bit"><b>Stay</b> Samba Bossa Nova</div>
+      <div class="bit"><b>Book</b> <a class="gyg" href="https://www.getyourguide.com/rio-de-janeiro-l9/rio-tijuca-rainforest-waterfalls-caves-hike-t546054/" target="_blank" rel="noopener">Tijuca hike</a> · <strong>7:00–7:30a hotel pickup</strong> (morning option, ~5h). Do not take the 1:00p slot. 4.8 / 3,200+</div>
+      <div class="bit"><b>Eat</b> Walk-in · açaí bowl near Ipanema (kiosk / juice stand). Named sucos shops fail 4.7 / 200.</div>
+    </div>
+    <p class="note">Soft shoes · bug spray · surf is Thu Apr 15, not today</p>
+  </div>
+</details>
+
+<details class="day rio" id="day-d12" data-day="d12">
+  <summary>
+    <div class="day-head"><h3>Mon Apr 12 · Hang gliding + orla</h3><span class="pill rio">Rio</span></div>
+    <p class="blurb">Tandem from Pedra Bonita to São Conrado. Afternoon Copacabana wave mosaic walk · Arpoador sunset.</p>
+    <p class="agenda"><b>Today</b> Hang glide (weather) · Copacabana boardwalk · Arpoador sunset</p>
+    <p class="hint">Hang glide · Copacabana</p>
+  </summary>
+  <div class="panel">
+        <div class="pics">
+      <figure>
+        <img src="photos/gyg-hang-5.jpg" alt="Hang gliding over Pedra Bonita and the Atlantic" loading="lazy" />
+        <figcaption>Hang glide · mountain to sea over São Conrado</figcaption>
+      </figure>
+      <figure>
+        <img src="photos/copacabana-mosaic.jpg" alt="Copacabana wave mosaic promenade toward Leme" loading="lazy" />
+        <figcaption>Copacabana calçadão · afternoon walk</figcaption>
+      </figure>
+    </div>
+    <div class="bits">
+      <div class="bit"><b>Stay</b> Samba Bossa Nova</div>
+      <div class="bit"><b>Book</b> <a class="gyg" href="https://www.getyourguide.com/rio-de-janeiro-l9/rio-de-janeiro-tandem-hang-gliding-flight-t228676/" target="_blank" rel="noopener">Hang gliding</a> · ~$295 · 4.9 / 480+ · <strong>first morning window</strong> GYG shows (often 8:00–9:00a Ipanema pickup). Wind is better early. Skip afternoon.</div>
+      <div class="bit"><b>Do</b> Copacabana boardwalk in daylight · then home to Ipanema. Do not linger on the mosaic after dark with bags or phones out.</div>
+      <div class="bit"><b>Sun</b> Arpoador rocks ~5:43p · the one we actually plan for</div>
+      <div class="bit"><b>Eat</b> Walk-in · beach kiosk on the orla · coconut + something salty. Clássico if you want a table.</div>
+    </div>
+    <p class="note">Weather-dependent · book closer in (wind cancels mornings)</p>
+  </div>
+</details>
+
+<details class="day paraty" id="day-d13" data-day="d13">
+  <summary>
+    <div class="day-head"><h3>Tue Apr 13 · Bus to Paraty</h3><span class="pill paraty">Paraty</span></div>
+    <p class="blurb">Costa Verde bus (~4h40). Check into Pousada do Ouro. Sunset on the stones ~5:46p. Dinner in Centro.</p>
+    <p class="agenda"><b>Today</b> Morning bus (~4h40) · check in Centro · sunset on stones · Peró dinner</p>
+    <p class="hint">Paraty Centro</p>
+  </summary>
+  <div class="panel">
+        <div class="pics">
+      <figure>
+        <img src="photos/paraty-stones.jpg" alt="Colorful colonial street in Paraty Centro" loading="lazy" />
+        <figcaption>Centro Histórico · cobbles + blue trim</figcaption>
+      </figure>
+      <figure>
+        <img src="photos/paraty-harbour.jpg" alt="Colorful boats and forested mountains in Paraty harbour" loading="lazy" />
+        <figcaption>Harbour · boats + Costa Verde hills</figcaption>
+      </figure>
+    </div>
+    <div class="bits">
+      <div class="bit"><b>Travel</b> <a href="https://www.costaverdetransportes.com.br/" target="_blank" rel="noopener">Costa Verde</a> · <strong>9:00a Novo Rio → Paraty</strong> · leave Samba ~7:45a with bags · ~4h40 · ~$25</div>
+      <div class="bit"><b>Stay</b> Pousada do Ouro · Centro</div>
+      <div class="bit"><b>Sun</b> Harbour / stones at Santa Rita ~5:45p · 3 min from the pousada</div>
+      <div class="bit"><b>Eat</b> Reserve <a href="https://www.tripadvisor.com/Restaurant_Review-g303503-d15450454-Reviews-Pero_Restaurante-Paraty_State_of_Rio_de_Janeiro.html" target="_blank" rel="noopener">Peró</a> · 4.9 · 1,100+ · <em>8:00p</em></div>
+    </div>
+    <p class="note">Book the <strong>9:00a</strong> bus · <em>reserve Peró 8:00p</em></p>
+  </div>
+</details>
+
+<details class="day paraty" id="day-d14" data-day="d14">
+  <summary>
+    <div class="day-head"><h3>Wed Apr 14 · Jeep + colonial night</h3><span class="pill paraty">Paraty</span></div>
+    <p class="blurb">4x4 jeep into the hills / waterfall. Evening: Igreja Santa Rita, cobblestones, cachaça in Centro.</p>
+    <p class="agenda"><b>Today</b> Jeep / waterfall / cachaça · colonial streets · Prosa dinner</p>
+    <p class="hint">Jeep · Paraty Centro</p>
+  </summary>
+  <div class="panel">
+        <div class="pics">
+      <figure>
+        <img src="photos/paraty-falls.jpg" alt="Jungle waterfall near Paraty" loading="lazy" />
+        <figcaption>Waterfall stop · jeep into the hills</figcaption>
+      </figure>
+      <figure>
+        <img src="photos/gyg-paraty-jeep.jpg" alt="Paraty Tours jeep at Pedra Branca" loading="lazy" />
+        <figcaption>4x4 jeep · Pedra Branca / cachaça</figcaption>
+      </figure>
+    </div>
+    <div class="bits">
+      <div class="bit"><b>Stay</b> Pousada do Ouro</div>
+      <div class="bit"><b>Book</b> <a class="gyg" href="https://www.getyourguide.com/paraty-l1845/paraty-jeep-tour-to-jungle-waterfalls-cachaca-distillery-t238542/" target="_blank" rel="noopener">Jeep + waterfalls + cachaça</a> · ~$40 · 4.7 / 580+ · <strong>8:30–9:00a Centro start</strong> (confirm the GYG time). Back mid-afternoon.</div>
+      <div class="bit"><b>Do</b> Centro evening · Santa Rita church</div>
+      <div class="bit"><b>Eat</b> Walk-in after the jeep <a href="https://www.tripadvisor.com/Restaurant_Review-g303503-d19875652-Reviews-Quintal_da_Vo_Hamburgueria_Artesanal-Paraty_State_of_Rio_de_Janeiro.html" target="_blank" rel="noopener">Quintal da Vó</a> · 4.8 · 720 · then Reserve <a href="https://www.tripadvisor.com/Restaurant_Review-g303503-d12375526-Reviews-Prosa_Restaurante-Paraty_State_of_Rio_de_Janeiro.html" target="_blank" rel="noopener">Prosa</a> · 4.8 · 2,300+ · <em>8:00p</em></div>
+    </div>
+    <p class="note">Book jeep <strong>8:30–9:00a</strong> · <em>reserve Prosa 8:00p</em></p>
+  </div>
+</details>
+
+<details class="day rio" id="day-d15" data-day="d15">
+  <summary>
+    <div class="day-head"><h3>Thu Apr 15 · Back to Rio · surf</h3><span class="pill rio">Rio</span></div>
+    <p class="blurb">Morning bus from Paraty. Re-check into Samba. Afternoon 1h surf lesson at Arpoador (walk from hotel). Early night for the 8:00a flight.</p>
+    <p class="agenda"><b>Today</b> Bus back · Arpoador surf lesson · early bedtime for 8:00a flight</p>
+    <p class="hint">Ipanema · surf</p>
+  </summary>
+  <div class="panel">
+        <div class="pics">
+      <figure>
+        <img src="photos/ipanema-posto.jpg" alt="Crowded sunny Ipanema beach near Posto 7" loading="lazy" />
+        <figcaption>Back in Ipanema · Posto 7 / Arpoador</figcaption>
+      </figure>
+      <figure>
+        <img src="photos/gyg-arpoador-surf.jpg" alt="Surf lesson at Arpoador in Ipanema" loading="lazy" />
+        <figcaption>Arpoador surf · ~1h · walk from Samba</figcaption>
+      </figure>
+    </div>
+    <div class="bits">
+      <div class="bit"><b>Travel</b> Costa Verde <strong>9:20a Paraty → Novo Rio</strong> · ~4h40 · at Samba ~2:30–3:00p</div>
+      <div class="bit"><b>Stay</b> Samba Bossa Nova · 1 night</div>
+      <div class="bit"><b>Book</b> <a class="gyg" href="https://www.getyourguide.com/rio-de-janeiro-l9/surf-classrooms-no-arpoador-em-ipanema-t781839/" target="_blank" rel="noopener">Arpoador surf lesson</a> · ~1h · <strong>3:30 or 4:00p</strong> (after the bus). If 9:20a bus is gone, take 7:20a instead.</div>
+      <div class="bit"><b>Eat</b> Walk-in · kiosk after surf · early bedtime</div>
+    </div>
+    <p class="note">Leave ~5:15–5:30a Fri for GIG 8:00a · hang-dry the boardshorts overnight</p>
+  </div>
+</details>
+
+<details class="day iguazu" id="day-d16" data-day="d16">
+  <summary>
+    <div class="day-head"><h3>Fri Apr 16 · Fly to Iguazu (Foz)</h3><span class="pill iguazu">Iguazu</span></div>
+    <p class="blurb">GIG 8:00a → IGU 10:10a. Drop bags. Easy afternoon: Marco das Três Fronteiras (Brazil / Argentina / Paraguay).</p>
+    <p class="agenda"><b>Today</b> Early GIG→IGU · bags at hotel · Triple Frontier afternoon · Confins dinner</p>
+    <p class="hint">Triple Frontier</p>
+  </summary>
+  <div class="panel">
+        <div class="pics">
+      <figure>
+        <img src="photos/frontier-sunset.jpg" alt="Bright green parrot in Foz rainforest vibe" loading="lazy" />
+        <figcaption>Foz wildlife vibe · Triple Frontier afternoon</figcaption>
+      </figure>
+      <figure>
+        <img src="photos/gyg-iguazu-brazil.jpg" alt="Iguazu Falls from Brazil side" loading="lazy" />
+        <figcaption>Falls preview · GYG both-sides gallery</figcaption>
+      </figure>
+    </div>
+    <div class="bits">
+      <div class="bit"><b>Travel</b> GOL GIG→IGU · 8:00a–10:10a · $177</div>
+      <div class="bit"><b>Stay</b> <a href="https://www.expedia.com/Foz-Do-Iguacu-Hotels-Aguas-Do-Iguacu-Hotel.h2540439.Hotel-Information" target="_blank" rel="noopener">Águas do Iguaçu Hotel Centro</a> · 8.8 / 827+</div>
+      <div class="bit"><b>Do</b> Triple Frontier overlook</div>
+      <div class="bit"><b>Sun</b> Triple Frontier ~6:21p · three rivers, three flags · then dinner</div>
+      <div class="bit"><b>Eat</b> Reserve <a href="https://www.tripadvisor.com/Restaurant_Review-g303444-d23730203-Reviews-Confins_Steakhouse-Foz_do_Iguacu_State_of_Parana.html" target="_blank" rel="noopener">Confins Steakhouse</a> · 4.9 · 4,300+ · <em>8:00p</em></div>
+    </div>
+    <p class="note">Drop bags at hotel · <em>reserve Confins 8:00p</em></p>
+  </div>
+</details>
+
+<details class="day iguazu" id="day-d17" data-day="d17">
+  <summary>
+    <div class="day-head"><h3>Sat Apr 17 · Both sides of the falls</h3><span class="pill iguazu">Iguazu</span></div>
+    <p class="blurb">Full-day both sides. Passports. Ponchos. The big wonder day.</p>
+    <p class="agenda"><b>Today</b> Full-day both sides tour · passports · ponchos · early night</p>
+    <p class="hint">Brazil panorama · Devil’s Throat</p>
+  </summary>
+  <div class="panel">
+        <div class="pics">
+      <figure>
+        <img src="photos/iguazu-brazil.jpg" alt="Iguazu Falls panorama from the Brazil side" loading="lazy" />
+        <figcaption>Brazil side · full horseshoe panorama</figcaption>
+      </figure>
+      <figure>
+        <img src="photos/devils-throat.jpg" alt="Devil's Throat at Iguazu Falls" loading="lazy" />
+        <figcaption>Devil’s Throat · Argentina catwalk</figcaption>
+      </figure>
+    </div>
+    <div class="bits">
+      <div class="bit"><b>Stay</b> Águas do Iguaçu · bags at hotel</div>
+      <div class="bit"><b>Book</b> <a class="gyg" href="https://www.getyourguide.com/foz-do-iguacu-l497/iguazu-falls-full-day-tour-of-brazil-argentina-sides-t805548/" target="_blank" rel="noopener">Both sides full day</a> · 4.9 / 2,000+ · <strong>Foz lobby 7:00–8:00a</strong> (operator texts the night before). ~10h. Foz pickup, not Puerto Iguazú only.</div>
+      <div class="bit"><b>Sun</b> Brazil panorama wants morning light · Garganta afternoon · no extra sunset after this</div>
+      <div class="bit"><b>Eat</b> Walk-in · park snacks / chipa if you see a bakery. Big dinner was last night.</div>
+    </div>
+    <p class="note">Passports + ponchos · lobby <strong>7:00–8:00a</strong></p>
+  </div>
+</details>
+
+<details class="day iguazu" id="day-d18" data-day="d18">
+  <summary>
+    <div class="day-head"><h3>Sun Apr 18 · Bird Park</h3><span class="pill iguazu">Iguazu</span></div>
+    <p class="blurb">Parque das Aves and/or optional Macuco boat. Easy day before Buenos Aires.</p>
+    <p class="agenda"><b>Today</b> Bird Park · optional boat</p>
+    <p class="hint">Bird Park · optional boat</p>
+  </summary>
+  <div class="panel">
+        <div class="pics">
+      <figure>
+        <img src="photos/bird-park.jpg" alt="Parque das Aves Foz" loading="lazy" />
+        <figcaption>Parque das Aves</figcaption>
+      </figure>
+      <figure>
+        <img src="photos/gyg-iguazu-boat.jpg" alt="Boat under Iguazu Falls" loading="lazy" />
+        <figcaption>Optional boat under the falls · GYG gallery</figcaption>
+      </figure>
+    </div>
+    <div class="bits">
+      <div class="bit"><b>Stay</b> Águas do Iguaçu</div>
+      <div class="bit"><b>Do</b> Bird Park <strong>9:00a</strong> (park opens ~8:30) · optional Macuco boat after, same afternoon</div>
+      <div class="bit"><b>Eat</b> Walk-in <a href="https://www.tripadvisor.com/Restaurant_Review-g303444-d24093657-Reviews-Baru_Gastronomia-Foz_do_Iguacu_State_of_Parana.html" target="_blank" rel="noopener">Baru Gastronomia</a> · 4.9 · 3,000+ · pastel, coxinha, tres leches</div>
+    </div>
+  </div>
+</details>
+
+<details class="day ba" id="day-d19" data-day="d19">
+  <summary>
+    <div class="day-head"><h3>Mon Apr 19 · Fly to Buenos Aires</h3><span class="pill ba">BA</span></div>
+    <p class="blurb">Border → IGR → JetSmart 1:33p. Land EZE 3:33p. Check into Miravida Soho. First Palermo night: wine + helado, not a leftover travel dinner.</p>
+    <p class="agenda"><b>Today</b> Border + JetSmart to EZE · Miravida Soho · Plaza Serrano wine + helado</p>
+    <p class="hint">Palermo first night</p>
+  </summary>
+  <div class="panel">
+        <div class="pics">
+      <figure>
+        <img src="photos/helado.jpg" alt="Colorful gelato flavors in a heladería case" loading="lazy" />
+        <figcaption>First night · helado near Plaza Serrano</figcaption>
+      </figure>
+      <figure>
+        <img src="photos/wine.jpg" alt="Hands toasting with Argentine red wine" loading="lazy" />
+        <figcaption>Wine walk from Miravida · easy, close</figcaption>
+      </figure>
+    </div>
+    <div class="bits">
+      <div class="bit"><b>Travel</b> Foz ~9:30a → border → IGR · JetSmart 1:33p–3:33p · $81 + carry-on</div>
+      <div class="bit"><b>Stay</b> Miravida Soho · ~5:30–6:30p</div>
+      <div class="bit"><b>Sun</b> Hotel ~sunset (~6:25p) · Plaza Serrano is the neighborhood, not a viewpoint run</div>
+      <div class="bit"><b>Eat</b> Walk-in · wine bar + dulce de leche helado around Plaza Serrano. Named heladerías sit under 4.7, so pick a busy case, not a listing.</div>
+    </div>
+    <p class="note">Carry-ons with us · buy JetSmart carry-on online (souvenir room)</p>
+  </div>
+</details>
+
+<details class="day ba" id="day-d20" data-day="d20">
+  <summary>
+    <div class="day-head"><h3>Tue Apr 20 · Centro icons + Palermo</h3><span class="pill ba">BA</span></div>
+    <p class="blurb">Casa Rosada, Obelisco, Teatro Colón. Uber, photo, leave. Afternoon back in Soho parks. Not a 9h ranch and not a history walking tour.</p>
+    <p class="agenda"><b>Today</b> Plaza de Mayo + Colón · then Palermo parks / cafes</p>
+    <p class="hint">Casa Rosada · Colón · Palermo</p>
+  </summary>
+  <div class="panel">
+        <div class="pics">
+      <figure>
+        <img src="photos/casa-rosada.jpg" alt="Casa Rosada on Plaza de Mayo" loading="lazy" />
+        <figcaption>Plaza de Mayo · Casa Rosada</figcaption>
+      </figure>
+      <figure>
+        <img src="photos/colon.jpg" alt="Teatro Colón facade in Buenos Aires" loading="lazy" />
+        <figcaption>Teatro Colón · walk the hall if a visit slot is open</figcaption>
+      </figure>
+      <figure>
+        <img src="photos/obelisco.jpg" alt="Obelisco on Avenida 9 de Julio" loading="lazy" />
+        <figcaption>Obelisco · 9 de Julio from the Uber</figcaption>
+      </figure>
+      <figure>
+        <img src="photos/plaza-serrano.jpg" alt="Plaza Serrano in Palermo" loading="lazy" />
+        <figcaption>Afternoon home in Soho</figcaption>
+      </figure>
+    </div>
+    <div class="bits">
+      <div class="bit"><b>Stay</b> Miravida Soho</div>
+      <div class="bit"><b>Do</b> Uber to Plaza de Mayo / Casa Rosada · Obelisco · <a href="https://teatrocolon.org.ar/en/visits" target="_blank" rel="noopener">Teatro Colón visits</a> <strong>10:00–11:00a</strong> if a same-day slot exists (official, ~50 min) · otherwise the facade is the icon. Daytime only in Centro, then back to Palermo.</div>
+      <div class="bit"><b>Do</b> Back to Palermo: Bosques / El Rosedal · Thames</div>
+      <div class="bit"><b>Eat</b> Walk-in · cafe lunch near Colón or a choripán / empanada counter back in Soho. No named street stall clears 4.7 / 200.</div>
+    </div>
+    <p class="note">This is the “don’t miss what’s right there” day · food tour + tango is Wed</p>
+  </div>
+</details>
+
+<details class="day ba" id="day-d21" data-day="d21">
+  <summary>
+    <div class="day-head"><h3>Wed Apr 21 · Food tour + tango</h3><span class="pill ba">BA</span></div>
+    <p class="blurb">Sherpa Palermo food walk near the hotel · then a tiny underground tango show (no tourist dinner theater. 30 people, wine, dancers a few meters away).</p>
+    <p class="agenda"><b>Today</b> Sherpa Palermo lunch walk · Secreto tango ~6:30p</p>
+    <p class="hint">Food tour · underground tango</p>
+  </summary>
+  <div class="panel">
+        <div class="pics">
+      <figure>
+        <img src="photos/gyg-food-3.jpg" alt="Friends toasting white wine at a Palermo lunch" loading="lazy" />
+        <figcaption>Sherpa lunch walk · bites + wine near the hotel</figcaption>
+      </figure>
+      <figure>
+        <img src="photos/gyg-food-milanesa.jpg" alt="Milanesa and wine on a Palermo cafe table" loading="lazy" />
+        <figcaption>Palermo table · milanesa, wine, sun</figcaption>
+      </figure>
+      <figure>
+        <img src="photos/ba-tango-color.jpg" alt="Bright Caminito tango shops and fileteado signs" loading="lazy" />
+        <figcaption>Evening tango · wine, color, small room</figcaption>
+      </figure>
+    </div>
+    <div class="bits">
+      <div class="bit"><b>Stay</b> Miravida Soho</div>
+      <div class="bit"><b>Book</b> <a class="gyg" href="https://www.getyourguide.com/buenos-aires-l1/buenos-aires-palermo-foodie-walking-tour-t437178/" target="_blank" rel="noopener">Sherpa Palermo food tour</a> · 4.9 / 800+ · ~$93 · <strong>11:30a lunch</strong> (ends ~3:00p). Meet Nicaragua 4896. Do not book 4:30p.</div>
+      <div class="bit"><b>Book</b> <a href="https://secretotangosociety.com/" target="_blank" rel="noopener">Secreto Tango Society</a> · official site (GYG listing is a dead page) · ~$60–75 original · ~1h · wine · <strong>6:30p original</strong> (also 4:40p / 8:30p. 6:30p is the pick). Or <a href="https://www.viator.com/tours/Buenos-Aires/Intimate-Underground-Tango-Show-by-Secreto-Tango-Society/d901-5653P5" target="_blank" rel="noopener">Viator</a></div>
+      <div class="bit"><b>Sun</b> Slack between lunch walk and 6:30p tango · Plaza Serrano / Thames ~6:22p</div>
+      <div class="bit"><b>Eat</b> Walk-in · included on the food tour (this is the street-food day) · light after tango if still hungry</div>
+    </div>
+    <p class="note">Book food tour lunch + tango 6:30p on <a href="https://secretotangosociety.com/" target="_blank" rel="noopener">secretotangosociety.com</a> · location emailed after booking · Gorriti / Palermo</p>
+  </div>
+</details>
+
+<details class="day ba" id="day-d22" data-day="d22">
+  <summary>
+    <div class="day-head"><h3>Thu Apr 22 · La Boca walk + cook</h3><span class="pill ba">BA</span></div>
+    <p class="blurb">La Boca walking tour (Caminito, conventillos, Bombonera outside) · then evening empanadas + alfajores class.</p>
+    <p class="agenda"><b>Today</b> La Boca guided walk · evening empanadas class dinner</p>
+    <p class="hint">La Boca walk · cook class</p>
+  </summary>
+  <div class="panel">
+        <div class="pics">
+      <figure>
+        <img src="photos/ba-caminito-bright.jpg" alt="Sunny Caminito corner in red yellow and blue" loading="lazy" />
+        <figcaption>Caminito · the color you actually come for</figcaption>
+      </figure>
+      <figure>
+        <img src="photos/ba-caminito-sun.jpg" alt="Sunlit Caminito street with painted houses and tourists" loading="lazy" />
+        <figcaption>La Boca walk · daytime only, bright and busy</figcaption>
+      </figure>
+      <figure>
+        <img src="photos/ba-caminito-corner.jpg" alt="Caminito cafe painted in primary colors under blue sky" loading="lazy" />
+        <figcaption>Fileteado + cafe color · still in the walk</figcaption>
+      </figure>
+      <figure>
+        <img src="photos/gyg-food-empanadas.jpg" alt="Golden empanadas on a sunny table" loading="lazy" />
+        <figcaption>Then cook class dinner · empanadas</figcaption>
+      </figure>
+    </div>
+    <div class="bits">
+      <div class="bit"><b>Stay</b> Miravida Soho</div>
+      <div class="bit"><b>Book</b> <a class="gyg" href="https://www.getyourguide.com/buenos-aires-l1/la-boca-neighborhood-guided-walking-tour-t235957/" target="_blank" rel="noopener">La Boca walking tour</a> · 4.8 / 1,700+ · ~$13 · ~2h · English · <strong>10:00a</strong> (confirm GYG). Magallanes 808 · stay with the group, Uber back to Palermo</div>
+      <div class="bit"><b>Book</b> <a class="gyg" href="https://www.getyourguide.com/buenos-aires-l1/buenos-aires-empanadas-and-alfajores-guided-cooking-class-t555618/" target="_blank" rel="noopener">Empanadas + alfajores class</a> · 4.7 / 600+ · ~$37 · <strong>6:00p</strong> (3h class after Boca). If 6:00p is gone, take 5:00p.</div>
+      <div class="bit"><b>Optional</b> Boca home game at La Bombonera · if a fixture falls Apr 19–23 · tourist package ~$170–350/person (members-only stadium · no street tickets)</div>
+      <div class="bit"><b>Eat</b> Walk-in · included in the class. Must-try: empanadas + alfajores (dulce de leche sandwich cookie).</div>
+    </div>
+    <p class="note"><em>Book 10:00a Boca + 6:00p class</em> · daytime only · Magallanes 808 · check Boca fixture early 2027</p>
+  </div>
+</details>
+
+<details class="day ba" id="day-d23" data-day="d23">
+  <summary>
+    <div class="day-head"><h3>Fri Apr 23 · Recoleta + asado</h3><span class="pill ba">BA</span></div>
+    <p class="blurb">Walk Recoleta ourselves (Evita’s tomb is the icon, no 2h talking tour). Ateneo. Helado. Fogón as the last proper dinner.</p>
+    <p class="agenda"><b>Today</b> Recoleta cemetery self-walk · Ateneo · helado · Fogón dinner</p>
+    <p class="hint">Recoleta · Fogón</p>
+  </summary>
+  <div class="panel">
+        <div class="pics">
+      <figure>
+        <img src="photos/ba-recoleta-sun.jpg" alt="White Recoleta cemetery gates against a bright blue sky" loading="lazy" />
+        <figcaption>Recoleta gates · sun, white stone, blue sky</figcaption>
+      </figure>
+      <figure>
+        <img src="photos/ba-ateneo-gold.jpg" alt="El Ateneo Grand Splendid theater-bookstore with gold balconies" loading="lazy" />
+        <figcaption>El Ateneo · gold, books, cafe on the old stage</figcaption>
+      </figure>
+      <figure>
+        <img src="photos/helado.jpg" alt="Colorful gelato flavors in a heladería case" loading="lazy" />
+        <figcaption>Helado stop · pick two flavors</figcaption>
+      </figure>
+    </div>
+    <div class="bits">
+      <div class="bit"><b>Stay</b> Miravida Soho</div>
+      <div class="bit"><b>Do</b> Recoleta cemetery · gate ticket ~$15 · Evita’s tomb · skip the GYG talking walk unless we want stories</div>
+      <div class="bit"><b>Do</b> Ateneo after · optional MALBA unguided (walk from hotel)</div>
+      <div class="bit"><b>Sun</b> Recoleta white stone in afternoon light · skip a Puerto Madero sunset chase if Fogón is early</div>
+      <div class="bit"><b>Eat</b> Reserve <a href="https://www.tripadvisor.com/Restaurant_Review-g312741-d15325004-Reviews-Fogon_Asado-Buenos_Aires_Capital_Federal_District.html" target="_blank" rel="noopener">Fogón Asado</a> · 4.9 · 4,000+ · <em>7:00p first seating</em> · Walk-in backup <a href="https://www.tripadvisor.com/Restaurant_Review-g312741-d1142327-Reviews-Calden_del_Soho-Buenos_Aires_Capital_Federal_District.html" target="_blank" rel="noopener">Caldén del Soho</a> · 4.7 · 4,000+ · helado after Recoleta</div>
+    </div>
+    <p class="note"><em>Reserve Fogón 7:00p</em> weeks ahead · cemetery card-only ticket</p>
+  </div>
+</details>
+
+<details class="day flight" id="day-d24" data-day="d24">
+  <summary>
+    <div class="day-head"><h3>Sat-Sun Apr 24-25 · Home</h3><span class="pill flight">Flight</span></div>
+    <p class="blurb">EZE 10:45a via Panama → IAD 12:41a Sunday. Jes sleeps a few hours → 8:45a to MSP.</p>
+    <p class="agenda"><b>Today</b> Early EZE · Copa via Panama · Jes MSP Sunday morning</p>
+    <p class="hint">Homeward</p>
+  </summary>
+  <div class="panel">
+    <div class="bits">
+      <div class="bit"><b>Travel</b> Checkout ~7:00a · EZE by ~7:45a · Copa via Panama · IAD 12:41a Sun · Jes 8:45a MSP</div>
+      <div class="bit"><b>Eat</b> Airport food</div>
+    </div>
+    <p class="note">Be at EZE ~3h early</p>
+  </div>
+</details>
+
+
+</div><!-- day-rail -->
+</div><!-- itinerary-stage -->
+
+<h2><span class="dot"></span> Cost snapshot (per person)</h2>
+<p class="muted" style="margin-top:-4px;font-size:14px">Rough share so you can decide if the trip feels worth it. Booking links and carry-on / hotel drop logistics live under Planning notes.</p>
+<div class="stats">
+  <div class="stat money"><span>Estimated total</span><b>~$4,490</b></div>
+  <div class="stat rio"><span>Flights</span><b>$1,421</b></div>
+  <div class="stat ba"><span>On-ground share</span><b>~$3,070</b></div>
+</div>
+
+<div class="card accent-money">
+  <div class="charts">
+    <div class="chart-panel">
+      <h4>Budget per person</h4>
+      <p class="chart-hint">Hover a slice or row · totals ~$4,490</p>
+      <div class="donut-wrap">
+        <svg class="donut-svg" id="budget-donut" viewBox="0 0 200 200" role="img" aria-label="Budget donut chart per person">
+          <g id="donut-segs" transform="translate(100,100)"></g>
+          <text class="donut-center-val" id="donut-val" x="100" y="96">~$4,490</text>
+          <text class="donut-center-text" id="donut-label" x="100" y="116">total / person</text>
+        </svg>
+        <ul class="donut-legend" id="donut-legend"></ul>
+      </div>
+      <div class="chart-live" id="donut-live"><b>Hover a category</b><span>Flights, hotels, tours, food, transport, souvenirs</span></div>
+    </div>
+
+    <div class="chart-grid">
+      <div class="chart-panel">
+        <h4>Tours &amp; tickets</h4>
+        <p class="chart-hint">Per person · hover a bar</p>
+        <div class="bar-chart" id="tours-bars"></div>
+        <div class="chart-live" id="tours-live"><b>Hover a tour</b><span>See the per-person price</span></div>
+      </div>
+      <div class="chart-panel">
+        <h4>Hotels (room totals)</h4>
+        <p class="chart-hint">Full room · you each pay half · hover a stay</p>
+        <div class="bar-chart hotel-bars" id="hotel-bars"></div>
+        <div class="chart-live" id="hotel-live"><b>Hover a hotel</b><span>Nights and room total</span></div>
+      </div>
+    </div>
+  </div>
+  <table style="margin-top:14px">
+    <tr><th>Category</th><th>Per person</th><th>Basis</th></tr>
+    <tr><td>Flights</td><td class="money"><strong>$1,421</strong></td><td>Half of $2,842 group air (incl. MSP legs)</td></tr>
+    <tr><td>Hotels (half of rooms)</td><td class="money">~$960</td><td>Samba $466 + Paraty ~$300 + Rio bridge ~$100 + Águas Foz ~$290 + Miravida ~$750</td></tr>
+    <tr><td>Tours / tickets</td><td class="money">~$908</td><td>Christ+Sugarloaf $95 · surf $40 · Tijuca $40 · hang $295 · jeep $40 · Iguazu $175 · Palermo food $93 · tango $65 · Recoleta $15 · La Boca $13 · empanadas $37</td></tr>
+    <tr><td>Food &amp; drinks</td><td class="money">~$850</td><td>Walk-in days ~$40–50 · reserve nights (Marine, Peró, Prosa, Confins, Fogón) pull it up. Food tour + cook class are in Tours, not double-counted here.</td></tr>
+    <tr><td>Local transport</td><td class="money">~$200</td><td>Costa Verde bus both ways ~$50 · Ubers · Foz/IGR taxis · border hop</td></tr>
+    <tr><td>Carry-on / souvenirs</td><td class="money">~$150</td><td>No checked bags · JetSmart carry-on for souvenirs + gift budget</td></tr>
+    <tr><td><strong>Total</strong></td><td class="money"><strong>~$4,490</strong></td><td>Or ~$4,195 without hang glide</td></tr>
+  </table>
+  <div class="call">Skip hang gliding (~$295) → closer to ~$4,195.</div>
+</div>
+
+</div><!-- view-trip -->
+
+<div id="view-plan" class="view-panel" role="tabpanel" aria-labelledby="tab-plan" hidden>
+<p class="plan-lede">Stuff for when we actually book and travel. Nothing on this page is purchased until you pay. GYG links are the picks. Icons we do ourselves (tickets + Uber). Guides only when we are <em>doing</em> something or the logistics are annoying, not a slow museum talk. If an icon is a short Uber away, we go. We do not spend that day on a lesser walking tour. Hands-on cooking counts. <strong>GYG 4.7+ / 150+ · active or food. Food: TripAdvisor 4.7+ / 200+. Eat lines: Reserve or Walk-in.</strong> Teralinks and the budget stay in sync. Photos match the day. Carry-on · laundry. Taxi with bags, never a luggage walk across town.</p>
+
+<h2><span class="dot"></span> What to book</h2>
+<p class="muted" style="margin-top:-4px;font-size:14px">Clock time to pick is the last column. How far in advance is under Flights → When to buy. Nothing is purchased until you pay.</p>
+<div class="card">
+<table>
+  <tr><th>Day</th><th>Activity</th><th>Each</th><th>Book this slot</th></tr>
+  <tr><td>Apr 10</td><td>Christ + Sugarloaf self · <a href="https://www.tremdocorcovado.rio/" target="_blank" rel="noopener">official train</a> + <a href="https://www.bondinho.com.br/" target="_blank" rel="noopener">official cable car</a> · Uber between · Selarón walk-in<br /><span class="muted" style="font-size:12px">GYG ticket listings sit under 4.7 · buy official. Confirm 2027 clocks when inventory opens.</span></td><td class="money">~$95 tickets</td><td>Train <strong>8:30 or 9:00a</strong> · Sugarloaf enter <strong>3:30–4:00p</strong></td></tr>
+  <tr><td>Apr 11</td><td><a href="https://www.getyourguide.com/rio-de-janeiro-l9/rio-tijuca-rainforest-waterfalls-caves-hike-t546054/" target="_blank" rel="noopener">Tijuca rainforest hike</a> · GYG 4.8 / 3,200+ · pickup worth it · own day, not stacked with surf</td><td class="money">~$40</td><td>Hotel pickup <strong>7:00–7:30a</strong> · skip 1:00p</td></tr>
+  <tr><td>Apr 12</td><td><a href="https://www.getyourguide.com/rio-de-janeiro-l9/rio-de-janeiro-tandem-hang-gliding-flight-t228676/" target="_blank" rel="noopener">Tandem hang gliding</a> · GYG 4.9 / 480+</td><td class="money">~$295</td><td><strong>First morning</strong> GYG shows (often 8:00–9:00a Ipanema). Skip afternoon.</td></tr>
+  <tr><td>Apr 13</td><td>Costa Verde bus Novo Rio → Paraty</td><td class="money">~$25</td><td><strong>9:00a</strong> Novo Rio · leave Samba ~7:45a</td></tr>
+  <tr><td>Apr 13 eve</td><td>Reserve Peró</td><td class="money">dinner</td><td><strong>8:00p</strong></td></tr>
+  <tr><td>Apr 14</td><td><a href="https://www.getyourguide.com/paraty-l1845/paraty-jeep-tour-to-jungle-waterfalls-cachaca-distillery-t238542/" target="_blank" rel="noopener">Paraty jeep + waterfalls + cachaça</a> · GYG 4.7 / 580+</td><td class="money">~$40</td><td>Centro start <strong>8:30–9:00a</strong></td></tr>
+  <tr><td>Apr 14 eve</td><td>Reserve Prosa</td><td class="money">dinner</td><td><strong>8:00p</strong></td></tr>
+  <tr><td>Apr 15</td><td>Costa Verde bus Paraty → Novo Rio</td><td class="money">~$25</td><td><strong>9:20a</strong> Paraty (fallback 7:20a)</td></tr>
+  <tr><td>Apr 15</td><td><a href="https://www.getyourguide.com/rio-de-janeiro-l9/surf-classrooms-no-arpoador-em-ipanema-t781839/" target="_blank" rel="noopener">Arpoador surf lesson</a> · GYG · ~1h at Posto 7 · walk from Samba · fewer reviews than the 200+ rule, keeping it anyway</td><td class="money">~$40</td><td><strong>3:30 or 4:00p</strong></td></tr>
+  <tr><td>Apr 16 eve</td><td>Reserve Confins Steakhouse</td><td class="money">dinner</td><td><strong>8:00p</strong></td></tr>
+  <tr><td>Apr 17</td><td><a href="https://www.getyourguide.com/foz-do-iguacu-l497/iguazu-falls-full-day-tour-of-brazil-argentina-sides-t805548/" target="_blank" rel="noopener">Iguazu both sides full day</a> · GYG 4.9 / 2,000+ · border logistics</td><td class="money">~$175</td><td>Foz lobby <strong>7:00–8:00a</strong> · passports</td></tr>
+  <tr><td>Apr 18</td><td>Parque das Aves (Bird Park) · optional Macuco boat at the Brazil falls</td><td class="money">extra</td><td>Park <strong>9:00a</strong> · boat after if you want it</td></tr>
+  <tr><td>Apr 20</td><td>Casa Rosada / Plaza de Mayo + Obelisco + Teatro Colón (Uber, photo, optional official Colón visit) · afternoon Palermo parks · not a walking tour</td><td class="money">Uber</td><td>Colón <strong>10:00–11:00a</strong> if a visit slot exists</td></tr>
+  <tr><td>Apr 21 lunch</td><td><a href="https://www.getyourguide.com/buenos-aires-l1/buenos-aires-palermo-foodie-walking-tour-t437178/" target="_blank" rel="noopener">Palermo food tour (Sherpa)</a> · GYG 4.9 / 800+ · near Miravida</td><td class="money">~$93</td><td><strong>11:30a lunch</strong> · skip 4:30p</td></tr>
+  <tr><td>Apr 21 eve</td><td><a href="https://secretotangosociety.com/" target="_blank" rel="noopener">Secreto Tango Society</a> · official site (not GYG) · ~1h · wine · <a href="https://www.viator.com/tours/Buenos-Aires/Intimate-Underground-Tango-Show-by-Secreto-Tango-Society/d901-5653P5" target="_blank" rel="noopener">Viator backup</a></td><td class="money">~$65</td><td><strong>6:30p original</strong></td></tr>
+  <tr><td>Apr 22 day</td><td><a href="https://www.getyourguide.com/buenos-aires-l1/la-boca-neighborhood-guided-walking-tour-t235957/" target="_blank" rel="noopener">La Boca walking tour</a> · GYG 4.8 / 1,700+ · ~2h English</td><td class="money">~$13</td><td>English <strong>10:00a</strong></td></tr>
+  <tr><td>Apr 22 eve</td><td><a href="https://www.getyourguide.com/buenos-aires-l1/buenos-aires-empanadas-and-alfajores-guided-cooking-class-t555618/" target="_blank" rel="noopener">Empanadas + alfajores cooking class</a> · GYG 4.7 / 600+</td><td class="money">~$37</td><td><strong>6:00p</strong> (fallback 5:00p)</td></tr>
+  <tr><td>Apr 19–23</td><td>Optional · Boca Juniors home game (La Bombonera) · only if fixture lands while we’re in BA · tourist package via legit reseller (LandingPad / Homefans-type) · not public sale</td><td class="money">~$170–350</td><td>Kickoff TBD · check early 2027</td></tr>
+  <tr><td>Apr 23</td><td>Recoleta cemetery self-walk (Evita) · gate ticket · skip the GYG talking tour · Ateneo</td><td class="money">~$15 gate</td><td>Afternoon walk · no guide slot</td></tr>
+  <tr><td>Apr 9</td><td>Walk-in <a href="https://www.tripadvisor.com/Restaurant_Review-g303506-d23808870-Reviews-Classico_Beach_Club_Ipanema-Rio_de_Janeiro_State_of_Rio_de_Janeiro.html" target="_blank" rel="noopener">Clássico Beach Club Ipanema</a> · 4.9 / 870+ · coconut on the orla</td><td class="money">casual</td><td>Walk-in lunch</td></tr>
+  <tr><td>Apr 10 eve</td><td><a href="https://www.tripadvisor.com/Restaurant_Review-g303506-d17760575-Reviews-Marine_Resto-Rio_de_Janeiro_State_of_Rio_de_Janeiro.html" target="_blank" rel="noopener">Marine Restô</a> · Copacabana · 4.9 / 3,000+</td><td class="money">dinner</td><td><strong>8:00p</strong></td></tr>
+  <tr><td>Apr 14 lunch</td><td>Walk-in <a href="https://www.tripadvisor.com/Restaurant_Review-g303503-d19875652-Reviews-Quintal_da_Vo_Hamburgueria_Artesanal-Paraty_State_of_Rio_de_Janeiro.html" target="_blank" rel="noopener">Quintal da Vó</a> · 4.8 / 720</td><td class="money">lunch</td><td>After the jeep (~3p)</td></tr>
+  <tr><td>Apr 18</td><td>Walk-in <a href="https://www.tripadvisor.com/Restaurant_Review-g303444-d24093657-Reviews-Baru_Gastronomia-Foz_do_Iguacu_State_of_Parana.html" target="_blank" rel="noopener">Baru Gastronomia</a> · 4.9 / 3,000+ · pastel + tres leches</td><td class="money">lunch</td><td>Walk-in after Bird Park</td></tr>
+  <tr><td>Apr 23 eve</td><td>Reserve <a href="https://www.tripadvisor.com/Restaurant_Review-g312741-d15325004-Reviews-Fogon_Asado-Buenos_Aires_Capital_Federal_District.html" target="_blank" rel="noopener">Fogón Asado</a> · last steak dinner · Walk-in backup Caldén</td><td class="money">dinner</td><td><strong>7:00p</strong> first seating · weeks ahead</td></tr>
+</table>
+</div>
+
+<div class="logistics">
+  <h3>Trip style (default)</h3>
+  <p>Active and hungry, not a classroom. Icons with official tickets (Christ, Sugarloaf, falls). Vibe neighborhoods we actually sleep in (Ipanema/Arpoador, Paraty Centro, Palermo Soho). One food tour per country if the listing exists. No slow museum loops.</p>
+  <ul>
+    <li><strong>Food tours:</strong> once per country, not per city. <strong>Argentina:</strong> Sherpa Palermo, Apr 21. <strong>Brazil:</strong> skip. No qualifying GYG food walk at Rio, Paraty, or Foz. Do not hold Apr 11 for one.</li>
+    <li><strong>Icons vs walks:</strong> Apr 20 is now Casa Rosada + Colón + Obelisco (the stuff next door we were skipping for a ranch). Recoleta is a self-walk, not a talking tour. La Boca stay is Caminito with a short guide because of touts, not a museum loop. Stay with the group, then Uber home.</li>
+    <li><strong>Neighborhoods:</strong> we sleep in relatively safe tourist areas (Ipanema, Paraty Centro, Foz centro, Palermo Soho). Mixed icons are day-only.</li>
+    <li><strong>Pace:</strong> overall fine. Two tight days only: Apr 10 Christ + Selarón + Sugarloaf + Marine, and Apr 15 bus + surf + 5:15a. Do not add more to those. Easy days (Apr 9, 11 after the hike, 18, 19) are where walk-in food lives.</li>
+  </ul>
+</div>
+
+<div class="logistics">
+  <h3>Walk-in food and delicacies</h3>
+  <p>Keep Marine, Peró, Prosa, Confins, Fogón. Those are Reserve. Also eat stuff that does not need a table.</p>
+  <ul>
+    <li><strong>Rio:</strong> coconut water and açaí from orla kiosks. Named juice bars (Bibi, etc.) fail 4.7. Sit-down walk-in: Clássico Beach Club Ipanema, 4.9 / 870+.</li>
+    <li><strong>Paraty:</strong> cachaça on the jeep. Walk-in burgers at Quintal da Vó, 4.8 / 720. Manuê café is 4.6, so it stays off the page.</li>
+    <li><strong>Foz:</strong> chipa from a bakery if you see it. Walk-in Baru for pastel / coxinha / tres leches, 4.9 / 3,000+.</li>
+    <li><strong>BA:</strong> dulce de leche helado around Plaza Serrano (Cadore and friends sit at 4.6). Choripán / empanada from a counter, not a named stall under the bar. Alfajores on the Apr 22 class. Food tour Apr 21 is the street-food day.</li>
+  </ul>
+</div>
+
+<div class="logistics">
+  <h3>Neighborhoods (relatively safe)</h3>
+  <p>We sleep where we would walk at 10p. Mixed spots are visits, not the hotel.</p>
+  <ul>
+    <li><strong>Rio:</strong> Samba is Ipanema / Arpoador. That is the right base. Copacabana mosaic is a daytime walk home to Ipanema. Marine is a taxi to a hotel restaurant, not a Lapa night. Selarón is daylight, Uber both ways.</li>
+    <li><strong>Paraty:</strong> Centro Histórico is small and lit. Fine after dinner on the cobbles.</li>
+    <li><strong>Foz:</strong> Hotel Centro. Taxi after dinner. Do not invent a long walk.</li>
+    <li><strong>BA:</strong> Miravida is Palermo Soho. Recoleta is the same kind of neighborhood. Plaza de Mayo / Colón in daylight. Caminito with the GYG guide, then leave. Do not wander the rest of La Boca.</li>
+  </ul>
+</div>
+
+<div class="logistics">
+  <h3>Bags, check-in, closed days</h3>
+  <p><strong>Rule:</strong> Carry-on only (no checked bags). Leave room for souvenirs. Day packs either stay at the hotel (ask for <em>guarda de bagagem</em> / luggage hold) or travel with us. Never assume a room is ready before ~2–3p.</p>
+  <p><strong>Closed / hours that matter:</strong> Iguazu parks open every day (Sat Apr 17 is busier; Sun buffer is intentional). Christ, Sugarloaf, Tijuca, hang glide, Paraty jeep = daily / weather. Recoleta + Caminito = daytime. Many BA museums close Mondays; Recoleta day is Fri so fine. Easter 2027 is <strong>Mar 28</strong> (before we leave the US). Brazil Tiradentes <strong>Apr 21</strong> hits while we are already in BA. Rio’s São Jorge holiday is <strong>Apr 23</strong> (we’re in BA by then).</p>
+  <ul>
+    <li><strong>Apr 9 Rio:</strong> Land GIG 2:05p → immigration + bags + Uber Ipanema ≈ 4:00–5:00p. Normal check-in. If room late, drop bags at reception and beach.</li>
+    <li><strong>Apr 13 / 15 buses:</strong> Costa Verde’s guaranteed boarding is at <strong>Rodoviária Novo Rio</strong> (not at the hotel). From Samba, Uber to Novo Rio with bags (~30–45 min), then the ~4h40 bus. Book <strong>9:00a Novo Rio → Paraty</strong> on Apr 13 (leave Samba ~7:45a). Book <strong>9:20a Paraty → Novo Rio</strong> on Apr 15 (fallback 7:20a). Paraty terminal is a short walk/taxi to Pousada do Ouro in Centro. On Apr 15, if Samba room is not ready, leave bags at the desk, beach, check in later. (Optional upgrade: shared Zona Sul van/transfer door-to-door if we want to skip Novo Rio.)</li>
+    <li><strong>Apr 16 early flight:</strong> Checkout Samba ~5:15–5:30a with bags → Uber GIG (domestic ~1.5h before 8:00a is enough). Land IGU 10:10a → hotel before check-in: drop bags at Foz hotel, lunch / walk, room later.</li>
+    <li><strong>Apr 17 falls day:</strong> Bags stay at Foz hotel. Passports required for the border. Confirm the tour picks up in Foz (not only Puerto Iguazú).</li>
+    <li><strong>Apr 19 Foz → BA:</strong> Checkout Foz morning with all bags → taxi to Brazil border → walk/taxi to IGR. Leave Foz by ~9:30–10:00a for the 1:33p JetSmart. Buy carry-on online. Land EZE 3:33p → Palermo ~5:30–6:30p (check-in OK).</li>
+    <li><strong>Apr 24 home:</strong> Checkout Miravida ~7:00a with bags → EZE for 10:45a international (aim 3h early). No coming back to the hotel.</li>
+  </ul>
+</div>
+
+<div class="logistics">
+  <h3>Laundry (twice, hotel desk)</h3>
+  <p>All four hotels list paid laundry / dry-cleaning (desk drop-off, not self-serve). Aim for <strong>two loads total</strong> so we stay carry-on light without scheduling a laundry day.</p>
+  <ul>
+    <li><strong>Who has it:</strong> Samba Bossa Nova · Pousada do Ouro · Águas do Iguaçu · Miravida Soho. Confirm overnight vs same-day price at check-in.</li>
+    <li><strong>Wash 1 · Rio (Samba):</strong> Drop evening <strong>Apr 10</strong> or after Tijuca on <strong>Apr 11</strong>. Pick up <strong>Apr 12</strong> afternoon/evening (hang + orla day). Clears hike clothes before Paraty. Surf is Apr 15 · hang-dry overnight, don’t wait on a third wash.</li>
+    <li><strong>Wash 2 · BA (Miravida):</strong> Drop evening <strong>Apr 20</strong> (easy neighborhood day) or after the food tour <strong>Apr 21</strong>. Pick up <strong>Apr 23</strong> before Recoleta / Fogón.</li>
+    <li><strong>Backup · Foz (Águas):</strong> If Rio wash slips, drop evening <strong>Apr 16</strong>, pick up <strong>Apr 18</strong> after Bird Park. Skip Paraty (only 2 nights + jeep day) unless they can truly do overnight.</li>
+    <li><strong>Cost ballpark:</strong> ~$15–40 per person per load depending on weight. Don’t budget a third wash unless something soaks through at the falls.</li>
+  </ul>
+</div>
+
+<div class="logistics">
+  <h3>Paraty bus (not an airport change)</h3>
+  <p>Rio in and out is still <strong>GIG</strong>. Paraty is a <strong>bus</strong>, both ways, then we fly GIG→IGU. The only flight that leaves a different airport than we landed is <strong>IGU in (Brazil) → IGR out (Argentina)</strong> because the falls sit on the border.</p>
+  <p><strong>Yes, book the bus in advance</strong> for the morning seats (Tue Apr 13 out, Thu Apr 15 back). Not months ahead · about <strong>1–2 weeks out</strong> is enough unless a holiday week sells out.</p>
+  <ul>
+    <li><strong>Where:</strong> <a href="https://www.costaverdetransportes.com.br/" target="_blank" rel="noopener">costaverdetransportes.com.br</a> (official) or <a href="https://www.clickbus.com/en/bus/rio-de-janeiro-rj-to-paraty-rj" target="_blank" rel="noopener">ClickBus</a> / Busbud if the official site is cranky in English. Origin <em>Rio de Janeiro (Novo Rio)</em> → dest <em>Paraty</em>. Round-trip in one cart is slightly cheaper.</li>
+    <li><strong>Board:</strong> Guaranteed boarding is only at <strong>Rodoviária Novo Rio</strong>, not at Ipanema. Uber from Samba with bags ~30–45 min. Be there ~30 min before departure. Paraty terminal → short taxi to Pousada do Ouro (don’t drag bags over cobbles).</li>
+    <li><strong>Zona Sul van stops</strong> (Ipanema/Copacabana) exist on some schedules but are <em>not</em> guaranteed boarding · skip them with luggage.</li>
+  </ul>
+</div>
+
+<div class="logistics">
+  <h3>Iguazu vs Foz</h3>
+  <p><strong>Iguazu</strong> = the falls. <strong>Foz do Iguaçu</strong> = the Brazilian town we sleep in (airport code IGU). <strong>Puerto Iguazú / IGR</strong> = Argentina side town we fly out of to Buenos Aires.</p>
+</div>
+
+<div class="logistics">
+  <h3>Flex days</h3>
+  <ul>
+    <li>Hang glide can cancel for wind (morning flights usually best).</li>
+    <li>Apr 18 boat is optional and usually bought locally (GYG Macuco listings sit under 4.7).</li>
+    <li>Tourist tango <em>dinner theaters</em> fail the GYG bar and run 2–3h with a mediocre steak. Secreto is the pick: ~30–45 people, ~1h, wine, dancers a few meters away, from ~$60 on <strong>secretotangosociety.com</strong> (GYG URL is dead). Not purchased yet. Book the 6:30p original session.</li>
+    <li><strong>Optional Boca game:</strong> Apr 2027 fixtures aren’t out yet. If Boca is home at La Bombonera while we’re in BA (Apr 19–23), tourist match packages run ~<strong>$170–350</strong>/person (ticket + host; members-only stadium). Skip street sellers. Would replace or shift that evening’s plan (e.g. move cook class / dinner). Check ~Jan–Feb 2027.</li>
+  </ul>
+</div>
+
+<div class="logistics">
+  <h3>Weather pack</h3>
+  <ul>
+    <li><strong>Rio / Paraty:</strong> shorts + light rain shell + bug spray for Tijuca / jeep.</li>
+    <li><strong>Foz:</strong> poncho for falls mist + dry change.</li>
+    <li><strong>BA:</strong> jeans + sweater for evenings (~55°F).</li>
+    <li><strong>Laundry cadence:</strong> Pack ~5–6 day rotation + one nicer outfit. Two hotel washes (Rio + BA) cover the 16 travel days without a dedicated laundry errand.</li>
+  </ul>
+</div>
+
+<div class="logistics">
+  <h3>Cash vs card</h3>
+  <p>You do not need a wad of local cash. Cards do most of the trip. Bring a little physical money for kiosks and tips.</p>
+  <ul>
+    <li><strong>Brazil:</strong> Visa/Mastercard in Ipanema, Paraty, Foz restaurants and hotels. Coconut / açaí kiosks and some Ubers prefer <strong>reais in cash</strong> or PIX (you will not have PIX). Get ~R$200–400 at a bank ATM on arrival (GIG or Ipanema), not a huge airport exchange. Capital One / no-FX card.</li>
+    <li><strong>Argentina:</strong> Pay restaurants and hotels on a foreign Visa/Mastercard in <strong>pesos, never USD on the terminal</strong> (MEP/tourist rate). Still bring <strong>~$200–300 crisp newer $100 USD bills</strong> for the two of you and swap a bit at a proper house in Palermo for kiosks, tips, the odd taxi. Skip airport exchange and ATMs if you can.</li>
+    <li><strong>Do not</strong> carry thousands of USD. Do not flash cash on the orla or in Centro.</li>
+  </ul>
+</div>
+
+<div class="logistics">
+  <h3>Plugs (not a giant adapter block)</h3>
+  <p>US Type A/B wall plugs will not fit. Phones and laptop bricks are dual-voltage. You need the <em>shape</em>, not a voltage converter, and not a surge “block.”</p>
+  <ul>
+    <li><strong>One compact universal adapter</strong> with USB-C PD (or two cheap ones: Brazil Type N + Argentina Type I, the Australian three-flat-pin). Type C Euro-round often works as a bonus in hotel USB walls.</li>
+    <li><strong>Brazil:</strong> Type N (three round pins). Rio is often 127V. Foz is often 220V. USB chargers do not care. A US hair dryer might.</li>
+    <li><strong>Argentina:</strong> Type I, 220V.</li>
+    <li>Skip the bulky cube with 6 outlets. One adapter + a small USB-C brick / Anker-style bank is enough for two phones.</li>
+  </ul>
+</div>
+
+<div class="logistics">
+  <h3>Sun + neighborhoods (April is autumn here · sunset is early)</h3>
+  <p>Times are local, ~2027. Put the view on a slack day. Do not chase a second neighborhood after a full ticketed morning.</p>
+  <table class="wx-table">
+    <tr><th>Place</th><th>Sleep / walk</th><th>Sunrise</th><th>Sunset</th><th>The view</th></tr>
+    <tr>
+      <td>Rio</td>
+      <td>Ipanema / Arpoador (Samba). Copacabana is the afternoon stroll. Santa Teresa / Lapa only on Christ day.</td>
+      <td>~6:04–6:06a</td>
+      <td>~5:40–5:46p</td>
+      <td><strong>Arpoador rocks</strong> (walk from Samba). Sugarloaf last cars only if Apr 10 still has legs. Skip a Christ sunrise · train hours + jet lag.</td>
+    </tr>
+    <tr>
+      <td>Paraty</td>
+      <td>Centro Histórico (Pousada do Ouro is in it). Bus terminal is a short taxi with bags, not a cobble drag.</td>
+      <td>~6:05a</td>
+      <td>~5:45p</td>
+      <td><strong>Harbour / stones at Santa Rita</strong> Apr 13. Jeep day is the big thing · no extra viewpoint chase.</td>
+    </tr>
+    <tr>
+      <td>Foz</td>
+      <td>Centro hotel. Falls are a tour day, not a neighborhood wander.</td>
+      <td>~6:54a</td>
+      <td>~6:20p</td>
+      <td><strong>Triple Frontier</strong> Apr 16 ~6:21p. Falls: Brazil side wants morning sun on the face; Garganta is the afternoon. No 5:30a park start.</td>
+    </tr>
+    <tr>
+      <td>Buenos Aires</td>
+      <td>Palermo Soho (Miravida). Recoleta and La Boca are day trips. Puerto Madero is the river sunset if we have a gap.</td>
+      <td>~7:20–7:24a</td>
+      <td>~6:20–6:25p</td>
+      <td>Apr 21 golden hour on <strong>Plaza Serrano / Thames</strong> between food tour and tango. Caminito = morning light. Recoleta white stone in afternoon sun. Do not add a sunrise alarm in BA.</td>
+    </tr>
+  </table>
+</div>
+
+<h2><span class="dot"></span> Flights</h2>
+<div class="card">
+<table>
+  <tr><th>Who</th><th>When</th><th>Route</th><th>Each</th></tr>
+  <tr>
+    <td>Jes</td><td>Thu Apr 8</td><td>MSP to IAD · 12:00p-3:24p · UA 293<div class="legs">Nonstop · 2h 24m · then hang at Alex’s until the overnight</div></td>
+    <td class="money">$183<br /><a class="terralink" href="https://travel.capitalone.com/flights/shop/review/?origin=MSP&amp;destination=IAD&amp;departureDate=2027-04-08&amp;tripCategory=one_way&amp;stopsOption=ANY_NUMBER&amp;adultsCount=1&amp;childrenCount=0&amp;infantsOnLapCount=0&amp;infantsInSeatCount=0" target="_blank" rel="noopener">Teralink</a></td>
+  </tr>
+  <tr>
+    <td>Both</td><td>Thu to Fri Apr 8-9</td><td>IAD to GRU to GIG · 10:30p to 2:05p+1
+      <div class="legs">
+        IAD 10:30p to GRU 9:30a · UA 861 · 10h · hang until ~7:15p, at IAD ~7:30p<br />
+        <span class="lay">3h 30m GRU · one Teralink IAD→GIG · protected if it stays one confirmation</span><br />
+        GRU 1:00p to GIG 2:05p · GOL G3 1376 · 1h 5m<br />
+        Carry-on + 1st bag free · seats included · changes free (fare non-refundable)
+      </div>
+    </td>
+    <td class="money">$407<br /><a class="terralink" href="https://travel.capitalone.com/flights/shop/review/?origin=IAD&amp;destination=GIG&amp;departureDate=2027-04-08&amp;tripCategory=one_way&amp;stopsOption=ANY_NUMBER&amp;adultsCount=1&amp;childrenCount=0&amp;infantsOnLapCount=0&amp;infantsInSeatCount=0" target="_blank" rel="noopener">Teralink</a></td>
+  </tr>
+  <tr>
+    <td>Both</td><td>Fri Apr 16</td><td>GIG to IGU · 8:00a-10:10a · GOL<div class="legs">Leave Samba ~5:15–5:30a with bags · dawn roads, ~1.5h at GIG is enough domestic</div></td>
+    <td class="money">$177<br /><a class="terralink" href="https://travel.capitalone.com/flights/shop/review/?origin=GIG&amp;destination=IGU&amp;departureDate=2027-04-16&amp;tripCategory=one_way&amp;stopsOption=ANY_NUMBER&amp;adultsCount=2&amp;childrenCount=0&amp;infantsOnLapCount=0&amp;infantsInSeatCount=0" target="_blank" rel="noopener">Teralink</a></td>
+  </tr>
+  <tr>
+    <td>Both</td><td>Mon Apr 19</td><td>IGR to EZE · 1:33p-3:33p · JetSmart<div class="legs">Leave Foz hotel ~9:00a (not 9:30) · border + ULCC · buy carry-on online before IGR</div></td>
+    <td class="money">$81<br /><a class="terralink" href="https://travel.capitalone.com/flights/shop/review/?origin=IGR&amp;destination=EZE&amp;departureDate=2027-04-19&amp;tripCategory=one_way&amp;stopsOption=ANY_NUMBER&amp;adultsCount=2&amp;childrenCount=0&amp;infantsOnLapCount=0&amp;infantsInSeatCount=0" target="_blank" rel="noopener">Teralink</a></td>
+  </tr>
+  <tr>
+    <td>Both</td><td>Sat to Sun Apr 24-25</td><td>EZE to PTY to IAD · 10:45a to 12:41a+1 · Copa
+      <div class="legs">
+        Leave Miravida ~6:30–7:00a · at EZE by ~7:45a (3h international)<br />
+        EZE 10:45a to PTY 4:09p · CM 653<br />
+        <span class="lay">2h 44m PTY · protected if Copa is one ticket</span><br />
+        PTY 6:53p to IAD 12:41a Sun · CM 448
+      </div>
+    </td>
+    <td class="money">$573<br /><a class="terralink" href="https://travel.capitalone.com/flights/shop/review/?origin=EZE&amp;destination=IAD&amp;departureDate=2027-04-24&amp;tripCategory=one_way&amp;stopsOption=ANY_NUMBER&amp;adultsCount=2&amp;childrenCount=0&amp;infantsOnLapCount=0&amp;infantsInSeatCount=0" target="_blank" rel="noopener">Teralink</a></td>
+  </tr>
+  <tr>
+    <td>Jes</td><td>Sun Apr 25</td><td>IAD to MSP · 8:45a-10:31a · UA 2798<div class="legs">~8h on the ground after 12:41a landing · sleep at Alex’s · leave ~6:15a for 8:45a domestic</div></td>
+    <td class="money">$183<br /><a class="terralink" href="https://travel.capitalone.com/flights/shop/review/?origin=IAD&amp;destination=MSP&amp;departureDate=2027-04-25&amp;tripCategory=one_way&amp;stopsOption=ANY_NUMBER&amp;adultsCount=1&amp;childrenCount=0&amp;infantsOnLapCount=0&amp;infantsInSeatCount=0" target="_blank" rel="noopener">Teralink</a></td>
+  </tr>
+</table>
+<p class="muted" style="margin:10px 0 0;font-size:13px">Group air $2,842. The only airport swap is IGU in / IGR out (border). Paraty is a bus, still GIG. Shop IAD→GIG as one itinerary. Teralink = Capital One Travel shop. Bump adults to 2 at checkout.</p>
+</div>
+
+<div class="logistics">
+  <h3>GRU layover · protected on this Teralink</h3>
+  <p><strong>One booking, IAD→GIG</strong>, with UA 861 and GOL G3 1376 on the same confirmation. If United is late, Capital One / the ticketing carrier owes you a later GRU→GIG. Do <strong>not</strong> buy GRU→GIG as its own one-way · that is the version that is unprotected.</p>
+  <p>At checkout: one confirmation covering both flights. Immigration still happens at GRU (you enter Brazil there). 3h 30m is enough for that plus a terminal hop. Carry-on is still easier; 1st checked bag is free on this fare if you through-check.</p>
+  <p><strong>Odds UA 861 is over an hour late into GRU:</strong> ~10–15% on recent samples; a miss-the-GOL delay (~90+ min) more like ~5–10%. Not rare, but you are covered on this ticket. April is not a US storm peak. GRU fog/ATC is the wild card.</p>
+  <p><strong>Worth changing?</strong> No, not for protection. Keep this. Copa home is already one ticket. Jes MSP↔IAD are separate on purpose and have hours of slack.</p>
+</div>
+
+<div class="logistics">
+  <h3>When to buy (today is Aug 15, 2026)</h3>
+  <p><strong>Do not buy the long-haul now and wait months for GIG→IGU or IGR→EZE.</strong> Those are the seats that can vanish. One shopping day for <em>all</em> air, then hotels the same week (refundable). Tours and dinners are later. Clock times to pick are in What to book. This table is <em>how far out</em>.</p>
+  <p>Buy fares on a <strong>Tue or Wed</strong> if the number looks right. Search-day is a small effect. The month window matters more.</p>
+  <table>
+    <tr><th>What</th><th>Buy this window</th><th>Why</th></tr>
+    <tr><td>All flights, one sitting</td><td><strong>late Dec 2026 to mid-Jan 2027</strong> (~70–100 days before Apr 8). Watch from now. Do not force-buy in August unless the Teralink is already the number you want.</td><td>Same checkout: Jes MSP↔IAD, IAD→GIG (one confirmation), GIG→IGU, IGR→EZE + JetSmart carry-on, EZE→IAD. If you lock Copa/UA first and wait until March for GOL/JetSmart, the planned hop can be sold or ugly.</td></tr>
+    <tr><td>Hotels (Expedia, free-cancel rate)</td><td><strong>Same week as the air</strong></td><td>Rooms for Samba / Ouro / Águas / Miravida. Cancel if you re-shop fares. Do not wait until March.</td></tr>
+    <tr><td>Fogón</td><td><strong>6–8 weeks out</strong> (late Feb)</td><td>Small asado. 7:00p first seating. Weeks-ahead is real here.</td></tr>
+    <tr><td>Marine, Peró, Prosa, Confins</td><td><strong>2–4 weeks out</strong></td><td>8:00p. Not Fogón-scarce, still reserve so we are not walking in hungry.</td></tr>
+    <tr><td>Secreto tango 6:30p</td><td><strong>3–4 weeks out</strong></td><td>Tiny room. Original session sells. Official site.</td></tr>
+    <tr><td>GYG (Tijuca, jeep, Iguazu, Sherpa, Boca, cook class, surf)</td><td><strong>2–4 weeks out</strong></td><td>Free cancel on most. April 2027 inventory may not open until closer. Pick the clock slot on the activity page.</td></tr>
+    <tr><td>Hang glide</td><td>Hold the GYG date <strong>~2 weeks out</strong>. Recheck weather <strong>2–3 days</strong> before.</td><td>Wind cancels mornings. Do not buy this in January and forget it.</td></tr>
+    <tr><td>Corcovado train + Sugarloaf</td><td><strong>7–14 days out</strong></td><td>Timed tickets. 8:30/9:00a train, 3:30–4:00p cable. Official sites, not GYG.</td></tr>
+    <tr><td>Costa Verde bus</td><td><strong>1–2 weeks out</strong></td><td>9:00a Novo Rio Apr 13, 9:20a Paraty Apr 15. Not months ahead.</td></tr>
+    <tr><td>Optional Boca match package</td><td>Check <strong>Jan–Feb 2027</strong> when fixtures drop</td><td>Only if a home game lands Apr 19–23.</td></tr>
+  </table>
+</div>
+
+<div class="logistics">
+  <h3>Leave extra early</h3>
+  <ul>
+    <li><strong>Thu Apr 8 · IAD 10:30p:</strong> International. At the airport ~7:30p. Jes’s 3:24p landing is plenty.</li>
+    <li><strong>Fri Apr 16 · GIG 8:00a:</strong> Samba checkout <strong>5:15–5:30a</strong>. No surf the night before. This is the early alarm, not a tight flight.</li>
+    <li><strong>Mon Apr 19 · IGR 1:33p JetSmart:</strong> Leave Foz <strong>~9:00a</strong>. Border queues are the delay, not the 2h hop.</li>
+    <li><strong>Sat Apr 24 · EZE 10:45a Copa:</strong> Leave Palermo <strong>6:30–7:00a</strong> (Saturday EZE traffic). 7:45a at the airport is the floor.</li>
+    <li><strong>Sun Apr 25 · Jes IAD 8:45a:</strong> Sleep at Alex’s after 12:41a. Leave ~6:15a. Do not stay in the terminal overnight unless that’s the plan.</li>
+  </ul>
+</div>
+
+<h2><span class="dot"></span> Where we sleep</h2>
+<div class="card">
+<table>
+  <tr><th>Hotel</th><th>Nights</th><th>Room total</th></tr>
+  <tr>
+    <td><span class="pill rio">Rio</span><br /><a href="https://www.expedia.com/Rio-De-Janeiro-Hotels-Samba-Bossa-Nova-Ipanema.h15431016.Hotel-Information" target="_blank" rel="noopener"><strong>Samba Bossa Nova Ipanema</strong></a><br /><span class="muted" style="font-size:12px">Bulhoes de Carvalho 337 · Arpoador · 8.6 / 835+</span></td>
+    <td>Fri Apr 9 to Tue Apr 13 · 4 nts<br /><span class="muted" style="font-size:12px">R. Bulhões de Carvalho 337 · Arpoador · Uber to Novo Rio / GIG with bags</span></td>
+    <td class="money"><strong>$466</strong></td>
+  </tr>
+  <tr>
+    <td><span class="pill paraty">Paraty</span><br /><a href="https://www.expedia.com/Paraty-Hotels-Pousada-Do-Ouro.h3949562.Hotel-Information" target="_blank" rel="noopener"><strong>Pousada do Ouro</strong></a><br /><span class="muted" style="font-size:12px">Centro Historico · 9.6 / 278+</span></td>
+    <td>Tue Apr 13 to Thu Apr 15 · 2 nts</td>
+    <td class="money">~$300 est.</td>
+  </tr>
+  <tr>
+    <td><span class="pill rio">Rio</span><br /><strong>Samba Bossa Nova</strong> again<br /><span class="muted" style="font-size:12px">Early exit for 8:00a GIG</span></td>
+    <td>Thu Apr 15 to Fri Apr 16 · 1 nt</td>
+    <td class="money">~$100 est.</td>
+  </tr>
+  <tr>
+    <td><span class="pill iguazu">Foz</span><br /><a href="https://www.expedia.com/Foz-Do-Iguacu-Hotels-Aguas-Do-Iguacu-Hotel.h2540439.Hotel-Information" target="_blank" rel="noopener"><strong>Águas do Iguaçu Hotel Centro</strong></a><br /><span class="muted" style="font-size:12px">Av. Brasil 84 · 8.8 / 827+</span></td>
+    <td>Fri Apr 16 to Mon Apr 19 · 3 nts</td>
+    <td class="money">~$290 est.</td>
+  </tr>
+  <tr>
+    <td><span class="pill ba">BA</span><br /><a href="https://www.expedia.com/Buenos-Aires-Hotels-Miravida-Soho-Hotel-Wine-Bar.h10218330.Hotel-Information" target="_blank" rel="noopener"><strong>Miravida Soho</strong></a><br /><span class="muted" style="font-size:12px">Palermo Soho · 9.4 / 300+</span></td>
+    <td>Mon Apr 19 to Sat Apr 24 · 5 nts<br /><span class="muted" style="font-size:12px">Darregueyra 2050 · Uber to EZE with bags</span></td>
+    <td class="money">~$750 est.</td>
+  </tr>
+</table>
+</div>
+
+<h2><span class="dot"></span> Weather &amp; sun (April 2027)</h2>
+<p class="muted" style="margin-top:-4px;font-size:14px">April averages + sunrise/sunset for our dates.</p>
+<div class="card">
+<table class="wx-table">
+  <tr><th>Stop</th><th>Typical April</th><th>Sunrise</th><th>Sunset</th></tr>
+  <tr>
+    <td><span class="pill rio">Rio</span> Apr 9-13 + 15</td>
+    <td>~82°F day / ~72°F night · warm · ~10 rainy days/mo · ocean ~77°F</td>
+    <td>Apr 10 · 6:04a</td>
+    <td>Apr 10 · 5:43p</td>
+  </tr>
+  <tr>
+    <td><span class="pill paraty">Paraty</span> Apr 13-15</td>
+    <td>Similar to Rio · humid hills · showers possible</td>
+    <td>Apr 13 · 6:11a</td>
+    <td>Apr 13 · 5:46p</td>
+  </tr>
+  <tr>
+    <td><span class="pill iguazu">Foz</span> Apr 16-19</td>
+    <td>~79-86°F day / ~61-67°F night · wetter · ~38% chance of a wet day</td>
+    <td>Apr 17 · 6:54a</td>
+    <td>Apr 17 · 6:20p</td>
+  </tr>
+  <tr>
+    <td><span class="pill ba">BA</span> Apr 19-24</td>
+    <td>~68°F day / ~55-60°F night · autumn cool · bring a jacket evenings</td>
+    <td>Apr 20 · 7:20a</td>
+    <td>Apr 20 · 6:23p</td>
+  </tr>
+</table>
+<p class="muted" style="margin:10px 0 0;font-size:13px">Rio/Paraty sunset ~5:40–5:45p · Foz/BA ~6:20p.</p>
+</div>
+
+</div><!-- view-plan -->
+
+<footer>
+  Apr 8–25, 2027 · Alex + Jes
+</footer>
+
+</div>
+
+<script>
+(function () {
+  // Trip vs Planning tabs
+  const tabs = Array.from(document.querySelectorAll('.view-tabs [role="tab"]'));
+  const panels = {
+    trip: document.getElementById('view-trip'),
+    plan: document.getElementById('view-plan')
+  };
+  function showView(name) {
+    tabs.forEach(function (tab) {
+      const on = tab.getAttribute('data-view') === name;
+      tab.setAttribute('aria-selected', on ? 'true' : 'false');
+    });
+    Object.keys(panels).forEach(function (key) {
+      if (!panels[key]) return;
+      if (key === name) panels[key].removeAttribute('hidden');
+      else panels[key].setAttribute('hidden', '');
+    });
+    if (name === 'trip') {
+      window.dispatchEvent(new Event('resize'));
+      setTimeout(function () { window.dispatchEvent(new Event('resize')); }, 80);
+    }
+    try { history.replaceState(null, '', name === 'trip' ? '#trip' : '#plan'); } catch (e) {}
+  }
+  tabs.forEach(function (tab) {
+    tab.addEventListener('click', function () { showView(tab.getAttribute('data-view')); });
+  });
+  if (location.hash === '#plan') showView('plan');
+
+  // Route timeline: jump to matching day card
+  document.querySelectorAll('.route-flow .rf-btn[data-day-jump]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      showView('trip');
+      const id = btn.getAttribute('data-day-jump');
+      const card = document.getElementById('day-' + id);
+      if (!card) return;
+      card.open = true;
+      card.classList.remove('flash');
+      void card.offsetWidth;
+      card.classList.add('flash');
+      card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+  // Keep one tip "open" after tap on touch devices
+  document.querySelectorAll('.route-flow .rf-stop').forEach(function (stop) {
+    stop.querySelector('.rf-btn').addEventListener('click', function () {
+      document.querySelectorAll('.route-flow .rf-stop.is-on').forEach(function (s) {
+        if (s !== stop) s.classList.remove('is-on');
+      });
+      stop.classList.toggle('is-on');
+    });
+  });
+
+  function money(n) {
+    return '$' + Math.round(n).toLocaleString('en-US');
+  }
+
+  // --- Budget donut ---
+  const budget = [
+    { id: 'flights', name: 'Flights', amt: 1421, color: '#0f766e', detail: 'Half of $2,842 group air, including Jes MSP legs' },
+    { id: 'hotels', name: 'Hotels', amt: 960, color: '#1d4ed8', detail: 'Half of room totals across Samba, Paraty, Foz, Miravida' },
+    { id: 'tours', name: 'Tours / tickets', amt: 908, color: '#b45309', detail: 'Christ+Sugarloaf, surf, Tijuca, hang glide, jeep, Iguazu, food tour, tango, Recoleta, La Boca, empanadas' },
+    { id: 'food', name: 'Food & drinks', amt: 850, color: '#9f1239', detail: 'Walk-in days plus Marine / Peró / Prosa / Confins / Fogón. Food tour + cook class sit in Tours.' },
+    { id: 'local', name: 'Local transport', amt: 200, color: '#6366f1', detail: 'Costa Verde bus both ways, Ubers, Foz/IGR taxis, border' },
+    { id: 'souvenirs', name: 'Carry-on / souvenirs', amt: 150, color: '#64748b', detail: 'No checked bags · JetSmart carry-on for souvenirs + gift budget' }
+  ];
+  const budgetTotal = budget.reduce(function (s, x) { return s + x.amt; }, 0);
+
+  const segG = document.getElementById('donut-segs');
+  const legend = document.getElementById('donut-legend');
+  const live = document.getElementById('donut-live');
+  const donutSvg = document.getElementById('budget-donut');
+  const donutVal = document.getElementById('donut-val');
+  const donutLabel = document.getElementById('donut-label');
+  if (segG && legend && live) {
+    const R = 72;
+    const r = 46;
+    let angle = -Math.PI / 2;
+
+    function arcPath(start, end) {
+      const large = end - start > Math.PI ? 1 : 0;
+      const x0 = Math.cos(start) * R;
+      const y0 = Math.sin(start) * R;
+      const x1 = Math.cos(end) * R;
+      const y1 = Math.sin(end) * R;
+      const xi0 = Math.cos(end) * r;
+      const yi0 = Math.sin(end) * r;
+      const xi1 = Math.cos(start) * r;
+      const yi1 = Math.sin(start) * r;
+      return [
+        'M', x0, y0,
+        'A', R, R, 0, large, 1, x1, y1,
+        'L', xi0, yi0,
+        'A', r, r, 0, large, 0, xi1, yi1,
+        'Z'
+      ].join(' ');
+    }
+
+    function setBudget(item) {
+      if (!item) {
+        donutSvg.classList.remove('is-filtering');
+        segG.querySelectorAll('.seg').forEach(function (el) { el.classList.remove('is-on'); });
+        legend.querySelectorAll('button').forEach(function (el) { el.classList.remove('is-on'); });
+        donutVal.textContent = '~' + money(budgetTotal);
+        donutLabel.textContent = 'total / person';
+        live.innerHTML = '<b>Hover a category</b><span>Flights, hotels, tours, food, transport, souvenirs</span>';
+        return;
+      }
+      donutSvg.classList.add('is-filtering');
+      segG.querySelectorAll('.seg').forEach(function (el) {
+        el.classList.toggle('is-on', el.getAttribute('data-id') === item.id);
+      });
+      legend.querySelectorAll('button').forEach(function (el) {
+        el.classList.toggle('is-on', el.getAttribute('data-id') === item.id);
+      });
+      const pct = Math.round((item.amt / budgetTotal) * 100);
+      donutVal.textContent = money(item.amt);
+      donutLabel.textContent = pct + '% of budget';
+      live.innerHTML = '<b>' + item.name + ' · ' + money(item.amt) + '</b><span>' + item.detail + '</span>';
+    }
+
+    budget.forEach(function (item) {
+      const slice = (item.amt / budgetTotal) * Math.PI * 2;
+      const start = angle;
+      const end = angle + slice;
+      angle = end;
+
+      const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      path.setAttribute('d', arcPath(start, end - 0.003));
+      path.setAttribute('fill', item.color);
+      path.setAttribute('class', 'seg');
+      path.setAttribute('data-id', item.id);
+      path.setAttribute('tabindex', '0');
+      path.setAttribute('role', 'button');
+      path.setAttribute('aria-label', item.name + ' ' + money(item.amt));
+      path.addEventListener('mouseenter', function () { setBudget(item); });
+      path.addEventListener('focus', function () { setBudget(item); });
+      path.addEventListener('mouseleave', function () { setBudget(null); });
+      path.addEventListener('blur', function () { setBudget(null); });
+      segG.appendChild(path);
+
+      const li = document.createElement('li');
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.setAttribute('data-id', item.id);
+      btn.innerHTML = '<i style="background:' + item.color + '"></i><span>' + item.name + '</span><span class="amt">' + money(item.amt) + '</span>';
+      btn.addEventListener('mouseenter', function () { setBudget(item); });
+      btn.addEventListener('focus', function () { setBudget(item); });
+      btn.addEventListener('mouseleave', function () { setBudget(null); });
+      btn.addEventListener('blur', function () { setBudget(null); });
+      li.appendChild(btn);
+      legend.appendChild(li);
+    });
+  }
+
+  // --- Tours bars ---
+  const tours = [
+    { name: 'Hang gliding', amt: 295, color: '#0d6e6e', detail: 'Tandem Pedra Bonita → São Conrado · book ahead' },
+    { name: 'Iguazu both sides', amt: 175, color: '#1d4ed8', detail: 'Full-day Brazil + Argentina with Foz pickup' },
+    { name: 'Christ + Sugarloaf', amt: 95, color: '#0f766e', detail: 'Official Corcovado train + bondinho tickets' },
+    { name: 'Palermo food tour', amt: 93, color: '#be123c', detail: 'Sherpa walk near Miravida Soho · lunch slot' },
+    { name: 'Underground tango', amt: 65, color: '#881337', detail: 'Secreto original session · ~$60–75 · ~1h · wine · book the site · Wed Apr 21 eve' },
+    { name: 'Tijuca hike', amt: 40, color: '#15803d', detail: 'Rainforest waterfalls guided hike · Sun Apr 11 · own day' },
+    { name: 'Arpoador surf', amt: 40, color: '#0ea5e9', detail: '1h lesson at Posto 7 · walk from Samba · Thu Apr 15 afternoon' },
+    { name: 'Paraty jeep', amt: 40, color: '#b45309', detail: 'Waterfalls + cachaça jeep day' },
+    { name: 'Empanadas class', amt: 37, color: '#9f1239', detail: 'Empanadas + alfajores cooking · Thu Apr 22 evening' },
+    { name: 'Recoleta gate', amt: 15, color: '#9f1239', detail: 'Cemetery ticket · self-walk Evita · Fri Apr 23' },
+    { name: 'La Boca walking tour', amt: 13, color: '#9f1239', detail: 'Caminito / conventillos · ~2h English · Thu Apr 22' }
+  ];
+  const toursMax = Math.max.apply(null, tours.map(function (t) { return t.amt; }));
+  const toursEl = document.getElementById('tours-bars');
+  const toursLive = document.getElementById('tours-live');
+  if (toursEl && toursLive) {
+    tours.forEach(function (t) {
+      const row = document.createElement('div');
+      row.className = 'bar-row';
+      row.innerHTML =
+        '<div class="label">' + t.name + '</div>' +
+        '<div class="track" role="img" aria-label="' + t.name + ' ' + money(t.amt) + '"><div class="fill" style="background:' + t.color + '"></div></div>' +
+        '<div class="val">' + money(t.amt) + '</div>';
+      const fill = row.querySelector('.fill');
+      const activate = function () {
+        toursEl.querySelectorAll('.bar-row').forEach(function (r) { r.classList.remove('is-on'); });
+        row.classList.add('is-on');
+        toursLive.innerHTML = '<b>' + t.name + ' · ' + money(t.amt) + '</b><span>' + t.detail + '</span>';
+      };
+      const clear = function () {
+        row.classList.remove('is-on');
+        toursLive.innerHTML = '<b>Hover a tour</b><span>See the per-person price</span>';
+      };
+      row.addEventListener('mouseenter', activate);
+      row.addEventListener('focusin', activate);
+      row.addEventListener('mouseleave', clear);
+      row.addEventListener('focusout', clear);
+      toursEl.appendChild(row);
+      requestAnimationFrame(function () {
+        fill.style.width = ((t.amt / toursMax) * 100) + '%';
+      });
+    });
+  }
+
+  // --- Hotel bars ---
+  const hotels = [
+    { name: 'Samba Bossa Nova', place: 'Ipanema', nights: 5, amt: 466, color: '#0d6e6e', detail: 'Main Rio base · Apr 9–13 (+ bridge night Apr 15 ~$100 separate)' },
+    { name: 'Pousada do Ouro', place: 'Paraty', nights: 2, amt: 300, color: '#b45309', detail: 'Centro Histórico · Apr 13–15' },
+    { name: 'Águas do Iguaçu', place: 'Foz', nights: 3, amt: 290, color: '#1d4ed8', detail: 'Foz do Iguaçu town · Apr 16–19' },
+    { name: 'Miravida Soho', place: 'Buenos Aires', nights: 5, amt: 750, color: '#9f1239', detail: 'Palermo Soho · Apr 19–24' },
+    { name: 'Samba bridge night', place: 'Rio', nights: 1, amt: 100, color: '#64748b', detail: 'One night back in Ipanema before the IGU flight' }
+  ];
+  const hotelMax = Math.max.apply(null, hotels.map(function (h) { return h.amt; }));
+  const hotelEl = document.getElementById('hotel-bars');
+  const hotelLive = document.getElementById('hotel-live');
+  if (hotelEl && hotelLive) {
+    hotels.forEach(function (h) {
+      const row = document.createElement('div');
+      row.className = 'bar-row';
+      row.tabIndex = 0;
+      row.innerHTML =
+        '<div class="hotel-top"><span class="label">' + h.name + ' · ' + h.nights + 'n</span><span class="val">' + money(h.amt) + '</span></div>' +
+        '<div class="track"><div class="fill" style="background:' + h.color + '"></div></div>';
+      const fill = row.querySelector('.fill');
+      const activate = function () {
+        hotelEl.querySelectorAll('.bar-row').forEach(function (r) { r.classList.remove('is-on'); });
+        row.classList.add('is-on');
+        hotelLive.innerHTML = '<b>' + h.name + ' · ' + money(h.amt) + ' room</b><span>' + h.detail + ' · ~' + money(h.amt / 2) + ' each</span>';
+      };
+      const clear = function () {
+        row.classList.remove('is-on');
+        hotelLive.innerHTML = '<b>Hover a hotel</b><span>Nights and room total</span>';
+      };
+      row.addEventListener('mouseenter', activate);
+      row.addEventListener('focus', activate);
+      row.addEventListener('mouseleave', clear);
+      row.addEventListener('blur', clear);
+      hotelEl.appendChild(row);
+      requestAnimationFrame(function () {
+        fill.style.width = ((h.amt / hotelMax) * 100) + '%';
+      });
+    });
+  }
+})();
+</script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script>
+(function () {
+  const hotels = {
+    samba: {
+      name: 'Samba Bossa Nova',
+      addr: 'R. Bulhões de Carvalho 337, Arpoador',
+      nights: 'Apr 9–13 + Apr 15',
+      lat: -22.9866,
+      lng: -43.1893,
+      color: '#0d6e6e'
+    },
+    ouro: {
+      name: 'Pousada do Ouro',
+      addr: 'Centro Histórico, Paraty (short taxi from the bus terminal)',
+      nights: 'Apr 13–15',
+      lat: -23.2196,
+      lng: -44.7133,
+      color: '#b45309'
+    },
+    aguas: {
+      name: 'Águas do Iguaçu',
+      addr: 'Av. Brasil 84, Centro, Foz do Iguaçu',
+      nights: 'Apr 16–19',
+      lat: -25.5472,
+      lng: -54.5818,
+      color: '#1d4ed8'
+    },
+    miravida: {
+      name: 'Miravida Soho',
+      addr: 'Darregueyra 2050, Palermo Soho',
+      nights: 'Apr 19–24',
+      lat: -34.5891,
+      lng: -58.4296,
+      color: '#9f1239'
+    }
+  };
+
+  const days = [
+    { id: 'd8', label: 'Apr 8', cls: 'flight', pin: 'airport', pinName: 'IAD (Dulles)', lat: 38.9531, lng: -77.4565, zoom: 4, title: 'Apr 8 · Meet in DC', body: 'Jes lands IAD. Overnight flight toward Brazil.' },
+    { id: 'd9', label: 'Apr 9 Rio', cls: 'rio', hotel: 'samba', pin: 'hotel', pinName: 'Samba Bossa Nova · Arpoador', lat: -22.9866, lng: -43.1893, zoom: 15, title: 'Apr 9 · Arrive Ipanema', body: 'Land GIG, then this hotel. Beach walk, easy night.' },
+    { id: 'd10', label: 'Apr 10', cls: 'rio', hotel: 'samba', pin: 'activity', pinName: 'Christ the Redeemer', lat: -22.9519, lng: -43.2105, zoom: 12, title: 'Apr 10 · Christ + Sugarloaf', body: 'Day outing. Sleep back at Samba in Ipanema.' },
+    { id: 'd11', label: 'Apr 11', cls: 'rio', hotel: 'samba', pin: 'activity', pinName: 'Tijuca rainforest', lat: -22.9500, lng: -43.2800, zoom: 12, title: 'Apr 11 · Tijuca', body: 'Hike outing. Sleep back at Samba.' },
+    { id: 'd12', label: 'Apr 12', cls: 'rio', hotel: 'samba', pin: 'activity', pinName: 'Pedra Bonita hang glide', lat: -22.9965, lng: -43.2835, zoom: 13, title: 'Apr 12 · Hang glide + Arpoador', body: 'Launch above São Conrado. Sunset back at the hotel rocks.' },
+    { id: 'd13', label: 'Apr 13 Paraty', cls: 'paraty', hotel: 'ouro', pin: 'hotel', pinName: 'Pousada do Ouro · Centro', lat: -23.2196, lng: -44.7133, zoom: 16, title: 'Apr 13 · Bus to Paraty', body: 'Bus from Rio. This is the hotel. Sunset on the stones.' },
+    { id: 'd14', label: 'Apr 14', cls: 'paraty', hotel: 'ouro', pin: 'activity', pinName: 'Jeep / waterfalls (back to Centro at night)', lat: -23.1800, lng: -44.7800, zoom: 12, title: 'Apr 14 · Jeep day', body: 'Day loop in the hills. Sleep at Pousada do Ouro.' },
+    { id: 'd15', label: 'Apr 15', cls: 'rio', hotel: 'samba', pin: 'hotel', pinName: 'Samba Bossa Nova · surf at the door', lat: -22.9866, lng: -43.1893, zoom: 15, title: 'Apr 15 · Back to Samba · surf', body: 'Hotel again. Arpoador surf is a walk from the door.' },
+    { id: 'd16', label: 'Apr 16 Foz', cls: 'iguazu', hotel: 'aguas', pin: 'hotel', pinName: 'Águas do Iguaçu · Foz centro', lat: -25.5472, lng: -54.5818, zoom: 14, title: 'Apr 16 · Foz hotel', body: 'Hotel. Triple Frontier is the afternoon outing.' },
+    { id: 'd17', label: 'Apr 17', cls: 'iguazu', hotel: 'aguas', pin: 'activity', pinName: 'Iguazu Falls (both sides)', lat: -25.6950, lng: -54.4370, zoom: 11, title: 'Apr 17 · Both sides', body: 'Falls all day. Sleep in Foz centro. Bags at the hotel.' },
+    { id: 'd18', label: 'Apr 18', cls: 'iguazu', hotel: 'aguas', pin: 'activity', pinName: 'Parque das Aves', lat: -25.6320, lng: -54.4820, zoom: 12, title: 'Apr 18 · Bird Park', body: 'Bird Park outing. Sleep at Águas.' },
+    { id: 'd19', label: 'Apr 19 BA', cls: 'ba', hotel: 'miravida', pin: 'hotel', pinName: 'Miravida Soho · Palermo', lat: -34.5891, lng: -58.4296, zoom: 15, title: 'Apr 19 · Miravida Soho', body: 'Hotel. Wine + helado around Plaza Serrano.' },
+    { id: 'd20', label: 'Apr 20', cls: 'ba', hotel: 'miravida', pin: 'activity', pinName: 'Casa Rosada / Plaza de Mayo', lat: -34.6083, lng: -58.3706, zoom: 14, title: 'Apr 20 · Casa Rosada + Colón', body: 'Centro outing. Afternoon back at the Palermo hotel.' },
+    { id: 'd21', label: 'Apr 21', cls: 'ba', hotel: 'miravida', pin: 'hotel', pinName: 'Miravida · food walk + tango nearby', lat: -34.5891, lng: -58.4296, zoom: 15, title: 'Apr 21 · Food + tango', body: 'Hotel neighborhood. Sherpa walk, then Secreto tango.' },
+    { id: 'd22', label: 'Apr 22', cls: 'ba', hotel: 'miravida', pin: 'activity', pinName: 'Caminito · La Boca', lat: -34.6345, lng: -58.3630, zoom: 13, title: 'Apr 22 · La Boca + cook', body: 'Day outing with the guide. Sleep and cook class back in Palermo.' },
+    { id: 'd23', label: 'Apr 23', cls: 'ba', hotel: 'miravida', pin: 'activity', pinName: 'Recoleta cemetery', lat: -34.5875, lng: -58.3930, zoom: 13, title: 'Apr 23 · Recoleta + Fogón', body: 'Recoleta outing. Sleep and Fogón in Palermo.' },
+    { id: 'd24', label: 'Apr 24 home', cls: 'flight', hotel: 'miravida', pin: 'airport', pinName: 'EZE airport', lat: -34.8222, lng: -58.5358, zoom: 11, title: 'Apr 24-25 · Home', body: 'Leave the hotel ~6:30–7:00a for this airport.' }
+  ];
+  const byId = Object.fromEntries(days.map(d => [d.id, d]));
+
+  const route = [
+    [hotels.samba.lat, hotels.samba.lng],
+    [hotels.ouro.lat, hotels.ouro.lng],
+    [hotels.samba.lat, hotels.samba.lng],
+    [hotels.aguas.lat, hotels.aguas.lng],
+    [hotels.miravida.lat, hotels.miravida.lng]
+  ];
+
+  const mapEl = document.getElementById('trip-map');
+  if (!mapEl || !window.L) return;
+
+  const map = L.map(mapEl, { scrollWheelZoom: false, zoomControl: true });
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; OpenStreetMap &copy; CARTO',
+    maxZoom: 18
+  }).addTo(map);
+
+  const colors = { rio: '#0d6e6e', paraty: '#b45309', iguazu: '#1d4ed8', ba: '#9f1239', flight: '#6366f1' };
+
+  L.polyline(route, { color: '#0f766e', weight: 3, opacity: 0.75, dashArray: '6 8' }).addTo(map);
+
+  const hotelMarkers = {};
+  Object.keys(hotels).forEach(function (id) {
+    const h = hotels[id];
+    const icon = L.divIcon({
+      className: 'hotel-pin',
+      html: '<span style="background:' + h.color + '">H</span>',
+      iconSize: [26, 26],
+      iconAnchor: [13, 13],
+      popupAnchor: [0, -16]
+    });
+    hotelMarkers[id] = L.marker([h.lat, h.lng], { icon: icon, zIndexOffset: 400 })
+      .addTo(map)
+      .bindPopup('<strong>' + h.name + '</strong><br>' + h.addr + '<br><span style="color:#5c6578">' + h.nights + '</span>');
+  });
+
+  map.fitBounds(L.latLngBounds(route).pad(0.35));
+
+  const btns = document.getElementById('map-day-btns');
+  const nowEl = document.getElementById('map-now');
+  const btnById = {};
+  let active = null;
+  let focusMarker = null;
+  let lockScrollSync = false;
+  let lockTimer = null;
+
+  function pinKindLabel(kind) {
+    if (kind === 'hotel') return 'Hotel (sleep tonight)';
+    if (kind === 'airport') return 'Airport';
+    return 'Today’s activity';
+  }
+
+  function setNow(d) {
+    if (!nowEl) return;
+    nowEl.innerHTML = '<b>' + pinKindLabel(d.pin) + '</b><span>' + d.pinName + '</span>';
+  }
+
+  function markCard(id) {
+    document.querySelectorAll('details.day.on-map').forEach(el => el.classList.remove('on-map'));
+    const card = document.getElementById('day-' + id);
+    if (card) card.classList.add('on-map');
+  }
+
+  function showDay(d, opts) {
+    opts = opts || {};
+    if (!d || active === d.id && !opts.force) return;
+    active = d.id;
+    Object.keys(btnById).forEach(id => btnById[id].classList.toggle('active', id === d.id));
+    setNow(d);
+    markCard(d.id);
+    map.flyTo([d.lat, d.lng], d.zoom, { duration: opts.instant ? 0.35 : 0.85 });
+    if (focusMarker) map.removeLayer(focusMarker);
+    const stay = d.hotel ? hotels[d.hotel] : null;
+    let popupHtml = '<strong>' + pinKindLabel(d.pin) + '</strong><br>' + d.pinName;
+    if (stay && d.pin !== 'hotel') {
+      popupHtml += '<br><span style="color:#5c6578">Sleep: ' + stay.name + '</span>';
+    }
+    popupHtml += '<br>' + d.body;
+    focusMarker = L.circleMarker([d.lat, d.lng], {
+      radius: 11, color: '#fff', weight: 3, fillColor: colors[d.cls] || '#0f766e', fillOpacity: 1
+    }).addTo(map).bindPopup(popupHtml).openPopup();
+  }
+
+  function jumpToDay(d) {
+    const card = document.getElementById('day-' + d.id);
+    lockScrollSync = true;
+    clearTimeout(lockTimer);
+    showDay(d, { force: true });
+    if (card) {
+      card.open = true;
+      card.classList.remove('flash');
+      void card.offsetWidth;
+      card.classList.add('flash');
+      card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    lockTimer = setTimeout(function () { lockScrollSync = false; }, 900);
+  }
+
+  days.forEach(function (d) {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.textContent = d.label;
+    btn.className = d.cls;
+    btn.setAttribute('aria-label', d.title);
+    btn.addEventListener('click', function () { jumpToDay(d); });
+    btns.appendChild(btn);
+    btnById[d.id] = btn;
+  });
+
+  // Scroll / focus sync: whichever day card is most visible drives the map
+  const cards = Array.from(document.querySelectorAll('details.day[data-day]'));
+  if ('IntersectionObserver' in window && cards.length) {
+    const ratios = new Map();
+    const io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        ratios.set(entry.target.getAttribute('data-day'), entry.intersectionRatio);
+      });
+      if (lockScrollSync) return;
+      let bestId = null;
+      let best = 0;
+      ratios.forEach(function (r, id) {
+        if (r > best) { best = r; bestId = id; }
+      });
+      if (bestId && best > 0.18 && byId[bestId]) showDay(byId[bestId]);
+    }, {
+      root: null,
+      threshold: [0.18, 0.35, 0.55, 0.75],
+      rootMargin: '-12% 0px -42% 0px'
+    });
+    cards.forEach(function (card) { io.observe(card); });
+  }
+
+  // Clicking a day summary also nudges the map
+  cards.forEach(function (card) {
+    card.addEventListener('toggle', function () {
+      if (!card.open) return;
+      const d = byId[card.getAttribute('data-day')];
+      if (d) showDay(d, { force: true });
+    });
+  });
+
+  function fixSize() {
+    map.invalidateSize();
+  }
+  setTimeout(fixSize, 80);
+  setTimeout(fixSize, 400);
+  window.addEventListener('resize', fixSize);
+
+  // Start on arrival day
+  setTimeout(function () { showDay(byId.d9, { force: true, instant: true }); }, 120);
+})();
+</script>
+
+</body>
+</html>
