@@ -26,7 +26,7 @@ enum ScheduleTextParser {
     /// Matches `CRN 11886` (notes) or `CRN: 11966` (paste line).
     private static let notesCrnPattern = try! NSRegularExpression(pattern: #"CRN\s*:?\s*(\d+)"#, options: .caseInsensitive)
     private static let courseTitlePattern = try! NSRegularExpression(
-        pattern: #"^(.+\|\s*.+?\s+Section\s+[^|]+?)(?:\s*\|\s*Class Begin:.*)?$"#
+        pattern: #"^(.+\|\s*.+?\s+Section\s+[^|]+?)(?:\s*\|\s*(?:Class Begin:.*|Registered\s*))?$"#
     )
 
     /// Parses pasted registrar text: **Banner / Format A** (Registered, date ranges, weekday-as-row
@@ -38,6 +38,13 @@ enum ScheduleTextParser {
             .replacingOccurrences(of: "\r\n", with: "\n")
             .replacingOccurrences(of: "\r", with: "\n")
         let normalized = newlinesOnly.replacingOccurrences(of: "\t", with: " ")
+
+        if StudentPortalScheduleParser.looksLikePortalPaste(normalized) {
+            let fromPortal = StudentPortalScheduleParser.parse(normalized, defaultSemesterEnd: defaultSemesterEnd)
+            if fromPortal.isEmpty == false {
+                return dedupeBannerSameSlot(mergeDuplicates(fromPortal))
+            }
+        }
 
         let fromBanner = parseBanner(normalized, defaultSemesterEnd: defaultSemesterEnd)
         if fromBanner.isEmpty == false {
@@ -278,9 +285,13 @@ enum ScheduleTextParser {
                     if line.contains("|"), line.contains("Section") { return line }
                     return nil
                 }()
-                if let t = headerTitle,
-                   let nextIdx = nextNonEmptyLineIndex(after: i, in: lines),
-                   lines[nextIdx].caseInsensitiveCompare("Registered") == .orderedSame
+                let registeredOnHeader = line
+                    .split(separator: "|")
+                    .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+                    .contains { $0.caseInsensitiveCompare("Registered") == .orderedSame }
+                let nextIsRegistered = nextNonEmptyLineIndex(after: i, in: lines)
+                    .map { lines[$0].caseInsensitiveCompare("Registered") == .orderedSame } ?? false
+                if let t = headerTitle, registeredOnHeader || nextIsRegistered
                 {
                     let norm = t.trimmingCharacters(in: .whitespacesAndNewlines)
                     if let prev = lastClosedBannerTitle?.trimmingCharacters(in: .whitespacesAndNewlines),
@@ -422,7 +433,7 @@ enum ScheduleTextParser {
         let t = line.trimmingCharacters(in: .whitespacesAndNewlines)
         guard t.isEmpty == false, t.contains(",") else { return false }
         if t.contains("|") { return false }
-        if t.contains("(") { return false }
+        if t.contains("("), t.lowercased().contains("mailto") == false { return false }
         let lower = t.lowercased()
         if lower.hasPrefix("crn:") { return false }
         if lower.hasPrefix("type:") || lower.hasPrefix("location:") || lower.hasPrefix("building:") || lower.hasPrefix("room:")
@@ -495,7 +506,10 @@ enum ScheduleTextParser {
         let letters = Set("SMTWF")
         for j in 0 ..< 7 {
             let s = lines[i + j]
-            guard s.count == 1, let c = s.first, letters.contains(c) else { return false }
+                .replacingOccurrences(of: "•", with: "")
+                .replacingOccurrences(of: "·", with: "")
+                .trimmingCharacters(in: .whitespaces)
+            guard s.count == 1, let c = s.uppercased().first, letters.contains(c) else { return false }
         }
         return true
     }

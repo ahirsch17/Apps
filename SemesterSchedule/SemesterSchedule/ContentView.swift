@@ -1,19 +1,6 @@
 import EventKit
-import PhotosUI
 import SwiftUI
 import UIKit
-import CoreTransferable
-
-/// Transferable wrapper so PhotosPicker can hand us raw image bytes.
-private struct SchedulePhotoData: Transferable {
-    let data: Data
-
-    static var transferRepresentation: some TransferRepresentation {
-        DataRepresentation(importedContentType: .image) { data in
-            SchedulePhotoData(data: data)
-        }
-    }
-}
 
 struct ContentView: View {
     @State private var pastedText = ""
@@ -33,7 +20,6 @@ struct ContentView: View {
     @State private var shareURL: URL?
     @State private var showShareSheet = false
     @State private var showFileImporter = false
-    @State private var photoItem: PhotosPickerItem?
     @State private var appeared = false
     @State private var parsePulse = false
 
@@ -130,10 +116,6 @@ struct ContentView: View {
                 inputSource = .none
             }
         }
-        .onChange(of: photoItem) { _, item in
-            guard let item else { return }
-            Task { await loadPhoto(item) }
-        }
         .sheet(isPresented: $showShareSheet) {
             if let shareURL {
                 ActivityView(activityItems: [shareURL])
@@ -161,7 +143,7 @@ struct ContentView: View {
                 .foregroundStyle(ScheduleTheme.ink)
                 .tracking(-0.5)
 
-            Text("Screenshot, file, or paste → review meetings → add to your calendar.")
+            Text("Paste your class schedule, review the meetings, then add them to your calendar.")
                 .font(ScheduleTheme.bodyFont)
                 .foregroundStyle(ScheduleTheme.inkMuted)
                 .fixedSize(horizontal: false, vertical: true)
@@ -193,8 +175,8 @@ struct ContentView: View {
             }
 
             HStack(spacing: 8) {
-                PhotosPicker(selection: $photoItem, matching: .images, photoLibrary: .shared()) {
-                    Label("Photo", systemImage: "photo.on.rectangle")
+                Button(action: pasteAndScan) {
+                    Label("Paste schedule", systemImage: "doc.on.clipboard")
                         .font(.system(size: 14, weight: .semibold, design: .rounded))
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 13)
@@ -205,16 +187,7 @@ struct ContentView: View {
                 Button {
                     showFileImporter = true
                 } label: {
-                    Label("File", systemImage: "doc.text")
-                        .font(.system(size: 14, weight: .semibold, design: .rounded))
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 13)
-                }
-                .buttonStyle(SoftButtonStyle())
-                .disabled(isReadingInput)
-
-                Button(action: pasteAndScan) {
-                    Label("Paste", systemImage: "doc.on.clipboard")
+                    Label("Text file", systemImage: "doc.text")
                         .font(.system(size: 14, weight: .semibold, design: .rounded))
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 13)
@@ -227,7 +200,7 @@ struct ContentView: View {
                 VStack(alignment: .leading, spacing: 10) {
                     ZStack(alignment: .topLeading) {
                         if hasText == false {
-                            Text("Paste Banner / VT / timetable text here, or use Photo / File above.")
+                            Text("Paste your class schedule from the student portal.")
                                 .font(ScheduleTheme.monoFont)
                                 .foregroundStyle(ScheduleTheme.inkMuted.opacity(0.55))
                                 .padding(.horizontal, 16)
@@ -297,7 +270,7 @@ struct ContentView: View {
                 ProgressView()
                     .controlSize(.large)
                     .tint(ScheduleTheme.teal)
-                Text(inputSource == .photo || inputSource == .file ? "Reading schedule…" : "Working…")
+                Text(inputSource == .file ? "Reading file…" : "Working…")
                     .font(.system(size: 15, weight: .semibold, design: .rounded))
                     .foregroundStyle(ScheduleTheme.ink)
             }
@@ -318,7 +291,7 @@ struct ContentView: View {
             EmptyView()
         case .empty:
             statusChip(
-                text: "No meetings found — check the text or try a clearer photo",
+                text: "No meetings found — check the pasted text",
                 tone: .warn
             )
         case let .found(meetings, courses, needs, tba):
@@ -553,39 +526,6 @@ struct ContentView: View {
     }
 
     @MainActor
-    private func loadPhoto(_ item: PhotosPickerItem) async {
-        inputNote = nil
-        importNote = nil
-        inputSource = .photo
-        isReadingInput = true
-        defer {
-            isReadingInput = false
-            photoItem = nil
-        }
-
-        do {
-            guard let raw = try await item.loadTransferable(type: SchedulePhotoData.self),
-                  let image = UIImage(data: raw.data)
-            else {
-                inputNote = "Couldn’t open that photo."
-                return
-            }
-            let text = try await ScheduleImageOCR.recognizeText(in: image)
-            pastedText = text
-            parse()
-            if events.isEmpty == false {
-                showTextEditor = false
-            } else {
-                showTextEditor = true
-                inputNote = "Text was read, but no meetings matched. Edit the text and re-parse."
-            }
-        } catch {
-            inputNote = error.localizedDescription
-            showTextEditor = true
-        }
-    }
-
-    @MainActor
     private func loadFile(_ url: URL) async {
         inputNote = nil
         importNote = nil
@@ -712,14 +652,12 @@ struct ContentView: View {
 private enum InputSource: Equatable {
     case none
     case paste
-    case photo
     case file
 
     var label: String {
         switch self {
         case .none: return ""
         case .paste: return "From paste"
-        case .photo: return "From photo"
         case .file: return "From file"
         }
     }

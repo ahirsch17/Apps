@@ -226,9 +226,12 @@ enum StructuredScheduleExportBuilder {
             let stripped = raw
                 .replacingOccurrences(of: "Instructor:", with: "", options: .caseInsensitive)
                 .trimmingCharacters(in: .whitespaces)
-            let noRole = stripped
+            var noRole = stripped
+                .replacingOccurrences(of: #"\(mailto:[^)]*\)"#, with: "", options: .regularExpression)
                 .replacingOccurrences(of: "(Primary)", with: "", options: .caseInsensitive)
                 .replacingOccurrences(of: "(Secondary)", with: "", options: .caseInsensitive)
+                .replacingOccurrences(of: "()", with: "")
+                .replacingOccurrences(of: "  ", with: " ")
                 .trimmingCharacters(in: .whitespaces)
             if noRole.isEmpty == false { out.append(noRole) }
         }
