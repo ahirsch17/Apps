@@ -4,62 +4,69 @@ struct WelcomeView: View {
     @EnvironmentObject private var settings: SettingsStore
     @State private var page = 0
 
-    private let pages: [(icon: String, title: String, body: String)] = [
-        ("mic.fill", "Speak without freezing", "A tutor walks you through real conversation — starters, Stuck help, and corrections when you’re ready."),
-        ("rectangle.stack.fill", "Free, offline practice", "Word bank + phrase drills work today with no API key. Listen, then say it out loud."),
-        ("sparkles", "AI Chat is optional", "When you want live conversation, add a cheap OpenAI key in Profile. Until then, Learn is fully usable.")
+    private let pages: [(String, String, String)] = [
+        ("phone.fill", "Talk like it's a real call", "No record button. Just speak — it knows when you're done. Fail out loud. That's how it sticks."),
+        ("message.fill", "Or text your tutor", "Same character, chat style. Corrections show up right on your bubbles."),
+        ("flame.fill", "Learn free, unlock Call later", "Level-based practice with zero API key. When you're ready, paste a key in Profile and Call/Text turn on.")
     ]
 
     var body: some View {
-        VStack(spacing: 0) {
-            Spacer()
-            TabView(selection: $page) {
-                ForEach(pages.indices, id: \.self) { index in
-                    VStack(spacing: 20) {
-                        ZStack {
-                            Circle()
-                                .fill(SFTheme.accent.opacity(0.15))
-                                .frame(width: 120, height: 120)
-                            Image(systemName: pages[index].icon)
-                                .font(.system(size: 44, weight: .semibold))
-                                .foregroundStyle(SFTheme.accent)
+        ZStack {
+            LinearGradient(colors: [SF.tealDeep, Color.black], startPoint: .topLeading, endPoint: .bottomTrailing)
+                .ignoresSafeArea()
+
+            VStack(spacing: 0) {
+                Spacer()
+                Text("SpeakFlow")
+                    .font(.system(size: 42, weight: .heavy, design: .rounded))
+                    .foregroundStyle(.white)
+
+                TabView(selection: $page) {
+                    ForEach(pages.indices, id: \.self) { i in
+                        VStack(spacing: 18) {
+                            ZStack {
+                                Circle().fill(SF.teal.opacity(0.25)).frame(width: 110, height: 110)
+                                Image(systemName: pages[i].0)
+                                    .font(.system(size: 40, weight: .semibold))
+                                    .foregroundStyle(SF.mint)
+                            }
+                            Text(pages[i].1)
+                                .font(.system(.title2, design: .rounded).weight(.bold))
+                                .multilineTextAlignment(.center)
+                                .foregroundStyle(.white)
+                            Text(pages[i].2)
+                                .font(.system(.body, design: .rounded))
+                                .foregroundStyle(.white.opacity(0.7))
+                                .multilineTextAlignment(.center)
+                                .padding(.horizontal, 28)
                         }
-                        Text(pages[index].title)
-                            .font(.title.bold())
-                            .multilineTextAlignment(.center)
-                        Text(pages[index].body)
-                            .font(.body)
-                            .foregroundStyle(.secondary)
-                            .multilineTextAlignment(.center)
-                            .padding(.horizontal, 28)
+                        .tag(i)
                     }
-                    .tag(index)
                 }
-            }
-            .tabViewStyle(.page(indexDisplayMode: .always))
-            .frame(height: 420)
+                .tabViewStyle(.page(indexDisplayMode: .always))
+                .frame(height: 360)
 
-            Spacer()
+                Spacer()
 
-            Button {
-                if page < pages.count - 1 {
-                    withAnimation { page += 1 }
-                } else {
-                    settings.hasSeenWelcome = true
+                Button {
+                    if page < pages.count - 1 { withAnimation { page += 1 } }
+                    else { settings.hasSeenWelcome = true }
+                } label: {
+                    Text(page == pages.count - 1 ? "Let's go" : "Next")
+                        .font(.system(.headline, design: .rounded))
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 16)
+                        .background(SF.coral)
+                        .foregroundStyle(.white)
+                        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                 }
-            } label: {
-                Text(page == pages.count - 1 ? "Start practicing" : "Continue")
-                    .font(.headline)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 14)
-            }
-            .buttonStyle(.borderedProminent)
-            .padding(.horizontal, 24)
+                .padding(.horizontal, 24)
 
-            Button("Skip") { settings.hasSeenWelcome = true }
-                .font(.subheadline)
-                .padding(.vertical, 16)
+                Button("Skip") { settings.hasSeenWelcome = true }
+                    .font(.system(.subheadline, design: .rounded))
+                    .foregroundStyle(.white.opacity(0.5))
+                    .padding(.vertical, 16)
+            }
         }
-        .background(Color(.systemBackground))
     }
 }

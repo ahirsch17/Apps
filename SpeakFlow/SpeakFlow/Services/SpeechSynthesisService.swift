@@ -4,42 +4,39 @@ import Foundation
 @MainActor
 final class SpeechSynthesisService: NSObject, ObservableObject {
     @Published private(set) var isSpeaking = false
-    private let synthesizer = AVSpeechSynthesizer()
+    private let synth = AVSpeechSynthesizer()
+    private var onFinish: (() -> Void)?
 
     override init() {
         super.init()
-        synthesizer.delegate = self
+        synth.delegate = self
     }
 
-    func speak(_ text: String, language: Language) {
+    func speak(_ text: String, language: Language, onFinish: (() -> Void)? = nil) {
         stop()
-        let utterance = AVSpeechUtterance(string: text)
-        utterance.voice = bestVoice(for: language)
-        utterance.rate = AVSpeechUtteranceDefaultSpeechRate * 0.9
+        self.onFinish = onFinish
+        let u = AVSpeechUtterance(string: text)
+        u.voice = AVSpeechSynthesisVoice(language: language.localeID)
+        u.rate = AVSpeechUtteranceDefaultSpeechRate * 0.92
         isSpeaking = true
-        synthesizer.speak(utterance)
+        synth.speak(u)
     }
 
     func stop() {
-        if synthesizer.isSpeaking { synthesizer.stopSpeaking(at: .immediate) }
+        if synth.isSpeaking { synth.stopSpeaking(at: .immediate) }
         isSpeaking = false
-    }
-
-    private func bestVoice(for language: Language) -> AVSpeechSynthesisVoice? {
-        let locale = language.speechLocaleIdentifier
-        let voices = AVSpeechSynthesisVoice.speechVoices().filter { $0.language.hasPrefix(language.rawValue) }
-        if let enhanced = voices.first(where: { $0.quality == .enhanced }) { return enhanced }
-        if let preferred = voices.first(where: { $0.language == locale }) { return preferred }
-        return AVSpeechSynthesisVoice(language: locale)
     }
 }
 
 extension SpeechSynthesisService: AVSpeechSynthesizerDelegate {
     nonisolated func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didFinish utterance: AVSpeechUtterance) {
-        Task { @MainActor in isSpeaking = false }
+        Task { @MainActor in
+            isSpeaking = false
+            onFinish?()
+            onFinish = nil
+        }
     }
-
     nonisolated func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didCancel utterance: AVSpeechUtterance) {
-        Task { @MainActor in isSpeaking = false }
+        Task { @MainActor in isSpeaking = false; onFinish = nil }
     }
 }

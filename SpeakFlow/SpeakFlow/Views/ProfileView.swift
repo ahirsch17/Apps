@@ -2,121 +2,116 @@ import SwiftUI
 
 struct ProfileView: View {
     @EnvironmentObject private var settings: SettingsStore
-    @State private var apiKeyDraft = ""
-    @State private var showAPIKey = false
+    @State private var keyDraft = ""
+    @State private var showKey = false
     @State private var saved = false
 
     var body: some View {
         NavigationStack {
             Form {
                 Section {
-                    Picker("Language", selection: $settings.language) {
-                        ForEach(Language.allCases) { language in
-                            Text("\(language.flag)  \(language.displayName)").tag(language)
+                    HStack(spacing: 14) {
+                        Text(settings.character.emoji).font(.system(size: 44))
+                        VStack(alignment: .leading) {
+                            Text(settings.character.name)
+                                .font(.system(.headline, design: .rounded))
+                            Text(settings.character.vibe)
+                                .font(.system(.caption, design: .rounded))
+                                .foregroundStyle(.secondary)
                         }
                     }
-                    Picker("Chat level", selection: $settings.level) {
-                        ForEach(ConversationLevel.allCases) { Text($0.displayName).tag($0) }
+                    Picker("Language", selection: $settings.language) {
+                        ForEach(Language.allCases) { Text("\($0.flag) \($0.displayName)").tag($0) }
                     }
-                    Text(settings.level.subtitle).font(.caption).foregroundStyle(.secondary)
-                    Picker("Chat topic", selection: $settings.topic) {
-                        ForEach(ConversationTopic.allCases) { Label($0.displayName, systemImage: $0.icon).tag($0) }
+                    Picker("Call level", selection: $settings.level) {
+                        ForEach(ConversationLevel.allCases) { Text($0.title).tag($0) }
+                    }
+                    Text(settings.level.blurb).font(.caption).foregroundStyle(.secondary)
+                    Picker("Topic vibe", selection: $settings.topic) {
+                        ForEach(ConversationTopic.allCases) { Label($0.title, systemImage: $0.icon).tag($0) }
                     }
                 } header: {
-                    Text("You")
-                } footer: {
-                    Text("Language applies everywhere. Level and topic are for AI Chat.")
+                    Text("Your tutor")
                 }
 
                 Section {
                     if settings.hasAPIKey {
-                        Label("AI Chat is on", systemImage: "checkmark.circle.fill")
-                            .foregroundStyle(.green)
+                        Label("Call & Text unlocked", systemImage: "checkmark.seal.fill")
+                            .foregroundStyle(SF.mint)
                     } else {
-                        Text("Optional — Learn works without this. Add a key only if you want a live conversation tutor.")
-                            .font(.subheadline)
+                        Text("Optional. Learn works forever free. Add a key only when you want live Call / Text.")
+                            .font(.system(.subheadline, design: .rounded))
                             .foregroundStyle(.secondary)
                     }
 
                     HStack {
-                        if showAPIKey {
-                            TextField("sk-…", text: $apiKeyDraft)
-                                .textInputAutocapitalization(.never)
-                                .autocorrectionDisabled()
-                                .font(.system(.body, design: .monospaced))
-                        } else {
-                            SecureField("sk-…", text: $apiKeyDraft)
-                                .textInputAutocapitalization(.never)
-                                .autocorrectionDisabled()
-                                .font(.system(.body, design: .monospaced))
+                        Group {
+                            if showKey {
+                                TextField("sk-…", text: $keyDraft)
+                            } else {
+                                SecureField("sk-…", text: $keyDraft)
+                            }
                         }
-                        Button { showAPIKey.toggle() } label: {
-                            Image(systemName: showAPIKey ? "eye.slash" : "eye")
+                        .textInputAutocapitalization(.never)
+                        .autocorrectionDisabled()
+                        .font(.system(.body, design: .monospaced))
+
+                        Button { showKey.toggle() } label: {
+                            Image(systemName: showKey ? "eye.slash" : "eye")
                         }
                         .buttonStyle(.borderless)
                     }
 
                     Button("Save key") {
-                        settings.apiKey = apiKeyDraft.trimmingCharacters(in: .whitespacesAndNewlines)
+                        settings.apiKey = keyDraft.trimmingCharacters(in: .whitespacesAndNewlines)
                         saved = true
                     }
-                    .disabled(apiKeyDraft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                    .disabled(keyDraft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
 
                     if settings.hasAPIKey {
                         Button("Remove key", role: .destructive) {
                             settings.apiKey = ""
-                            apiKeyDraft = ""
+                            keyDraft = ""
                             saved = false
                         }
                     }
 
                     if saved && settings.hasAPIKey {
-                        Label("Saved on this device (Keychain)", systemImage: "lock.fill")
-                            .font(.caption)
-                            .foregroundStyle(.green)
+                        Label("Saved on-device (Keychain)", systemImage: "lock.fill")
+                            .font(.caption).foregroundStyle(SF.mint)
                     }
 
-                    Link("Get a key at platform.openai.com", destination: URL(string: "https://platform.openai.com/api-keys")!)
+                    Link("Get a key → platform.openai.com", destination: URL(string: "https://platform.openai.com/api-keys")!)
                         .font(.caption)
 
-                    Picker("Model", selection: $settings.selectedModel) {
-                        ForEach(LLMModel.allCases) { Text($0.displayName).tag($0) }
+                    Picker("Model", selection: $settings.model) {
+                        Text("GPT-4o mini (~$0.001)").tag("gpt-4o-mini")
+                        Text("GPT-4.1 nano (cheapest)").tag("gpt-4.1-nano")
+                        Text("GPT-4.1 mini").tag("gpt-4.1-mini")
                     }
-                    Text(settings.selectedModel.costNote).font(.caption).foregroundStyle(.secondary)
+                    Toggle("Speak replies in Text mode", isOn: $settings.autoSpeak)
                 } header: {
-                    Text("AI Chat (optional)")
+                    Text("AI Call & Text (optional)")
                 } footer: {
-                    Text("You pay OpenAI directly — no SpeakFlow subscription. Typical practice is under $0.10 for 15 minutes.")
+                    Text("You pay OpenAI directly — SpeakFlow is the interface. Typical 10-min call is pennies.")
                 }
 
-                Section {
-                    Toggle("Speak tutor replies aloud", isOn: $settings.autoSpeakResponses)
-                    Toggle("Show corrections on my message", isOn: $settings.showCorrectionsBeforeReply)
-                    Toggle("Reuse weak vocab in chat", isOn: $settings.reuseWeakVocab)
-                } header: {
-                    Text("Chat behavior")
-                }
-
-                Section {
-                    VStack(alignment: .leading, spacing: 10) {
-                        labeled("Learn", "Words, phrases, and later your mistakes. Free. Offline.")
-                        labeled("Chat", "Live tutor. Hold to talk. Starters + Stuck. Needs a key.")
-                        labeled("Profile", "Language and optional API key live here.")
-                    }
-                    .padding(.vertical, 4)
-                } header: {
-                    Text("How to use SpeakFlow")
+                Section("How it works") {
+                    labeled("Call", "FaceTime-style. Hands-free. Blanked button if you freeze. Recap at the end.")
+                    labeled("Text", "iMessage-style with the same tutor.")
+                    labeled("Learn", "Level path, offline. Fail on purpose — that's the point.")
                 }
             }
             .navigationTitle("Profile")
-            .onAppear { apiKeyDraft = settings.apiKey }
+            .onAppear { keyDraft = settings.apiKey }
         }
     }
 
-    private func labeled(_ title: String, _ body: String) -> some View {
+    private func labeled(_ t: String, _ b: String) -> some View {
         VStack(alignment: .leading, spacing: 2) {
-            Text(title).font(.subheadline.weight(.semibold))
-            Text(body).font(.caption).foregroundStyle(.secondary)
+            Text(t).font(.system(.subheadline, design: .rounded).weight(.semibold))
+            Text(b).font(.system(.caption, design: .rounded)).foregroundStyle(.secondary)
         }
+        .padding(.vertical, 2)
     }
 }

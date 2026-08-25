@@ -1,457 +1,241 @@
 import SwiftUI
 
-struct LearnView: View {
+struct LearnHomeView: View {
     @EnvironmentObject private var settings: SettingsStore
-    @State private var mode: Mode = .words
 
-    enum Mode: String, CaseIterable, Identifiable {
-        case words, phrases, mistakes
-        var id: String { rawValue }
-        var title: String {
-            switch self {
-            case .words: return "Words"
-            case .phrases: return "Phrases"
-            case .mistakes: return "My mistakes"
-            }
-        }
-    }
+    private var units: [LearnUnit] { Curriculum.units(for: settings.language) }
 
     var body: some View {
         NavigationStack {
-            VStack(spacing: 0) {
-                header
-                Picker("Mode", selection: $mode) {
-                    ForEach(Mode.allCases) { Text($0.title).tag($0) }
+            ScrollView {
+                VStack(alignment: .leading, spacing: 20) {
+                    header
+                    ForEach(Array(units.enumerated()), id: \.element.id) { idx, unit in
+                        unitCard(unit, number: idx + 1)
+                    }
                 }
-                .pickerStyle(.segmented)
                 .padding()
-
-                switch mode {
-                case .words: WordBankView()
-                case .phrases: PhraseDrillView()
-                case .mistakes: MistakesView()
+            }
+            .background(
+                LinearGradient(colors: [SF.tealDeep.opacity(0.9), Color(.systemBackground)], startPoint: .top, endPoint: .center)
+                    .ignoresSafeArea()
+            )
+            .navigationTitle("Learn")
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Menu {
+                        ForEach(Language.allCases) { lang in
+                            Button("\(lang.flag) \(lang.displayName)") { settings.language = lang }
+                        }
+                    } label: {
+                        Text(settings.language.flag).font(.title3)
+                    }
                 }
             }
-            .background(Color(.systemBackground))
-            .navigationBarHidden(true)
         }
     }
 
     private var header: some View {
         VStack(alignment: .leading, spacing: 8) {
+            Text("No API key needed")
+                .font(.system(.caption, design: .rounded).weight(.bold))
+                .foregroundStyle(SF.mint)
+            Text("Get the ball rolling")
+                .font(.system(.title, design: .rounded).weight(.heavy))
+            Text("Say it wrong. Remember it. Levels unlock as you finish lessons — like a path, not a dictionary.")
+                .font(.system(.subheadline, design: .rounded))
+                .foregroundStyle(.secondary)
             HStack {
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("Learn")
-                        .font(.largeTitle.bold())
-                    Text("No API key · listen then speak")
-                        .font(.subheadline)
+                Label("\(settings.xp) XP", systemImage: "bolt.fill")
+                Spacer()
+                Text("\(settings.completedLessonIDs.count) lessons done")
+            }
+            .font(.system(.caption, design: .rounded).weight(.semibold))
+            .foregroundStyle(SF.coral)
+            .padding(.top, 4)
+        }
+    }
+
+    private func unitCard(_ unit: LearnUnit, number: Int) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Text(unit.emoji).font(.largeTitle)
+                VStack(alignment: .leading) {
+                    Text("Unit \(number)")
+                        .font(.system(.caption, design: .rounded).weight(.bold))
+                        .foregroundStyle(SF.teal)
+                    Text(unit.title)
+                        .font(.system(.title3, design: .rounded).weight(.bold))
+                    Text(unit.subtitle)
+                        .font(.system(.caption, design: .rounded))
                         .foregroundStyle(.secondary)
                 }
-                Spacer()
-                Menu {
-                    ForEach(Language.allCases) { language in
-                        Button("\(language.flag)  \(language.displayName)") {
-                            settings.language = language
-                        }
-                    }
+            }
+            ForEach(unit.lessons) { lesson in
+                let done = settings.completedLessonIDs.contains(lesson.id)
+                NavigationLink {
+                    LessonPlayerView(lesson: lesson)
                 } label: {
-                    Text("\(settings.language.flag) \(settings.language.displayName)")
-                        .font(.subheadline.weight(.semibold))
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 8)
-                        .background(Color(.secondarySystemBackground))
-                        .clipShape(Capsule())
+                    HStack {
+                        Image(systemName: done ? "checkmark.circle.fill" : "circle")
+                            .foregroundStyle(done ? SF.mint : .secondary)
+                        Text(lesson.title)
+                            .font(.system(.body, design: .rounded).weight(.semibold))
+                            .foregroundStyle(.primary)
+                        Spacer()
+                        Image(systemName: "chevron.right")
+                            .font(.caption.weight(.bold))
+                            .foregroundStyle(.tertiary)
+                    }
+                    .padding(14)
+                    .background(Color(.secondarySystemBackground))
+                    .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
                 }
             }
-            howTo
         }
-        .padding(.horizontal)
-        .padding(.top, 8)
-        .padding(.bottom, 4)
-    }
-
-    private var howTo: some View {
-        HStack(spacing: 8) {
-            step("1", "See it")
-            Image(systemName: "chevron.right").font(.caption2).foregroundStyle(.tertiary)
-            step("2", "Listen")
-            Image(systemName: "chevron.right").font(.caption2).foregroundStyle(.tertiary)
-            step("3", "Say it")
-        }
-        .padding(.top, 4)
-    }
-
-    private func step(_ n: String, _ label: String) -> some View {
-        HStack(spacing: 6) {
-            Text(n)
-                .font(.caption.bold())
-                .foregroundStyle(.white)
-                .frame(width: 20, height: 20)
-                .background(SFTheme.accent)
-                .clipShape(Circle())
-            Text(label)
-                .font(.caption.weight(.semibold))
-        }
+        .padding(16)
+        .background(Color(.secondarySystemBackground).opacity(0.55))
+        .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
     }
 }
 
-struct WordBankView: View {
+struct LessonPlayerView: View {
     @EnvironmentObject private var settings: SettingsStore
-    @StateObject private var speech = SpeechSynthesisService()
-    @StateObject private var recognition = SpeechRecognitionService()
-    @State private var category: WordCategory = .essentials
-    @State private var deck: [WordCard] = []
+    let lesson: LearnLesson
+
+    @StateObject private var speech = SpeechRecognitionService()
+    @StateObject private var tts = SpeechSynthesisService()
     @State private var index = 0
-    @State private var showAnswer = false
+    @State private var revealed = false
     @State private var attempt = ""
     @State private var feedback: String?
-    @State private var isRecording = false
-    @State private var englishFirst = true
+    @State private var listening = false
+    @Environment(\.dismiss) private var dismiss
 
-    private var current: WordCard? {
-        deck.indices.contains(index) ? deck[index] : nil
-    }
+    private var prompt: LearnPrompt { lesson.prompts[index] }
 
     var body: some View {
         VStack(spacing: 0) {
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 8) {
-                    ForEach(WordCategory.allCases) { item in
-                        Button {
-                            category = item
-                            reload()
-                        } label: {
-                            Label(item.displayName, systemImage: item.icon)
-                                .font(.caption.weight(.semibold))
-                                .padding(.horizontal, 12)
-                                .padding(.vertical, 8)
-                                .background(category == item ? SFTheme.accent : Color(.tertiarySystemBackground))
-                                .foregroundStyle(category == item ? .white : .primary)
-                                .clipShape(Capsule())
-                        }
-                        .buttonStyle(.plain)
-                    }
-                }
-                .padding(.horizontal)
-            }
-            .padding(.bottom, 8)
-
-            Toggle("Hide the answer first", isOn: $englishFirst)
-                .font(.subheadline)
-                .padding(.horizontal)
-                .padding(.bottom, 8)
-
-            if let card = current {
-                Spacer(minLength: 8)
-                VStack(alignment: .leading, spacing: 14) {
-                    HStack {
-                        Text("\(index + 1) of \(deck.count)")
-                            .font(.caption.weight(.semibold))
-                            .foregroundStyle(.secondary)
-                        Spacer()
-                        Label(card.category.displayName, systemImage: card.category.icon)
-                            .font(.caption.weight(.semibold))
-                            .foregroundStyle(.secondary)
-                    }
-
-                    if englishFirst && !showAnswer {
-                        Text(card.english)
-                            .font(.largeTitle.bold())
-                        Text("Say it in \(settings.language.displayName)")
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-                    } else {
-                        Text(card.target)
-                            .font(.largeTitle.bold())
-                        Text(card.english)
-                            .font(.title3)
-                            .foregroundStyle(.secondary)
-                        Text(card.example)
-                            .font(.body)
-                            .padding(.top, 4)
-                    }
-
-                    if !attempt.isEmpty {
-                        Text("You said: \(attempt)")
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-                    }
-                    if let feedback {
-                        Text(feedback)
-                            .font(.subheadline.weight(.semibold))
-                            .foregroundStyle(.green)
-                    }
-                }
-                .softCard()
-                .padding(.horizontal)
-
-                Spacer()
-
-                VStack(spacing: 12) {
-                    HStack(spacing: 12) {
-                        Button {
-                            showAnswer = true
-                            speech.speak(card.target, language: settings.language)
-                        } label: {
-                            Label(showAnswer || !englishFirst ? "Listen" : "Reveal & listen", systemImage: "speaker.wave.2.fill")
-                                .frame(maxWidth: .infinity)
-                        }
-                        .buttonStyle(.bordered)
-
-                        Button { Task { await toggleRecord(for: card) } } label: {
-                            Label(isRecording ? "Stop" : "Say it", systemImage: isRecording ? "stop.fill" : "mic.fill")
-                                .frame(maxWidth: .infinity)
-                        }
-                        .buttonStyle(.borderedProminent)
-                        .tint(isRecording ? .red : SFTheme.accent)
-                    }
-                    HStack {
-                        Button("Skip") { advance() }.buttonStyle(.bordered)
-                        Button("Got it") { showAnswer = true; advance() }
-                            .buttonStyle(.borderedProminent)
-                    }
-                }
+            ProgressView(value: Double(index + 1), total: Double(lesson.prompts.count))
+                .tint(SF.coral)
                 .padding()
-            } else {
-                ContentUnavailableView("No words here", systemImage: "textformat", description: Text("Try Essentials or Connectors."))
+
+            Spacer()
+
+            VStack(alignment: .leading, spacing: 16) {
+                Text("Say this idea")
+                    .font(.system(.caption, design: .rounded).weight(.bold))
+                    .foregroundStyle(SF.teal)
+                Text(prompt.english)
+                    .font(.system(.largeTitle, design: .rounded).weight(.bold))
+
+                if revealed {
+                    Text(prompt.target)
+                        .font(.system(.title, design: .rounded).weight(.semibold))
+                        .foregroundStyle(SF.mint)
+                    Text(prompt.tip)
+                        .font(.system(.subheadline, design: .rounded))
+                        .foregroundStyle(.secondary)
+                } else {
+                    Text("Try first — messing up is the point")
+                        .font(.system(.subheadline, design: .rounded))
+                        .foregroundStyle(.secondary)
+                }
+
+                if !attempt.isEmpty {
+                    Text("You: \(attempt)")
+                        .font(.system(.body, design: .rounded))
+                        .foregroundStyle(.secondary)
+                }
+                if let feedback {
+                    Text(feedback)
+                        .font(.system(.subheadline, design: .rounded).weight(.semibold))
+                        .foregroundStyle(SF.coral)
+                }
             }
+            .padding(24)
+            .frame(maxWidth: .infinity, alignment: .leading)
+
+            Spacer()
+
+            VStack(spacing: 12) {
+                HStack(spacing: 12) {
+                    Button {
+                        revealed = true
+                        tts.speak(prompt.target, language: settings.language)
+                    } label: {
+                        Label(revealed ? "Listen" : "Reveal", systemImage: "speaker.wave.2.fill")
+                            .frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(.bordered)
+
+                    Button {
+                        Task { await toggleListen() }
+                    } label: {
+                        Label(listening ? "Stop" : "Try saying it", systemImage: listening ? "stop.fill" : "mic.fill")
+                            .frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .tint(listening ? SF.coral : SF.teal)
+                }
+
+                Button(index == lesson.prompts.count - 1 ? "Finish lesson" : "Next") {
+                    advance()
+                }
+                .buttonStyle(.borderedProminent)
+                .tint(SF.coral)
+                .frame(maxWidth: .infinity)
+            }
+            .padding()
         }
-        .onAppear { reload() }
-        .onChange(of: settings.language) { _, _ in reload() }
-        .onChange(of: englishFirst) { _, _ in
-            showAnswer = !englishFirst
-            attempt = ""
-            feedback = nil
-        }
+        .navigationTitle(lesson.title)
+        .navigationBarTitleDisplayMode(.inline)
         .task {
-            _ = await recognition.requestAuthorization()
-            _ = await recognition.requestMicrophonePermission()
-            recognition.prepare(for: settings.language)
+            await speech.requestPermissions()
+            speech.prepare(for: settings.language)
         }
     }
 
-    private func reload() {
-        deck = WordBank.words(for: settings.language, category: category).shuffled()
-        if deck.isEmpty { deck = WordBank.words(for: settings.language).shuffled() }
-        index = 0
-        showAnswer = !englishFirst
-        attempt = ""
-        feedback = nil
-        recognition.prepare(for: settings.language)
-    }
-
-    private func toggleRecord(for card: WordCard) async {
-        if isRecording {
-            recognition.stopRecording()
-            isRecording = false
-            attempt = recognition.transcript
-            showAnswer = true
-            let spoken = normalize(attempt)
-            let target = normalize(card.target)
-            let ok = !spoken.isEmpty && (spoken.contains(target) || target.contains(spoken))
-            feedback = ok ? "Nice — that matches." : "Listen once, then try again. Close is fine."
+    private func toggleListen() async {
+        if listening {
+            speech.stopListening(cancel: false)
+            listening = false
+            attempt = speech.transcript
+            revealed = true
+            feedback = "Nice try. Compare & steal the phrase."
         } else {
-            attempt = ""
-            feedback = nil
-            recognition.transcript = ""
-            speech.stop()
+            attempt = ""; feedback = nil; speech.transcript = ""
             do {
-                try recognition.startRecording()
-                isRecording = true
-            } catch { feedback = error.localizedDescription }
+                // For lessons we still use a simple start; user taps stop (short drills)
+                try speech.startListening()
+                listening = true
+                // Disable auto-complete for short drills by clearing callback
+                speech.onUtteranceComplete = { text in
+                    Task { @MainActor in
+                        attempt = text
+                        listening = false
+                        revealed = true
+                        feedback = "Logged. Check the answer."
+                    }
+                }
+            } catch {
+                feedback = error.localizedDescription
+            }
         }
     }
 
     private func advance() {
-        guard !deck.isEmpty else { return }
-        if index < deck.count - 1 { index += 1 }
-        else { deck.shuffle(); index = 0 }
-        showAnswer = !englishFirst
-        attempt = ""
-        feedback = nil
-        speech.stop()
-    }
-
-    private func normalize(_ text: String) -> String {
-        text.lowercased()
-            .folding(options: .diacriticInsensitive, locale: .current)
-            .components(separatedBy: CharacterSet.punctuationCharacters)
-            .joined()
-            .replacingOccurrences(of: "\\s+", with: " ", options: .regularExpression)
-            .trimmingCharacters(in: .whitespacesAndNewlines)
-    }
-}
-
-struct PhraseDrillView: View {
-    @EnvironmentObject private var settings: SettingsStore
-    @StateObject private var viewModel = DrillViewModel()
-
-    var body: some View {
-        VStack(spacing: 0) {
-            HStack {
-                Text(viewModel.progressLabel)
-                    .font(.caption.weight(.semibold))
-                    .foregroundStyle(.secondary)
-                Spacer()
-                Button {
-                    viewModel.configure(language: settings.language, level: settings.level, topic: settings.topic)
-                } label: { Image(systemName: "shuffle") }
-            }
-            .padding(.horizontal)
-            .padding(.bottom, 8)
-
-            if let phrase = viewModel.current {
-                ScrollView {
-                    VStack(alignment: .leading, spacing: 16) {
-                        Label(phrase.topic.displayName, systemImage: phrase.topic.icon)
-                            .font(.caption.weight(.semibold))
-                            .foregroundStyle(.secondary)
-                        Text(phrase.promptEnglish)
-                            .font(.title2.bold())
-                        if viewModel.showAnswer {
-                            VStack(alignment: .leading, spacing: 8) {
-                                Text(phrase.targetPhrase)
-                                    .font(.title3.bold())
-                                    .foregroundStyle(SFTheme.accent)
-                                Text(phrase.tip)
-                                    .font(.subheadline)
-                                    .foregroundStyle(.secondary)
-                            }
-                            .softCard()
-                        }
-                        if !viewModel.userAttempt.isEmpty {
-                            Text("You said: \(viewModel.userAttempt)").font(.subheadline).foregroundStyle(.secondary)
-                        }
-                        if let feedback = viewModel.feedback {
-                            Text(feedback.message)
-                                .font(.subheadline.weight(.semibold))
-                                .foregroundStyle(feedback.isClose ? .green : .orange)
-                        }
-                    }
-                    .padding()
-                }
-                VStack(spacing: 12) {
-                    HStack(spacing: 12) {
-                        Button { viewModel.revealAnswer() } label: {
-                            Label("Reveal", systemImage: "eye").frame(maxWidth: .infinity)
-                        }.buttonStyle(.bordered)
-                        Button { viewModel.speakTarget() } label: {
-                            Label("Listen", systemImage: "speaker.wave.2").frame(maxWidth: .infinity)
-                        }.buttonStyle(.bordered)
-                    }
-                    Button { Task { await viewModel.toggleRecording() } } label: {
-                        Label(viewModel.isRecording ? "Stop" : "Try saying it",
-                              systemImage: viewModel.isRecording ? "stop.fill" : "mic.fill")
-                            .font(.headline)
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 6)
-                    }
-                    .buttonStyle(.borderedProminent)
-                    .tint(viewModel.isRecording ? .red : SFTheme.accent)
-                    HStack {
-                        Button("Skip") { viewModel.next() }.buttonStyle(.bordered)
-                        Button("Got it") { viewModel.markDone() }
-                            .buttonStyle(.borderedProminent)
-                            .disabled(!viewModel.showAnswer)
-                    }
-                }
-                .padding()
-            } else {
-                ContentUnavailableView("No phrases for this filter", systemImage: "text.bubble")
-            }
-        }
-        .onAppear {
-            viewModel.configure(language: settings.language, level: settings.level, topic: settings.topic)
-        }
-        .task { await viewModel.onAppear() }
-        .onChange(of: settings.language) { _, _ in
-            viewModel.configure(language: settings.language, level: settings.level, topic: settings.topic)
-        }
-    }
-}
-
-struct MistakesView: View {
-    @EnvironmentObject private var settings: SettingsStore
-    @EnvironmentObject private var vocabulary: VocabularyStore
-    @StateObject private var speech = SpeechSynthesisService()
-    @StateObject private var recognition = SpeechRecognitionService()
-    @State private var current: VocabularyEntry?
-    @State private var attempt = ""
-    @State private var feedback: String?
-    @State private var isRecording = false
-
-    private var items: [VocabularyEntry] { vocabulary.entries(for: settings.language) }
-
-    var body: some View {
-        Group {
-            if items.isEmpty {
-                ContentUnavailableView(
-                    "No mistakes yet",
-                    systemImage: "text.book.closed",
-                    description: Text("These appear after AI Chat corrections. Use Words or Phrases until then — they’re free.")
-                )
-            } else if let entry = current ?? items.first {
-                VStack(alignment: .leading, spacing: 16) {
-                    Label(entry.correctionType.label, systemImage: entry.correctionType.icon)
-                        .font(.caption.weight(.semibold))
-                        .foregroundStyle(.secondary)
-                    if !entry.original.isEmpty {
-                        Text(entry.original).strikethrough().foregroundStyle(.secondary)
-                    }
-                    Text(entry.corrected).font(.title2.bold())
-                    Text(entry.explanation).font(.subheadline).foregroundStyle(.secondary)
-                    if !attempt.isEmpty { Text("You said: \(attempt)").font(.subheadline).foregroundStyle(.secondary) }
-                    if let feedback { Text(feedback).font(.subheadline.weight(.semibold)).foregroundStyle(.green) }
-                    Spacer()
-                    HStack(spacing: 12) {
-                        Button {
-                            speech.speak(entry.corrected, language: settings.language)
-                            vocabulary.markReviewed(entry)
-                        } label: { Label("Listen", systemImage: "speaker.wave.2").frame(maxWidth: .infinity) }
-                        .buttonStyle(.bordered)
-                        Button { Task { await toggleRecord(for: entry) } } label: {
-                            Label(isRecording ? "Stop" : "Say it", systemImage: isRecording ? "stop.fill" : "mic.fill")
-                                .frame(maxWidth: .infinity)
-                        }
-                        .buttonStyle(.borderedProminent)
-                        .tint(isRecording ? .red : SFTheme.accent)
-                    }
-                    Button("Next") { advance(from: entry) }
-                        .buttonStyle(.bordered)
-                        .frame(maxWidth: .infinity)
-                }
-                .padding()
-                .onAppear {
-                    if current == nil { current = items.first }
-                    recognition.prepare(for: settings.language)
-                }
-            }
-        }
-        .task {
-            _ = await recognition.requestAuthorization()
-            _ = await recognition.requestMicrophonePermission()
-            recognition.prepare(for: settings.language)
-        }
-    }
-
-    private func toggleRecord(for entry: VocabularyEntry) async {
-        if isRecording {
-            recognition.stopRecording()
-            isRecording = false
-            attempt = recognition.transcript
-            feedback = "Good practice — listen once more if it didn’t match."
-            vocabulary.markReviewed(entry)
+        tts.stop()
+        speech.stopListening(cancel: true)
+        listening = false
+        if index >= lesson.prompts.count - 1 {
+            settings.completeLesson(lesson.id)
+            dismiss()
         } else {
-            attempt = ""; feedback = nil; recognition.transcript = ""; speech.stop()
-            do { try recognition.startRecording(); isRecording = true }
-            catch { feedback = error.localizedDescription }
+            index += 1
+            revealed = false
+            attempt = ""
+            feedback = nil
         }
-    }
-
-    private func advance(from entry: VocabularyEntry) {
-        guard let i = items.firstIndex(of: entry) else { current = items.first; return }
-        let next = items.index(after: i)
-        current = next < items.endIndex ? items[next] : items.first
-        attempt = ""; feedback = nil; speech.stop()
     }
 }
