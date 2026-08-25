@@ -1,6 +1,7 @@
 import Foundation
 
-/// One row from a Virginia Tech–style tabular SIS paste (12 logical columns).
+/// One row from a tabular SIS course list (12 logical columns). Same family of
+/// Banner self-service tables used at many US schools, not one campus.
 struct VTTabularParsedRow {
     var crn: String
     var courseCode: String
@@ -48,7 +49,7 @@ enum VTTabularScheduleParser {
         return rows.isEmpty ? nil : rows
     }
 
-    /// True when the paste looks like the VT table (header words + modality column).
+    /// True when the paste looks like a Banner tabular course list (header words + modality).
     static func looksLikeVtTabularPaste(_ text: String) -> Bool {
         let lower = text.lowercased()
         if lower.contains("modality"), lower.contains("grade opt"), lower.contains("part of term") {
@@ -83,7 +84,7 @@ enum VTTabularScheduleParser {
             return EditableScheduleEvent(
                 title: row.title,
                 location: locDisplay,
-                notes: "CRN \(row.crn)\n\(row.courseCode)\n\(row.modality)",
+                notes: "CRN \(row.crn)\n\(row.courseCode)\n\(row.modality)\(row.instructor.isEmpty ? "" : "\n\(row.instructor)")",
                 semesterStart: semesterStart,
                 semesterEnd: semesterEnd,
                 weekdays: tba ? [] : row.weekdayNumbers,

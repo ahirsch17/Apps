@@ -220,6 +220,7 @@ final class PasteScheduleCorpusTests: XCTestCase {
         XCTAssertTrue(lecture!.location.contains("Hahn Hall"))
         XCTAssertTrue(lecture!.location.contains("110"))
         XCTAssertTrue(lecture!.notes.contains("Kim, Hana"))
+        XCTAssertTrue(lecture!.notes.contains("hana.kim@school.edu"))
         XCTAssertFalse(lecture!.notes.localizedCaseInsensitiveContains("mailto"))
 
         let lab = withCRN(events, "20458").first

@@ -13,7 +13,7 @@ struct ContentView: View {
     @State private var importNote: String?
     @State private var inputNote: String?
     @State private var inputSource: InputSource = .none
-    @State private var showTextEditor = true
+    @State private var showTextEditor = false
     @State private var destination: CalendarDestination = .apple
     @State private var calendars: [EKCalendar] = []
     @State private var selectedCalendarID: String?
@@ -72,11 +72,29 @@ struct ContentView: View {
                                 .transition(.opacity)
                         }
 
+                        if let importNote {
+                            Text(importNote)
+                                .font(.system(size: 14, weight: .semibold, design: .rounded))
+                                .foregroundStyle(ScheduleTheme.teal)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(14)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 14, style: .continuous)
+                                        .fill(ScheduleTheme.teal.opacity(0.10))
+                                )
+                                .transition(.opacity)
+                        }
+
                         parseBanner
                             .scaleEffect(parsePulse ? 1.02 : 1)
                             .animation(.spring(response: 0.35, dampingFraction: 0.7), value: parsePulse)
 
                         if events.isEmpty == false {
+                            WeekScheduleView(events: events) { id in
+                                if let i = events.firstIndex(where: { $0.id == id }) {
+                                    events[i].isSelected.toggle()
+                                }
+                            }
                             semesterRow
                             actionsRow
                             eventCards
@@ -84,15 +102,19 @@ struct ContentView: View {
                                     insertion: .opacity.combined(with: .move(edge: .bottom)).combined(with: .offset(y: 12)),
                                     removal: .opacity
                                 ))
-                            destinationBlock
-                            importBlock
                         }
                     }
                     .padding(.horizontal, 20)
                     .padding(.top, 8)
-                    .padding(.bottom, 40)
+                    .padding(.bottom, 24)
                     .animation(.spring(response: 0.45, dampingFraction: 0.86), value: events.count)
                     .animation(.easeOut(duration: 0.2), value: inputNote)
+                    .animation(.easeOut(duration: 0.2), value: importNote)
+                }
+                .safeAreaInset(edge: .bottom, spacing: 0) {
+                    if events.isEmpty == false {
+                        stickyImportBar
+                    }
                 }
 
                 if isReadingInput {
@@ -137,16 +159,21 @@ struct ContentView: View {
     }
 
     private var header: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            Text("Schedule")
-                .font(ScheduleTheme.brandFont)
-                .foregroundStyle(ScheduleTheme.ink)
-                .tracking(-0.5)
+        HStack(alignment: .top, spacing: 14) {
+            WeekStripMark()
+                .padding(.top, 6)
 
-            Text("Paste your class schedule, review the meetings, then add them to your calendar.")
-                .font(ScheduleTheme.bodyFont)
-                .foregroundStyle(ScheduleTheme.inkMuted)
-                .fixedSize(horizontal: false, vertical: true)
+            VStack(alignment: .leading, spacing: 6) {
+                Text("Schedule")
+                    .font(ScheduleTheme.brandFont)
+                    .foregroundStyle(ScheduleTheme.ink)
+                    .tracking(-0.8)
+
+                Text("Paste your classes. Check them. Drop them on your calendar.")
+                    .font(ScheduleTheme.bodyFont)
+                    .foregroundStyle(ScheduleTheme.inkMuted)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
         }
         .padding(.top, 12)
     }
@@ -154,7 +181,7 @@ struct ContentView: View {
     private var inputBlock: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
-                Text("GET SCHEDULE")
+                Text("YOUR SCHEDULE")
                     .font(ScheduleTheme.sectionFont)
                     .foregroundStyle(ScheduleTheme.inkMuted)
                     .tracking(1.2)
@@ -174,33 +201,38 @@ struct ContentView: View {
                 }
             }
 
-            HStack(spacing: 8) {
-                Button(action: pasteAndScan) {
-                    Label("Paste schedule", systemImage: "doc.on.clipboard")
-                        .font(.system(size: 14, weight: .semibold, design: .rounded))
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 13)
+            Button(action: pasteAndScan) {
+                HStack(spacing: 14) {
+                    Image(systemName: "doc.on.clipboard.fill")
+                        .font(.system(size: 22, weight: .semibold))
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Paste schedule")
+                            .font(.system(size: 17, weight: .bold, design: .rounded))
+                        Text("Copy Student Schedule, then tap")
+                            .font(.system(size: 13, weight: .medium, design: .rounded))
+                            .opacity(0.88)
+                    }
+                    Spacer()
+                    Image(systemName: "arrow.right")
+                        .font(.system(size: 14, weight: .semibold))
+                        .opacity(0.7)
                 }
-                .buttonStyle(SoftButtonStyle())
-                .disabled(isReadingInput)
-
-                Button {
-                    showFileImporter = true
-                } label: {
-                    Label("Text file", systemImage: "doc.text")
-                        .font(.system(size: 14, weight: .semibold, design: .rounded))
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 13)
-                }
-                .buttonStyle(SoftButtonStyle())
-                .disabled(isReadingInput)
+                .padding(.horizontal, 18)
+                .padding(.vertical, 16)
             }
+            .buttonStyle(PrimaryButtonStyle())
+            .disabled(isReadingInput)
+
+            Text("Works with the Student Schedule page a lot of US schools share (title, days, times, CRN). A syllabus line is fine too. Paste text — not a screenshot.")
+                .font(.system(size: 12, weight: .regular, design: .rounded))
+                .foregroundStyle(ScheduleTheme.inkMuted)
+                .fixedSize(horizontal: false, vertical: true)
 
             DisclosureGroup(isExpanded: $showTextEditor) {
                 VStack(alignment: .leading, spacing: 10) {
                     ZStack(alignment: .topLeading) {
                         if hasText == false {
-                            Text("Paste your class schedule from the student portal.")
+                            Text("Paste the schedule text here if you want to edit it first.")
                                 .font(ScheduleTheme.monoFont)
                                 .foregroundStyle(ScheduleTheme.inkMuted.opacity(0.55))
                                 .padding(.horizontal, 16)
@@ -240,10 +272,18 @@ struct ContentView: View {
                             .foregroundStyle(ScheduleTheme.inkMuted)
                         }
 
+                        Button {
+                            showFileImporter = true
+                        } label: {
+                            Text("From file")
+                                .font(.system(size: 14, weight: .semibold, design: .rounded))
+                                .foregroundStyle(ScheduleTheme.inkMuted)
+                        }
+
                         Spacer()
 
                         Button(action: parse) {
-                            Text(events.isEmpty ? "Parse schedule" : "Re-parse")
+                            Text(events.isEmpty ? "Find classes" : "Find again")
                                 .font(.system(size: 15, weight: .semibold, design: .rounded))
                                 .padding(.horizontal, 18)
                                 .padding(.vertical, 12)
@@ -254,7 +294,7 @@ struct ContentView: View {
                 }
                 .padding(.top, 8)
             } label: {
-                Text(showTextEditor ? "Hide text" : (hasText ? "Edit / fix text" : "Or type / paste text"))
+                Text(showTextEditor ? "Hide text" : (hasText ? "Edit the pasted text" : "Or type it in"))
                     .font(.system(size: 13, weight: .semibold, design: .rounded))
                     .foregroundStyle(ScheduleTheme.inkMuted)
             }
@@ -290,10 +330,19 @@ struct ContentView: View {
         case .none:
             EmptyView()
         case .empty:
-            statusChip(
-                text: "No meetings found — check the pasted text",
-                tone: .warn
-            )
+            VStack(alignment: .leading, spacing: 10) {
+                statusChip(
+                    text: "Couldn’t find any meetings in that paste. Check the text, or add a class yourself.",
+                    tone: .warn
+                )
+                Button(action: addBlankClass) {
+                    Label("Add a class by hand", systemImage: "plus")
+                        .font(.system(size: 15, weight: .semibold, design: .rounded))
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 12)
+                }
+                .buttonStyle(SoftButtonStyle())
+            }
         case let .found(meetings, courses, needs, tba):
             VStack(alignment: .leading, spacing: 6) {
                 Text(parseSummaryLine(meetings: meetings, courses: courses))
@@ -349,12 +398,18 @@ struct ContentView: View {
 
     private var actionsRow: some View {
         HStack(spacing: 10) {
-            Text("MEETINGS")
+            Text("CLASSES")
                 .font(ScheduleTheme.sectionFont)
                 .foregroundStyle(ScheduleTheme.inkMuted)
                 .tracking(1.2)
 
             Spacer()
+
+            Button("Add") {
+                addBlankClass()
+            }
+            .font(.system(size: 13, weight: .semibold, design: .rounded))
+            .foregroundStyle(ScheduleTheme.teal)
 
             Button("All") {
                 for i in events.indices where events[i].isTBA == false {
@@ -375,18 +430,22 @@ struct ContentView: View {
     private var eventCards: some View {
         VStack(spacing: 12) {
             ForEach($events) { $ev in
-                EventEditorRow(event: $ev, weekdaySymbols: weekdaySymbols)
+                EventEditorRow(
+                    event: $ev,
+                    weekdaySymbols: weekdaySymbols,
+                    onDelete: {
+                        withAnimation {
+                            events.removeAll { $0.id == ev.id }
+                            if events.isEmpty { parseOutcome = .none }
+                        }
+                    }
+                )
             }
         }
     }
 
-    private var destinationBlock: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("ADD TO")
-                .font(ScheduleTheme.sectionFont)
-                .foregroundStyle(ScheduleTheme.inkMuted)
-                .tracking(1.2)
-
+    private var stickyImportBar: some View {
+        VStack(spacing: 10) {
             HStack(spacing: 0) {
                 ForEach(CalendarDestination.allCases) { dest in
                     let on = destination == dest
@@ -396,52 +455,37 @@ struct ContentView: View {
                         }
                     } label: {
                         Text(dest.title)
-                            .font(.system(size: 14, weight: .semibold, design: .rounded))
+                            .font(.system(size: 13, weight: .semibold, design: .rounded))
                             .frame(maxWidth: .infinity)
-                            .padding(.vertical, 11)
+                            .padding(.vertical, 9)
                             .foregroundStyle(on ? Color.white : ScheduleTheme.ink)
                             .background(
-                                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                                RoundedRectangle(cornerRadius: 10, style: .continuous)
                                     .fill(on ? ScheduleTheme.teal : Color.clear)
                             )
                     }
                     .buttonStyle(.plain)
                 }
             }
-            .padding(4)
+            .padding(3)
             .background(
-                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
                     .fill(ScheduleTheme.mistDeep.opacity(0.55))
             )
 
-            Text(destination.detail)
-                .font(.system(size: 12, weight: .regular, design: .rounded))
-                .foregroundStyle(ScheduleTheme.inkMuted)
-                .fixedSize(horizontal: false, vertical: true)
-
-            if destination.usesEventKit {
-                if calendars.isEmpty {
-                    Text("Calendar access is requested when you add events.")
-                        .font(.system(size: 12, weight: .regular, design: .rounded))
-                        .foregroundStyle(ScheduleTheme.inkMuted)
-                } else {
-                    Picker("Calendar", selection: Binding(
-                        get: { selectedCalendarID ?? calendars.first?.calendarIdentifier ?? "" },
-                        set: { selectedCalendarID = $0 }
-                    )) {
-                        ForEach(calendars, id: \.calendarIdentifier) { cal in
-                            Text(calendarLabel(cal)).tag(cal.calendarIdentifier)
-                        }
+            if destination.usesEventKit, calendars.isEmpty == false {
+                Picker("Calendar", selection: Binding(
+                    get: { selectedCalendarID ?? calendars.first?.calendarIdentifier ?? "" },
+                    set: { selectedCalendarID = $0 }
+                )) {
+                    ForEach(calendars, id: \.calendarIdentifier) { cal in
+                        Text(calendarLabel(cal)).tag(cal.calendarIdentifier)
                     }
-                    .pickerStyle(.menu)
-                    .tint(ScheduleTheme.teal)
                 }
+                .pickerStyle(.menu)
+                .tint(ScheduleTheme.teal)
             }
-        }
-    }
 
-    private var importBlock: some View {
-        VStack(spacing: 10) {
             Button {
                 Task { await importToCalendar() }
             } label: {
@@ -455,31 +499,29 @@ struct ContentView: View {
                     }
                 }
                 .frame(maxWidth: .infinity)
-                .padding(.vertical, 17)
+                .padding(.vertical, 15)
             }
             .buttonStyle(PrimaryButtonStyle())
             .disabled(isImporting || selectedImportable.isEmpty || selectedNeedingDays > 0)
             .opacity(isImporting || selectedImportable.isEmpty || selectedNeedingDays > 0 ? 0.45 : 1)
-
-            if let importNote {
-                Text(importNote)
-                    .font(.system(size: 12, weight: .medium, design: .rounded))
-                    .foregroundStyle(ScheduleTheme.inkMuted)
-                    .multilineTextAlignment(.center)
-                    .frame(maxWidth: .infinity)
-                    .transition(.opacity)
-            }
         }
-        .padding(.top, 4)
+        .padding(.horizontal, 16)
+        .padding(.top, 12)
+        .padding(.bottom, 8)
+        .background(
+            ScheduleTheme.cream
+                .shadow(color: ScheduleTheme.ink.opacity(0.12), radius: 16, y: -4)
+                .ignoresSafeArea(edges: .bottom)
+        )
     }
 
     private var importTitle: String {
         if selectedNeedingDays > 0 { return "Pick days first" }
         if selectedImportable.isEmpty { return "Select meetings" }
         switch destination {
-        case .apple: return "Add to Apple Calendar"
-        case .google: return "Share for Google Calendar"
-        case .both: return "Add + Share for Google"
+        case .apple: return "Add to iPhone Calendar"
+        case .google: return "Share .ics file"
+        case .both: return "Add + Share .ics"
         }
     }
 
@@ -508,6 +550,22 @@ struct ContentView: View {
         guard let c = courses, c != meetings else { return m }
         let cStr = c == 1 ? "1 class" : "\(c) classes"
         return "\(m) · \(cStr)"
+    }
+
+    private func addBlankClass() {
+        let end = useCustomSemesterEnd
+            ? semesterEnd
+            : (Calendar.current.date(byAdding: .month, value: 4, to: Date()) ?? Date())
+        let start = Calendar.current.date(byAdding: .month, value: -4, to: end) ?? Date()
+        withAnimation(.spring(response: 0.4, dampingFraction: 0.85)) {
+            events.append(EditableScheduleEvent.blank(semesterStart: start, semesterEnd: end))
+            parseOutcome = .found(
+                meetings: events.count,
+                courses: ScheduleTextParser.distinctRegisteredCourseCount(in: events),
+                needs: events.filter(\.needsWeekdayPick).count,
+                tba: events.filter(\.isTBA).count
+            )
+        }
     }
 
     private func pasteAndScan() {
@@ -634,7 +692,7 @@ struct ContentView: View {
                     importNote = "Select rows with days picked"
                 }
             } else {
-                importNote = "Open the .ics in Google Calendar (or any calendar app)."
+                importNote = "Open the .ics in Google Calendar, Outlook, or any calendar app."
                 withAnimation {
                     events = []
                     parseOutcome = .none
@@ -677,14 +735,14 @@ private struct AtmosphereBackground: View {
             ScheduleTheme.mist
 
             RadialGradient(
-                colors: [ScheduleTheme.tealBright.opacity(0.18), .clear],
+                colors: [ScheduleTheme.amber.opacity(0.16), .clear],
                 center: .topTrailing,
                 startRadius: 20,
-                endRadius: 340
+                endRadius: 320
             )
 
             RadialGradient(
-                colors: [ScheduleTheme.mistDeep.opacity(0.9), .clear],
+                colors: [ScheduleTheme.teal.opacity(0.10), .clear],
                 center: .bottomLeading,
                 startRadius: 40,
                 endRadius: 380
@@ -742,22 +800,111 @@ private struct SoftButtonStyle: ButtonStyle {
 private struct EventEditorRow: View {
     @Binding var event: EditableScheduleEvent
     let weekdaySymbols: [String]
+    var onDelete: () -> Void
 
     private let weekdayOrder = [1, 2, 3, 4, 5, 6, 7]
     @State private var showDetailFields = false
 
     private var needsDays: Bool { event.needsWeekdayPick }
+    private var accent: Color { ScheduleTheme.accent(for: event.title) }
+    private var parseHint: String? {
+        let lines = event.notes
+            .components(separatedBy: .newlines)
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { $0.isEmpty == false }
+        return lines.first { $0.hasPrefix("Graph:") }
+    }
+
+    private var crnLabel: String? {
+        guard let range = event.notes.range(of: #"CRN\s*:?\s*(\d+)"#, options: .regularExpression) else { return nil }
+        return String(event.notes[range]).replacingOccurrences(of: "CRN:", with: "CRN", options: .caseInsensitive)
+    }
+
+    private var instructorLines: [String] {
+        event.notes
+            .components(separatedBy: .newlines)
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { line in
+                guard line.isEmpty == false else { return false }
+                if line.uppercased().hasPrefix("CRN") { return false }
+                if line.hasPrefix("Graph:") { return false }
+                if let kind = event.sessionKind, line.caseInsensitiveCompare(kind) == .orderedSame { return false }
+                return true
+            }
+    }
+
+    private var startTimeBinding: Binding<Date> {
+        Binding(
+            get: {
+                Calendar.current.date(
+                    bySettingHour: event.startHour,
+                    minute: event.startMinute,
+                    second: 0,
+                    of: Date()
+                ) ?? Date()
+            },
+            set: { newDate in
+                let cal = Calendar.current
+                event.startHour = cal.component(.hour, from: newDate)
+                event.startMinute = cal.component(.minute, from: newDate)
+            }
+        )
+    }
+
+    private var endTimeBinding: Binding<Date> {
+        Binding(
+            get: {
+                Calendar.current.date(
+                    bySettingHour: event.endHour,
+                    minute: event.endMinute,
+                    second: 0,
+                    of: Date()
+                ) ?? Date()
+            },
+            set: { newDate in
+                let cal = Calendar.current
+                event.endHour = cal.component(.hour, from: newDate)
+                event.endMinute = cal.component(.minute, from: newDate)
+            }
+        )
+    }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        HStack(alignment: .top, spacing: 0) {
+            RoundedRectangle(cornerRadius: 2, style: .continuous)
+                .fill(accent)
+                .frame(width: 5)
+                .padding(.vertical, 16)
+                .padding(.leading, 10)
+
+            VStack(alignment: .leading, spacing: 12) {
+            HStack(alignment: .top) {
             Toggle(isOn: $event.isSelected) {
-                Text(event.title)
-                    .font(.system(size: 16, weight: .semibold, design: .rounded))
-                    .multilineTextAlignment(.leading)
-                    .foregroundStyle(ScheduleTheme.ink)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(event.title)
+                        .font(.system(size: 16, weight: .semibold, design: .rounded))
+                        .multilineTextAlignment(.leading)
+                        .foregroundStyle(ScheduleTheme.ink)
+                    if let crnLabel {
+                        Text(crnLabel)
+                            .font(.system(size: 11, weight: .medium, design: .rounded))
+                            .foregroundStyle(ScheduleTheme.inkMuted)
+                    }
+                }
             }
             .tint(ScheduleTheme.teal)
             .disabled(event.isTBA)
+
+            Button(action: onDelete) {
+                Image(systemName: "xmark")
+                    .font(.system(size: 11, weight: .bold))
+                    .foregroundStyle(ScheduleTheme.inkMuted)
+                    .padding(8)
+                    .background(Circle().fill(ScheduleTheme.mistDeep.opacity(0.55)))
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel("Remove class")
+            }
 
             VStack(alignment: .leading, spacing: 3) {
                 Text(event.displayTimeRange())
@@ -771,6 +918,11 @@ private struct EventEditorRow: View {
                         .font(.system(size: 12, weight: .medium, design: .rounded))
                         .foregroundStyle(ScheduleTheme.teal)
                 }
+                ForEach(instructorLines, id: \.self) { line in
+                    Text(line)
+                        .font(.system(size: 12, weight: .regular, design: .rounded))
+                        .foregroundStyle(ScheduleTheme.inkMuted)
+                }
             }
 
             if let kind = event.sessionKind {
@@ -780,11 +932,23 @@ private struct EventEditorRow: View {
                     .foregroundStyle(ScheduleTheme.inkMuted)
             }
 
+            if let parseHint {
+                Text(parseHint.replacingOccurrences(of: "Graph: ", with: ""))
+                    .font(.system(size: 12, weight: .medium, design: .rounded))
+                    .foregroundStyle(ScheduleTheme.amber)
+            }
+
             if event.isTBA {
                 Text("No timed meetings — skipped for calendar import.")
                     .font(.system(size: 12, weight: .medium, design: .rounded))
                     .foregroundStyle(ScheduleTheme.amber)
             } else {
+                if needsDays {
+                    Text("Tap the days this class meets")
+                        .font(.system(size: 12, weight: .semibold, design: .rounded))
+                        .foregroundStyle(ScheduleTheme.amber)
+                }
+
                 HStack(spacing: 6) {
                     ForEach(weekdayOrder, id: \.self) { wd in
                         let on = event.weekdays.contains(wd)
@@ -816,20 +980,42 @@ private struct EventEditorRow: View {
             }
 
             DisclosureGroup(isExpanded: $showDetailFields) {
-                VStack(spacing: 8) {
+                VStack(spacing: 10) {
                     TextField("Title", text: $event.title)
                     TextField("Location", text: $event.location)
+
+                    if event.isTBA == false {
+                        HStack(spacing: 12) {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text("Starts")
+                                    .font(.system(size: 11, weight: .semibold, design: .rounded))
+                                    .foregroundStyle(ScheduleTheme.inkMuted)
+                                DatePicker("", selection: startTimeBinding, displayedComponents: .hourAndMinute)
+                                    .labelsHidden()
+                            }
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text("Ends")
+                                    .font(.system(size: 11, weight: .semibold, design: .rounded))
+                                    .foregroundStyle(ScheduleTheme.inkMuted)
+                                DatePicker("", selection: endTimeBinding, displayedComponents: .hourAndMinute)
+                                    .labelsHidden()
+                            }
+                        }
+                    }
                 }
                 .font(.system(size: 15, weight: .regular, design: .rounded))
                 .padding(.top, 6)
             } label: {
-                Text("Edit details")
+                Text("Edit title, time, location")
                     .font(.system(size: 12, weight: .semibold, design: .rounded))
                     .foregroundStyle(ScheduleTheme.inkMuted)
             }
             .tint(ScheduleTheme.teal)
+            }
+            .padding(.vertical, 16)
+            .padding(.trailing, 16)
+            .padding(.leading, 8)
         }
-        .padding(16)
         .background(
             RoundedRectangle(cornerRadius: 20, style: .continuous)
                 .fill(ScheduleTheme.surfaceSolid)
@@ -842,6 +1028,11 @@ private struct EventEditorRow: View {
                     lineWidth: needsDays || event.isTBA ? 1.5 : 1
                 )
         )
+        .onAppear {
+            if needsDays || parseHint != nil {
+                showDetailFields = true
+            }
+        }
     }
 
     private func shortSymbol(for weekday: Int) -> String {

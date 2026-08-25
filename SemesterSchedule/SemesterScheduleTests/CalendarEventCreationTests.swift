@@ -85,6 +85,8 @@ CRN: 11902
         XCTAssertTrue(ics.contains("RRULE:FREQ=WEEKLY;BYDAY=TU;UNTIL="))
         XCTAssertTrue(ics.contains("SUMMARY:Dosage Calculations"))
         XCTAssertTrue(ics.contains("SUMMARY:Pathophysiology"))
+        XCTAssertTrue(ics.contains("Knoeckel") && ics.contains("Sarah"))
+        XCTAssertTrue(ics.contains("DESCRIPTION:"))
         XCTAssertTrue(ics.contains("TRIGGER:-PT15M"))
         XCTAssertTrue(ics.contains("END:VCALENDAR"))
         // Two distinct UIDs / events

@@ -24,7 +24,7 @@ enum ICSCalendarExport {
         }
 
         lines.append("END:VCALENDAR")
-        return lines.joined(separator: "\r\n") + "\r\n"
+        return foldAll(lines).joined(separator: "\r\n") + "\r\n"
     }
 
     static func writeTemporaryFile(
@@ -107,5 +107,31 @@ enum ICSCalendarExport {
             hash = ((hash << 5) &+ hash) &+ UInt64(b)
         }
         return String(hash, radix: 16)
+    }
+
+    /// RFC 5545: fold content lines at 75 octets with a CRLF + space continuation.
+    static func foldAll(_ lines: [String]) -> [String] {
+        lines.flatMap(foldLine)
+    }
+
+    static func foldLine(_ line: String) -> [String] {
+        let bytes = Array(line.utf8)
+        guard bytes.count > 75 else { return [line] }
+        var out: [String] = []
+        var i = 0
+        var first = true
+        while i < bytes.count {
+            let budget = first ? 75 : 74
+            var take = min(budget, bytes.count - i)
+            while take > 0, take < bytes.count - i, (bytes[i + take] & 0xC0) == 0x80 {
+                take -= 1
+            }
+            if take == 0 { take = 1 }
+            let chunk = String(decoding: bytes[i ..< (i + take)], as: UTF8.self)
+            out.append(first ? chunk : " " + chunk)
+            i += take
+            first = false
+        }
+        return out
     }
 }

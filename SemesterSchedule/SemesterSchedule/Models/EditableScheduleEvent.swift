@@ -19,6 +19,22 @@ struct EditableScheduleEvent: Identifiable, Hashable {
     /// True when the registrar listed TBA / no clock times (async online, etc.).
     var isTBA: Bool
 
+    /// Empty meeting a student can fill in when paste did not catch a class.
+    static func blank(semesterStart: Date, semesterEnd: Date) -> EditableScheduleEvent {
+        EditableScheduleEvent(
+            title: "New class",
+            location: "",
+            notes: "",
+            semesterStart: semesterStart,
+            semesterEnd: semesterEnd,
+            weekdays: [],
+            startHour: 10,
+            startMinute: 0,
+            endHour: 11,
+            endMinute: 0
+        )
+    }
+
     init(
         id: UUID = UUID(),
         title: String,

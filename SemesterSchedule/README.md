@@ -2,7 +2,11 @@
 
 Paste a class schedule from the student portal, review the meetings, then add them as weekly calendar events for the term.
 
-Copy the schedule as text (Select All → Copy on the registrar page, or from a registration email). Screenshots and photos are not supported yet.
+The main format is the **Student Schedule** page used across many US colleges (Ellucian Banner / self-service). That is not Virginia Tech–specific — Radford, VT, and a long list of other schools print the same layout: course title, section, date range, weekday, Type/Location, instructor, CRN.
+
+Copy as text (Select All → Copy on the registrar page, or from a registration email). Screenshots are not supported.
+
+If a paste is messy, you can still add or edit a class by hand before it goes on the calendar.
 
 ## Ways to import
 
@@ -23,10 +27,11 @@ No Google OAuth client is required — Google Calendar accepts the same ICS that
 
 ## Supported paste formats
 
-1. **Student portal / Banner vertical schedule** — course title + section, date ranges, weekday, Type/Location line, instructors, CRN. Lab + lecture under one CRN stay one class. Calendar widget letters (`S M T W T F S`) are ignored.
-2. **Virginia Tech–style tabular SIS** — 12-column table (TBA/async rows shown but not imported)
+1. **Student Schedule (common US portal)** — course title + section, date ranges, weekday, Type/Location, instructors, CRN. Lab + lecture under one CRN stay one class. Mini-calendar letters (`S M T W T F S`) are ignored.
+2. **Tabular SIS course list** — 12-column table with modality / grade option / part of term (TBA rows shown but not imported)
 3. **Weekly Mon–Sun grid** — column-aligned `CRN:` blocks
 4. **Table-like rows** — `CRN DEPT #### Title time–time DAYS location`
+5. **Loose syllabus / notes** — title + days + time on one or two lines (`MATH 2114 Linear Algebra MWF 9:00 AM - 9:50 AM Hall 100`)
 
 Day codes: `MWF`, `MW`, `TR`, `Tu/Th`, `TTH`, `M/W/F`, plus letter scans. Times: `9:00 AM - 9:50 AM`, en-dashes, glued `9:00AM`, and 24-hour `12:30-13:45`.
 

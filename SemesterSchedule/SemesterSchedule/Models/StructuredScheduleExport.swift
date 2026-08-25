@@ -233,6 +233,11 @@ enum StructuredScheduleExportBuilder {
                 .replacingOccurrences(of: "()", with: "")
                 .replacingOccurrences(of: "  ", with: " ")
                 .trimmingCharacters(in: .whitespaces)
+            if let split = noRole.range(of: " — ") {
+                noRole = String(noRole[..<split.lowerBound]).trimmingCharacters(in: .whitespaces)
+            }
+            let skip = ["class", "lab", "lecture", "laboratory", "online", "tba"]
+            if skip.contains(noRole.lowercased()) { continue }
             if noRole.isEmpty == false { out.append(noRole) }
         }
         return out

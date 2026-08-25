@@ -69,4 +69,80 @@ CRN: 33333
         XCTAssertEqual(events.count, 1)
         XCTAssertEqual(events[0].weekdays, Set([3, 5]))
     }
+
+    func testLowercaseDayCodes() {
+        let fixture = "22774 CS 4094 Capstone 12:30 PM - 1:45 PM tr ONLINE"
+        let events = ScheduleTextParser.parse(fixture, defaultSemesterEnd: Self.semesterEnd)
+        XCTAssertEqual(events.count, 1)
+        XCTAssertEqual(events[0].weekdays, Set([3, 5]))
+    }
+
+    func testThroughDateRange() {
+        let fixture = """
+Algorithms | CS 4104 Section 01
+Registered
+08/24/2026 through 12/11/2026
+Wednesday
+   2:00 PM - 3:15 PM Type: Class Location: Main Campus Building: McBryde Room: 100
+CRN: 44444
+"""
+        let events = ScheduleTextParser.parse(fixture, defaultSemesterEnd: nil)
+        XCTAssertEqual(events.count, 1)
+        XCTAssertEqual(events[0].weekdays, Set([4]))
+        XCTAssertTrue(events[0].notes.contains("44444"))
+    }
+
+    func testNoSpaceAmPmGlue() {
+        let fixture = "21937 CS 4944 Seminar 2:30PM-3:20PM F MCB 100"
+        let events = ScheduleTextParser.parse(fixture, defaultSemesterEnd: Self.semesterEnd)
+        XCTAssertEqual(events.count, 1)
+        XCTAssertEqual(events[0].startHour, 14)
+        XCTAssertEqual(events[0].endHour, 15)
+        XCTAssertEqual(events[0].endMinute, 20)
+    }
+
+    func testInstructorEmailKeptForCalendarNotes() {
+        let line = "Instructor: Knoeckel, Sarah (mailto:sarahknoeckel@gmail.com) (Primary)"
+        let formatted = ScheduleNoteFormatting.instructorDisplay(from: line)
+        XCTAssertEqual(formatted, "Knoeckel, Sarah — sarahknoeckel@gmail.com")
+        XCTAssertFalse(formatted?.localizedCaseInsensitiveContains("mailto") == true)
+    }
+
+    func testSyllabusStyleTwoLineClass() {
+        let fixture = """
+        CS 2114 Data Structures
+        TR 12:30 PM - 1:45 PM Goodwin 135
+        """
+        let events = ScheduleTextParser.parse(fixture, defaultSemesterEnd: Self.semesterEnd)
+        XCTAssertEqual(events.count, 1)
+        XCTAssertEqual(events[0].weekdays, Set([3, 5]))
+        XCTAssertEqual(events[0].startHour, 12)
+        XCTAssertEqual(events[0].startMinute, 30)
+        XCTAssertTrue(events[0].title.contains("2114") || events[0].title.lowercased().contains("data"))
+        XCTAssertTrue(events[0].location.lowercased().contains("goodwin"))
+    }
+
+    func testCanvasStyleFullWeekdayNames() {
+        let fixture = """
+        Public Speaking
+        Tuesday/Thursday 6:00 PM – 8:50 PM
+        Shanks 160
+        """
+        let events = ScheduleTextParser.parse(fixture, defaultSemesterEnd: Self.semesterEnd)
+        XCTAssertEqual(events.count, 1)
+        XCTAssertEqual(events[0].weekdays, Set([3, 5]))
+        XCTAssertEqual(events[0].startHour, 18)
+        XCTAssertEqual(events[0].endHour, 20)
+        XCTAssertEqual(events[0].endMinute, 50)
+    }
+
+    func testOneLineWithoutCRN() {
+        let fixture = "MATH 2114 Linear Algebra MWF 9:00 AM - 9:50 AM McBryde 100"
+        let events = ScheduleTextParser.parse(fixture, defaultSemesterEnd: Self.semesterEnd)
+        XCTAssertEqual(events.count, 1)
+        XCTAssertEqual(events[0].weekdays, Set([2, 4, 6]))
+        XCTAssertEqual(events[0].startHour, 9)
+        XCTAssertEqual(events[0].endMinute, 50)
+        XCTAssertTrue(events[0].title.lowercased().contains("algebra") || events[0].title.contains("2114"))
+    }
 }

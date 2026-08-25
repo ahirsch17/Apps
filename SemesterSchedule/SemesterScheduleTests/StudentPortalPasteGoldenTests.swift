@@ -2,14 +2,14 @@ import XCTest
 @testable import SemesterSchedule
 
 /// Golden test for a real student-portal copy-paste (Banner self-service layout).
-/// The widget rows (`• S` … `• S`) and `mailto:` wrappers are noise; meetings come from
-/// the date range, the full weekday name, and the Type/Location clock line.
+/// Widget rows (`• S` … `• S`) are noise. Instructor `mailto:` wrappers are stripped,
+/// but the email itself is kept on the calendar notes.
 final class StudentPortalPasteGoldenTests: XCTestCase {
 
     private enum WD: Int { case mon = 2, tue = 3, thu = 5, fri = 6 }
 
     /// Exact registrar paste the user provided.
-    private static let portalPaste = #"""
+    static let portalPaste = #"""
 Dosage Calculations | Nursing 301 Section 01 | Registered
 08/24/2026 -- 12/11/2026
 Tuesday
@@ -129,6 +129,7 @@ CRN: 12154
         XCTAssertTrue(row!.location.contains("Artis Center"), row!.location)
         XCTAssertTrue(row!.location.contains("310"), row!.location)
         XCTAssertTrue(notes(row!).contains("Knoeckel, Sarah"))
+        XCTAssertTrue(notes(row!).contains("sarahknoeckel@gmail.com"))
         XCTAssertFalse(notes(row!).localizedCaseInsensitiveContains("mailto"))
         XCTAssertFalse(row!.title.localizedCaseInsensitiveContains("Registered"))
     }

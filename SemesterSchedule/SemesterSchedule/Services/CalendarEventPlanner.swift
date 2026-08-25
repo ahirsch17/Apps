@@ -36,7 +36,7 @@ enum CalendarEventPlanner {
                 CalendarEventBlueprint(
                     title: ev.title,
                     location: ev.location,
-                    notes: ev.notes,
+                    notes: ScheduleNoteFormatting.calendarNotes(for: ev),
                     firstStart: firstStart,
                     firstEnd: firstEnd,
                     weekdays: ev.weekdays.sorted(),

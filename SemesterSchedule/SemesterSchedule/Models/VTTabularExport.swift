@@ -1,6 +1,6 @@
 import Foundation
 
-// MARK: - Virginia Tech–style tabular schedule export (JSON)
+// MARK: - Tabular SIS course-list export (JSON)
 //
 // Schema matches a common SIS email/table paste: CRN, course code, modality, title, grade option,
 // credit hours, time, days, location, instructor, part of term, exam.

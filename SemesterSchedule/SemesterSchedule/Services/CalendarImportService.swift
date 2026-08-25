@@ -10,17 +10,20 @@ enum CalendarDestination: String, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .apple: return "Apple"
-        case .google: return "Google"
+        case .apple: return "iPhone"
+        case .google: return "Share file"
         case .both: return "Both"
         }
     }
 
     var detail: String {
         switch self {
-        case .apple: return "Saves into a calendar on this iPhone (Apple or a Google account already added in Settings → Calendar)."
-        case .google: return "Shares a .ics file you can open in Google Calendar (or any calendar app)."
-        case .both: return "Saves on this iPhone and shares a .ics for Google Calendar."
+        case .apple:
+            return "Adds weekly events to a calendar on this iPhone — iCloud, Google, or any account in Settings → Calendar."
+        case .google:
+            return "Shares a .ics file. Open it in Google Calendar, Outlook, Samsung Calendar, or any app on iPhone or Android."
+        case .both:
+            return "Saves on this iPhone and shares the same .ics file for other calendars."
         }
     }
 

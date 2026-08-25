@@ -66,7 +66,11 @@ enum ScheduleTextParser {
         }
 
         let fromTable = parseTableLike(normalized, defaultSemesterEnd: defaultSemesterEnd)
-        return mergeDuplicates(fromTable)
+        if fromTable.isEmpty == false {
+            return mergeDuplicates(fromTable)
+        }
+
+        return mergeDuplicates(LooseScheduleParser.parse(normalized, defaultSemesterEnd: defaultSemesterEnd))
     }
 
     /// Unique CRNs across parsed events (from each row’s notes). When every row has a CRN, this is the registrar “class” count even if one course produced several meeting rows. Returns `nil` if no notes contained a CRN (common for some grid-only pastes).
@@ -493,10 +497,16 @@ enum ScheduleTextParser {
 
     private static func notesForPartial(_ p: PartialMeeting) -> String {
         var bits: [String] = []
+        if let kind = p.sessionKind, kind.isEmpty == false { bits.append(kind) }
         if let crn = p.crn { bits.append("CRN \(crn)") }
         for ins in p.instructorLines {
-            let t = ins.replacingOccurrences(of: "Instructor:", with: "", options: .caseInsensitive).trimmingCharacters(in: .whitespaces)
-            if t.isEmpty == false { bits.append(t) }
+            if let formatted = ScheduleNoteFormatting.instructorDisplay(from: ins) {
+                bits.append(formatted)
+            } else {
+                let t = ins.replacingOccurrences(of: "Instructor:", with: "", options: .caseInsensitive)
+                    .trimmingCharacters(in: .whitespaces)
+                if t.isEmpty == false { bits.append(t) }
+            }
         }
         return bits.joined(separator: "\n")
     }

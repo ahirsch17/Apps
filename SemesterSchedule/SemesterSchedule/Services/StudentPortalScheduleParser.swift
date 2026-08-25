@@ -1,8 +1,9 @@
 import Foundation
 
-/// Parser for the classic student self-service portal copy-paste (Banner "Student Schedule").
+/// Parser for the Student Schedule page most US Banner / self-service portals print.
+/// Same layout at many schools — not specific to one campus.
 ///
-/// Read a real paste first, then match this layout for any school that uses it:
+/// Read a real paste first, then match this layout:
 ///
 /// 1. Course header: `Title | Subject 301 Section 01` plus optional `| Registered`
 ///    or `| Class Begin: … | Class End: …`. `Section` may be its own pipe cell.
@@ -177,6 +178,7 @@ enum StudentPortalScheduleParser {
                 else { return nil }
 
                 var notes: [String] = []
+                if let kind = meeting.sessionKind { notes.append(kind) }
                 if let crn { notes.append("CRN \(crn)") }
                 notes.append(contentsOf: instructors)
 
@@ -334,47 +336,9 @@ enum StudentPortalScheduleParser {
 
     private static func parseInstructorLine(_ line: String) -> String? {
         if looksLikeMeetingDetails(line) { return nil }
-        var t = line
-        if t.lowercased().hasPrefix("instructor:") {
-            t = String(t.dropFirst("Instructor:".count))
-        }
-        t = stripMailto(t.trimmingCharacters(in: .whitespaces))
-        t = t.replacingOccurrences(of: "(Primary)", with: "", options: .caseInsensitive)
-        t = t.replacingOccurrences(of: "(Secondary)", with: "", options: .caseInsensitive)
-        t = t.replacingOccurrences(of: "()", with: "")
-            .trimmingCharacters(in: .whitespacesAndNewlines)
-        guard t.contains(","), t.contains("|") == false else { return nil }
-        if t.lowercased().hasPrefix("crn") { return nil }
-        if parseDateRange(t) != nil { return nil }
-        if parseTimeRange(t) != nil { return nil }
-
-        let bits = t.split(separator: ",", maxSplits: 1)
-        guard bits.count == 2 else { return nil }
-        let last = bits[0].trimmingCharacters(in: .whitespaces)
-        let rest = bits[1].trimmingCharacters(in: .whitespaces)
-        guard last.isEmpty == false, rest.isEmpty == false else { return nil }
-        let first = rest.split { $0 == " " || $0 == "(" }.first.map(String.init) ?? rest
-        return "\(last), \(first)"
-    }
-
-    private static func stripMailto(_ s: String) -> String {
-        var out = s
-        let patterns = [
-            #"\(mailto:[^)]*\)"#,
-            #"mailto:[^\s)]+"#,
-        ]
-        for pattern in patterns {
-            while let range = out.range(of: pattern, options: .regularExpression) {
-                out.removeSubrange(range)
-            }
-        }
-        if let m = firstMatch(markdownMailto, out), m.numberOfRanges >= 2,
-           let full = Range(m.range(at: 0), in: out),
-           let name = Range(m.range(at: 1), in: out)
-        {
-            out.replaceSubrange(full, with: String(out[name]))
-        }
-        return out.replacingOccurrences(of: "  ", with: " ")
+        if parseDateRange(line) != nil { return nil }
+        if parseTimeRange(line) != nil { return nil }
+        return ScheduleNoteFormatting.instructorDisplay(from: line)
     }
 
     private static func applyMeetingDetails(_ line: String, to meeting: inout MeetingDraft) {
@@ -501,10 +465,6 @@ enum StudentPortalScheduleParser {
     )
     private static let crnPattern = try! NSRegularExpression(
         pattern: #"CRN\s*:?\s*(\d+)"#,
-        options: .caseInsensitive
-    )
-    private static let markdownMailto = try! NSRegularExpression(
-        pattern: #"\[([^\]]+)\]\(mailto:[^)]+\)"#,
         options: .caseInsensitive
     )
 

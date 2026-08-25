@@ -13,6 +13,7 @@ targets:
           - Assets.xcassets
     resources:
       - SemesterSchedule/Assets.xcassets
+      - SemesterSchedule/PrivacyInfo.xcprivacy
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.alexhirsch.semesterschedule
@@ -27,6 +28,8 @@ targets:
         INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.education
         INFOPLIST_KEY_NSCalendarsUsageDescription: Schedule adds class meetings you approve to your calendar.
         INFOPLIST_KEY_NSCalendarsFullAccessUsageDescription: Schedule needs calendar access to save the meetings you review. Nothing is saved until you tap Add to Calendar.
+        MARKETING_VERSION: 1.0.0
+        CURRENT_PROJECT_VERSION: 1
         TARGETED_DEVICE_FAMILY: "1,2"
         DEVELOPMENT_TEAM: SPDTT4AL46
         CODE_SIGN_STYLE: Automatic
