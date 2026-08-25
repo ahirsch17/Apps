@@ -19,6 +19,15 @@ struct PowerView: View {
             case .shutdown: return "Shut down PC?"
             }
         }
+
+        var message: String {
+            switch self {
+            case .sleep:
+                return "Sleep is best for waking from your phone later."
+            case .shutdown:
+                return "Shutdown takes 2–3 minutes to wake. Prefer Sleep when you want phone control back quickly."
+            }
+        }
     }
 
     var body: some View {
@@ -43,7 +52,7 @@ struct PowerView: View {
                         VStack(spacing: 4) {
                             Text(isWaking ? "Waking PC…" : "Wake PC")
                                 .font(.title3.weight(.semibold))
-                            Text("Wake & sign in")
+                            Text("Wake-on-LAN + sign in")
                                 .font(.caption)
                                 .foregroundStyle(AppTheme.textSecondary)
                         }
@@ -69,6 +78,10 @@ struct PowerView: View {
                         }
                         powerTile("Off", icon: "power", destructive: true) { confirmAction = .shutdown }
                     }
+
+                    Text("Tip: use Sleep instead of Off if you want to wake the PC from this app.")
+                        .font(.caption2)
+                        .foregroundStyle(AppTheme.textTertiary)
                 }
                 .padding(16)
                 .cardStyle()
@@ -81,14 +94,14 @@ struct PowerView: View {
             .onChange(of: connection.wakeRoutineMessage) { _, message in
                 guard !message.isEmpty else { return }
                 wakeMessage = message
-                if message == "Signed in" || message.contains("failed") {
+                if message == "Signed in" || message.contains("failed") || message.contains("signed in") {
                     isWaking = false
                 }
             }
             .alert(item: $confirmAction) { action in
                 Alert(
                     title: Text(action.title),
-                    message: Text(""),
+                    message: Text(action.message),
                     primaryButton: .destructive(Text("Confirm")) {
                         switch action {
                         case .sleep:
@@ -137,7 +150,7 @@ struct PowerView: View {
                 pcHost: settings.host,
                 broadcastHost: settings.wolBroadcast
             )
-            wakeMessage = "Wake signal sent — waiting for PC to respond…"
+            wakeMessage = "Wake signal sent — PC may take 2–3 min to boot after shutdown…"
             Haptics.medium(enabled: settings.hapticsEnabled)
         } catch {
             wakeMessage = error.localizedDescription
@@ -145,10 +158,10 @@ struct PowerView: View {
             return
         }
 
-        let connected = await connection.waitForConnection(timeout: 120, settings: settings)
+        let connected = await connection.waitForConnection(timeout: 300, settings: settings)
         guard connected else {
             wakeMessage = """
-            PC did not respond. Sleep the PC instead of shutting down, run enable-wol.bat on the PC, \
+            PC did not respond in time. Use Sleep instead of Off for faster wake, run enable-wol.bat on the PC, \
             and stay on the same Wi‑Fi.
             """
             isWaking = false
@@ -158,7 +171,7 @@ struct PowerView: View {
         wakeMessage = "PC online — signing in…"
         connection.send(command: RemoteCommand.wakeRoutine())
 
-        let signedIn = await waitForWakeRoutineCompletion(timeout: 90)
+        let signedIn = await waitForWakeRoutineCompletion(timeout: 120)
         if !signedIn, wakeMessage == "PC online — signing in…" {
             wakeMessage = "Sign-in timed out — tap Wake PC to retry"
             isWaking = false
@@ -173,6 +186,10 @@ struct PowerView: View {
             }
             if connection.wakeRoutineMessage.contains("failed") {
                 return false
+            }
+            if connection.wakeRoutineMessage.contains("already be signed in") {
+                wakeMessage = "PC is awake"
+                return true
             }
             try? await Task.sleep(nanoseconds: 300_000_000)
         }

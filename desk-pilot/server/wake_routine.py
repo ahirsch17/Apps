@@ -59,7 +59,7 @@ def is_sign_in_screen() -> bool:
                 return True
         return False
     except Exception:
-        return True
+        return False
 
 
 def select_user_profile(user_name: str, log: LogFn = print) -> bool:

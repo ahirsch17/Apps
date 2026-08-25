@@ -69,10 +69,11 @@ struct ConnectionBanner: View {
     }
 
     private var isAnimating: Bool {
-        switch connection.state {
-        case .connecting, .pairing: return true
-        default: return false
+        if connection.isBusyConnecting { return true }
+        if case .error(let message) = connection.state, message.contains("Reconnecting") {
+            return true
         }
+        return false
     }
 
     private var statusBorderColor: Color {
@@ -104,7 +105,9 @@ struct ConnectionBanner: View {
         case .pairing: return "Pairing…"
         case .connecting: return "Connecting…"
         case .disconnected: return "Not connected"
-        case .error(let message): return message
+        case .error(let message):
+            if message.contains("Reconnecting") { return "Reconnecting…" }
+            return message
         }
     }
 }

@@ -80,6 +80,7 @@ struct TypingOverlay: View {
         fieldFocused = false
         isVisible = false
         connection.setKeyboardOpen(false)
+        connection.recordKeyboardDismissed()
         clearLocalBuffer()
     }
 

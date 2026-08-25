@@ -40,14 +40,11 @@ struct ContentView: View {
             TypingOverlay()
         }
         .task {
-            await connection.bootstrap(settings: settings)
-        }
-        .onChange(of: connection.keyboardFocusRequestID) { _, _ in
-            selectedTab = 0
+            await connection.verifyOrReconnect(settings: settings)
         }
         .onChange(of: scenePhase) { _, phase in
-            if phase == .active, !connection.isConnected {
-                Task { await connection.bootstrap(settings: settings, force: false) }
+            if phase == .active {
+                Task { await connection.verifyOrReconnect(settings: settings) }
             }
         }
     }

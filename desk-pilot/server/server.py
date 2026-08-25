@@ -17,7 +17,7 @@ from pynput.keyboard import Controller as KeyboardController, Key
 from pynput.mouse import Button, Controller as MouseController
 from text_focus import describe_focus_target, pc_text_field_is_focused
 from app_launcher import launch_app
-from wake_routine import run_wake_routine
+from wake_routine import is_sign_in_screen, run_wake_routine
 
 HOST = "0.0.0.0"
 PORT = 8765
@@ -32,6 +32,8 @@ MAC_ADDRESS = str(CONFIG.get("mac_address", ""))
 AUTHED_CLIENTS: set[Any] = set()
 _wake_task: asyncio.Task | None = None
 _focus_task: asyncio.Task | None = None
+_last_focus_sent_at: float = 0.0
+FOCUS_COOLDOWN_SECONDS = 3.0
 _scroll_accumulator = [0.0, 0.0]
 
 KEY_MAP: dict[str, Any] = {
@@ -218,17 +220,23 @@ async def send_json(websocket: websockets.WebSocketServerProtocol, payload: dict
 
 
 async def maybe_notify_text_focus(websocket: websockets.WebSocketServerProtocol) -> None:
-    global _focus_task
+    global _focus_task, _last_focus_sent_at
     if _focus_task and not _focus_task.done():
         _focus_task.cancel()
 
     async def _check() -> None:
-        for delay in (0.2, 0.45, 0.75):
+        global _last_focus_sent_at
+        for delay in (0.35, 0.7):
             await asyncio.sleep(delay)
-            if pc_text_field_is_focused():
-                log_line(f"Text focus detected ({describe_focus_target()})")
-                await send_json(websocket, {"type": "focus_text"})
+            if not pc_text_field_is_focused():
+                continue
+            now = asyncio.get_running_loop().time()
+            if now - _last_focus_sent_at < FOCUS_COOLDOWN_SECONDS:
                 return
+            _last_focus_sent_at = now
+            log_line(f"Text focus detected ({describe_focus_target()})")
+            await send_json(websocket, {"type": "focus_text"})
+            return
 
     _focus_task = asyncio.create_task(_check())
 
@@ -242,6 +250,7 @@ def wake_settings() -> tuple[str, str]:
 async def handle_wake_routine(websocket: websockets.WebSocketServerProtocol) -> None:
     global _wake_task
     if _wake_task and not _wake_task.done():
+        await send_json(websocket, {"type": "wake_routine_status", "status": "started"})
         return
 
     user, pin = wake_settings()
@@ -259,13 +268,31 @@ async def handle_wake_routine(websocket: websockets.WebSocketServerProtocol) -> 
             log_line(message)
 
         try:
-            await asyncio.to_thread(
-                run_wake_routine,
-                windows_user=user,
-                windows_pin=pin,
-                log=log,
-            )
-            await send_json(websocket, {"type": "wake_routine_status", "status": "done"})
+            signed_in = False
+            for attempt in range(1, 9):
+                if is_sign_in_screen():
+                    await asyncio.to_thread(
+                        run_wake_routine,
+                        windows_user=user,
+                        windows_pin=pin,
+                        log=log,
+                    )
+                    signed_in = True
+                    break
+                log(f"Waiting for sign-in screen ({attempt}/8)…")
+                await asyncio.sleep(15)
+
+            if signed_in:
+                await send_json(websocket, {"type": "wake_routine_status", "status": "done"})
+            else:
+                await send_json(
+                    websocket,
+                    {
+                        "type": "wake_routine_status",
+                        "status": "done",
+                        "message": "PC may already be signed in",
+                    },
+                )
         except Exception as exc:
             await send_json(
                 websocket,

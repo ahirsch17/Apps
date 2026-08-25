@@ -26,6 +26,10 @@ final class ConnectionManager: ObservableObject {
     private var reconnectWorkItem: DispatchWorkItem?
     private var reconnectAttempt = 0
     private var bootstrapTask: Task<Void, Never>?
+    private var authWaitContinuation: CheckedContinuation<Bool, Never>?
+    private var pingWaitContinuation: CheckedContinuation<Bool, Never>?
+    private var lastKeyboardDismissedAt: Date?
+    private weak var settingsStore: SettingsStore?
 
     private var currentHost: String = ""
     private var currentPort: Int = 8765
@@ -51,12 +55,30 @@ final class ConnectionManager: ObservableObject {
         keyboardIsOpen = isOpen
     }
 
+    func recordKeyboardDismissed() {
+        lastKeyboardDismissedAt = Date()
+    }
+
+    func verifyOrReconnect(settings: SettingsStore) async {
+        settingsStore = settings
+        if isConnected {
+            let alive = await sendPingAndWait(timeout: 1.0)
+            if alive { return }
+            teardownSockets()
+        }
+
+        if settings.isPaired, !isConnected, !isBusyConnecting {
+            state = .connecting
+        }
+        await bootstrap(settings: settings, force: false)
+    }
+
     func waitForConnection(timeout: TimeInterval, settings: SettingsStore) async -> Bool {
         let deadline = Date().addingTimeInterval(timeout)
         while Date() < deadline {
             if isConnected { return true }
             await bootstrap(settings: settings, force: false)
-            try? await Task.sleep(nanoseconds: 4_000_000_000)
+            try? await Task.sleep(nanoseconds: 1_000_000_000)
         }
         return isConnected
     }
@@ -134,7 +156,7 @@ final class ConnectionManager: ObservableObject {
 
         do {
             try await send(text: text)
-            let response = try await receiveOnce(timeout: 8)
+            let response = try await receiveOnce(timeout: 5)
             guard let json = try? JSONSerialization.jsonObject(with: Data(response.utf8)) as? [String: Any],
                   let type = json["type"] as? String else {
                 state = .error("Invalid server response")
@@ -181,6 +203,7 @@ final class ConnectionManager: ObservableObject {
     }
 
     func bootstrap(settings: SettingsStore, force: Bool = true) async {
+        settingsStore = settings
         if !force, isConnected { return }
 
         if let existing = bootstrapTask {
@@ -208,7 +231,16 @@ final class ConnectionManager: ObservableObject {
             }
             if case .error(let message) = state, message.contains("Session expired") {
                 settings.authToken = nil
+            } else if !isConnected {
+                scheduleReconnect()
+                return
             }
+        }
+
+        guard !settings.isPaired else {
+            if case .error = state { return }
+            state = .error("Tap banner to retry")
+            return
         }
 
         state = .pairing
@@ -230,20 +262,54 @@ final class ConnectionManager: ObservableObject {
     }
 
     private func connectWithAuth(host: String, port: Int, token: String) async -> Bool {
-        connect(host: host, port: port, token: token)
+        for attempt in 0..<2 {
+            authWaitContinuation = nil
+            connect(host: host, port: port, token: token)
 
-        let deadline = Date().addingTimeInterval(8)
-        while Date() < deadline {
-            if isConnected { return true }
-            if case .error = state { return false }
-            try? await Task.sleep(nanoseconds: 200_000_000)
+            let authenticated = await withCheckedContinuation { (continuation: CheckedContinuation<Bool, Never>) in
+                authWaitContinuation = continuation
+                Task { @MainActor in
+                    try? await Task.sleep(nanoseconds: 2_500_000_000)
+                    if let pending = self.authWaitContinuation {
+                        self.authWaitContinuation = nil
+                        pending.resume(returning: false)
+                    }
+                }
+            }
+
+            if authenticated { return true }
+            if case .error(let message) = state, message.contains("Session expired") {
+                return false
+            }
+
+            teardownSockets()
+            if attempt == 0 {
+                try? await Task.sleep(nanoseconds: 300_000_000)
+            }
         }
 
         if case .connecting = state {
-            state = .error("PC not responding — tap banner to retry")
-            teardownSockets()
+            state = .error("Reconnecting…")
+            teardownSockets(keepReconnectPlan: true)
+            scheduleReconnect()
         }
         return false
+    }
+
+    private func sendPingAndWait(timeout: TimeInterval) async -> Bool {
+        guard webSocket != nil else { return false }
+
+        return await withCheckedContinuation { (continuation: CheckedContinuation<Bool, Never>) in
+            pingWaitContinuation = continuation
+            send(command: RemoteCommand.ping())
+            Task { @MainActor in
+                try? await Task.sleep(nanoseconds: UInt64(timeout * 1_000_000_000))
+                if let pending = self.pingWaitContinuation {
+                    self.pingWaitContinuation = nil
+                    pending.resume(returning: false)
+                }
+            }
+        }
     }
 
     private func sendAuthIfNeeded() {
@@ -341,10 +407,16 @@ final class ConnectionManager: ObservableObject {
             state = .connected
             reconnectAttempt = 0
             cancelReconnect()
+            authWaitContinuation?.resume(returning: true)
+            authWaitContinuation = nil
         case "auth_fail":
             state = .error("Session expired — tap banner to retry")
             teardownSockets()
+            authWaitContinuation?.resume(returning: false)
+            authWaitContinuation = nil
         case "pong":
+            pingWaitContinuation?.resume(returning: true)
+            pingWaitContinuation = nil
             if case .connecting = state {
                 state = .connected
                 reconnectAttempt = 0
@@ -356,7 +428,8 @@ final class ConnectionManager: ObservableObject {
             case "started":
                 wakeRoutineMessage = "Signing in…"
             case "done":
-                wakeRoutineMessage = "Signed in"
+                let detail = json["message"] as? String ?? ""
+                wakeRoutineMessage = detail.isEmpty ? "Signed in" : detail
             case "error":
                 wakeRoutineMessage = json["message"] as? String ?? "Wake routine failed"
             default:
@@ -370,9 +443,12 @@ final class ConnectionManager: ObservableObject {
                 appLaunchMessage = json["message"] as? String ?? "Could not open app"
             }
         case "focus_text":
-            if !keyboardIsOpen {
-                keyboardFocusRequestID += 1
+            if keyboardIsOpen { return }
+            if let dismissedAt = lastKeyboardDismissedAt,
+               Date().timeIntervalSince(dismissedAt) < 3 {
+                return
             }
+            keyboardFocusRequestID += 1
         case "error":
             let message = json["message"] as? String ?? "Server error"
             state = .error(message)
@@ -390,18 +466,19 @@ final class ConnectionManager: ObservableObject {
         cancelReconnect()
         guard !currentHost.isEmpty, let token = authToken, !token.isEmpty else { return }
 
-        let delays: [TimeInterval] = [3, 5, 10, 15, 30]
+        let delays: [TimeInterval] = [0, 0.5, 1, 2, 5, 10]
         let delay = delays[min(reconnectAttempt, delays.count - 1)]
         reconnectAttempt += 1
 
         let work = DispatchWorkItem { [weak self] in
             Task { @MainActor in
                 guard let self, !self.isConnected else { return }
-                self.connect(host: self.currentHost, port: self.currentPort, token: token)
-                try? await Task.sleep(nanoseconds: 4_000_000_000)
-                if !self.isConnected {
-                    self.scheduleReconnect()
+                if let settings = self.settingsStore {
+                    await self.bootstrap(settings: settings, force: false)
+                    return
                 }
+                self.state = .connecting
+                self.connect(host: self.currentHost, port: self.currentPort, token: token)
             }
         }
         reconnectWorkItem = work

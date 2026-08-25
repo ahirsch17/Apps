@@ -76,14 +76,21 @@ function Register-DeskPilotTaskFromXml {
 $logonTrigger = @'
     <LogonTrigger>
       <Enabled>true</Enabled>
-      <Delay>PT20S</Delay>
+      <Delay>PT10S</Delay>
     </LogonTrigger>
 '@
 
 $bootTrigger = @'
     <BootTrigger>
       <Enabled>true</Enabled>
-      <Delay>PT90S</Delay>
+      <Delay>PT45S</Delay>
+    </BootTrigger>
+'@
+
+$bootServerTrigger = @'
+    <BootTrigger>
+      <Enabled>true</Enabled>
+      <Delay>PT60S</Delay>
     </BootTrigger>
 '@
 
@@ -101,6 +108,10 @@ Write-Host ""
 
 Register-DeskPilotTaskFromXml -Name "DeskPilot Server" -Xml (
     New-DeskPilotTaskXml -Id "Server" -Description "Start DeskPilot WebSocket server at login" -Arguments $EnsureArgs -TriggersXml $logonTrigger
+)
+
+Register-DeskPilotTaskFromXml -Name "DeskPilot Server Boot" -Xml (
+    New-DeskPilotTaskXml -Id "Server Boot" -Description "Start DeskPilot server after cold boot" -Arguments $EnsureArgs -TriggersXml $bootServerTrigger
 )
 
 Register-DeskPilotTaskFromXml -Name "DeskPilot Server Resume" -Xml (

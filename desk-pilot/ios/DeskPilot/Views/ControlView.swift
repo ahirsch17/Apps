@@ -28,7 +28,7 @@ struct ControlView: View {
                 .buttonStyle(PrimaryButtonStyle(isActive: connection.keyboardIsOpen))
                 .disabled(!connection.isConnected)
 
-                Text("Click a search field on your PC — keyboard opens automatically, or tap above.")
+                Text("Tap Keyboard above, or click a text field on your PC.")
                     .font(.caption2)
                     .foregroundStyle(AppTheme.textTertiary)
                     .multilineTextAlignment(.center)
