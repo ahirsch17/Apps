@@ -28,7 +28,5 @@ yarn-error.*
 .DS_Store
 *.pem
 
-# SamePath was consolidated into Between/ (archived on GitHub as ahirsch17/SamePath)
-
-# Local trip photo scratch. Live shots live in trips/<slug>/photos/
+# Local photo scratch
 trip-assets/
