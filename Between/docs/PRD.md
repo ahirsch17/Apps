@@ -1,89 +1,120 @@
-# Between — Product Requirements (canonical)
+# Between product requirements
 
-**Last updated:** August 2026  
+Last updated: September 2026
 
-This file is the single PRD pointer inside the app repo. Narrative and fundraising story live in [`Between/Between/docs/PITCH_DECK.md`](../Between/docs/PITCH_DECK.md) and [`docs/VT_PITCH_DECK.md`](VT_PITCH_DECK.md). Execution checklist: [`docs/PRODUCT_MASTER_PLAN.md`](PRODUCT_MASTER_PLAN.md). Technical shape: [`DATA_MODEL.md`](DATA_MODEL.md), [`SERVER_ARCHITECTURE.md`](SERVER_ARCHITECTURE.md).
+Campus participation app: one place to see what is happening at VT and join without schedule matching or class data.
 
-The old standalone repo `ahirsch17/BetweenPRD` (LaTeX, July 2026) is **retired** — it described an earlier UI (heatmap / neon / three-tab prototype) that we replaced with the current minimal overlap-first home.
+## Problem
 
----
+Campus life is scattered across email, Instagram, GroupMe, posters, and portals. Showing up alone feels socially risky. Free-time and class-overlap tools go stale after the first couple of weeks, and they depend on protected academic data that is hard to get approved.
 
-## One-line
+## Solution
 
-**Schedule-native campus app:** see when friends are free between classes, discover class overlap, and opt into campus events — privacy-first, no public feed.
+Make events easy to find and low-pressure to track. Official events, clubs, sports, student pop-ups, and local happenings share one feed. Interest is private by default.
 
-## Product principles
+The university is the primary customer. Students are users. Without institutional seeding (major events and club onboarding before move-in), the feed dies.
 
-1. **Schedule-centered** — enrollments and free blocks drive the experience.
-2. **Privacy-first** — share overlap and free/busy by friend; minimization by default.
-3. **Low friction** — one screen answers “who can I see now?”; deeper flows are optional.
-4. **Real-time relevance** — “now” and “later today” beat all-day density.
+## Principles
+
+1. Engagement over academics. No course data, SIS, or free-time matching.
+2. Low embarrassment. Private interest by default; soft cues like "1 spot left" instead of newcomer labels.
+3. Value for tapping. "Keep me posted" unlocks updates and alerts, not a public commitment.
+4. Unified feed with clear category labels.
+5. Fast, mobile-native UX.
+6. Institution-ready analytics (for example QR check-in) without making students feel watched.
+
+## Deprecated
+
+| Removed | Why |
+|---------|-----|
+| Course ingestion / CRN lookup | Protected data; weak long-term value |
+| Schedule / free-block overlap | Stale after week ~2 |
+| Class-friend discovery via course hashes | Academic infrastructure, not engagement |
+| Public Interested / Going lists | Lowers tap rates |
+
+Legacy schedule code may still exist in the tree. Treat it as dead product surface; do not extend it.
 
 ## North star
 
-**Weekly coordinated meetups per active user (WCM/AU)** — accepted/joined in-person coordination that happened in the intended time window, per weekly active user.
+Weekly event engagements per active user (keep-me-posted taps, open-spot claims, check-ins, attributed attendance).
 
-### Pilot KPIs (first 90 days — targets from legacy PRD, still useful for VT pilot)
+## Target tabs
 
-| Metric | Target |
-|--------|--------|
-| Activation (verify + schedule + ≥2 connections) | ≥ 45% |
-| WAU/MAU | ≥ 0.45 |
-| Time to first meaningful overlap / plan | median < 24h after onboarding |
-| D30 retention (activated) | ≥ 25% |
-| Weekly class-connection views (WAU) | ≥ 40% |
+| Tab | Job |
+|-----|-----|
+| For You | Personalized + trending + happening soon |
+| Discover | Categories and search |
+| Post | Club events or moderated student pop-ups |
+| My Week | Private tracked events and reminders |
+| Friends | Lightweight social graph (opt-in), not chat-as-product |
 
-Adjust with the institution during MOU; measure with server analytics when deployed.
+### Event categories
 
-## MVP scope (current build vs planned)
+1. Official university events
+2. Clubs and student orgs
+3. Sports and athletics (including IM / Rec)
+4. Campus services
+5. Student pop-ups (moderated)
+6. Community and local businesses (separated from official)
 
-| Capability | Status in repo |
-|------------|----------------|
-| Free-time overlap with friends | Shipped (local seed + `/v1` API) |
-| Class same-course / different-section matches | Shipped (`ClassConnection`, course lookup) |
-| Friend graph (requests, accept, suggestions) | Shipped |
-| Contact-based suggestions | Shipped (matcher + simulated contacts fixture) |
-| Activity modes + “available to hang” | Shipped |
-| Campus events + interests onboarding | Shipped |
-| Partner / newcomer event matching | Shipped (mutual opt-in gate) |
-| Course hash upload (privacy-preserving discovery) | Shipped (client hash, server match) |
-| VT SSO + consent | Demo (domain check + consent UI; real OIDC planned) |
-| SIS schedule import | Planned (manual/seed today) |
-| Push notifications (smart, capped) | Planned |
-| Join / Maybe / Pass on shared **activities** | Partial (plans in model; not full UI loop) |
+### Copy rules
 
-## User stories (still valid)
+- Prefer **Keep me posted** / **Follow updates**. Avoid public **Going**.
+- Show counts by default; names only with explicit opt-in.
+- Soft cues: open spots, rides, drop-in language.
+- No guilt copy, newcomer badges, or schedule exposure.
 
-- As a student, I want my schedule represented once so the app knows when I am free.
-- As a privacy-conscious user, I want to control overlap visibility per friend.
-- As a student between classes, I want to see who is free now or later without a group chat.
-- As a student in a large lecture, I want to know friends in my course or section.
-- As a student, I want event interest and optional partner matching without exposing my whole schedule.
+## Differentiator features
 
-## Functional requirements (traceability)
+| Feature | Student value | Admin value |
+|---------|---------------|-------------|
+| Private interest + turnout signals | Social safety | Engagement analytics |
+| Student pop-ups + moderation | Informal layer stays alive | Campus vitality with safety |
+| Open spots | Join with cover | Higher turnout |
+| Rideboard | Off-campus without awkward asks | Trip participation |
+| Local business category | Trivia, specials, live music | Town-gown life (separated) |
+| QR check-in | Fast entry | Attendance metrics |
 
-| ID | Requirement | Notes |
-|----|-------------|--------|
-| FR-1 | Verified campus identity before social features | Demo: `@vt.edu` + roster; prod: OIDC |
-| FR-2 | Schedule engine: free blocks, overlaps, class relationships | `ScheduleEngine`, `DashboardBuilder` |
-| FR-2a | Enrollment freshness / last sync visible | Dashboard `syncTimestamp`; refresh in app |
-| FR-3 | Matching respects privacy prefs | Per-friend share overlap; hash-based discovery |
-| FR-4 | Activity / plan lifecycle | Backend `Plan`; UI lightweight |
-| FR-5 | Targeted notifications | Not implemented |
+## Auth and profiles
 
-## Privacy model (institution-facing)
+1. Enter `@vt.edu` email
+2. Verification code
+3. Password + minimal profile (name, year, optional bio)
 
-- Schedule import only after explicit consent; revocation must be supported in production.
-- Default: friends-only; overlap windows — not full catalog broadcast to strangers.
-- Course discovery: prefer hashed canonical course IDs where possible.
-- Align storage and subprocessors with school policy and FERPA guidance (see consent copy in app — keep aligned with actual deployment).
+No academic data. Event visibility is opt-in.
 
-## Out of scope (MVP)
+## MVP status
 
-- Public feed, follower graphs, creator metrics.
-- Always-on precise GPS.
-- Full replacement for campus-wide event calendars.
+| Capability | Status |
+|------------|--------|
+| VT email auth (demo code flow) | Partial |
+| Unified event feed + categories | Partial |
+| Event detail + private keep-me-posted | In progress / rebrand |
+| Interests onboarding | Shipped (retarget to engagement) |
+| Open spots | Not built (P0) |
+| Rideboard | Not built (P0) |
+| Student pop-up create + moderation | Not built (P0) |
+| Local business category | Not built (P1) |
+| QR check-in + admin analytics | Not built (P1) |
+| Friend graph | Shipped (keep lightweight) |
+| Course / schedule / free-time stack | Deprecated |
 
----
+## Privacy
 
-For deck slides and VT-specific pitch, use **`Between/Between/docs/PITCH_DECK.md`**, not this file alone.
+- No SIS, rosters, or course schedules
+- Interest and attendance anonymous by default
+- Location only if event-tied; never always-on tracking
+- Student pop-ups need moderation and a report path
+
+## Near-term out of scope
+
+- Class schedules, CRN tools, free-time overlap
+- Public follower graphs
+- Always-on precise GPS
+- Replacing Banner or other systems of record
+
+## Related docs
+
+- [Data model](DATA_MODEL.md)
+- [Server architecture](SERVER_ARCHITECTURE.md)
+- [Testing](TESTING.md)

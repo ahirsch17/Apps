@@ -1,92 +1,65 @@
 # Between
 
-Between helps college students find shared free time and class overlap with people they already know — privacy-first, no campus-wide feed.
+iOS app for discovering campus events and deciding what to show up to, without schedule matching or class data.
 
-**Stack:** SwiftUI · pluggable backend (local seed demo → deployed API)
+Students see official events, clubs, IM sports, student pop-ups, and local happenings in one feed. Interest is private by default ("keep me posted") so joining feels low pressure.
 
-## Run in Xcode
+**Stack:** SwiftUI, pluggable backend (bundled seed data for demo, or a deployed HTTP API)
 
-1. Open `Between.xcodeproj` on your Mac.
-2. Select the **Between** scheme → Run on Simulator or iPhone.
-3. **Sign in with Virginia Tech** → `alex.hirsch@vt.edu` (demo SSO — no password).
+## Run
 
-Works offline in demo mode (bundled seed data).
+1. Open `Between.xcodeproj` in Xcode.
+2. Select the Between scheme and run on a simulator or iPhone.
+3. Sign in with a `@vt.edu` demo email (for example `alex.hirsch@vt.edu`).
 
-## Architecture (swap backend in one place)
+Demo mode works offline using bundled seed data.
+
+## Architecture
 
 ```
-Views  →  AppViewModel  →  BetweenBackendServicing (protocol)
-                                    ↑
-                    ┌───────────────┴───────────────┐
-            LocalBackendService          RemoteBackendService
-            (seed_data.json)             (HTTPS /v1/…)
-                    ↑                           ↑
-            BackendServiceFactory ← BackendConfiguration.mode
+Views  ->  AppViewModel  ->  BetweenBackendServicing
+                                |
+                 +--------------+--------------+
+                 |                             |
+         LocalBackendService          RemoteBackendService
+         (seed_data.json)             (HTTPS /v1/...)
 ```
 
 | File | Role |
 |------|------|
-| `BetweenBackendServicing.swift` | API contract — UI never imports local vs remote |
-| `BackendConfiguration.swift` | **Change `mode` here to go production** |
+| `BetweenBackendServicing.swift` | Backend contract used by the UI |
+| `BackendConfiguration.swift` | Switch local vs remote here |
 | `BackendServiceFactory.swift` | Wires the active backend |
-| `LocalBackendService.swift` | Demo: in-process store + `seed_data.json` |
-| `RemoteBackendService.swift` | Production: `BetweenAPIClient` + REST routes |
-| `DashboardBuilder.swift` | Domain logic (mirrors what the server should return) |
-| `ScheduleEngine.swift` | Overlap / timeline math (client-side for demo) |
+| `LocalBackendService.swift` | In-process demo store |
+| `RemoteBackendService.swift` | Production HTTP client |
 
-### Going live
+To point a release build at a live API, set `BackendConfiguration.mode` to `.remote` with your base URL.
 
-1. Deploy an API implementing routes in `BetweenAPIClient.swift` (`/v1/auth/login`, `/v1/me/dashboard`, etc.).
-2. In `BackendConfiguration.swift`:
+## Auth (demo)
 
-```swift
-static var mode: BackendMode = .remote(baseURL: URL(string: "https://your-api.com")!)
-```
+- VT email only (`@vt.edu`)
+- Activate with any seed email and code `482910`
+- Profiles stay minimal: name, year, optional bio
 
-3. Release build already defaults to remote — point the URL at your deployment.
-
-No ViewModel or View changes required.
-
-## Demo data
-
-Regenerate curated seed data (25 students, John + Rachel with designed overlaps):
+Regenerate seed data:
 
 ```bash
 python Scripts/generate_seed_data.py
 ```
 
-**Demo cast**
-
-| Person | Role |
-|--------|------|
-| Alex Hirsch | You — login account |
-| John Martinez | Close friend, same section CS 2114, Wed lunch overlap |
-| Rachel Chen | Close friend, different section CS 3214, partial overlap |
-| Others | Suggestions, classmates, pending requests |
-
-Contact-style suggestions show **“From your contacts”** when `ContactSuggestionMatcher` finds a phone match between `simulated_device_contacts.json` (demo address book) and student directory phones in `seed_data.json`. Production swaps in `SystemDeviceContactsProvider` (Contacts.framework) and the same matcher on the server.
-
-## Demo flow (Sunday)
-
-1. **Sign in with Virginia Tech** → `alex.hirsch@vt.edu` (SSO demo — password never entered in app)
-2. **Today** — main screen: schedule, free-time overlap bars, shared-free-time hero
-3. **Bell** — friend requests · **People icon** — network, star friends, add suggestions
-4. **Search** — course/CRN lookup · **People on class row** — friends in that section
-
-New users: **Activate account** → any seed `@vt.edu` email + code `482910`.
-
-## Repo layout
+## Layout
 
 | Path | Purpose |
 |------|---------|
 | `Between/` | SwiftUI iOS app |
-| `api/` | Postgres + VT import server (from earlier prototype) |
-| `docs/VT_INTEGRATION_GUIDE.md` | VT onboarding flow for production |
-| `Scripts/` | Seed data generator |
+| `api/` | Node API and tests |
+| `docs/PRD.md` | Product requirements |
+| `docs/` | Architecture and data model notes |
+| `Scripts/` | Seed generator and test helpers |
 
-**Note:** SamePath was the earlier React Native prototype for the same product. It is consolidated here — Between is the only app.
+## Docs
 
-## Related
-
-- Product requirements: [`Between/docs/PRD.md`](docs/PRD.md) (canonical; pitch narrative in `Between/Between/docs/PITCH_DECK.md`)
-- Repo: [`Apps`](https://github.com/ahirsch17/Apps) → `Between/`
+- [Product requirements](docs/PRD.md)
+- [Data model](docs/DATA_MODEL.md)
+- [Server architecture](docs/SERVER_ARCHITECTURE.md)
+- [API README](api/README.md)

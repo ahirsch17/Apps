@@ -1,22 +1,20 @@
 # SpeakFlow
 
-Practice speaking like a real **Call** or **Text** with a tutor character. Offline **Learn** path needs no API key.
+Practice a language in Call or Text mode with a tutor character. The Learn path works offline with no API key.
 
 ## Tabs
 
-| Tab | API key? | What it is |
-|-----|----------|------------|
-| **Call** | Yes | FaceTime-style. Hands-free — speak, pause, it sends. Blanked = skip. End → recap. |
-| **Text** | Yes | Same tutor, chat bubbles + corrections. |
-| **Learn** | No | Unit/lesson path (Duolingo-ish). Try first, fail, then reveal. |
-| **Profile** | — | Language, level, topic, optional OpenAI key. |
+| Tab | Needs API key? | Description |
+|-----|----------------|-------------|
+| Call | Yes | Hands-free voice turns. Pause to send. Blank utterance skips. End call for a recap. |
+| Text | Yes | Same tutor in chat, with corrections. |
+| Learn | No | Unit and lesson path. Attempt first, then reveal. |
+| Profile | No | Language, level, topic, optional OpenAI key. |
 
 ## Install
 
-Open `SpeakFlow.xcodeproj` → set Team → Run on iPhone (iOS 17+).
+Open `SpeakFlow.xcodeproj`, set your signing team, run on an iPhone (iOS 17+).
 
-## Icon
-
-Teal wave / speech-bubble mark in `Assets.xcassets/AppIcon`.
+## License
 
 MIT
