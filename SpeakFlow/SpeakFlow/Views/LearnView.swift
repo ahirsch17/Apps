@@ -202,26 +202,48 @@ struct LessonPlayerView: View {
             listening = false
             attempt = speech.transcript
             revealed = true
-            feedback = "Nice try. Compare & steal the phrase."
+            feedback = grade(attempt: attempt, target: prompt.target)
         } else {
             attempt = ""; feedback = nil; speech.transcript = ""
-            do {
-                // For lessons we still use a simple start; user taps stop (short drills)
-                try speech.startListening()
-                listening = true
-                // Disable auto-complete for short drills by clearing callback
-                speech.onUtteranceComplete = { text in
-                    Task { @MainActor in
-                        attempt = text
-                        listening = false
-                        revealed = true
-                        feedback = "Logged. Check the answer."
-                    }
+            speech.onUtteranceComplete = { text in
+                Task { @MainActor in
+                    attempt = text
+                    listening = false
+                    revealed = true
+                    feedback = grade(attempt: text, target: prompt.target)
                 }
+            }
+            do {
+                try speech.startListening(style: .drill)
+                listening = true
             } catch {
                 feedback = error.localizedDescription
             }
         }
+    }
+
+    private func grade(attempt: String, target: String) -> String {
+        let a = normalize(attempt)
+        let t = normalize(target)
+        guard !a.isEmpty else { return "Didn't catch that — try again, or Reveal." }
+        if a == t { return "Nailed it. Steal that phrasing." }
+        if t.contains(a) || a.contains(t) { return "Close — check the full phrase." }
+        let aw = Set(a.split(separator: " "))
+        let tw = Set(t.split(separator: " "))
+        let overlap = aw.intersection(tw).count
+        if overlap > 0, overlap * 2 >= tw.count { return "Got the idea. Compare & lock the words." }
+        return "Nice try. Compare & steal the phrase."
+    }
+
+    private func normalize(_ s: String) -> String {
+        let folded = s.lowercased().folding(options: .diacriticInsensitive, locale: .current)
+        let mapped = folded.map { ch -> Character in
+            if ch.isLetter || ch.isNumber || ch.isWhitespace { return ch }
+            return " "
+        }
+        return String(mapped)
+            .split(whereSeparator: \.isWhitespace)
+            .joined(separator: " ")
     }
 
     private func advance() {

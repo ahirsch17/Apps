@@ -7,9 +7,9 @@ struct CallHomeView: View {
 
     var body: some View {
         Group {
-            if conversation.phase == .report, conversation.report != nil {
+            if conversation.phase == .report, conversation.report != nil, conversation.mode == .call {
                 CallReportView()
-            } else if conversation.isInCall || conversation.phase == .connecting {
+            } else if conversation.isInCall || (conversation.mode == .call && conversation.phase == .connecting) {
                 ActiveCallView()
             } else {
                 preCall
@@ -99,6 +99,7 @@ struct CallHomeView: View {
 struct ActiveCallView: View {
     @EnvironmentObject private var settings: SettingsStore
     @EnvironmentObject private var conversation: ConversationController
+    @State private var showCoach = false
 
     var body: some View {
         ZStack {
@@ -120,17 +121,31 @@ struct ActiveCallView: View {
 
                 Spacer()
 
-                PulseAvatar(
-                    emoji: settings.character.emoji,
-                    color: settings.character.color,
-                    isActive: conversation.phase == .tutorSpeaking || conversation.phase == .listening,
-                    size: 160
-                )
+                Button {
+                    conversation.interruptTutor()
+                } label: {
+                    PulseAvatar(
+                        emoji: settings.character.emoji,
+                        color: settings.character.color,
+                        isActive: conversation.phase == .tutorSpeaking || conversation.phase == .listening,
+                        size: 160
+                    )
+                }
+                .buttonStyle(.plain)
+                .disabled(conversation.phase != .tutorSpeaking)
+                .accessibilityLabel(conversation.phase == .tutorSpeaking ? "Tap to jump in" : settings.character.name)
+
                 Text(settings.character.name)
                     .font(.system(.title, design: .rounded).weight(.bold))
                     .foregroundStyle(.white)
 
-                // Last tutor line
+                if conversation.phase == .tutorSpeaking {
+                    Text("Tap them to jump in")
+                        .font(.system(.caption, design: .rounded))
+                        .foregroundStyle(.white.opacity(0.45))
+                        .transition(.opacity)
+                }
+
                 if let last = conversation.messages.last(where: { $0.role == .tutor }) {
                     Text(last.text)
                         .font(.system(.title3, design: .rounded))
@@ -156,12 +171,28 @@ struct ActiveCallView: View {
                     ProgressView().tint(SF.mint)
                 }
 
-                // Latest correction peek
-                if let corr = conversation.messages.last(where: { !$0.corrections.isEmpty })?.corrections.first {
-                    Text("↳ \(corr.original) → \(corr.corrected)")
-                        .font(.system(.caption, design: .rounded).weight(.medium))
-                        .foregroundStyle(SF.coral)
-                        .padding(.horizontal, 20)
+                if !conversation.latestCorrections.isEmpty {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Try next time")
+                            .font(.system(.caption2, design: .rounded).weight(.bold))
+                            .foregroundStyle(SF.coral.opacity(0.9))
+                        ForEach(conversation.latestCorrections.prefix(2)) { c in
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("\(c.original) → \(c.corrected)")
+                                    .font(.system(.subheadline, design: .rounded).weight(.semibold))
+                                    .foregroundStyle(.white)
+                                Text(c.explanation)
+                                    .font(.system(.caption2, design: .rounded))
+                                    .foregroundStyle(.white.opacity(0.55))
+                            }
+                        }
+                    }
+                    .padding(14)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(.white.opacity(0.08))
+                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                    .padding(.horizontal, 24)
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
                 }
 
                 Spacer()
@@ -198,7 +229,54 @@ struct ActiveCallView: View {
                 }
                 .padding(.bottom, 36)
             }
+
+            if showCoach {
+                callCoach
+            }
         }
+        .animation(.easeOut(duration: 0.25), value: conversation.latestCorrections)
+        .animation(.easeOut(duration: 0.2), value: conversation.phase)
+        .onAppear {
+            if !settings.hasSeenCallCoach {
+                showCoach = true
+            }
+        }
+        .onChange(of: conversation.phase) { _, phase in
+            // Auto-dismiss coach once they reach their first listening turn.
+            if phase == .listening, showCoach {
+                dismissCoach()
+            }
+        }
+    }
+
+    private var callCoach: some View {
+        ZStack {
+            Color.black.opacity(0.55).ignoresSafeArea()
+                .onTapGesture { dismissCoach() }
+
+            VStack(spacing: 14) {
+                Text("Quick tip")
+                    .font(.system(.caption, design: .rounded).weight(.bold))
+                    .foregroundStyle(SF.mint)
+                Text("Talk naturally. When you pause, it sends.\nFrozen? Hit Blanked. Jump in anytime by tapping \(settings.character.name).")
+                    .font(.system(.body, design: .rounded))
+                    .foregroundStyle(.white)
+                    .multilineTextAlignment(.center)
+                Text("Tap anywhere")
+                    .font(.system(.caption2, design: .rounded))
+                    .foregroundStyle(.white.opacity(0.45))
+            }
+            .padding(24)
+            .background(.ultraThinMaterial)
+            .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+            .padding(.horizontal, 32)
+        }
+        .transition(.opacity)
+    }
+
+    private func dismissCoach() {
+        withAnimation(.easeOut(duration: 0.2)) { showCoach = false }
+        settings.hasSeenCallCoach = true
     }
 
     private var statusLabel: String {

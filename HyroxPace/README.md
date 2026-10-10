@@ -44,6 +44,8 @@ Apple Watch app that paces two athletes through a Hyrox race. One screen, one ta
 cd HyroxPace && xcodegen generate
 ```
 
-Open `HyroxPace.xcodeproj`, pick a watch simulator or device, run.
+After generating, set `GENERATE_INFOPLIST_FILE = NO` in the pbxproj (xcodegen flips it to YES).
 
-Requires watchOS 10+. Independent Watch app; no iPhone companion.
+Open `HyroxPace.xcodeproj`, pick the `HyroxPace` scheme and your iPhone, run. The watch app is embedded in the iPhone app; install it from the iPhone Watch app under Available Apps. The `HyroxPaceWatch` scheme runs directly on a watch or watch simulator.
+
+Requires iOS 17+ / watchOS 10+. The watch app runs independently once installed.

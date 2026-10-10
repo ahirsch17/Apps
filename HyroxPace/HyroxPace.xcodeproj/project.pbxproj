@@ -1,0 +1,471 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		13E10F38903C6F88D39ECFC0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3A18C06CABB710AA6F5673BE /* Assets.xcassets */; };
+		1706630329FBF052E451E13D /* RacePlan.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08C19A7A90199779727A21DD /* RacePlan.swift */; };
+		386C8FE855D7CC37698DD94E /* HyroxPaceApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E3ACB77CFB7D53540A89DC5 /* HyroxPaceApp.swift */; };
+		4A2E7114C374C32C1F53BC25 /* HyroxPaceiOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 707A19F5EB133956790C880D /* HyroxPaceiOSApp.swift */; };
+		79BF64EA2C34E8F6B8DDB748 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 065D4C7BB93DAD45385CFC77 /* Assets.xcassets */; };
+		902BE594E1B91DB1F1AC4438 /* RaceEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D9CFA27A68606A87A289309 /* RaceEngine.swift */; };
+		9E5CFFFB1981804555CBD7DD /* HyroxPaceWatch.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = EAC2352CE0B93A3906DD46B3 /* HyroxPaceWatch.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		9EE584A3AFB54AA76A3CF80D /* WorkoutKeepAlive.swift in Sources */ = {isa = PBXBuildFile; fileRef = D32795C3FED1F11C9B8EA14D /* WorkoutKeepAlive.swift */; };
+		CEFC7FA992E7A6035496D414 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A28BC539E2EF1DC98E102A10 /* ContentView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		3EF162CE4B176890A2918B39 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 044A677B41A69A788D528537 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 10B1708FBF85E9DEDB587414;
+			remoteInfo = HyroxPaceWatch;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		20860CD2108E689EB9E79EE3 /* Embed Watch Content */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
+			dstSubfolderSpec = 16;
+			files = (
+				9E5CFFFB1981804555CBD7DD /* HyroxPaceWatch.app in Embed Watch Content */,
+			);
+			name = "Embed Watch Content";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		044ACD82BB3B0532F47C091F /* HyroxPace.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HyroxPace.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		065D4C7BB93DAD45385CFC77 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		08C19A7A90199779727A21DD /* RacePlan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RacePlan.swift; sourceTree = "<group>"; };
+		0E3ACB77CFB7D53540A89DC5 /* HyroxPaceApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HyroxPaceApp.swift; sourceTree = "<group>"; };
+		2D9CFA27A68606A87A289309 /* RaceEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceEngine.swift; sourceTree = "<group>"; };
+		3A18C06CABB710AA6F5673BE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		707A19F5EB133956790C880D /* HyroxPaceiOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HyroxPaceiOSApp.swift; sourceTree = "<group>"; };
+		A28BC539E2EF1DC98E102A10 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		C0B0F6009751A21F1E4EA3F7 /* HyroxPace.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = HyroxPace.entitlements; sourceTree = "<group>"; };
+		D32795C3FED1F11C9B8EA14D /* WorkoutKeepAlive.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutKeepAlive.swift; sourceTree = "<group>"; };
+		EAC2352CE0B93A3906DD46B3 /* HyroxPaceWatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HyroxPaceWatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		2213CB93165AB45B3E07B483 /* HyroxPaceiOS */ = {
+			isa = PBXGroup;
+			children = (
+				065D4C7BB93DAD45385CFC77 /* Assets.xcassets */,
+				707A19F5EB133956790C880D /* HyroxPaceiOSApp.swift */,
+			);
+			path = HyroxPaceiOS;
+			sourceTree = "<group>";
+		};
+		7B66B4972E528E194B2555DF /* HyroxPace */ = {
+			isa = PBXGroup;
+			children = (
+				3A18C06CABB710AA6F5673BE /* Assets.xcassets */,
+				A28BC539E2EF1DC98E102A10 /* ContentView.swift */,
+				C0B0F6009751A21F1E4EA3F7 /* HyroxPace.entitlements */,
+				0E3ACB77CFB7D53540A89DC5 /* HyroxPaceApp.swift */,
+				2D9CFA27A68606A87A289309 /* RaceEngine.swift */,
+				08C19A7A90199779727A21DD /* RacePlan.swift */,
+				D32795C3FED1F11C9B8EA14D /* WorkoutKeepAlive.swift */,
+			);
+			path = HyroxPace;
+			sourceTree = "<group>";
+		};
+		8B4C849B60B45E3436378271 = {
+			isa = PBXGroup;
+			children = (
+				7B66B4972E528E194B2555DF /* HyroxPace */,
+				2213CB93165AB45B3E07B483 /* HyroxPaceiOS */,
+				8BA58C4B9B780D8DAF94586C /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		8BA58C4B9B780D8DAF94586C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				044ACD82BB3B0532F47C091F /* HyroxPace.app */,
+				EAC2352CE0B93A3906DD46B3 /* HyroxPaceWatch.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		0D764A31D47BEFF7B9CBE628 /* HyroxPace */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D75EE8F6D0F2D6A5395CDE78 /* Build configuration list for PBXNativeTarget "HyroxPace" */;
+			buildPhases = (
+				920E8111364A0B91A8FD7C08 /* Sources */,
+				B0ECCCA04100B7C70FE057F4 /* Resources */,
+				20860CD2108E689EB9E79EE3 /* Embed Watch Content */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				F9E97928FC13272381A07BFD /* PBXTargetDependency */,
+			);
+			name = HyroxPace;
+			packageProductDependencies = (
+			);
+			productName = HyroxPace;
+			productReference = 044ACD82BB3B0532F47C091F /* HyroxPace.app */;
+			productType = "com.apple.product-type.application";
+		};
+		10B1708FBF85E9DEDB587414 /* HyroxPaceWatch */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C9E97F490F04607C9812BAAC /* Build configuration list for PBXNativeTarget "HyroxPaceWatch" */;
+			buildPhases = (
+				12E69DF7FB132A426F1803B6 /* Sources */,
+				3D90012ADEE5B88545427045 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = HyroxPaceWatch;
+			packageProductDependencies = (
+			);
+			productName = HyroxPaceWatch;
+			productReference = EAC2352CE0B93A3906DD46B3 /* HyroxPaceWatch.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		044A677B41A69A788D528537 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 2660;
+				TargetAttributes = {
+					0D764A31D47BEFF7B9CBE628 = {
+						DevelopmentTeam = SPDTT4AL46;
+						ProvisioningStyle = Automatic;
+					};
+					10B1708FBF85E9DEDB587414 = {
+						DevelopmentTeam = SPDTT4AL46;
+						ProvisioningStyle = Automatic;
+						SystemCapabilities = "[\"com.apple.HealthKit\": [\"enabled\": 1]]";
+					};
+				};
+			};
+			buildConfigurationList = 7DE9B4E7CB5E9B93309AF7A4 /* Build configuration list for PBXProject "HyroxPace" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 8B4C849B60B45E3436378271;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 8BA58C4B9B780D8DAF94586C /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				0D764A31D47BEFF7B9CBE628 /* HyroxPace */,
+				10B1708FBF85E9DEDB587414 /* HyroxPaceWatch */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		3D90012ADEE5B88545427045 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				13E10F38903C6F88D39ECFC0 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B0ECCCA04100B7C70FE057F4 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				79BF64EA2C34E8F6B8DDB748 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		12E69DF7FB132A426F1803B6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CEFC7FA992E7A6035496D414 /* ContentView.swift in Sources */,
+				386C8FE855D7CC37698DD94E /* HyroxPaceApp.swift in Sources */,
+				902BE594E1B91DB1F1AC4438 /* RaceEngine.swift in Sources */,
+				1706630329FBF052E451E13D /* RacePlan.swift in Sources */,
+				9EE584A3AFB54AA76A3CF80D /* WorkoutKeepAlive.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		920E8111364A0B91A8FD7C08 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4A2E7114C374C32C1F53BC25 /* HyroxPaceiOSApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		F9E97928FC13272381A07BFD /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 10B1708FBF85E9DEDB587414 /* HyroxPaceWatch */;
+			targetProxy = 3EF162CE4B176890A2918B39 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		075577630E6DC5D54F799FC7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = HyroxPace/HyroxPace.entitlements;
+				DEVELOPMENT_TEAM = SPDTT4AL46;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = HyroxPace/Info.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = com.hirschengineering.hyroxpace.watch;
+				PRODUCT_NAME = HyroxPaceWatch;
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 9.0;
+			};
+			name = Release;
+		};
+		62EC5722249830C29D602B91 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = SPDTT4AL46;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = HyroxPaceiOS/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.hirschengineering.hyroxpace;
+				PRODUCT_NAME = HyroxPace;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		7205B1FABA9E629856B32EA2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = HyroxPace/HyroxPace.entitlements;
+				DEVELOPMENT_TEAM = SPDTT4AL46;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = HyroxPace/Info.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = com.hirschengineering.hyroxpace.watch;
+				PRODUCT_NAME = HyroxPaceWatch;
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 9.0;
+			};
+			name = Debug;
+		};
+		CF94E16474B668EDF663A3F7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = SPDTT4AL46;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = HyroxPaceiOS/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.hirschengineering.hyroxpace;
+				PRODUCT_NAME = HyroxPace;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		E9CEB7543975511B8977DEF5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = SPDTT4AL46;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				WATCHOS_DEPLOYMENT_TARGET = 9.0;
+			};
+			name = Debug;
+		};
+		EA1777A2A06676D4CF3C1FC2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = SPDTT4AL46;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				WATCHOS_DEPLOYMENT_TARGET = 9.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		7DE9B4E7CB5E9B93309AF7A4 /* Build configuration list for PBXProject "HyroxPace" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E9CEB7543975511B8977DEF5 /* Debug */,
+				EA1777A2A06676D4CF3C1FC2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		C9E97F490F04607C9812BAAC /* Build configuration list for PBXNativeTarget "HyroxPaceWatch" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7205B1FABA9E629856B32EA2 /* Debug */,
+				075577630E6DC5D54F799FC7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		D75EE8F6D0F2D6A5395CDE78 /* Build configuration list for PBXNativeTarget "HyroxPace" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				62EC5722249830C29D602B91 /* Debug */,
+				CF94E16474B668EDF663A3F7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 044A677B41A69A788D528537 /* Project object */;
+}

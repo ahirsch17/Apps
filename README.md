@@ -4,7 +4,7 @@ Personal iOS and mobile projects. Each folder is its own Xcode project (unless n
 
 | App | Description |
 |---|---|
-| [Between](Between/) | Campus events iOS app (SwiftUI) with a pluggable Flask/Node backend |
+| [Sparq](Sparq/) | Campus events iOS app (SwiftUI) with a pluggable Node backend |
 | [SpeakFlow](SpeakFlow/) | Language practice: Call, Text, and offline Learn modes |
 | [HyroxPace](HyroxPace/) | Apple Watch Hyrox doubles pacing (one screen, one tap) |
 | [SemesterSchedule](SemesterSchedule/) | Paste a course schedule into Calendar |

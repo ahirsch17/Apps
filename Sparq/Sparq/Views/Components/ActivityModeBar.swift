@@ -1,0 +1,40 @@
+import SwiftUI
+
+struct ActivityModeBar: View {
+    @EnvironmentObject private var viewModel: AppViewModel
+    @Environment(\.colorScheme) private var colorScheme
+
+    var showsHeader: Bool = true
+    var activeMode: ActivityMode? { viewModel.eventsData?.activeMode }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            if showsHeader {
+                SectionHeader(title: "What's the vibe?", subtitle: "Friends in the same mode can find you")
+            }
+
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 8) {
+                    ForEach(ActivityMode.allCases) { mode in
+                        modeChip(mode)
+                    }
+                }
+            }
+        }
+    }
+
+    private func modeChip(_ mode: ActivityMode) -> some View {
+        let selected = activeMode == mode
+        return Button {
+            Task { await viewModel.setActivityMode(mode) }
+        } label: {
+            HStack(spacing: 6) {
+                Image(systemName: mode.icon)
+                    .font(.caption)
+                Text(mode.label)
+            }
+            .sparqChip(selected: selected)
+        }
+        .buttonStyle(.plain)
+    }
+}

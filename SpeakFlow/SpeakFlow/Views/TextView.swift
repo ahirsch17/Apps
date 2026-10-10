@@ -11,7 +11,9 @@ struct TextHomeView: View {
             Group {
                 if !settings.hasAPIKey {
                     locked
-                } else if conversation.phase == .report {
+                } else if conversation.isCallBlockingText {
+                    callBusy
+                } else if conversation.phase == .report, conversation.mode == .text {
                     CallReportView()
                 } else {
                     chat
@@ -19,7 +21,7 @@ struct TextHomeView: View {
             }
             .navigationTitle(settings.character.name)
             .toolbar {
-                if settings.hasAPIKey {
+                if settings.hasAPIKey && !conversation.isCallBlockingText {
                     ToolbarItem(placement: .topBarTrailing) {
                         Menu {
                             Button("New chat") { Task { await conversation.startText() } }
@@ -29,8 +31,8 @@ struct TextHomeView: View {
                 }
             }
             .task {
-                if settings.hasAPIKey && conversation.messages.isEmpty && conversation.phase == .idle {
-                    await conversation.startText()
+                if settings.hasAPIKey {
+                    await conversation.startTextIfNeeded()
                 }
             }
         }
@@ -49,6 +51,21 @@ struct TextHomeView: View {
             Button("Open Profile", action: onNeedKey)
                 .buttonStyle(.borderedProminent)
                 .tint(SF.coral)
+        }
+    }
+
+    private var callBusy: some View {
+        VStack(spacing: 16) {
+            Image(systemName: "phone.fill")
+                .font(.system(size: 40))
+                .foregroundStyle(SF.mint)
+            Text("You're on a call")
+                .font(.system(.title2, design: .rounded).weight(.bold))
+            Text("Hang up on the Call tab when you're done — Text keeps its own chat so nothing gets mixed up.")
+                .font(.system(.subheadline, design: .rounded))
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 32)
         }
     }
 
@@ -86,6 +103,7 @@ struct TextHomeView: View {
                         .background(SF.card)
                         .clipShape(Circle())
                 }
+                .accessibilityLabel("I blanked")
 
                 TextField("Message in \(settings.language.displayName)…", text: $draft, axis: .vertical)
                     .lineLimit(1...4)
@@ -125,7 +143,7 @@ struct TextHomeView: View {
 
             ForEach(msg.corrections) { c in
                 Text("\(c.original) → \(c.corrected)")
-                    .font(.system(.caption, design: .rounded))
+                    .font(.system(.caption, design: .rounded).weight(.semibold))
                     .foregroundStyle(SF.coral)
                     .frame(maxWidth: .infinity, alignment: .trailing)
                 Text(c.explanation)

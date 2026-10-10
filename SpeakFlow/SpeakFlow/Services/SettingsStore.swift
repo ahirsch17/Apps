@@ -13,6 +13,8 @@ final class SettingsStore: ObservableObject {
     @Published var model: String { didSet { save() } }
     @Published var autoSpeak: Bool { didSet { save() } }
     @Published var hasSeenWelcome: Bool { didSet { save() } }
+    /// One-time soft coach on the first Call — not a settings toggle.
+    @Published var hasSeenCallCoach: Bool { didSet { save() } }
     @Published var completedLessonIDs: Set<String> { didSet { save() } }
     @Published var xp: Int { didSet { save() } }
 
@@ -25,6 +27,7 @@ final class SettingsStore: ObservableObject {
         model = d.string(forKey: "model") ?? "gpt-4o-mini"
         autoSpeak = d.object(forKey: "autoSpeak") as? Bool ?? true
         hasSeenWelcome = d.bool(forKey: "welcome")
+        hasSeenCallCoach = d.bool(forKey: "callCoach")
         completedLessonIDs = Set(d.stringArray(forKey: "lessons") ?? [])
         xp = d.integer(forKey: "xp")
         apiKey = KeychainService.load() ?? ""
@@ -46,6 +49,7 @@ final class SettingsStore: ObservableObject {
         d.set(model, forKey: "model")
         d.set(autoSpeak, forKey: "autoSpeak")
         d.set(hasSeenWelcome, forKey: "welcome")
+        d.set(hasSeenCallCoach, forKey: "callCoach")
         d.set(Array(completedLessonIDs), forKey: "lessons")
         d.set(xp, forKey: "xp")
     }
