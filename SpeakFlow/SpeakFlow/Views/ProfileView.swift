@@ -35,6 +35,15 @@ struct ProfileView: View {
                 }
 
                 Section {
+                    Toggle("Slower tutor voice", isOn: $settings.slowSpeech)
+                    Toggle("Show English under replies", isOn: $settings.showTranslations)
+                } header: {
+                    Text("Practice help")
+                } footer: {
+                    Text("In a call, Say again always replays the last line slowly.")
+                }
+
+                Section {
                     if settings.hasAPIKey {
                         Label("Call & Text unlocked", systemImage: "checkmark.seal.fill")
                             .foregroundStyle(SF.mint)
@@ -97,9 +106,10 @@ struct ProfileView: View {
                 }
 
                 Section("How it works") {
-                    labeled("Call", "FaceTime-style. Hands-free. Blanked button if you freeze. Recap at the end.")
-                    labeled("Text", "iMessage-style with the same tutor.")
+                    labeled("Call", "FaceTime-style. Hands-free. Blanked if you freeze, Say again if you missed it. Recap at the end.")
+                    labeled("Text", "iMessage-style with the same tutor. Tap a reply idea if you're stuck.")
                     labeled("Learn", "Level path, offline. Fail on purpose — that's the point.")
+                    labeled("Review", "Corrections, recap phrases and Learn misses come back on a spaced schedule.")
                 }
             }
             .navigationTitle("Profile")

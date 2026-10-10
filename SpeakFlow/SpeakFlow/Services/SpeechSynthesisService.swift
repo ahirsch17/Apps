@@ -12,17 +12,33 @@ final class SpeechSynthesisService: NSObject, ObservableObject {
         synth.delegate = self
     }
 
-    func speak(_ text: String, language: Language, onFinish: (() -> Void)? = nil) {
-        stop(invokeFinish: false)
+    nonisolated static func voice(for language: Language) -> AVSpeechSynthesisVoice? {
+        AVSpeechSynthesisVoice(language: language.localeID)
+            ?? AVSpeechSynthesisVoice(language: language.rawValue)
+            ?? (language == .tagalog ? AVSpeechSynthesisVoice(language: "tl-PH") : nil)
+    }
+
+    /// - Parameter configuresSession: false during a call, where the controller owns one play-and-record session.
+    func speak(
+        _ text: String,
+        language: Language,
+        slow: Bool = false,
+        configuresSession: Bool = true,
+        onFinish: (() -> Void)? = nil
+    ) {
+        // Finish (not drop) any previous utterance so callers awaiting it never hang.
+        stop(invokeFinish: true)
         self.onFinish = onFinish
         let u = AVSpeechUtterance(string: text)
-        u.voice = AVSpeechSynthesisVoice(language: language.localeID)
-        u.rate = AVSpeechUtteranceDefaultSpeechRate * 0.92
+        u.voice = Self.voice(for: language)
+        u.rate = AVSpeechUtteranceDefaultSpeechRate * (slow ? 0.72 : 0.92)
         isSpeaking = true
 
-        let session = AVAudioSession.sharedInstance()
-        try? session.setCategory(.playback, mode: .spokenAudio, options: [.duckOthers])
-        try? session.setActive(true, options: .notifyOthersOnDeactivation)
+        if configuresSession {
+            let session = AVAudioSession.sharedInstance()
+            try? session.setCategory(.playback, mode: .spokenAudio, options: [.duckOthers])
+            try? session.setActive(true, options: .notifyOthersOnDeactivation)
+        }
 
         synth.speak(u)
     }

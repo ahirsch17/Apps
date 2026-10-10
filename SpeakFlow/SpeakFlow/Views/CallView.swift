@@ -36,8 +36,20 @@ struct CallHomeView: View {
 
                 HStack(spacing: 10) {
                     chip(settings.language.flag + " " + settings.language.displayName)
-                    chip(settings.level.title)
-                    chip(settings.topic.title)
+                    Menu {
+                        Picker("Level", selection: $settings.level) {
+                            ForEach(ConversationLevel.allCases) { Text("\($0.title) — \($0.blurb)").tag($0) }
+                        }
+                    } label: {
+                        chip(settings.level.title + " ▾")
+                    }
+                    Menu {
+                        Picker("Topic", selection: $settings.topic) {
+                            ForEach(ConversationTopic.allCases) { Label($0.title, systemImage: $0.icon).tag($0) }
+                        }
+                    } label: {
+                        chip(settings.topic.title + " ▾")
+                    }
                 }
 
                 if let err = conversation.error {
@@ -46,7 +58,21 @@ struct CallHomeView: View {
 
                 Spacer()
 
-                if settings.hasAPIKey {
+                if !speechSupported {
+                    VStack(spacing: 8) {
+                        Text("Voice calls aren't available for \(settings.language.displayName) yet")
+                            .font(.system(.headline, design: .rounded))
+                            .foregroundStyle(.white)
+                        Text("Apple's speech recognition doesn't support it on iPhone. Text \(settings.character.name) instead — same tutor, same corrections.")
+                            .font(.system(.subheadline, design: .rounded))
+                            .foregroundStyle(.white.opacity(0.6))
+                            .multilineTextAlignment(.center)
+                    }
+                    .padding(20)
+                    .background(.ultraThinMaterial)
+                    .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+                    .padding(.horizontal, 24)
+                } else if settings.hasAPIKey {
                     Button {
                         Task { await conversation.startCall() }
                     } label: {
@@ -84,6 +110,8 @@ struct CallHomeView: View {
             }
         }
     }
+
+    private var speechSupported: Bool { SpeechRecognitionService.supports(settings.language) }
 
     private func chip(_ t: String) -> some View {
         Text(t)
@@ -147,12 +175,19 @@ struct ActiveCallView: View {
                 }
 
                 if let last = conversation.messages.last(where: { $0.role == .tutor }) {
-                    Text(last.text)
-                        .font(.system(.title3, design: .rounded))
-                        .foregroundStyle(.white.opacity(0.9))
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal, 28)
-                        .transition(.opacity)
+                    VStack(spacing: 6) {
+                        Text(last.text)
+                            .font(.system(.title3, design: .rounded))
+                            .foregroundStyle(.white.opacity(0.9))
+                        if settings.showTranslations, let translation = last.translation {
+                            Text(translation)
+                                .font(.system(.footnote, design: .rounded))
+                                .foregroundStyle(.white.opacity(0.45))
+                        }
+                    }
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 28)
+                    .transition(.opacity)
                 }
 
                 if conversation.phase == .listening {
@@ -163,6 +198,13 @@ struct ActiveCallView: View {
                             .multilineTextAlignment(.center)
                             .padding(.horizontal, 24)
                             .animation(.easeInOut, value: conversation.liveTranscript)
+                        if conversation.liveTranscript.isEmpty, let starter = conversation.latestStarters.first {
+                            Text("Try: “\(starter)”")
+                                .font(.system(.footnote, design: .rounded).weight(.medium))
+                                .foregroundStyle(.white.opacity(0.6))
+                                .multilineTextAlignment(.center)
+                                .padding(.horizontal, 24)
+                        }
                         Text("Pause when you're done — it'll catch it")
                             .font(.system(.caption2, design: .rounded))
                             .foregroundStyle(.white.opacity(0.4))
@@ -197,7 +239,24 @@ struct ActiveCallView: View {
 
                 Spacer()
 
-                HStack(spacing: 36) {
+                HStack(spacing: 28) {
+                    Button {
+                        Task { await conversation.replayLastTutorLine() }
+                    } label: {
+                        VStack(spacing: 6) {
+                            Image(systemName: "gobackward")
+                                .font(.title2)
+                                .frame(width: 64, height: 64)
+                                .background(.white.opacity(0.12))
+                                .clipShape(Circle())
+                            Text("Say again").font(.system(.caption2, design: .rounded))
+                        }
+                        .foregroundStyle(.white)
+                    }
+                    .disabled(!conversation.canReplayInCall)
+                    .opacity(conversation.canReplayInCall ? 1 : 0.4)
+                    .accessibilityLabel("Repeat that slower")
+
                     Button {
                         Task { await conversation.skipTrySomething() }
                     } label: {
@@ -258,7 +317,7 @@ struct ActiveCallView: View {
                 Text("Quick tip")
                     .font(.system(.caption, design: .rounded).weight(.bold))
                     .foregroundStyle(SF.mint)
-                Text("Talk naturally. When you pause, it sends.\nFrozen? Hit Blanked. Jump in anytime by tapping \(settings.character.name).")
+                Text("Talk naturally. When you pause, it sends.\nFrozen? Hit Blanked. Missed it? Say again replays slower. Jump in anytime by tapping \(settings.character.name).")
                     .font(.system(.body, design: .rounded))
                     .foregroundStyle(.white)
                     .multilineTextAlignment(.center)
@@ -307,7 +366,19 @@ struct CallReportView: View {
 
                         section("What worked", r.strengths, SF.mint)
                         section("Practice next", r.focusNext, SF.coral)
-                        section("Steal these phrases", r.keyPhrases, SF.teal)
+                        section("Steal these phrases", r.keyPhrases.map { (p: KeyPhrase) -> String in
+                            if let meaning = p.meaning, !meaning.isEmpty { return "\(p.phrase) — \(meaning)" }
+                            return p.phrase
+                        }, SF.teal)
+
+                        if conversation.savedThisSession > 0 {
+                            Label(
+                                "\(conversation.savedThisSession) phrase\(conversation.savedThisSession == 1 ? "" : "s") saved to Review in the Learn tab",
+                                systemImage: "rectangle.stack.badge.plus"
+                            )
+                            .font(.system(.subheadline, design: .rounded).weight(.semibold))
+                            .foregroundStyle(SF.mint)
+                        }
                     }
                     .padding()
                 }
@@ -322,7 +393,14 @@ struct CallReportView: View {
         }
     }
 
+    @ViewBuilder
     private func section(_ title: String, _ items: [String], _ color: Color) -> some View {
+        if !items.isEmpty {
+            sectionCard(title, items, color)
+        }
+    }
+
+    private func sectionCard(_ title: String, _ items: [String], _ color: Color) -> some View {
         VStack(alignment: .leading, spacing: 10) {
             Text(title).font(.system(.headline, design: .rounded)).foregroundStyle(color)
             ForEach(items, id: \.self) { item in

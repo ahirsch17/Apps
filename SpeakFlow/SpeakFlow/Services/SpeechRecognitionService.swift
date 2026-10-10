@@ -12,14 +12,34 @@ final class SpeechRecognitionService: ObservableObject {
         case drill
     }
 
+    enum SpeechError: LocalizedError {
+        case unsupported(Language), unavailable, notAuthorized, noMicrophone
+
+        var errorDescription: String? {
+            switch self {
+            case .unsupported(let language):
+                return "Apple speech recognition doesn't support \(language.displayName) yet — use Text mode or Reveal instead."
+            case .unavailable:
+                return "Speech recognition is offline right now. Check your connection and try again."
+            case .notAuthorized:
+                return "Turn on Microphone and Speech Recognition for SpeakFlow in Settings."
+            case .noMicrophone:
+                return "Couldn't open the microphone. Unplug or reconnect headphones and try again."
+            }
+        }
+    }
+
     @Published var transcript = ""
     @Published private(set) var isListening = false
     @Published private(set) var isAuthorized = false
 
     /// Fired when user seems done speaking (silence after speech).
     var onUtteranceComplete: ((String) -> Void)?
+    /// Fired when recognition dies with nothing usable captured (timeout, network drop, no speech).
+    var onError: ((String) -> Void)?
 
     private var engine = AVAudioEngine()
+    private var language: Language = .spanish
     private var recognizer: SFSpeechRecognizer?
     private var request: SFSpeechAudioBufferRecognitionRequest?
     private var task: SFSpeechRecognitionTask?
@@ -28,6 +48,14 @@ final class SpeechRecognitionService: ObservableObject {
     private var speechBeganAt: Date?
     private var style: SessionStyle = .drill
     private var finishing = false
+    private var tapInstalled = false
+    /// Bumped on every start/stop so late callbacks from an old recognition task are ignored.
+    private var generation = 0
+
+    nonisolated static func supports(_ language: Language) -> Bool {
+        if SFSpeechRecognizer(locale: Locale(identifier: language.localeID)) != nil { return true }
+        return language == .tagalog && SFSpeechRecognizer(locale: Locale(identifier: "tl-PH")) != nil
+    }
 
     func requestPermissions() async {
         let speech: Bool = await withCheckedContinuation { c in
@@ -40,16 +68,28 @@ final class SpeechRecognitionService: ObservableObject {
     }
 
     func prepare(for language: Language) {
+        self.language = language
         recognizer = SFSpeechRecognizer(locale: Locale(identifier: language.localeID))
         if language == .tagalog, recognizer?.isAvailable != true {
-            recognizer = SFSpeechRecognizer(locale: Locale(identifier: "tl-PH"))
+            recognizer = SFSpeechRecognizer(locale: Locale(identifier: "tl-PH")) ?? recognizer
         }
     }
 
+    /// One audio configuration for the whole call so tutor speech and listening don't flip the session every turn.
+    func activateCallAudio() throws {
+        let session = AVAudioSession.sharedInstance()
+        try session.setCategory(.playAndRecord, mode: .voiceChat, options: [.defaultToSpeaker, .allowBluetooth])
+        try session.setActive(true)
+    }
+
+    func endAudioSession() {
+        try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+    }
+
     func startListening(style: SessionStyle = .drill) throws {
-        guard let recognizer, recognizer.isAvailable else {
-            throw NSError(domain: "Speech", code: 1, userInfo: [NSLocalizedDescriptionKey: "Speech recognition unavailable"])
-        }
+        guard let recognizer else { throw SpeechError.unsupported(language) }
+        guard isAuthorized else { throw SpeechError.notAuthorized }
+        guard recognizer.isAvailable else { throw SpeechError.unavailable }
         stopListening(cancel: true)
         self.style = style
         finishing = false
@@ -67,15 +107,26 @@ final class SpeechRecognitionService: ObservableObject {
         }
         try session.setActive(true, options: .notifyOthersOnDeactivation)
 
-        request = SFSpeechAudioBufferRecognitionRequest()
-        guard let request else { return }
-        request.shouldReportPartialResults = true
-        if #available(iOS 16, *) { request.addsPunctuation = true }
-
+        // A fresh engine picks up the current route's input format (avoids tap format crashes after route changes).
+        engine = AVAudioEngine()
         let input = engine.inputNode
+        let format = input.outputFormat(forBus: 0)
+        guard format.sampleRate > 0, format.channelCount > 0 else { throw SpeechError.noMicrophone }
+
+        let request = SFSpeechAudioBufferRecognitionRequest()
+        request.shouldReportPartialResults = true
+        request.addsPunctuation = true
+        // On-device avoids the ~1 minute server limit and keeps practice audio on the phone.
+        if recognizer.supportsOnDeviceRecognition {
+            request.requiresOnDeviceRecognition = true
+        }
+        self.request = request
+
+        generation += 1
+        let gen = generation
         task = recognizer.recognitionTask(with: request) { [weak self] result, error in
             Task { @MainActor in
-                guard let self, !self.finishing else { return }
+                guard let self, gen == self.generation, !self.finishing else { return }
                 if let result {
                     let text = result.bestTranscription.formattedString
                     if text != self.transcript {
@@ -87,28 +138,41 @@ final class SpeechRecognitionService: ObservableObject {
                         self.armSilenceTimer()
                     }
                     if result.isFinal {
-                        self.finishUtterance()
+                        self.finishUtterance(force: true)
+                        return
                     }
                 }
-                _ = error
+                if error != nil {
+                    self.handleRecognitionFailure()
+                }
             }
         }
 
-        let format = input.outputFormat(forBus: 0)
         input.installTap(onBus: 0, bufferSize: 1024, format: format) { buffer, _ in
             request.append(buffer)
         }
+        tapInstalled = true
         engine.prepare()
-        try engine.start()
+        do {
+            try engine.start()
+        } catch {
+            stopListening(cancel: true)
+            throw error
+        }
         isListening = true
     }
 
     func stopListening(cancel: Bool = false) {
+        generation += 1
+        let wasCapturing = isListening || tapInstalled
         silenceTask?.cancel()
         silenceTask = nil
         if engine.isRunning {
             engine.stop()
+        }
+        if tapInstalled {
             engine.inputNode.removeTap(onBus: 0)
+            tapInstalled = false
         }
         if cancel { task?.cancel() }
         request?.endAudio()
@@ -116,7 +180,21 @@ final class SpeechRecognitionService: ObservableObject {
         task = nil
         isListening = false
         speechBeganAt = nil
-        try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+        // Calls keep the session up between turns; the controller ends it on hang up.
+        if wasCapturing, style == .drill {
+            endAudioSession()
+        }
+    }
+
+    private func handleRecognitionFailure() {
+        guard isListening, !finishing else { return }
+        let text = transcript.trimmingCharacters(in: .whitespacesAndNewlines)
+        if !text.isEmpty, !isFiller(text) {
+            finishUtterance(force: true)
+            return
+        }
+        stopListening(cancel: true)
+        onError?("Didn't catch anything — try again.")
     }
 
     /// Adaptive pause: wait longer after short starts so people aren't cut off mid-thought;
@@ -150,14 +228,21 @@ final class SpeechRecognitionService: ObservableObject {
         }
     }
 
-    private func finishUtterance() {
+    private func isFiller(_ text: String) -> Bool {
+        let fillers: Set<String> = ["um", "uh", "eh", "ah", "er", "mm", "hmm", "mhm"]
+        let compact = text.lowercased().trimmingCharacters(in: .punctuationCharacters.union(.whitespaces))
+        return fillers.contains(compact)
+    }
+
+    /// `force` is used when the recognizer has already ended the task — a lone filler can't keep listening then.
+    private func finishUtterance(force: Bool = false) {
         guard !finishing else { return }
         let text = transcript.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !text.isEmpty else { return }
-        // Single filler tokens are usually accidents — keep listening.
-        let fillers: Set<String> = ["um", "uh", "eh", "ah", "er", "mm", "hmm", "mhm"]
-        let compact = text.lowercased().trimmingCharacters(in: .punctuationCharacters)
-        if fillers.contains(compact) {
+        if text.isEmpty || isFiller(text) {
+            // Single filler tokens are usually accidents — keep listening while the task is alive.
+            guard force else { return }
+            stopListening(cancel: true)
+            onError?("Didn't catch that — try again.")
             return
         }
         finishing = true

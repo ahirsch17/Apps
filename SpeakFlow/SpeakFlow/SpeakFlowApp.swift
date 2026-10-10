@@ -4,12 +4,14 @@ import SwiftUI
 struct SpeakFlowApp: App {
     @StateObject private var settings = SettingsStore()
     @StateObject private var conversation = ConversationController()
+    @StateObject private var phrasebook = PhrasebookStore()
 
     var body: some Scene {
         WindowGroup {
             RootView()
                 .environmentObject(settings)
                 .environmentObject(conversation)
+                .environmentObject(phrasebook)
                 .tint(SF.teal)
                 .preferredColorScheme(.dark)
         }
@@ -19,6 +21,7 @@ struct SpeakFlowApp: App {
 struct RootView: View {
     @EnvironmentObject private var settings: SettingsStore
     @EnvironmentObject private var conversation: ConversationController
+    @EnvironmentObject private var phrasebook: PhrasebookStore
 
     var body: some View {
         Group {
@@ -29,11 +32,10 @@ struct RootView: View {
             }
         }
         .task {
-            conversation.bind(settings)
-            await conversation.prepareAudio()
+            conversation.bind(settings, phrasebook: phrasebook)
         }
         .onChange(of: settings.language) { _, _ in
-            conversation.bind(settings)
+            conversation.languageDidChange()
         }
     }
 }

@@ -93,48 +93,115 @@ enum Curriculum {
     ]
 
     static let german: [LearnUnit] = [
-        u("de-1", .german, "Don't freeze", "Survival phrases", "🧊", [
+        u("de-1", .german, "Don't freeze", "Buy time. Stay in German.", "🧊", [
             l("de-1a", "Basics", [
                 p("d1", "I don't know", "Ich weiß nicht", "Keep it short."),
                 p("d2", "Can you repeat?", "Kannst du das wiederholen?", "Thinking time."),
                 p("d3", "because", "weil", "Verb goes to the end."),
                 p("d4", "I think that…", "Ich denke, dass…", "Opinion.")
+            ]),
+            l("de-1b", "Keep it going", [
+                p("d8", "Give me a second", "Einen Moment, bitte", "Pause without panic."),
+                p("d9", "How do you say…?", "Wie sagt man…?", "Ask in German."),
+                p("d10", "but", "aber", "Contrast — word order stays normal."),
+                p("d11", "also / too", "auch", "Add one more idea."),
+                p("d12", "so / then", "also", "False friend: German also = so.")
             ])
         ]),
-        u("de-2", .german, "Daily", "Simple present", "☀️", [
+        u("de-2", .german, "Daily", "Present-tense muscle memory", "☀️", [
             l("de-2a", "You", [
                 p("d5", "My name is…", "Ich heiße…", "Intro."),
                 p("d6", "I work from home", "Ich arbeite von zu Hause aus", "WFH."),
                 p("d7", "I'm tired", "Ich bin müde", "Feelings.")
+            ]),
+            l("de-2b", "Food & plans", [
+                p("d13", "I live in…", "Ich wohne in…", "wohnen = live somewhere."),
+                p("d14", "I'm hungry", "Ich habe Hunger", "Haben + noun, like Spanish tener."),
+                p("d15", "I like coffee", "Ich trinke gern Kaffee", "Verb + gern = like doing it."),
+                p("d16", "I'm going shopping", "Ich gehe einkaufen", "Second verb goes last."),
+                p("d17", "See you later", "Bis später", "Clean exit.")
+            ])
+        ]),
+        u("de-3", .german, "Tell a story", "Past tense without freezing", "📖", [
+            l("de-3a", "Yesterday", [
+                p("d18", "Yesterday I was in…", "Gestern war ich in…", "Verb stays second, so ich moves after war."),
+                p("d19", "I was tired", "Ich war müde", "war = was. Easiest past there is."),
+                p("d20", "I played soccer", "Ich habe Fußball gespielt", "haben … ge-…-t: participle goes last."),
+                p("d21", "It was worth it", "Es hat sich gelohnt", "Great closer.")
+            ])
+        ]),
+        u("de-4", .german, "Have an opinion", "Sound like a real adult", "💡", [
+            l("de-4a", "Take a stance", [
+                p("d22", "In my opinion…", "Meiner Meinung nach…", "Verb comes right after: …ist das gut."),
+                p("d23", "On the other hand…", "Andererseits…", "Debate move."),
+                p("d24", "Even though…", "Obwohl…", "Like weil — verb to the end."),
+                p("d25", "For example…", "Zum Beispiel…", "Support your point.")
             ])
         ])
     ]
 
     static let italian: [LearnUnit] = [
-        u("it-1", .italian, "Don't freeze", "Survival phrases", "🧊", [
+        u("it-1", .italian, "Don't freeze", "Buy time. Stay in Italian.", "🧊", [
             l("it-1a", "Basics", [
                 p("i1", "I don't know", "Non lo so", "Include lo."),
                 p("i2", "Can you repeat?", "Puoi ripetere?", "Pause."),
                 p("i3", "because", "perché", "Finish the thought."),
                 p("i4", "I think that…", "Penso che…", "Opinion.")
+            ]),
+            l("it-1b", "Keep it going", [
+                p("i8", "Give me a second", "Un attimo", "Pause without panic."),
+                p("i9", "How do you say…?", "Come si dice…?", "Ask in Italian."),
+                p("i10", "but", "ma", "Contrast = real conversation."),
+                p("i11", "also / too", "anche", "Add one more idea."),
+                p("i12", "so / then", "allora", "Italians open half their sentences with it.")
             ])
         ]),
-        u("it-2", .italian, "Daily", "Simple present", "☀️", [
+        u("it-2", .italian, "Daily", "Present-tense muscle memory", "☀️", [
             l("it-2a", "You", [
                 p("i5", "My name is…", "Mi chiamo…", "Reflexive."),
                 p("i6", "I work from home", "Lavoro da casa", "Natural."),
                 p("i7", "I'm tired", "Sono stanco/a", "Feelings.")
+            ]),
+            l("it-2b", "Food & plans", [
+                p("i13", "I live in…", "Abito a…", "a + city, in + country."),
+                p("i14", "I'm hungry", "Ho fame", "Avere + noun, like Spanish tener."),
+                p("i15", "I like coffee", "Mi piace il caffè", "Piacere flips like gustar."),
+                p("i16", "I'm going to the store", "Vado al negozio", "a + il = al."),
+                p("i17", "See you later", "A dopo", "Clean exit.")
+            ])
+        ]),
+        u("it-3", .italian, "Tell a story", "Past tense without freezing", "📖", [
+            l("it-3a", "Yesterday", [
+                p("i18", "Yesterday I went to…", "Ieri sono andato/a a…", "Movement verbs use essere."),
+                p("i19", "I was tired", "Ero stanco/a", "Imperfect for states."),
+                p("i20", "I used to play…", "Giocavo…", "Habitual past."),
+                p("i21", "It was worth it", "Ne è valsa la pena", "Great closer.")
+            ])
+        ]),
+        u("it-4", .italian, "Have an opinion", "Sound like a real adult", "💡", [
+            l("it-4a", "Take a stance", [
+                p("i22", "In my opinion…", "Secondo me…", "The most natural opener."),
+                p("i23", "On the other hand…", "D'altra parte…", "Debate move."),
+                p("i24", "Even though…", "Anche se…", "Simple and everywhere."),
+                p("i25", "For example…", "Per esempio…", "Support your point.")
             ])
         ])
     ]
 
     static let tagalog: [LearnUnit] = [
-        u("fil-1", .tagalog, "Don't freeze", "Survival phrases", "🧊", [
+        u("fil-1", .tagalog, "Don't freeze", "Buy time. Stay in Tagalog.", "🧊", [
             l("fil-1a", "Basics", [
                 p("f1", "I don't know", "Hindi ko alam", "When stuck."),
                 p("f2", "Can you repeat?", "Puwede bang ulitin?", "Pause."),
                 p("f3", "because", "kasi", "Finish the thought."),
                 p("f4", "I think…", "Sa tingin ko…", "Opinion.")
+            ]),
+            l("fil-1b", "Keep it going", [
+                p("f8", "Wait a moment", "Sandali lang", "Pause without panic."),
+                p("f9", "What does … mean?", "Ano ang ibig sabihin ng…?", "Ask in Tagalog."),
+                p("f10", "but", "pero", "Borrowed from Spanish — easy win."),
+                p("f11", "also / too", "din/rin", "rin after vowels, din after consonants."),
+                p("f12", "and then", "tapos", "Glue for stories.")
             ])
         ]),
         u("fil-2", .tagalog, "Daily", "Everyday chat", "☀️", [
@@ -142,6 +209,29 @@ enum Curriculum {
                 p("f5", "My name is…", "Ako si…", "Intro."),
                 p("f6", "I work from home", "Nagtatrabaho ako sa bahay", "Habitual."),
                 p("f7", "I'm tired", "Pagod ako", "Feelings.")
+            ]),
+            l("fil-2b", "Food & plans", [
+                p("f13", "I live in…", "Nakatira ako sa…", "sa = in / at."),
+                p("f14", "I'm hungry", "Gutom na ako", "na = already / now."),
+                p("f15", "I like coffee", "Gusto ko ng kape", "Gusto ko + ng + thing."),
+                p("f16", "I'm going to the store", "Pupunta ako sa tindahan", "pupunta = going to go."),
+                p("f17", "See you later", "Kita tayo mamaya", "mamaya = later today.")
+            ])
+        ]),
+        u("fil-3", .tagalog, "Tell a story", "Past tense without freezing", "📖", [
+            l("fil-3a", "Yesterday", [
+                p("f18", "Yesterday I went to…", "Kahapon, pumunta ako sa…", "-um- verbs: pumunta = went."),
+                p("f19", "I already ate", "Kumain na ako", "na marks it as done."),
+                p("f20", "I was tired yesterday", "Pagod ako kahapon", "No word for was — the time word does the work."),
+                p("f21", "It was so fun!", "Ang saya!", "Ang + adjective = so …!")
+            ])
+        ]),
+        u("fil-4", .tagalog, "Have an opinion", "Sound like a real adult", "💡", [
+            l("fil-4a", "Take a stance", [
+                p("f22", "In my opinion…", "Sa palagay ko…", "Opinion opener."),
+                p("f23", "On the other hand…", "Sa kabilang banda…", "Debate move."),
+                p("f24", "Even though…", "Kahit na…", "Kahit = even."),
+                p("f25", "For example…", "Halimbawa…", "Support your point.")
             ])
         ])
     ]

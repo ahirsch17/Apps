@@ -74,10 +74,13 @@ struct TextHomeView: View {
             ScrollViewReader { proxy in
                 ScrollView {
                     LazyVStack(spacing: 12) {
+                        if conversation.messages.isEmpty && conversation.phase == .idle {
+                            emptyChat
+                        }
                         ForEach(conversation.messages) { msg in
                             bubble(msg).id(msg.id)
                         }
-                        if conversation.phase == .thinking {
+                        if conversation.phase == .thinking || conversation.phase == .connecting {
                             ProgressView().padding().id("load")
                         }
                     }
@@ -94,6 +97,28 @@ struct TextHomeView: View {
                 Text(err).font(.caption).foregroundStyle(SF.coral).padding(.horizontal)
             }
 
+            if !conversation.latestStarters.isEmpty, conversation.phase == .idle || conversation.phase == .tutorSpeaking {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 8) {
+                        ForEach(conversation.latestStarters, id: \.self) { starter in
+                            Button {
+                                draft = starter
+                            } label: {
+                                Text(starter)
+                                    .font(.system(.footnote, design: .rounded).weight(.medium))
+                                    .padding(.horizontal, 12)
+                                    .padding(.vertical, 8)
+                                    .background(SF.teal.opacity(0.18))
+                                    .clipShape(Capsule())
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    }
+                    .padding(.horizontal, 12)
+                }
+                .padding(.top, 6)
+            }
+
             HStack(spacing: 10) {
                 Button {
                     Task { await conversation.skipTrySomething() }
@@ -103,6 +128,7 @@ struct TextHomeView: View {
                         .background(SF.card)
                         .clipShape(Circle())
                 }
+                .disabled(conversation.messages.isEmpty || conversation.phase == .thinking || conversation.phase == .connecting)
                 .accessibilityLabel("I blanked")
 
                 TextField("Message in \(settings.language.displayName)…", text: $draft, axis: .vertical)
@@ -126,12 +152,35 @@ struct TextHomeView: View {
         }
     }
 
+    private var emptyChat: some View {
+        VStack(spacing: 12) {
+            Text(settings.character.emoji).font(.system(size: 48))
+            Text("Start a chat with \(settings.character.name)")
+                .font(.system(.headline, design: .rounded))
+            Button("Say hi") { Task { await conversation.startText() } }
+                .buttonStyle(.borderedProminent)
+                .tint(SF.teal)
+        }
+        .padding(.top, 60)
+    }
+
     private func bubble(_ msg: ChatMessage) -> some View {
         VStack(alignment: msg.role == .user ? .trailing : .leading, spacing: 6) {
             if msg.role == .tutor {
-                Text(settings.character.name)
-                    .font(.system(.caption2, design: .rounded).weight(.semibold))
-                    .foregroundStyle(.secondary)
+                HStack(spacing: 6) {
+                    Text(settings.character.name)
+                        .font(.system(.caption2, design: .rounded).weight(.semibold))
+                        .foregroundStyle(.secondary)
+                    Button {
+                        conversation.speakMessage(msg)
+                    } label: {
+                        Image(systemName: "speaker.wave.2.fill")
+                            .font(.caption2)
+                            .foregroundStyle(SF.teal)
+                    }
+                    .buttonStyle(.borderless)
+                    .accessibilityLabel("Play message")
+                }
             }
             Text(msg.text)
                 .font(.system(.body, design: .rounded))
@@ -140,6 +189,14 @@ struct TextHomeView: View {
                 .foregroundStyle(msg.role == .user ? .white : .primary)
                 .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
                 .frame(maxWidth: .infinity, alignment: msg.role == .user ? .trailing : .leading)
+
+            if msg.role == .tutor, settings.showTranslations, let translation = msg.translation {
+                Text(translation)
+                    .font(.system(.caption, design: .rounded))
+                    .foregroundStyle(.secondary)
+                    .padding(.horizontal, 4)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
 
             ForEach(msg.corrections) { c in
                 Text("\(c.original) → \(c.corrected)")
