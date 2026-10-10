@@ -29,4 +29,6 @@ jobs:
             -configuration Debug \
             CODE_SIGNING_ALLOWED=NO \
             | tee build.log | grep -E "error:|warning: .*(deprecated|will be an error)|BUILD (SUCCEEDED|FAILED)" || true
+          echo "Swift files compiled: $(grep -cE '^SwiftCompile normal [a-z0-9_]+ .*\.swift' build.log)"
+          grep -E "Grade/Grade/.*\.swift:[0-9]+:[0-9]+: warning:" build.log | sort -u || true
           grep -q "BUILD SUCCEEDED" build.log
