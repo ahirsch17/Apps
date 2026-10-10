@@ -27,20 +27,23 @@ struct ShiftLayer {
     var mask: CIImage?
 }
 
-/// A fully resolved edit for one image size. Preview and export use the same order:
-/// base look (mixed by strength), then Tune, then each color shift inside its mask.
+/// A fully resolved edit for one image size. Preview and export run the same steps in the same order:
+/// highlights/shadows, base look (mixed by strength), Tune, color shifts inside their masks,
+/// glow/vignette/grain, then crop.
 struct RenderJob {
     var base: LUT?
     var strength: Float = 1
     var tune: LUT?
+    var effects = Effects.none
     var shifts: [ShiftLayer] = []
+    var crop = Crop()
     /// Preview-only: highlights what the active color shift will touch.
     var selection: ShiftLayer?
 
     func graded(_ image: CIImage) -> CIImage {
-        var out = image
+        var out = effects.tone(image)
         if let base {
-            out = GradePipeline.mix(image, GradePipeline.apply(base, to: image), amount: strength)
+            out = GradePipeline.mix(out, GradePipeline.apply(base, to: out), amount: strength)
         }
         if let tune {
             out = GradePipeline.apply(tune, to: out)
@@ -66,8 +69,8 @@ struct RenderJob {
         return out
     }
 
-    func render(_ image: CIImage) -> CIImage {
-        shifted(graded(image))
+    func render(_ image: CIImage, seed: Int = 0) -> CIImage {
+        crop.apply(effects.finish(shifted(graded(image)), seed: seed))
     }
 }
 
@@ -82,9 +85,9 @@ struct JobTemplate {
     var base: LUT?
     var strength: Float
     var tune: LUT?
+    var effects: Effects
     var shifts: [ShiftTemplate]
-
-    var isIdentity: Bool { base == nil && tune == nil && shifts.isEmpty }
+    var crop: Crop
 
     static func make(edit: EditState, spec: BaseSpec) -> JobTemplate {
         let cache = LUTCache.shared
@@ -93,7 +96,7 @@ struct JobTemplate {
         let shifts = edit.shifts.filter { !$0.params.isNeutral }.map {
             ShiftTemplate(lut: cache.shift($0.params), strokes: $0.strokes, feather: $0.feather)
         }
-        return JobTemplate(base: base, strength: edit.strength, tune: tune, shifts: shifts)
+        return JobTemplate(base: base, strength: edit.strength, tune: tune, effects: edit.effects, shifts: shifts, crop: edit.crop)
     }
 
     func job(for size: CGSize) -> RenderJob {
@@ -101,9 +104,11 @@ struct JobTemplate {
             base: base,
             strength: strength,
             tune: tune,
+            effects: effects,
             shifts: shifts.map {
                 ShiftLayer(lut: $0.lut, mask: MaskRenderer.mask(strokes: $0.strokes, feather: $0.feather, size: size))
-            }
+            },
+            crop: crop
         )
     }
 }

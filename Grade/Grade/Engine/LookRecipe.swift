@@ -56,8 +56,12 @@ struct LookRecipe: Codable, Hashable {
         if monochrome {
             c = gray
         } else if saturation != 1 || vibrance != 0 {
-            let currentSat = ColorMath.rgbToHSV(c).s
-            let factor = max(0, saturation * (1 + vibrance * (1 - currentSat)))
+            // Vibrance targets muted colors but leaves near-whites and skin alone, so a white dress
+            // doesn't pick up a blue cast and faces don't go orange.
+            let clamped = ColorMath.clamp01(c)
+            let s = ColorMath.rgbToHSV(clamped).s
+            let muted = (1 - s) * ColorMath.smoothstep(0.03, 0.18, s) * (1 - 0.6 * ColorMath.skinWeight(clamped))
+            let factor = max(0, saturation * (1 + vibrance * muted))
             c = gray + (c - gray) * factor
         }
 
@@ -85,8 +89,8 @@ struct LookRecipe: Codable, Hashable {
 
     private func applyBands(_ c: RGB) -> RGB {
         let hsv = ColorMath.rgbToHSV(c)
-        // Near-neutral colors have no reliable hue, so they stay put.
-        let colorfulness = ColorMath.smoothstep(0.05, 0.25, hsv.s)
+        // Near-neutral colors (white clothes, gray pavement) have no reliable hue, so they stay put.
+        let colorfulness = ColorMath.smoothstep(0.12, 0.35, hsv.s)
         guard colorfulness > 0 else { return c }
         var hueShift: Float = 0
         var satScale: Float = 1
@@ -104,68 +108,83 @@ struct LookRecipe: Codable, Hashable {
 }
 
 enum BuiltInLooks {
-    private static func look(_ key: String, _ name: String, _ recipe: LookRecipe) -> Look {
-        Look(id: "builtin.\(key)", name: name, source: .recipe(recipe))
+    private static func look(_ key: String, _ name: String, _ category: LookCategory, _ recipe: LookRecipe) -> Look {
+        Look(id: "builtin.\(key)", name: name, category: category, source: .recipe(recipe))
     }
 
+    // Tuned against real portrait, couple, group, sunset and night photos.
     // HSV hue centers: red 0, orange 30, yellow 55, green 110, aqua 180, blue 220, purple 275, magenta 320.
     static let all: [Look] = [
-        look("golden", "Golden Hour", LookRecipe(
-            warmth: 0.45, tint: 0.05, contrast: 0.15, saturation: 1.08, vibrance: 0.15,
-            shadowHue: 250, shadowAmount: 0.1, highlightHue: 38, highlightAmount: 0.35,
-            bands: [HueBand(center: 30, width: 40, saturation: 1.12, lightness: 0.04),
+        look("airy", "Bright & Airy", .portrait, LookRecipe(
+            warmth: 0.08, brightness: 0.35, contrast: -0.05, fade: 0.08, highlightRolloff: 0.3, saturation: 0.92, vibrance: 0.1,
+            bands: [HueBand(center: 110, width: 50, hueShift: -8, saturation: 0.75, lightness: 0.05),
+                    HueBand(center: 220, width: 60, saturation: 0.85)])),
+        look("portra", "Portra", .portrait, LookRecipe(
+            warmth: 0.18, tint: 0.04, contrast: 0.08, fade: 0.15, highlightRolloff: 0.35, saturation: 0.95,
+            shadowHue: 200, shadowAmount: 0.08, highlightHue: 40, highlightAmount: 0.12,
+            bands: [HueBand(center: 110, width: 50, hueShift: -10, saturation: 0.75),
+                    HueBand(center: 30, width: 35, saturation: 1.05, lightness: 0.04),
                     HueBand(center: 220, width: 60, hueShift: -8, saturation: 0.85)])),
-        look("film400", "Film 400", LookRecipe(
-            warmth: 0.15, contrast: 0.1, fade: 0.25, highlightRolloff: 0.4, saturation: 0.92,
-            shadowHue: 190, shadowAmount: 0.12, highlightHue: 45, highlightAmount: 0.15,
-            bands: [HueBand(center: 110, width: 50, hueShift: -12, saturation: 0.8),
-                    HueBand(center: 30, width: 35, saturation: 1.05, lightness: 0.03),
-                    HueBand(center: 220, width: 60, hueShift: -10, saturation: 0.9)])),
-        look("coolfilm", "Cool Film", LookRecipe(
-            warmth: -0.25, contrast: 0.08, fade: 0.2, saturation: 0.9,
-            shadowHue: 195, shadowAmount: 0.25, highlightHue: 50, highlightAmount: 0.08,
-            bands: [HueBand(center: 110, width: 50, hueShift: 25, saturation: 0.8)])),
-        look("tealorange", "Teal & Orange", LookRecipe(
-            contrast: 0.2, saturation: 1.05,
-            shadowHue: 190, shadowAmount: 0.35, highlightHue: 30, highlightAmount: 0.25,
-            bands: [HueBand(center: 220, width: 70, hueShift: -25, saturation: 1.1),
-                    HueBand(center: 30, width: 40, saturation: 1.15),
-                    HueBand(center: 110, width: 50, hueShift: 40, saturation: 0.7)])),
-        look("tropical", "Tropical", LookRecipe(
-            contrast: 0.12, saturation: 1.15, vibrance: 0.35,
-            bands: [HueBand(center: 200, width: 60, hueShift: -20, saturation: 1.2),
+        look("golden", "Golden Hour", .portrait, LookRecipe(
+            warmth: 0.45, tint: 0.05, contrast: 0.15, saturation: 1.05, vibrance: 0.15,
+            shadowHue: 250, shadowAmount: 0.08, highlightHue: 38, highlightAmount: 0.35,
+            bands: [HueBand(center: 30, width: 40, saturation: 1.1, lightness: 0.04),
+                    HueBand(center: 220, width: 60, hueShift: -8, saturation: 0.85)])),
+        look("peach", "Peach", .portrait, LookRecipe(
+            warmth: 0.15, tint: 0.1, brightness: 0.15, contrast: 0.05, fade: 0.1, highlightRolloff: 0.2, saturation: 0.95,
+            highlightHue: 15, highlightAmount: 0.22,
+            bands: [HueBand(center: 110, width: 50, hueShift: -10, saturation: 0.8)])),
+        look("vivid", "Vivid", .travel, LookRecipe(
+            contrast: 0.18, highlightRolloff: 0.15, saturation: 1.04, vibrance: 0.4)),
+        look("azure", "Azure", .travel, LookRecipe(
+            warmth: 0.05, contrast: 0.12, vibrance: 0.25,
+            bands: [HueBand(center: 195, width: 50, hueShift: -8, saturation: 1.25, lightness: 0.03),
+                    HueBand(center: 225, width: 50, hueShift: -12, saturation: 1.15),
+                    HueBand(center: 30, width: 40, saturation: 1.05)])),
+        look("tropical", "Tropical", .travel, LookRecipe(
+            contrast: 0.12, saturation: 1.08, vibrance: 0.35,
+            bands: [HueBand(center: 200, width: 60, hueShift: -15, saturation: 1.2),
                     HueBand(center: 110, width: 50, hueShift: -5, saturation: 1.15),
                     HueBand(center: 30, width: 40, saturation: 1.05)])),
-        look("sunset", "Sunset Pop", LookRecipe(
-            warmth: 0.25, tint: 0.12, contrast: 0.15, vibrance: 0.3,
-            shadowHue: 290, shadowAmount: 0.18,
-            bands: [HueBand(center: 25, width: 45, saturation: 1.25),
-                    HueBand(center: 0, width: 30, saturation: 1.15)])),
-        look("clean", "Clean & Bright", LookRecipe(
-            warmth: 0.05, brightness: 0.3, contrast: 0.08, highlightRolloff: 0.1, saturation: 1.04, vibrance: 0.1)),
-        look("matte", "Matte", LookRecipe(
-            contrast: -0.15, fade: 0.55, highlightRolloff: 0.3, saturation: 0.85)),
-        look("pastel", "Pastel", LookRecipe(
-            brightness: 0.25, contrast: -0.25, fade: 0.45, saturation: 0.85,
-            shadowHue: 260, shadowAmount: 0.1, highlightHue: 340, highlightAmount: 0.18)),
-        look("vintage", "Vintage", LookRecipe(
-            warmth: 0.3, tint: 0.15, contrast: -0.05, fade: 0.4, saturation: 0.8,
-            shadowHue: 330, shadowAmount: 0.12, highlightHue: 50, highlightAmount: 0.3)),
-        look("desert", "Desert", LookRecipe(
+        look("tealorange", "Teal & Orange", .travel, LookRecipe(
+            contrast: 0.18, saturation: 1.02,
+            shadowHue: 190, shadowAmount: 0.2, highlightHue: 30, highlightAmount: 0.2,
+            bands: [HueBand(center: 220, width: 70, hueShift: -25, saturation: 1.1),
+                    HueBand(center: 30, width: 40, saturation: 1.12),
+                    HueBand(center: 110, width: 50, hueShift: 40, saturation: 0.7)])),
+        look("sunset", "Sunset Pop", .travel, LookRecipe(
+            warmth: 0.25, tint: 0.06, contrast: 0.15, vibrance: 0.3,
+            shadowHue: 280, shadowAmount: 0.07,
+            bands: [HueBand(center: 25, width: 45, saturation: 1.22),
+                    HueBand(center: 0, width: 30, saturation: 1.12)])),
+        look("desert", "Desert", .travel, LookRecipe(
             warmth: 0.35, contrast: 0.12, fade: 0.12, saturation: 0.9,
             bands: [HueBand(center: 30, width: 50, hueShift: 5, saturation: 1.1),
                     HueBand(center: 220, width: 60, saturation: 0.65),
                     HueBand(center: 110, width: 60, hueShift: -20, saturation: 0.6)])),
-        look("nordic", "Nordic", LookRecipe(
-            warmth: -0.2, brightness: 0.1, contrast: 0.05, fade: 0.15, saturation: 0.7,
-            shadowHue: 210, shadowAmount: 0.12)),
-        look("moody", "Moody", LookRecipe(
-            brightness: -0.25, contrast: 0.3, saturation: 0.75,
-            shadowHue: 210, shadowAmount: 0.25,
+        look("greenfilm", "Green Film", .film, LookRecipe(
+            warmth: -0.05, contrast: 0.12, fade: 0.15, highlightRolloff: 0.25, saturation: 0.92,
+            shadowHue: 170, shadowAmount: 0.12,
+            bands: [HueBand(center: 110, width: 50, hueShift: 12, saturation: 0.85),
+                    HueBand(center: 0, width: 30, saturation: 0.9)])),
+        look("vintage", "Vintage", .film, LookRecipe(
+            warmth: 0.3, tint: 0.1, contrast: 0.12, fade: 0.3, highlightRolloff: 0.25, saturation: 0.82,
+            shadowHue: 330, shadowAmount: 0.08, highlightHue: 50, highlightAmount: 0.25)),
+        look("matte", "Matte", .film, LookRecipe(
+            contrast: 0.08, fade: 0.42, highlightRolloff: 0.3, saturation: 0.9)),
+        look("pastel", "Pastel", .film, LookRecipe(
+            brightness: 0.25, contrast: -0.1, fade: 0.3, saturation: 0.85,
+            shadowHue: 260, shadowAmount: 0.06, highlightHue: 340, highlightAmount: 0.12)),
+        look("moody", "Moody", .moody, LookRecipe(
+            brightness: -0.2, contrast: 0.3, saturation: 0.78,
+            shadowHue: 210, shadowAmount: 0.2,
             bands: [HueBand(center: 110, width: 60, saturation: 0.6, lightness: -0.1),
                     HueBand(center: 220, width: 60, saturation: 0.8, lightness: -0.08)])),
-        look("noir", "Noir", LookRecipe(contrast: 0.35, fade: 0.1, monochrome: true)),
-        look("softbw", "Soft B&W", LookRecipe(
-            contrast: 0.05, fade: 0.3, highlightHue: 40, highlightAmount: 0.1, monochrome: true)),
+        look("nordic", "Nordic", .moody, LookRecipe(
+            warmth: -0.2, brightness: 0.1, contrast: 0.08, fade: 0.12, saturation: 0.7,
+            shadowHue: 210, shadowAmount: 0.1)),
+        look("noir", "Noir", .blackAndWhite, LookRecipe(contrast: 0.35, fade: 0.08, monochrome: true)),
+        look("softbw", "Soft B&W", .blackAndWhite, LookRecipe(
+            brightness: 0.1, contrast: 0.05, fade: 0.25, highlightHue: 40, highlightAmount: 0.08, monochrome: true)),
     ]
 }

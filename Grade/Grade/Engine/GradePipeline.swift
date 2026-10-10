@@ -57,6 +57,24 @@ enum GradePipeline {
         return normalized(filter.outputImage ?? image)
     }
 
+    /// The image squeezed into a `side`×`side` grid of sRGB colors, row by row from the top.
+    static func samplePixels(_ image: CGImage, side: Int) -> [RGB]? {
+        var bytes = [UInt8](repeating: 0, count: side * side * 4)
+        let drawn: Bool = bytes.withUnsafeMutableBytes { buffer in
+            guard let ctx = CGContext(
+                data: buffer.baseAddress, width: side, height: side, bitsPerComponent: 8, bytesPerRow: side * 4,
+                space: sRGB, bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
+            ) else { return false }
+            ctx.interpolationQuality = .medium
+            ctx.draw(image, in: CGRect(x: 0, y: 0, width: side, height: side))
+            return true
+        }
+        guard drawn else { return nil }
+        return stride(from: 0, to: bytes.count, by: 4).map {
+            RGB(Float(bytes[$0]), Float(bytes[$0 + 1]), Float(bytes[$0 + 2])) / 255
+        }
+    }
+
     /// Average color around a normalized point (0...1, top-left origin).
     static func sampleColor(_ image: CGImage, at point: SIMD2<Float>, radius: Int = 4) -> RGB? {
         let x = Int(Float(image.width) * point.x)

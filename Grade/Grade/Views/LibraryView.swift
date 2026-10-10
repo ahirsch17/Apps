@@ -7,6 +7,7 @@ struct LibraryView: View {
     @State private var picks: [PhotosPickerItem] = []
     @State private var toast: String?
     @State private var saving = false
+    @State private var confirmingRemoveAll = false
 
     private let columns = [GridItem(.adaptive(minimum: 108), spacing: 4)]
 
@@ -31,12 +32,30 @@ struct LibraryView: View {
                         Button("Save all") { saveAll() }
                             .disabled(!store.items.contains(where: { $0.edit.isEdited }) || saving)
                     }
-                    ToolbarItem(placement: .topBarTrailing) {
+                    ToolbarItemGroup(placement: .topBarTrailing) {
+                        Menu {
+                            if let copied = store.copiedEdit {
+                                Button("Paste edit to all", systemImage: "doc.on.clipboard") {
+                                    store.pasteToAll(copied, library: library)
+                                    toast = "Pasted to \(store.items.count) photos"
+                                }
+                            }
+                            Button("Remove all", systemImage: "trash", role: .destructive) {
+                                confirmingRemoveAll = true
+                            }
+                        } label: {
+                            Image(systemName: "ellipsis.circle")
+                        }
                         picker { Image(systemName: "plus") }
                     }
                 }
             }
             .toast($toast)
+            .confirmationDialog("Remove all photos from Grade?", isPresented: $confirmingRemoveAll, titleVisibility: .visible) {
+                Button("Remove all", role: .destructive) { store.removeAll() }
+            } message: {
+                Text("Your originals in Photos aren't touched. Unsaved edits are lost.")
+            }
             .overlay {
                 if let label = store.progressLabel {
                     BusyOverlay(label: label, progress: store.progress)
@@ -61,7 +80,7 @@ struct LibraryView: View {
             VStack(spacing: 8) {
                 Text("Color grade your photos and videos")
                     .font(.title3.weight(.semibold))
-                Text("Pick a look, then fine-tune any color: whiter teeth, bluer water, greener grass, without the fake filter feel.")
+                Text("Pick a look, fix the light, then fine-tune any color: whiter teeth, bluer water, greener grass, without the fake filter feel. Edit one shot and paste it onto the whole set.")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
@@ -89,11 +108,22 @@ struct LibraryView: View {
                     }
                     .buttonStyle(.plain)
                     .contextMenu {
-                        Button("Use this look on all") {
-                            store.applyLook(from: item, library: library)
+                        Button("Copy edit", systemImage: "doc.on.doc") {
+                            store.copyEdit(from: item)
+                            toast = "Edit copied"
                         }
                         .disabled(!item.edit.isEdited)
-                        Button("Remove", role: .destructive) { store.remove(item) }
+                        if let copied = store.copiedEdit {
+                            Button("Paste edit", systemImage: "doc.on.clipboard") {
+                                store.paste(copied, onto: item, library: library)
+                            }
+                        }
+                        Button("Use this edit on all", systemImage: "square.stack.3d.down.right") {
+                            store.pasteToAll(item.edit.transferable(), except: item, library: library)
+                            toast = "Applied to \(store.items.count - 1) more"
+                        }
+                        .disabled(!item.edit.isEdited || store.items.count < 2)
+                        Button("Remove", systemImage: "trash", role: .destructive) { store.remove(item) }
                     }
                 }
                 ForEach(0..<store.importing, id: \.self) { _ in

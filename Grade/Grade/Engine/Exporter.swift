@@ -9,25 +9,27 @@ enum Exporter {
         var errorDescription: String? { message }
     }
 
-    static func save(item: MediaItem, template: JobTemplate, progress: @escaping (Double) -> Void = { _ in }) async throws {
-        try await requestAccess()
-        let kind = item.kind
+    /// Renders the edit at full quality to a temporary file (for Photos or the share sheet).
+    static func render(item: MediaItem, template: JobTemplate, progress: @escaping (Double) -> Void = { _ in }) async throws -> URL {
         let source = item.url
-        let output: URL
-        switch kind {
+        switch item.kind {
         case .photo:
-            output = try await Task.detached(priority: .userInitiated) {
+            return try await Task.detached(priority: .userInitiated) {
                 try Exporter.renderPhoto(source, template: template)
             }.value
         case .video:
-            output = try await renderVideo(source, template: template, progress: progress)
+            return try await renderVideo(source, template: template, progress: progress)
         }
+    }
+
+    static func save(item: MediaItem, template: JobTemplate, progress: @escaping (Double) -> Void = { _ in }) async throws {
+        try await requestAccess()
+        let output = try await render(item: item, template: template, progress: progress)
         defer { try? FileManager.default.removeItem(at: output) }
+        let kind = item.kind
         try await PHPhotoLibrary.shared().performChanges {
             let request = PHAssetCreationRequest.forAsset()
-            let options = PHAssetResourceCreationOptions()
-            options.shouldMoveFile = false
-            request.addResource(with: kind == .photo ? .photo : .video, fileURL: output, options: options)
+            request.addResource(with: kind == .photo ? .photo : .video, fileURL: output, options: nil)
         }
         progress(1)
     }
@@ -51,6 +53,14 @@ enum Exporter {
             tiff[kCGImagePropertyTIFFOrientation as String] = 1
             properties[kCGImagePropertyTIFFDictionary as String] = tiff
         }
+        // The pixel size changes with crops, so drop the stale dimensions.
+        properties[kCGImagePropertyPixelWidth as String] = nil
+        properties[kCGImagePropertyPixelHeight as String] = nil
+        if var exif = properties[kCGImagePropertyExifDictionary as String] as? [String: Any] {
+            exif[kCGImagePropertyExifPixelXDimension as String] = nil
+            exif[kCGImagePropertyExifPixelYDimension as String] = nil
+            properties[kCGImagePropertyExifDictionary as String] = exif
+        }
 
         let rendered = template.job(for: source.extent.size).render(source).settingProperties(properties)
         let colorSpace = source.colorSpace.flatMap { $0.model == .rgb ? $0 : nil } ?? GradePipeline.displayP3
@@ -58,7 +68,7 @@ enum Exporter {
         guard let data = GradePipeline.context.jpegRepresentation(of: rendered, colorSpace: colorSpace, options: [quality: 0.95]) else {
             throw ExportError(message: "Couldn't render the photo.")
         }
-        let out = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString).appendingPathExtension("jpg")
+        let out = FileManager.default.temporaryDirectory.appendingPathComponent("Grade-\(UUID().uuidString.prefix(8))").appendingPathExtension("jpg")
         try data.write(to: out)
         return out
     }
@@ -69,7 +79,7 @@ enum Exporter {
         guard let session = AVAssetExportSession(asset: asset, presetName: AVAssetExportPresetHighestQuality) else {
             throw ExportError(message: "This video can't be exported.")
         }
-        let out = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString).appendingPathExtension("mov")
+        let out = FileManager.default.temporaryDirectory.appendingPathComponent("Grade-\(UUID().uuidString.prefix(8))").appendingPathExtension("mov")
         session.outputURL = out
         session.outputFileType = .mov
         session.videoComposition = composition
@@ -92,11 +102,16 @@ enum Exporter {
     /// Used both for export and for live playback in the editor.
     static func videoComposition(for asset: AVAsset, template: JobTemplate) async throws -> AVVideoComposition {
         let jobs = JobsBySize(template: template)
-        return try await AVVideoComposition.videoComposition(with: asset) { request in
+        let composition = try await AVVideoComposition.videoComposition(with: asset) { request in
             let frame = GradePipeline.normalized(request.sourceImage)
-            let output = jobs.job(for: frame.extent.size).render(frame)
+            let seed = Int(request.compositionTime.seconds * 30)
+            let output = jobs.job(for: frame.extent.size).render(frame, seed: seed)
             request.finish(with: output, context: nil)
         }
+        guard !template.crop.isIdentity,
+              let mutable = composition.mutableCopy() as? AVMutableVideoComposition else { return composition }
+        mutable.renderSize = template.crop.pixelRect(in: CGRect(origin: .zero, size: composition.renderSize)).size
+        return mutable
     }
 }
 

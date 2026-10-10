@@ -21,15 +21,26 @@ struct EditState: Hashable {
     var strength: Float = 1
     var protectSkin = true
     var tune = LookRecipe.neutral
+    var effects = Effects.none
     var shifts: [ColorShift] = []
+    var crop = Crop()
 
     var isEdited: Bool {
-        base != .original || tune != .neutral || shifts.contains { !$0.params.isNeutral }
+        base != .original || tune != .neutral || effects != .none || !crop.isIdentity
+            || shifts.contains { !$0.params.isNeutral }
     }
 
-    /// The parts of an edit that make sense on other photos (color shifts and masks are photo-specific).
-    func lookOnly() -> EditState {
-        EditState(base: base, strength: strength, protectSkin: protectSkin, tune: tune)
+    /// The parts of an edit that make sense on another photo from the same shoot.
+    /// Drawn areas and crop position are photo-specific; color changes carry over by color, not by location.
+    func transferable() -> EditState {
+        var copy = self
+        copy.shifts = shifts.filter { $0.strokes.isEmpty }.map {
+            var shift = $0
+            shift.samplePoint = nil
+            return shift
+        }
+        copy.crop = Crop(aspect: crop.aspect)
+        return copy
     }
 }
 
@@ -68,6 +79,8 @@ final class MediaStore {
     var importing = 0
     var progressLabel: String?
     var progress: Double = 0
+    /// "Copy edit" clipboard for pasting a look onto other photos from the same shoot.
+    var copiedEdit: EditState?
 
     func add(_ picks: [PhotosPickerItem]) async {
         importing += picks.count
@@ -84,13 +97,26 @@ final class MediaStore {
         try? FileManager.default.removeItem(at: item.url)
     }
 
-    func applyLook(from source: MediaItem, library: LookLibrary) {
-        let look = source.edit.lookOnly()
-        for item in items where item.id != source.id {
-            var edit = look
-            edit.shifts = item.edit.shifts
-            item.edit = edit
-            refreshThumbnail(item, library: library)
+    func removeAll() {
+        for item in items { try? FileManager.default.removeItem(at: item.url) }
+        items = []
+    }
+
+    func copyEdit(from item: MediaItem) {
+        copiedEdit = item.edit.transferable()
+    }
+
+    /// Pastes the copied edit, keeping any drawn-area color fixes the target photo already has.
+    func paste(_ edit: EditState, onto item: MediaItem, library: LookLibrary) {
+        var pasted = edit
+        pasted.shifts = item.edit.shifts.filter { !$0.strokes.isEmpty } + edit.shifts
+        item.edit = pasted
+        refreshThumbnail(item, library: library)
+    }
+
+    func pasteToAll(_ edit: EditState, except source: MediaItem? = nil, library: LookLibrary) {
+        for item in items where item.id != source?.id {
+            paste(edit, onto: item, library: library)
         }
     }
 

@@ -1,3 +1,4 @@
+import simd
 import SwiftUI
 
 struct ColorPanel: View {
@@ -23,14 +24,17 @@ struct ColorPanel: View {
 
     private var emptyState: some View {
         VStack(spacing: 14) {
-            Text("Tap any color in your photo to change just that color: teeth, eyes, sky, water, grass. Similar shades move together, so it still looks real.")
+            Text("Change just one color: teeth, eyes, sky, water, grass. Similar shades move together, so it still looks real.")
                 .font(.footnote)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
+            if !session.foundColors.isEmpty {
+                foundChips
+            }
             Button {
                 session.startPicking()
             } label: {
-                Label(session.mode == .pickColor ? "Tap the photo…" : "Pick a color", systemImage: "eyedropper")
+                Label(session.mode == .pickColor ? "Tap the photo…" : "Pick a color yourself", systemImage: "eyedropper")
                     .font(.headline)
                     .padding(.horizontal, 20)
                     .padding(.vertical, 12)
@@ -74,6 +78,51 @@ struct ColorPanel: View {
                         .background(Circle().fill(session.mode == .pickColor ? Theme.accent.opacity(0.3) : Theme.card))
                 }
                 .buttonStyle(.plain)
+
+                let unused = session.foundColors.filter { found in
+                    !session.edit.shifts.contains { shift in
+                        let samePoint = shift.samplePoint.map { simd_distance($0, found.point) < 0.02 } ?? false
+                        return samePoint || simd_distance(shift.target, found.color) < 0.03
+                    }
+                }
+                if !unused.isEmpty {
+                    Divider().frame(height: 22)
+                    ForEach(unused) { found in
+                        Button { session.pick(found) } label: {
+                            Text(found.name)
+                                .font(.caption.weight(.medium))
+                                .padding(.horizontal, 10)
+                                .padding(.vertical, 7)
+                                .background(Capsule().strokeBorder(.secondary.opacity(0.5)))
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+            }
+        }
+    }
+
+    private var foundChips: some View {
+        VStack(spacing: 8) {
+            Text("Found in this photo")
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(.secondary)
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 8) {
+                    ForEach(session.foundColors) { found in
+                        Button { session.pick(found) } label: {
+                            HStack(spacing: 6) {
+                                Swatch(color: found.color, size: 18)
+                                Text(found.name).font(.subheadline.weight(.medium))
+                            }
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 8)
+                            .background(Capsule().fill(Theme.card))
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+                .padding(.horizontal)
             }
         }
     }

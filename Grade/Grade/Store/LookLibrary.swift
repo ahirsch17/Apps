@@ -1,6 +1,17 @@
 import Foundation
 import Observation
 
+enum LookCategory: String, CaseIterable, Identifiable {
+    case portrait = "Portrait"
+    case travel = "Travel"
+    case film = "Film"
+    case moody = "Moody"
+    case blackAndWhite = "B&W"
+    case yours = "Yours"
+
+    var id: Self { self }
+}
+
 struct Look: Identifiable, Hashable {
     enum Source: Hashable {
         case recipe(LookRecipe)
@@ -11,6 +22,7 @@ struct Look: Identifiable, Hashable {
 
     let id: String
     var name: String
+    var category: LookCategory = .yours
     var source: Source
 
     var isBuiltIn: Bool { id.hasPrefix("builtin.") }
@@ -44,6 +56,12 @@ final class LookLibrary {
 
     func look(_ id: String) -> Look? {
         custom.first(where: { $0.id == id }) ?? builtIns.first(where: { $0.id == id })
+    }
+
+    /// nil means every look, yours first.
+    func looks(in category: LookCategory?) -> [Look] {
+        guard let category else { return custom + builtIns }
+        return category == .yours ? custom : builtIns.filter { $0.category == category }
     }
 
     func name(for choice: BaseChoice) -> String {
