@@ -218,9 +218,9 @@ final class EditSession {
     }
 
     private func findColors(in image: CGImage) {
-        Task.detached(priority: .utility) { [weak self] in
-            let found = ColorFinder.find(in: image)
-            await MainActor.run { self?.foundColors = found }
+        Task { [weak self] in
+            let found = await Task.detached(priority: .utility) { ColorFinder.find(in: image) }.value
+            self?.foundColors = found
         }
     }
 
@@ -245,11 +245,13 @@ final class EditSession {
         let specs = looks.map { ($0.id, library.spec(for: .look($0.id), item: item)) }
         let protectSkin = edit.protectSkin
         let thumb = GradePipeline.downscale(CIImage(cgImage: item.thumbnail), maxDimension: 200)
-        Task.detached(priority: .utility) { [weak self] in
+        Task { [weak self] in
             for (id, spec) in specs {
-                let lut = LUTCache.shared.base(spec, protectSkin: protectSkin)
-                guard let image = UIImage(rendering: GradePipeline.apply(lut, to: thumb)) else { continue }
-                await MainActor.run { self?.lookThumbs[id] = image }
+                let image = await Task.detached(priority: .utility) { () -> UIImage? in
+                    let lut = LUTCache.shared.base(spec, protectSkin: protectSkin)
+                    return UIImage(rendering: GradePipeline.apply(lut, to: thumb))
+                }.value
+                if let image { self?.lookThumbs[id] = image }
             }
         }
     }

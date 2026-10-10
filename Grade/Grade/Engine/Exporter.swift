@@ -116,7 +116,7 @@ enum Exporter {
 }
 
 /// Masks depend on frame size, so rasterize them once per size instead of once per frame.
-private final class JobsBySize {
+private final class JobsBySize: @unchecked Sendable {
     private let template: JobTemplate
     private var cached: (size: CGSize, job: RenderJob)?
     private let lock = NSLock()
