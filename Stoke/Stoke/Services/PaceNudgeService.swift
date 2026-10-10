@@ -12,6 +12,25 @@ final class PaceNudgeService {
 
     private init() {}
 
+    /// Asked once at the end of onboarding (or from Settings) — never mid-refresh, where the prompt has no context.
+    @discardableResult
+    func requestAuthorizationIfNeeded() async -> Bool {
+        let center = UNUserNotificationCenter.current()
+        let settings = await center.notificationSettings()
+        switch settings.authorizationStatus {
+        case .notDetermined:
+            return (try? await center.requestAuthorization(options: [.alert, .sound])) ?? false
+        case .authorized, .provisional, .ephemeral:
+            return true
+        default:
+            return false
+        }
+    }
+
+    func authorizationStatus() async -> UNAuthorizationStatus {
+        await UNUserNotificationCenter.current().notificationSettings().authorizationStatus
+    }
+
     func maybeSendOffPaceNudge(
         weekPoints: Double,
         expectedPoints: Double,
@@ -37,9 +56,6 @@ final class PaceNudgeService {
 
         let settings = await UNUserNotificationCenter.current().notificationSettings()
         switch settings.authorizationStatus {
-        case .notDetermined:
-            let granted = try? await UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound])
-            guard granted == true else { return }
         case .authorized, .provisional, .ephemeral:
             break
         default:

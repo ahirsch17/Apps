@@ -87,7 +87,7 @@ struct OnboardingFlowView: View {
     private var genderStep: some View {
         onboardingPage(
             title: "Sex",
-            subtitle: nil
+            subtitle: "Used only to estimate your max heart rate."
         ) {
             VStack(spacing: 12) {
                 ForEach(UserGender.allCases) { option in
@@ -186,6 +186,11 @@ struct OnboardingFlowView: View {
                     .foregroundStyle(StokeTheme.inkMuted)
             }
 
+            Text("Next, Stoke asks to send notifications: at most one gentle reminder a day, only when you're behind pace.")
+                .font(.caption)
+                .foregroundStyle(StokeTheme.inkMuted)
+                .multilineTextAlignment(.center)
+
             primaryButton(isFinishingOnboarding ? "Opening..." : "Start") {
                 Task { await finishOnboarding() }
             }
@@ -276,6 +281,7 @@ struct OnboardingFlowView: View {
             weeklyTarget: fullWeeklyGoal,
             displayName: trimmedName.isEmpty ? nil : trimmedName
         )
+        await PaceNudgeService.shared.requestAuthorizationIfNeeded()
         await programStore.refresh(modelContext: modelContext)
     }
 
@@ -288,7 +294,7 @@ struct OnboardingFlowView: View {
             healthDailyAverages: Array(history.values),
             healthDataReliable: assessment.isReliable
         )
-        thisWeekGoal = prospectivePeriod.targetForWeek(fullTarget: fullWeeklyGoal)
+        thisWeekGoal = ProgramStore.periodTarget(for: prospectivePeriod, weeklyTarget: fullWeeklyGoal, week: 1)
     }
 
     private func connectHealth() async {

@@ -5,6 +5,7 @@ struct HomeView: View {
     @Environment(ProgramStore.self) private var programStore
     @Environment(\.modelContext) private var modelContext
     @Environment(\.scenePhase) private var scenePhase
+    @Query(sort: \WeekRecapRecord.endDate, order: .reverse) private var recaps: [WeekRecapRecord]
     @State private var showProfile = false
     @State private var showFamily = false
 
@@ -19,14 +20,22 @@ struct HomeView: View {
                         if programStore.consecutiveWeeksMet >= 2 {
                             streakChip
                         }
+                        if let recap = recentRecap {
+                            recapCard(recap)
+                        }
                         todayCard
                         weekSection
                         paceLine
                         if let error = programStore.refreshError {
                             Text(error)
                                 .font(.footnote)
-                                .foregroundStyle(.red)
+                                .foregroundStyle(StokeTheme.terracottaDeep)
                                 .multilineTextAlignment(.center)
+                        }
+                        if let refreshed = programStore.lastRefreshed {
+                            Text("Updated \(refreshed.formatted(date: .omitted, time: .shortened)) · pull to refresh")
+                                .font(.caption2)
+                                .foregroundStyle(StokeTheme.inkMuted)
                         }
                     }
                     .padding(.horizontal, 20)
@@ -110,8 +119,59 @@ struct HomeView: View {
             Text("points")
                 .font(.footnote)
                 .foregroundStyle(StokeTheme.inkMuted)
+            if let zoneLine {
+                Text(zoneLine)
+                    .font(.caption)
+                    .foregroundStyle(StokeTheme.inkMuted)
+                    .padding(.top, 4)
+            }
         }
         .frame(maxWidth: .infinity)
+        .stokeCard()
+    }
+
+    /// "12 min easy · 8 min tempo" — shows where today's points came from.
+    private var zoneLine: String? {
+        let minutes = programStore.todayZoneMinutes
+        let labeled: [(String, Double)] = [
+            ("easy", minutes["zone2"] ?? 0),
+            ("tempo", minutes["zone3"] ?? 0),
+            ("brisk", minutes["zone4"] ?? 0),
+        ]
+        let parts = labeled
+            .filter { $0.1 >= 1 }
+            .map { "\(Int($0.1.rounded())) min \($0.0)" }
+        return parts.isEmpty ? nil : parts.joined(separator: " · ")
+    }
+
+    /// Last week's recap for the first few days of a new week.
+    private var recentRecap: WeekRecapRecord? {
+        guard let recap = recaps.first else { return nil }
+        let calendar = Calendar.current
+        let days = calendar.dateComponents(
+            [.day],
+            from: calendar.startOfDay(for: recap.endDate),
+            to: calendar.startOfDay(for: Date())
+        ).day ?? 99
+        return days <= 3 ? recap : nil
+    }
+
+    private func recapCard(_ recap: WeekRecapRecord) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Label(
+                recap.metTarget ? "Last week: goal met" : "Last week",
+                systemImage: recap.metTarget ? "checkmark.seal.fill" : "calendar"
+            )
+            .font(.subheadline.weight(.semibold))
+            .foregroundStyle(recap.metTarget ? StokeTheme.sage : StokeTheme.terracottaDeep)
+            Text(recap.summary)
+                .font(.subheadline)
+                .foregroundStyle(StokeTheme.ink)
+            Text("\(recap.greenDayCount) of \(recap.dayCount) strong days")
+                .font(.caption)
+                .foregroundStyle(StokeTheme.inkMuted)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
         .stokeCard()
     }
 

@@ -100,17 +100,19 @@ enum GamificationEngine {
         target: Int,
         met: Bool,
         nextWeeklyTarget: Int?,
-        wasRecalibrated: Bool
+        wasRecalibrated: Bool,
+        wasEased: Bool = false
     ) -> String {
         let pct = weekCompletionPercent(earned: earned, target: target)
         if met {
             var line = "Week \(weekNumber): \(pct)% of goal. Well done."
-            if wasRecalibrated, let next = nextWeeklyTarget {
-                line += " Next week: \(next) pts."
-            } else if let next = nextWeeklyTarget {
+            if let next = nextWeeklyTarget {
                 line += " Next week: \(next) pts."
             }
             return line
+        }
+        if wasEased, let next = nextWeeklyTarget {
+            return "Week \(weekNumber): \(pct)% of goal. Two short weeks in a row, so next week eases to \(next) pts."
         }
         return "Week \(weekNumber): \(pct)% of goal. Same target next week. Keep building."
     }

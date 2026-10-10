@@ -1,5 +1,7 @@
 import SwiftData
 import SwiftUI
+import UIKit
+import UserNotifications
 
 struct ProfileView: View {
     @Environment(ProgramStore.self) private var programStore
@@ -225,22 +227,60 @@ enum MedicalDisclaimer {
 struct SettingsView: View {
     @Environment(ProgramStore.self) private var programStore
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.openURL) private var openURL
 
     @State private var age: Int = 60
     @State private var gender: UserGender = .woman
     @State private var name: String = ""
+    @State private var weeklyGoal: Int = 52
+    @State private var reminderStatus: UNAuthorizationStatus = .notDetermined
 
     var body: some View {
         NavigationStack {
             Form {
-                Section("About you") {
+                Section {
                     TextField("Display name (for sharing)", text: $name)
                         .textContentType(.name)
                     Picker("Age", selection: $age) {
                         ForEach(18...99, id: \.self) { Text("\($0)").tag($0) }
                     }
-                    Picker("Gender", selection: $gender) {
+                    Picker("Sex", selection: $gender) {
                         ForEach(UserGender.allCases) { Text($0.displayName).tag($0) }
+                    }
+                } header: {
+                    Text("About you")
+                } footer: {
+                    Text("Age and sex are only used to estimate your max heart rate.")
+                }
+
+                Section {
+                    Stepper(value: $weeklyGoal, in: WeekProgression.minimumTarget...WeekProgression.maximumTarget, step: 2) {
+                        LabeledContent("Full-week goal", value: "\(weeklyGoal) pts")
+                    }
+                } header: {
+                    Text("Weekly goal")
+                } footer: {
+                    Text("Stoke adjusts this after every week on its own. Change it here if life gets in the way (travel, illness). It applies to this week too.")
+                }
+
+                Section("Reminders") {
+                    switch reminderStatus {
+                    case .authorized, .provisional, .ephemeral:
+                        Label("Pace reminders on", systemImage: "bell.fill")
+                            .foregroundStyle(StokeTheme.sage)
+                    case .denied:
+                        Button("Turn on in iPhone Settings") {
+                            if let url = URL(string: UIApplication.openSettingsURLString) {
+                                openURL(url)
+                            }
+                        }
+                    default:
+                        Button("Allow gentle pace reminders") {
+                            Task {
+                                await PaceNudgeService.shared.requestAuthorizationIfNeeded()
+                                reminderStatus = await PaceNudgeService.shared.authorizationStatus()
+                            }
+                        }
                     }
                 }
 
@@ -288,6 +328,9 @@ struct SettingsView: View {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") {
                         programStore.updateProfile(age: age, gender: gender, displayName: name)
+                        if weeklyGoal != programStore.weeklyTarget {
+                            programStore.updateWeeklyTarget(weeklyGoal)
+                        }
                         dismiss()
                     }
                 }
@@ -296,6 +339,10 @@ struct SettingsView: View {
                 age = programStore.age
                 gender = programStore.gender
                 name = programStore.displayName
+                weeklyGoal = programStore.weeklyTarget
+            }
+            .task {
+                reminderStatus = await PaceNudgeService.shared.authorizationStatus()
             }
         }
     }

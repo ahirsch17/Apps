@@ -29,9 +29,13 @@ struct ShareProgressLink<Label: View>: View {
                 }
             }
         }
-        .task {
+        .task(id: shareKey) {
             prepareShare()
         }
+    }
+
+    private var shareKey: String {
+        "\(Int(programStore.weekPoints.rounded()))-\(programStore.periodTarget)-\(programStore.consecutiveWeeksMet)-\(programStore.displayName)"
     }
 
     @MainActor

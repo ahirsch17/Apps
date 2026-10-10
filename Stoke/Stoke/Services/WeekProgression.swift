@@ -1,7 +1,19 @@
 import Foundation
 
 enum WeekProgression {
+    static let minimumTarget = 30
+    static var maximumTarget: Int { hardCap }
     private static let hardCap = 210
+    /// After two missed weeks in a row the goal steps down so it stays winnable.
+    private static let missEaseFactor = 0.92
+
+    /// Nil keeps the current goal (first miss, or already at the floor).
+    static func targetAfterMiss(current: Int, previousWeekMet: Bool?) -> Int? {
+        guard previousWeekMet == false, current > minimumTarget else { return nil }
+        let eased = Int((Double(current) * missEaseFactor).rounded())
+        return max(eased, minimumTarget)
+    }
+
     private static let plateauThreshold = 150
     private static let barelyThreshold = 1.05
     private static let solidThreshold = 1.25

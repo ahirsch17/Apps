@@ -57,8 +57,13 @@ final class ProgramStore {
         periodTarget(for: currentPeriod, week: weekNumber)
     }
 
-    /// Week 1: small bump so the ring means something, still reachable for new users.
     func periodTarget(for period: WeekPeriod, week: Int) -> Int {
+        Self.periodTarget(for: period, weeklyTarget: weeklyTarget, week: week)
+    }
+
+    /// Week 1: small bump so the ring means something, still reachable for new users.
+    /// Static so onboarding shows the exact number Home will show.
+    nonisolated static func periodTarget(for period: WeekPeriod, weeklyTarget: Int, week: Int) -> Int {
         let base = period.targetForWeek(fullTarget: weeklyTarget)
         guard week == 1 else { return base }
         return Int((Double(base) * 1.05).rounded())
@@ -74,6 +79,8 @@ final class ProgramStore {
     }
 
     var todayPoints: Double = 0
+    /// Minutes today in each effort zone ("zone2" easy, "zone3" tempo, "zone4" brisk).
+    var todayZoneMinutes: [String: Double] = [:]
     var weekPoints: Double = 0
     var dayPointsInPeriod: [Date: Double] = [:]
     var isRefreshing = false
@@ -175,6 +182,12 @@ final class ProgramStore {
         persistProfile()
     }
 
+    /// Manual override (injury, travel, or a goal that's clearly off). Applies to the current week too.
+    func updateWeeklyTarget(_ target: Int) {
+        weeklyTarget = min(max(target, WeekProgression.minimumTarget), WeekProgression.maximumTarget)
+        persistProfile()
+    }
+
     var greenDaysThisWeek: Int {
         GamificationEngine.greenDayCount(
             period: currentPeriod,
@@ -269,6 +282,7 @@ final class ProgramStore {
         var freshQuerySuccessCount = 0
         var freshQueryFailureCount = 0
         var totalHeartRateSamples = 0
+        var zoneMinutesToday: [String: Double]?
 
         for day in period.datesInPeriod() {
             let dayStart = calendar.startOfDay(for: day)
@@ -291,6 +305,9 @@ final class ProgramStore {
                 totalHeartRateSamples += result.sampleCount
                 byDay[dayStart] = result.points
                 weekTotal += result.points
+                if calendar.isDateInToday(day) {
+                    zoneMinutesToday = result.zoneMinutes
+                }
                 upsertDayRecord(dayStart: dayStart, points: result.points, context: modelContext)
             } catch {
                 freshQueryFailureCount += 1
@@ -304,6 +321,7 @@ final class ProgramStore {
         dayPointsInPeriod = byDay
         weekPoints = weekTotal
         todayPoints = byDay[calendar.startOfDay(for: Date())] ?? 0
+        todayZoneMinutes = zoneMinutesToday ?? [:]
 
         lastRefreshHeartRateSampleCount = totalHeartRateSamples
 
@@ -319,6 +337,9 @@ final class ProgramStore {
     }
 
     private func performRolloverIfNeeded(modelContext: ModelContext) async {
+        // Health data is encrypted while the phone is locked (background delivery); closing a week then would read zeros.
+        guard UIApplication.shared.isProtectedDataAvailable else { return }
+
         let calendar = Calendar.current
         let now = Date()
         var checkDate = onboardingDate
@@ -335,7 +356,11 @@ final class ProgramStore {
                 break
             }
 
-            await archivePeriod(period, modelContext: modelContext)
+            guard let pointsByDay = await archivedDayPoints(for: period, modelContext: modelContext) else {
+                // Retry on a later refresh instead of locking in a week that looks empty.
+                break
+            }
+            archivePeriod(period, pointsByDay: pointsByDay, modelContext: modelContext)
             UserDefaults.standard.set(period.end, forKey: Keys.lastRolloverPeriodEnd)
             checkDate = dayAfterPeriod
         }
@@ -343,11 +368,10 @@ final class ProgramStore {
         try? modelContext.save()
     }
 
-    private func archivePeriod(_ period: WeekPeriod, modelContext: ModelContext) async {
+    private func archivePeriod(_ period: WeekPeriod, pointsByDay: [Date: Double], modelContext: ModelContext) {
         let target = periodTarget(for: period, week: weekNumber)
-        let earned = await sumPoints(for: period)
+        let earned = pointsByDay.values.reduce(0, +)
         let met = earned >= Double(target)
-        let pointsByDay = await dayPointsMap(for: period)
         let greenDays = GamificationEngine.greenDayCount(
             period: period,
             periodTarget: target,
@@ -376,6 +400,7 @@ final class ProgramStore {
 
         var nextTargetAfterWeek: Int?
         var wasRecalibrated = false
+        var wasEased = false
 
         if met {
             consecutiveWeeksMet += 1
@@ -400,6 +425,11 @@ final class ProgramStore {
             persistProfile()
         } else {
             consecutiveWeeksMet = 0
+            if let eased = WeekProgression.targetAfterMiss(current: weeklyTarget, previousWeekMet: prevMet) {
+                weeklyTarget = eased
+                nextTargetAfterWeek = eased
+                wasEased = true
+            }
             persistProfile()
         }
 
@@ -418,7 +448,8 @@ final class ProgramStore {
                 target: target,
                 met: met,
                 nextWeeklyTarget: nextTargetAfterWeek,
-                wasRecalibrated: wasRecalibrated
+                wasRecalibrated: wasRecalibrated,
+                wasEased: wasEased
             ),
             endDate: period.end
         )
@@ -429,20 +460,33 @@ final class ProgramStore {
         defaults.set(met, forKey: Keys.previousWeekMet)
     }
 
-    private func sumPoints(for period: WeekPeriod) async -> Double {
-        let byDay = await dayPointsMap(for: period)
-        return byDay.values.reduce(0, +)
-    }
-
-    private func dayPointsMap(for period: WeekPeriod) async -> [Date: Double] {
+    /// Fresh Health numbers per day, falling back to the points cached during the week.
+    /// Nil means Health couldn't be read and the week ended recently — better to wait than archive zeros.
+    private func archivedDayPoints(for period: WeekPeriod, modelContext: ModelContext) async -> [Date: Double]? {
         let calendar = Calendar.current
         var byDay: [Date: Double] = [:]
+        var unreadableDays = 0
         for day in period.datesInPeriod() {
             let dayStart = calendar.startOfDay(for: day)
             let dayEnd = calendar.date(byAdding: .day, value: 1, to: dayStart) ?? dayStart
-            if let result = try? await HealthKitService.shared.points(from: dayStart, to: dayEnd, zones: zones) {
+            do {
+                let result = try await HealthKitService.shared.points(from: dayStart, to: dayEnd, zones: zones)
                 byDay[dayStart] = result.points
+                upsertDayRecord(dayStart: dayStart, points: result.points, context: modelContext)
+            } catch {
+                if let cached = fetchDayRecord(dayStart: dayStart, context: modelContext) {
+                    byDay[dayStart] = cached.points
+                } else {
+                    unreadableDays += 1
+                }
             }
+        }
+
+        if unreadableDays > 0 {
+            let graceDays = 3
+            let periodEndDay = calendar.startOfDay(for: period.end)
+            let daysSinceEnd = calendar.dateComponents([.day], from: periodEndDay, to: calendar.startOfDay(for: Date())).day ?? 0
+            if daysSinceEnd <= graceDays { return nil }
         }
         return byDay
     }
