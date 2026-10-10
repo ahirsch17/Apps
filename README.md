@@ -5,11 +5,14 @@ Personal iOS and mobile projects. Each folder is its own Xcode project (unless n
 | App | Description |
 |---|---|
 | [Sparq](Sparq/) | Campus events iOS app (SwiftUI) with a pluggable Node backend |
-| [SpeakFlow](SpeakFlow/) | Language practice: Call, Text, and offline Learn modes |
+| [SpeakFlow](SpeakFlow/) | Language practice: voice Call, Text, offline Learn, and a spaced-repetition Review deck |
 | [HyroxPace](HyroxPace/) | Apple Watch Hyrox doubles pacing (one screen, one tap) |
 | [SemesterSchedule](SemesterSchedule/) | Paste a course schedule into Calendar |
 | [Encrypted](Encrypted/) | Local pass-and-play word game |
 | [BluffLocation](BluffLocation/) | Location bluffing game (Socket.IO client) |
-| [Stoke](Stoke/) | Small experiment |
+| [Stoke](Stoke/) | Weekly heart-rate goal from Apple Health: zone points, pace ring, adaptive goal |
 
 Open a folder, open the `.xcodeproj`, set your signing team, and run on a simulator or device.
+
+The NFL / MLB / CFB betting models that used to live here (`nfl-edge`) moved to
+[sports-ev-system](https://github.com/ahirsch17/sports-ev-system).
