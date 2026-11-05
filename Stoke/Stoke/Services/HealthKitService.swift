@@ -160,8 +160,8 @@ final class HealthKitService {
             let rate = zones.pointsPerMinute(for: bpm)
             totalPoints += rate * duration
             if zones.zone2.contains(bpm) { z2 += duration }
-            if zones.zone3.contains(bpm) { z3 += duration }
-            if zones.zone4.contains(bpm) { z4 += duration }
+            else if zones.zone3.contains(bpm) { z3 += duration }
+            else if zones.zone4.contains(bpm) { z4 += duration }
         }
 
         return (totalPoints, samples.count, ["zone2": z2, "zone3": z3, "zone4": z4])

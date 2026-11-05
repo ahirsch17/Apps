@@ -343,6 +343,10 @@ final class ProgramStore {
         let calendar = Calendar.current
         let now = Date()
         var checkDate = onboardingDate
+        if let lastClosed = UserDefaults.standard.object(forKey: Keys.lastRolloverPeriodEnd) as? Date,
+           let dayAfterClosed = calendar.date(byAdding: .day, value: 1, to: calendar.startOfDay(for: lastClosed)) {
+            checkDate = dayAfterClosed
+        }
 
         while true {
             let period = WeekPeriod.current(onboardingDate: onboardingDate, now: checkDate)
@@ -353,7 +357,10 @@ final class ProgramStore {
 
             if let lastClosed = UserDefaults.standard.object(forKey: Keys.lastRolloverPeriodEnd) as? Date,
                calendar.startOfDay(for: lastClosed) >= periodEndDay {
-                break
+                // This week is already closed. Keep walking; stopping here would freeze every later week.
+                if dayAfterPeriod <= checkDate { break }
+                checkDate = dayAfterPeriod
+                continue
             }
 
             guard let pointsByDay = await archivedDayPoints(for: period, modelContext: modelContext) else {
