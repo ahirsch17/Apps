@@ -19,38 +19,26 @@ struct CallHomeView: View {
 
     private var preCall: some View {
         ZStack {
-            LinearGradient(colors: [settings.character.color.opacity(0.35), SF.tealDeep, .black], startPoint: .top, endPoint: .bottom)
-                .ignoresSafeArea()
+            SF.ink.ignoresSafeArea()
 
             VStack(spacing: 28) {
                 Spacer()
-                PulseAvatar(emoji: settings.character.emoji, color: settings.character.color, isActive: false, size: 150)
+                TutorMark(name: settings.character.name, size: 140)
                 Text(settings.character.name)
-                    .font(.system(size: 34, weight: .bold, design: .rounded))
+                    .font(SF.display(34))
                     .foregroundStyle(.white)
                 Text(settings.character.vibe)
-                    .font(.system(.body, design: .rounded))
+                    .font(SF.ui(17))
                     .foregroundStyle(.white.opacity(0.65))
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 36)
 
-                HStack(spacing: 10) {
-                    chip(settings.language.flag + " " + settings.language.displayName)
-                    Menu {
-                        Picker("Level", selection: $settings.level) {
-                            ForEach(ConversationLevel.allCases) { Text("\($0.title) — \($0.blurb)").tag($0) }
-                        }
-                    } label: {
-                        chip(settings.level.title + " ▾")
-                    }
-                    Menu {
-                        Picker("Topic", selection: $settings.topic) {
-                            ForEach(ConversationTopic.allCases) { Label($0.title, systemImage: $0.icon).tag($0) }
-                        }
-                    } label: {
-                        chip(settings.topic.title + " ▾")
-                    }
-                }
+                Text("\(settings.language.displayName)  ·  \(settings.talkLevel.title)  ·  \(settings.topic.title)")
+                    .font(SF.ui(15))
+                    .foregroundStyle(.white.opacity(0.72))
+                Text(settings.talkLevel.blurb)
+                    .font(SF.ui(13))
+                    .foregroundStyle(.white.opacity(0.45))
 
                 if let err = conversation.error {
                     Text(err).font(.footnote).foregroundStyle(SF.coral).padding(.horizontal)
@@ -58,52 +46,29 @@ struct CallHomeView: View {
 
                 Spacer()
 
-                if !speechSupported {
-                    VStack(spacing: 8) {
-                        Text("Voice calls aren't available for \(settings.language.displayName) yet")
-                            .font(.system(.headline, design: .rounded))
-                            .foregroundStyle(.white)
-                        Text("Apple's speech recognition doesn't support it on iPhone. Text \(settings.character.name) instead — same tutor, same corrections.")
-                            .font(.system(.subheadline, design: .rounded))
-                            .foregroundStyle(.white.opacity(0.6))
-                            .multilineTextAlignment(.center)
-                    }
-                    .padding(20)
-                    .background(.ultraThinMaterial)
-                    .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
-                    .padding(.horizontal, 24)
-                } else if settings.hasAPIKey {
-                    Button {
+                if settings.hasAPIKey {
+                    Button("Start talk") {
                         Task { await conversation.startCall() }
-                    } label: {
-                        Label("Start call", systemImage: "phone.fill")
-                            .font(.system(.headline, design: .rounded))
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 16)
-                            .background(SF.mint)
-                            .foregroundStyle(.black)
-                            .clipShape(Capsule())
                     }
+                    .buttonStyle(StampButton())
                     .padding(.horizontal, 32)
-                    Text("Hands-free — just talk. Silence sends.")
-                        .font(.system(.caption, design: .rounded))
+                    Text("No button after this. A short pause stays with you. Notes wait until the end.")
+                        .font(SF.ui(13))
                         .foregroundStyle(.white.opacity(0.45))
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 32)
                 } else {
                     VStack(spacing: 12) {
                         Text("Call needs your OpenAI key")
-                            .font(.system(.headline, design: .rounded))
+                            .font(SF.uiBold(17))
                             .foregroundStyle(.white)
-                        Text("Learn tab works free. Paste a key in Profile to unlock live calls.")
-                            .font(.system(.subheadline, design: .rounded))
+                        Text("Practice works with no key. Paste a key in You to unlock live calls.")
+                            .font(SF.ui(15))
                             .foregroundStyle(.white.opacity(0.6))
                             .multilineTextAlignment(.center)
-                        Button("Open Profile", action: onNeedKey)
-                            .buttonStyle(.borderedProminent)
-                            .tint(SF.coral)
+                        Button("Open You", action: onNeedKey)
+                            .buttonStyle(StampButton(filled: false))
                     }
-                    .padding(24)
-                    .background(.ultraThinMaterial)
-                    .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
                     .padding(.horizontal, 24)
                 }
                 Spacer().frame(height: 24)
@@ -111,17 +76,6 @@ struct CallHomeView: View {
         }
     }
 
-    private var speechSupported: Bool { SpeechRecognitionService.supports(settings.language) }
-
-    private func chip(_ t: String) -> some View {
-        Text(t)
-            .font(.system(.caption, design: .rounded).weight(.semibold))
-            .padding(.horizontal, 10)
-            .padding(.vertical, 6)
-            .background(.white.opacity(0.12))
-            .clipShape(Capsule())
-            .foregroundStyle(.white)
-    }
 }
 
 struct ActiveCallView: View {
@@ -131,17 +85,16 @@ struct ActiveCallView: View {
 
     var body: some View {
         ZStack {
-            LinearGradient(colors: [settings.character.color.opacity(0.45), SF.tealDeep, .black], startPoint: .top, endPoint: .bottom)
-                .ignoresSafeArea()
+            SF.ink.ignoresSafeArea()
 
             VStack(spacing: 20) {
                 HStack {
                     Text(statusLabel)
-                        .font(.system(.subheadline, design: .rounded).weight(.semibold))
+                        .font(SF.uiBold(15))
                         .foregroundStyle(.white.opacity(0.7))
                     Spacer()
                     Text("\(conversation.turnCount) turns")
-                        .font(.system(.caption, design: .rounded))
+                        .font(SF.ui(13))
                         .foregroundStyle(.white.opacity(0.4))
                 }
                 .padding(.horizontal, 24)
@@ -152,10 +105,9 @@ struct ActiveCallView: View {
                 Button {
                     conversation.interruptTutor()
                 } label: {
-                    PulseAvatar(
-                        emoji: settings.character.emoji,
-                        color: settings.character.color,
-                        isActive: conversation.phase == .tutorSpeaking || conversation.phase == .listening,
+                    TutorMark(
+                        name: settings.character.name,
+                        active: conversation.phase == .tutorSpeaking || conversation.phase == .listening,
                         size: 160
                     )
                 }
@@ -164,99 +116,44 @@ struct ActiveCallView: View {
                 .accessibilityLabel(conversation.phase == .tutorSpeaking ? "Tap to jump in" : settings.character.name)
 
                 Text(settings.character.name)
-                    .font(.system(.title, design: .rounded).weight(.bold))
+                    .font(SF.display(28))
                     .foregroundStyle(.white)
 
                 if conversation.phase == .tutorSpeaking {
                     Text("Tap them to jump in")
-                        .font(.system(.caption, design: .rounded))
+                        .font(SF.ui(13))
                         .foregroundStyle(.white.opacity(0.45))
                         .transition(.opacity)
                 }
 
                 if let last = conversation.messages.last(where: { $0.role == .tutor }) {
-                    VStack(spacing: 6) {
-                        Text(last.text)
-                            .font(.system(.title3, design: .rounded))
-                            .foregroundStyle(.white.opacity(0.9))
-                        if settings.showTranslations, let translation = last.translation {
-                            Text(translation)
-                                .font(.system(.footnote, design: .rounded))
-                                .foregroundStyle(.white.opacity(0.45))
-                        }
-                    }
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, 28)
-                    .transition(.opacity)
+                    Text(last.text)
+                        .font(SF.display(20))
+                        .foregroundStyle(.white.opacity(0.9))
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 28)
+                        .transition(.opacity)
                 }
 
                 if conversation.phase == .listening {
                     VStack(spacing: 8) {
                         Text(conversation.liveTranscript.isEmpty ? "Listening… just talk" : conversation.liveTranscript)
-                            .font(.system(.body, design: .rounded))
+                            .font(SF.ui(17))
                             .foregroundStyle(SF.mint)
                             .multilineTextAlignment(.center)
                             .padding(.horizontal, 24)
                             .animation(.easeInOut, value: conversation.liveTranscript)
-                        if conversation.liveTranscript.isEmpty, let starter = conversation.latestStarters.first {
-                            Text("Try: “\(starter)”")
-                                .font(.system(.footnote, design: .rounded).weight(.medium))
-                                .foregroundStyle(.white.opacity(0.6))
-                                .multilineTextAlignment(.center)
-                                .padding(.horizontal, 24)
-                        }
-                        Text("Pause when you're done — it'll catch it")
-                            .font(.system(.caption2, design: .rounded))
+                        Text("A short pause stays open")
+                            .font(SF.ui(11))
                             .foregroundStyle(.white.opacity(0.4))
                     }
                 } else if conversation.phase == .thinking || conversation.phase == .connecting {
                     ProgressView().tint(SF.mint)
                 }
 
-                if !conversation.latestCorrections.isEmpty {
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("Try next time")
-                            .font(.system(.caption2, design: .rounded).weight(.bold))
-                            .foregroundStyle(SF.coral.opacity(0.9))
-                        ForEach(conversation.latestCorrections.prefix(2)) { c in
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text("\(c.original) → \(c.corrected)")
-                                    .font(.system(.subheadline, design: .rounded).weight(.semibold))
-                                    .foregroundStyle(.white)
-                                Text(c.explanation)
-                                    .font(.system(.caption2, design: .rounded))
-                                    .foregroundStyle(.white.opacity(0.55))
-                            }
-                        }
-                    }
-                    .padding(14)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(.white.opacity(0.08))
-                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-                    .padding(.horizontal, 24)
-                    .transition(.move(edge: .bottom).combined(with: .opacity))
-                }
-
                 Spacer()
 
-                HStack(spacing: 28) {
-                    Button {
-                        Task { await conversation.replayLastTutorLine() }
-                    } label: {
-                        VStack(spacing: 6) {
-                            Image(systemName: "gobackward")
-                                .font(.title2)
-                                .frame(width: 64, height: 64)
-                                .background(.white.opacity(0.12))
-                                .clipShape(Circle())
-                            Text("Say again").font(.system(.caption2, design: .rounded))
-                        }
-                        .foregroundStyle(.white)
-                    }
-                    .disabled(!conversation.canReplayInCall)
-                    .opacity(conversation.canReplayInCall ? 1 : 0.4)
-                    .accessibilityLabel("Repeat that slower")
-
+                HStack(spacing: 36) {
                     Button {
                         Task { await conversation.skipTrySomething() }
                     } label: {
@@ -266,7 +163,7 @@ struct ActiveCallView: View {
                                 .frame(width: 64, height: 64)
                                 .background(.white.opacity(0.12))
                                 .clipShape(Circle())
-                            Text("Blanked").font(.system(.caption2, design: .rounded))
+                            Text("Blanked").font(SF.ui(11))
                         }
                         .foregroundStyle(.white)
                     }
@@ -280,8 +177,7 @@ struct ActiveCallView: View {
                                 .frame(width: 76, height: 76)
                                 .background(SF.coral)
                                 .clipShape(Circle())
-                                .shadow(color: SF.coral.opacity(0.5), radius: 12)
-                            Text("End").font(.system(.caption2, design: .rounded))
+                            Text("End").font(SF.ui(11))
                         }
                         .foregroundStyle(.white)
                     }
@@ -315,19 +211,20 @@ struct ActiveCallView: View {
 
             VStack(spacing: 14) {
                 Text("Quick tip")
-                    .font(.system(.caption, design: .rounded).weight(.bold))
+                    .font(SF.label(12))
                     .foregroundStyle(SF.mint)
-                Text("Talk naturally. When you pause, it sends.\nFrozen? Hit Blanked. Missed it? Say again replays slower. Jump in anytime by tapping \(settings.character.name).")
-                    .font(.system(.body, design: .rounded))
+                Text("Talk naturally. A short pause stays open, and it sends when the sentence is done.\nFrozen? Hit Blanked. Jump in anytime by tapping \(settings.character.name).")
+                    .font(SF.ui(17))
                     .foregroundStyle(.white)
                     .multilineTextAlignment(.center)
                 Text("Tap anywhere")
-                    .font(.system(.caption2, design: .rounded))
-                    .foregroundStyle(.white.opacity(0.45))
+                    .font(SF.ui(15))
+                    .foregroundStyle(.white.opacity(0.72))
             }
             .padding(24)
-            .background(.ultraThinMaterial)
-            .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+            .frame(maxWidth: .infinity)
+            .background(SF.ink)
+            .overlay(Rectangle().stroke(SF.line, lineWidth: 1))
             .padding(.horizontal, 32)
         }
         .transition(.opacity)
@@ -358,33 +255,26 @@ struct CallReportView: View {
                 if let r = conversation.report {
                     VStack(alignment: .leading, spacing: 20) {
                         Text(r.scoreLabel)
-                            .font(.system(.largeTitle, design: .rounded).weight(.heavy))
+                            .font(SF.display(40))
                             .foregroundStyle(SF.mint)
                         Text(r.summary)
-                            .font(.system(.body, design: .rounded))
+                            .font(SF.ui(17))
                             .foregroundStyle(.secondary)
 
                         section("What worked", r.strengths, SF.mint)
                         section("Practice next", r.focusNext, SF.coral)
-                        section("Steal these phrases", r.keyPhrases.map { (p: KeyPhrase) -> String in
-                            if let meaning = p.meaning, !meaning.isEmpty { return "\(p.phrase) — \(meaning)" }
-                            return p.phrase
+                        section("Steal these phrases", r.keyPhrases.map { item in
+                            if let meaning = item.meaning, !meaning.isEmpty {
+                                return "\(item.phrase) — \(meaning)"
+                            }
+                            return item.phrase
                         }, SF.teal)
-
-                        if conversation.savedThisSession > 0 {
-                            Label(
-                                "\(conversation.savedThisSession) phrase\(conversation.savedThisSession == 1 ? "" : "s") saved to Review in the Learn tab",
-                                systemImage: "rectangle.stack.badge.plus"
-                            )
-                            .font(.system(.subheadline, design: .rounded).weight(.semibold))
-                            .foregroundStyle(SF.mint)
-                        }
                     }
                     .padding()
                 }
             }
             .background(SF.tealDeep.ignoresSafeArea())
-            .navigationTitle("Call recap")
+            .navigationTitle("Recap")
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Done") { conversation.dismissReport() }
@@ -393,25 +283,18 @@ struct CallReportView: View {
         }
     }
 
-    @ViewBuilder
     private func section(_ title: String, _ items: [String], _ color: Color) -> some View {
-        if !items.isEmpty {
-            sectionCard(title, items, color)
-        }
-    }
-
-    private func sectionCard(_ title: String, _ items: [String], _ color: Color) -> some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text(title).font(.system(.headline, design: .rounded)).foregroundStyle(color)
+            Text(title).font(SF.uiBold(17)).foregroundStyle(color)
             ForEach(items, id: \.self) { item in
                 Text("• \(item)")
-                    .font(.system(.body, design: .rounded))
+                    .font(SF.ui(17))
                     .foregroundStyle(.white.opacity(0.85))
             }
         }
         .padding()
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(Color.white.opacity(0.06))
-        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: 2, style: .continuous))
     }
 }

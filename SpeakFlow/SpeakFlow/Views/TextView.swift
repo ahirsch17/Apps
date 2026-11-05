@@ -40,11 +40,11 @@ struct TextHomeView: View {
 
     private var locked: some View {
         VStack(spacing: 16) {
-            Text(settings.character.emoji).font(.system(size: 64))
+            TutorMark(name: settings.character.name, size: 88)
             Text("Text \(settings.character.name)")
-                .font(.system(.title2, design: .rounded).weight(.bold))
-            Text("Same tutor as Call, message-style. Needs an API key in Profile.")
-                .font(.system(.subheadline, design: .rounded))
+                .font(SF.display(26))
+            Text("One line at a time with \(settings.character.name). Needs an API key in You.")
+                .font(SF.ui(15))
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 32)
@@ -60,9 +60,9 @@ struct TextHomeView: View {
                 .font(.system(size: 40))
                 .foregroundStyle(SF.mint)
             Text("You're on a call")
-                .font(.system(.title2, design: .rounded).weight(.bold))
+                .font(SF.display(26))
             Text("Hang up on the Call tab when you're done — Text keeps its own chat so nothing gets mixed up.")
-                .font(.system(.subheadline, design: .rounded))
+                .font(SF.ui(15))
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 32)
@@ -74,13 +74,10 @@ struct TextHomeView: View {
             ScrollViewReader { proxy in
                 ScrollView {
                     LazyVStack(spacing: 12) {
-                        if conversation.messages.isEmpty && conversation.phase == .idle {
-                            emptyChat
-                        }
                         ForEach(conversation.messages) { msg in
                             bubble(msg).id(msg.id)
                         }
-                        if conversation.phase == .thinking || conversation.phase == .connecting {
+                        if conversation.phase == .thinking {
                             ProgressView().padding().id("load")
                         }
                     }
@@ -97,26 +94,39 @@ struct TextHomeView: View {
                 Text(err).font(.caption).foregroundStyle(SF.coral).padding(.horizontal)
             }
 
-            if !conversation.latestStarters.isEmpty, conversation.phase == .idle || conversation.phase == .tutorSpeaking {
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 8) {
-                        ForEach(conversation.latestStarters, id: \.self) { starter in
-                            Button {
-                                draft = starter
-                            } label: {
-                                Text(starter)
-                                    .font(.system(.footnote, design: .rounded).weight(.medium))
-                                    .padding(.horizontal, 12)
-                                    .padding(.vertical, 8)
-                                    .background(SF.teal.opacity(0.18))
-                                    .clipShape(Capsule())
-                            }
-                            .buttonStyle(.plain)
-                        }
-                    }
-                    .padding(.horizontal, 12)
+            if conversation.phase == .listening {
+                Text(conversation.liveTranscript.isEmpty ? "Listening" : conversation.liveTranscript)
+                    .font(SF.ui(16))
+                    .foregroundStyle(SF.teal)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 8)
+                Text("A short pause stays open.")
+                    .font(SF.ui(13))
+                    .foregroundStyle(.white.opacity(0.45))
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal, 16)
+            }
+
+            Button(conversation.phase == .listening ? "Done" : "Speak") {
+                if conversation.phase == .listening {
+                    conversation.commitChatTurn()
+                } else {
+                    Task { await conversation.listenForChatTurn() }
                 }
-                .padding(.top, 6)
+            }
+            .buttonStyle(StampButton(filled: conversation.phase == .listening))
+            .disabled(conversation.phase == .thinking || conversation.phase == .connecting || conversation.phase == .tutorSpeaking)
+            .padding(.horizontal, 12)
+            .padding(.top, 8)
+
+            if conversation.phase != .listening {
+                Text("Read the note, then speak. A one-second pause will not send.")
+                    .font(SF.ui(13))
+                    .foregroundStyle(.white.opacity(0.45))
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 6)
             }
 
             HStack(spacing: 10) {
@@ -128,14 +138,13 @@ struct TextHomeView: View {
                         .background(SF.card)
                         .clipShape(Circle())
                 }
-                .disabled(conversation.messages.isEmpty || conversation.phase == .thinking || conversation.phase == .connecting)
                 .accessibilityLabel("I blanked")
 
                 TextField("Message in \(settings.language.displayName)…", text: $draft, axis: .vertical)
                     .lineLimit(1...4)
                     .padding(10)
                     .background(SF.card)
-                    .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: 2, style: .continuous))
 
                 Button {
                     let t = draft
@@ -152,59 +161,28 @@ struct TextHomeView: View {
         }
     }
 
-    private var emptyChat: some View {
-        VStack(spacing: 12) {
-            Text(settings.character.emoji).font(.system(size: 48))
-            Text("Start a chat with \(settings.character.name)")
-                .font(.system(.headline, design: .rounded))
-            Button("Say hi") { Task { await conversation.startText() } }
-                .buttonStyle(.borderedProminent)
-                .tint(SF.teal)
-        }
-        .padding(.top, 60)
-    }
-
     private func bubble(_ msg: ChatMessage) -> some View {
         VStack(alignment: msg.role == .user ? .trailing : .leading, spacing: 6) {
             if msg.role == .tutor {
-                HStack(spacing: 6) {
-                    Text(settings.character.name)
-                        .font(.system(.caption2, design: .rounded).weight(.semibold))
-                        .foregroundStyle(.secondary)
-                    Button {
-                        conversation.speakMessage(msg)
-                    } label: {
-                        Image(systemName: "speaker.wave.2.fill")
-                            .font(.caption2)
-                            .foregroundStyle(SF.teal)
-                    }
-                    .buttonStyle(.borderless)
-                    .accessibilityLabel("Play message")
-                }
+                Text(settings.character.name)
+                    .font(SF.label(11))
+                    .foregroundStyle(.secondary)
             }
             Text(msg.text)
-                .font(.system(.body, design: .rounded))
+                .font(SF.ui(17))
                 .padding(12)
-                .background(msg.role == .user ? SF.teal : SF.card)
-                .foregroundStyle(msg.role == .user ? .white : .primary)
-                .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+                .background(msg.role == .user ? SF.coral : Color.white.opacity(0.06))
+                .foregroundStyle(msg.role == .user ? SF.ink : Color.white)
+                .clipShape(RoundedRectangle(cornerRadius: 2, style: .continuous))
                 .frame(maxWidth: .infinity, alignment: msg.role == .user ? .trailing : .leading)
-
-            if msg.role == .tutor, settings.showTranslations, let translation = msg.translation {
-                Text(translation)
-                    .font(.system(.caption, design: .rounded))
-                    .foregroundStyle(.secondary)
-                    .padding(.horizontal, 4)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-            }
 
             ForEach(msg.corrections) { c in
                 Text("\(c.original) → \(c.corrected)")
-                    .font(.system(.caption, design: .rounded).weight(.semibold))
+                    .font(SF.label(13))
                     .foregroundStyle(SF.coral)
                     .frame(maxWidth: .infinity, alignment: .trailing)
                 Text(c.explanation)
-                    .font(.system(.caption2, design: .rounded))
+                    .font(SF.ui(11))
                     .foregroundStyle(.secondary)
                     .frame(maxWidth: .infinity, alignment: .trailing)
             }

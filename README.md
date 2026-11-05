@@ -5,7 +5,7 @@ Personal iOS and mobile projects. Each folder is its own Xcode project (unless n
 | App | Description |
 |---|---|
 | [Sparq](Sparq/) | Campus events iOS app (SwiftUI) with a pluggable Node backend |
-| [SpeakFlow](SpeakFlow/) | Language practice: voice Call, Text, offline Learn, and a spaced-repetition Review deck |
+| [SpeakFlow](SpeakFlow/) | Spoken language practice: hear a phrase, say it, then answer a short scene. Call and Text open after a few scenes |
 | [HyroxPace](HyroxPace/) | Apple Watch Hyrox doubles pacing (one screen, one tap) |
 | [SemesterSchedule](SemesterSchedule/) | Paste a course schedule into Calendar |
 | [Encrypted](Encrypted/) | Local pass-and-play word game |

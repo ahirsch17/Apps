@@ -1,42 +1,76 @@
 import SwiftUI
 
 enum SF {
-    // Teal / coral / deep ink — youthful, not purple or cream-textbook
-    static let teal = Color(red: 0.05, green: 0.58, blue: 0.53)
-    static let tealDeep = Color(red: 0.06, green: 0.09, blue: 0.16)
-    static let coral = Color(red: 1.0, green: 0.42, blue: 0.29)
-    static let mint = Color(red: 0.20, green: 0.90, blue: 0.72)
-    static let cream = Color(red: 0.96, green: 0.97, blue: 0.98)
+    /// Flat ink. Not a gradient, not cream.
+    static let ink = Color(red: 0.08, green: 0.08, blue: 0.07)
+    static let tealDeep = ink
+    static let teal = Color(red: 0.93, green: 0.76, blue: 0.38)
+    static let coral = Color(red: 0.90, green: 0.28, blue: 0.16)
+    static let mint = Color(red: 0.93, green: 0.76, blue: 0.38)
+    static let line = Color.white.opacity(0.18)
 
-    static var bg: Color { Color(.systemBackground) }
-    static var card: Color { Color(.secondarySystemBackground) }
+    static var bg: Color { ink }
+    static var card: Color { Color.white.opacity(0.05) }
 
-    static let rounded = Font.system(.body, design: .rounded)
+    static func display(_ size: CGFloat) -> Font { .custom("IowanOldStyle-Roman", size: size) }
+    static func displayItalic(_ size: CGFloat) -> Font { .custom("IowanOldStyle-Italic", size: size) }
+    static func ui(_ size: CGFloat) -> Font { .custom("AvenirNext-Regular", size: size) }
+    static func uiBold(_ size: CGFloat) -> Font { .custom("AvenirNext-DemiBold", size: size) }
+    static func label(_ size: CGFloat) -> Font { .custom("AvenirNextCondensed-DemiBold", size: size) }
+
+    static let rounded = ui(16)
 }
 
-struct PulseAvatar: View {
-    let emoji: String
-    let color: Color
-    var isActive: Bool
-    var size: CGFloat = 140
+struct StampButton: ButtonStyle {
+    var filled: Bool = true
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .font(SF.label(16))
+            .textCase(.uppercase)
+            .tracking(1.2)
+            .foregroundStyle(filled ? SF.ink : Color.white)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 14)
+            .background(filled ? SF.coral : Color.clear)
+            .overlay(Rectangle().stroke(Color.white.opacity(filled ? 0 : 0.45), lineWidth: 1))
+            .opacity(configuration.isPressed ? 0.72 : 1)
+    }
+}
+
+/// A name, set in the display face. No emoji, no glow.
+struct TutorMark: View {
+    let name: String
+    var active: Bool = false
+    var size: CGFloat = 120
 
     var body: some View {
+        let letter = String(name.trimmingCharacters(in: .whitespacesAndNewlines).prefix(1))
         ZStack {
-            if isActive {
-                Circle()
-                    .stroke(color.opacity(0.35), lineWidth: 3)
-                    .frame(width: size + 28, height: size + 28)
-                    .scaleEffect(isActive ? 1.08 : 1)
-                    .animation(.easeInOut(duration: 1.1).repeatForever(autoreverses: true), value: isActive)
-            }
-            Circle()
-                .fill(
-                    LinearGradient(colors: [color, color.opacity(0.7)], startPoint: .topLeading, endPoint: .bottomTrailing)
-                )
+            Rectangle()
+                .stroke(active ? SF.coral : SF.teal, lineWidth: active ? 2 : 1)
                 .frame(width: size, height: size)
-                .shadow(color: color.opacity(0.35), radius: 18, y: 8)
-            Text(emoji)
-                .font(.system(size: size * 0.42))
+            Text(letter.isEmpty ? "?" : letter)
+                .font(SF.display(size * 0.42))
+                .foregroundStyle(.white)
         }
+        .accessibilityLabel(name)
+    }
+}
+
+/// Three clean answers, drawn as marks. Filled ones are done.
+struct RepTicks: View {
+    let filled: Int
+    var total: Int = SpeakPath.repsToPass
+
+    var body: some View {
+        HStack(spacing: 3) {
+            ForEach(0..<total, id: \.self) { index in
+                Rectangle()
+                    .fill(index < filled ? SF.teal : Color.white.opacity(0.22))
+                    .frame(width: 8, height: 8)
+            }
+        }
+        .accessibilityLabel("\(min(filled, total)) of \(total)")
     }
 }

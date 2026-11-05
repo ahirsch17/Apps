@@ -25,6 +25,10 @@
 		B00000000000000000000031 /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000032 /* WelcomeView.swift */; };
 		B00000000000000000000037 /* PhrasebookStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000038 /* PhrasebookStore.swift */; };
 		B00000000000000000000033 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000034 /* Assets.xcassets */; };
+		C10000000000000000000001 /* SpanishPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = C10000000000000000000002 /* SpanishPath.swift */; };
+		C10000000000000000000007 /* LanguagePaths.swift in Sources */ = {isa = PBXBuildFile; fileRef = C10000000000000000000008 /* LanguagePaths.swift */; };
+		C10000000000000000000003 /* PracticeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C10000000000000000000004 /* PracticeView.swift */; };
+		C10000000000000000000005 /* PathOverviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C10000000000000000000006 /* PathOverviewView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -48,6 +52,10 @@
 		B00000000000000000000034 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		B00000000000000000000035 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B00000000000000000000036 /* SpeakFlow.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SpeakFlow.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C10000000000000000000002 /* SpanishPath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpanishPath.swift; sourceTree = "<group>"; };
+		C10000000000000000000008 /* LanguagePaths.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguagePaths.swift; sourceTree = "<group>"; };
+		C10000000000000000000004 /* PracticeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PracticeView.swift; sourceTree = "<group>"; };
+		C10000000000000000000006 /* PathOverviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PathOverviewView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -114,6 +122,8 @@
 			isa = PBXGroup;
 			children = (
 				B00000000000000000000002 /* Curriculum.swift */,
+				C10000000000000000000002 /* SpanishPath.swift */,
+				C10000000000000000000008 /* LanguagePaths.swift */,
 			);
 			path = Learn;
 			sourceTree = "<group>";
@@ -147,6 +157,8 @@
 				B00000000000000000000028 /* ProfileView.swift */,
 				B00000000000000000000030 /* TextView.swift */,
 				B00000000000000000000032 /* WelcomeView.swift */,
+				C10000000000000000000004 /* PracticeView.swift */,
+				C10000000000000000000006 /* PathOverviewView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -237,6 +249,10 @@
 				B00000000000000000000027 /* ProfileView.swift in Sources */,
 				B00000000000000000000029 /* TextView.swift in Sources */,
 				B00000000000000000000031 /* WelcomeView.swift in Sources */,
+				C10000000000000000000001 /* SpanishPath.swift in Sources */,
+				C10000000000000000000007 /* LanguagePaths.swift in Sources */,
+				C10000000000000000000003 /* PracticeView.swift in Sources */,
+				C10000000000000000000005 /* PathOverviewView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
